@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/expense.dart';
+import 'package:finance_tracker/models/expense_category.dart';
+import 'package:finance_tracker/models/financial_type.dart';
 
 void main() {
   group('Expense', () {
@@ -9,13 +11,14 @@ void main() {
       final expense = Expense(
         id: '1',
         amount: 42.5,
-        category: 'Food',
+        category: ExpenseCategory.groceries,
         date: date,
       );
 
       expect(expense.id, '1');
       expect(expense.amount, 42.5);
-      expect(expense.category, 'Food');
+      expect(expense.category, ExpenseCategory.groceries);
+      expect(expense.financialType, FinancialType.consumption);
       expect(expense.date, date);
       expect(expense.note, isNull);
     });
@@ -24,7 +27,7 @@ void main() {
       final expense = Expense(
         id: '2',
         amount: 10.0,
-        category: 'Transport',
+        category: ExpenseCategory.transport,
         date: date,
         note: 'Bus ticket',
       );
@@ -36,7 +39,7 @@ void main() {
       final expense = Expense(
         id: '3',
         amount: 5.0,
-        category: 'Other',
+        category: ExpenseCategory.other,
         date: date,
       );
 
@@ -47,7 +50,7 @@ void main() {
       final expense = Expense(
         id: '4',
         amount: 0.0,
-        category: 'Other',
+        category: ExpenseCategory.other,
         date: date,
       );
 
@@ -58,11 +61,105 @@ void main() {
       final expense = Expense(
         id: '5',
         amount: 999999.99,
-        category: 'Shopping',
+        category: ExpenseCategory.clothing,
         date: date,
       );
 
       expect(expense.amount, 999999.99);
+    });
+
+    test('financialType defaults to consumption', () {
+      final expense = Expense(
+        id: '6',
+        amount: 50.0,
+        category: ExpenseCategory.health,
+        date: date,
+      );
+
+      expect(expense.financialType, FinancialType.consumption);
+    });
+
+    test('financialType can be set to asset', () {
+      final expense = Expense(
+        id: '7',
+        amount: 100.0,
+        category: ExpenseCategory.investment,
+        date: date,
+        financialType: FinancialType.asset,
+      );
+
+      expect(expense.financialType, FinancialType.asset);
+    });
+
+    group('serialization', () {
+      test('toJson and fromJson round-trip preserves all fields', () {
+        final expense = Expense(
+          id: 'abc',
+          amount: 29.99,
+          category: ExpenseCategory.restaurants,
+          financialType: FinancialType.consumption,
+          date: date,
+          note: 'Lunch',
+        );
+
+        final json = expense.toJson();
+        final restored = Expense.fromJson(json);
+
+        expect(restored.id, expense.id);
+        expect(restored.amount, expense.amount);
+        expect(restored.category, expense.category);
+        expect(restored.financialType, expense.financialType);
+        expect(restored.date, expense.date);
+        expect(restored.note, expense.note);
+      });
+
+      test('fromJson handles missing financialType (legacy records)', () {
+        final json = {
+          'id': 'old1',
+          'amount': 15.0,
+          'category': 'groceries',
+          'date': date.toIso8601String(),
+          'note': null,
+        };
+        final expense = Expense.fromJson(json);
+        expect(expense.financialType, FinancialType.consumption);
+      });
+
+      test('fromJson maps legacy string category Food to groceries', () {
+        final json = {
+          'id': 'old2',
+          'amount': 10.0,
+          'category': 'Food',
+          'date': date.toIso8601String(),
+          'note': null,
+        };
+        final expense = Expense.fromJson(json);
+        expect(expense.category, ExpenseCategory.groceries);
+      });
+
+      test('fromJson maps legacy string category Shopping to clothing', () {
+        final json = {
+          'id': 'old3',
+          'amount': 20.0,
+          'category': 'Shopping',
+          'date': date.toIso8601String(),
+          'note': null,
+        };
+        final expense = Expense.fromJson(json);
+        expect(expense.category, ExpenseCategory.clothing);
+      });
+
+      test('fromJson maps unknown legacy string to other', () {
+        final json = {
+          'id': 'old4',
+          'amount': 5.0,
+          'category': 'UnknownCategory',
+          'date': date.toIso8601String(),
+          'note': null,
+        };
+        final expense = Expense.fromJson(json);
+        expect(expense.category, ExpenseCategory.other);
+      });
     });
   });
 }

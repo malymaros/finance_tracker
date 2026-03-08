@@ -1,5 +1,7 @@
+import 'expense_category.dart';
+
 class CategoryTotal {
-  final String category;
+  final ExpenseCategory category;
   final double amount;
   final double percentage;
 

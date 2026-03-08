@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/expense.dart';
 import '../models/fixed_cost.dart';
 import '../models/income_entry.dart';
+import '../models/report_line.dart';
 
 class FinanceRepository extends ChangeNotifier {
   final bool _persist;
@@ -148,6 +149,75 @@ class FinanceRepository extends ChangeNotifier {
       }
     }
     return total;
+  }
+
+  // ── Report lines (expenses + fixed costs combined) ───────────────────────
+
+  /// Combined report lines for a single month.
+  /// Expenses: each at their recorded amount.
+  /// Fixed costs active in the month: monthly → full amount, yearly → amount/12.
+  List<ReportLine> reportLinesForMonth(int year, int month) {
+    final lines = <ReportLine>[];
+
+    for (final e in expensesForMonth(year, month)) {
+      lines.add(ReportLine(
+          category: e.category,
+          financialType: e.financialType,
+          amount: e.amount));
+    }
+
+    for (final fc in fixedCostsForMonth(year, month)) {
+      final amount = fc.recurrence == Recurrence.yearly
+          ? fc.amount / 12
+          : fc.amount;
+      lines.add(ReportLine(
+          category: fc.category,
+          financialType: fc.financialType,
+          amount: amount));
+    }
+
+    return lines;
+  }
+
+  /// Combined report lines for a full year.
+  /// Expenses: each at their recorded amount.
+  /// Fixed costs: monthly → amount × active months in year, yearly → full amount.
+  List<ReportLine> reportLinesForYear(int year) {
+    final lines = <ReportLine>[];
+
+    for (final e in expensesForYear(year)) {
+      lines.add(ReportLine(
+          category: e.category,
+          financialType: e.financialType,
+          amount: e.amount));
+    }
+
+    for (final fc in _fixedCosts) {
+      if (fc.recurrence == Recurrence.monthly) {
+        double total = 0;
+        for (int m = 1; m <= 12; m++) {
+          if (fc.startYear < year ||
+              (fc.startYear == year && fc.startMonth <= m)) {
+            total += fc.amount;
+          }
+        }
+        if (total > 0) {
+          lines.add(ReportLine(
+              category: fc.category,
+              financialType: fc.financialType,
+              amount: total));
+        }
+      } else {
+        if (fc.startYear <= year) {
+          lines.add(ReportLine(
+              category: fc.category,
+              financialType: fc.financialType,
+              amount: fc.amount));
+        }
+      }
+    }
+
+    return lines;
   }
 
   // ── Persistence ──────────────────────────────────────────────────────────

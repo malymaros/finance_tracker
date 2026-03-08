@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../../models/category_total.dart';
 import '../../models/expense_category.dart';
+import '../../models/financial_type.dart';
+import '../../models/financial_type_breakdown.dart';
 import '../../models/monthly_summary.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/finance_repository.dart';
@@ -42,14 +44,6 @@ class _ReportScreenState extends State<ReportScreen> {
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
 
-  static const _categoryColors = {
-    'Food': Color(0xFFEF5350),
-    'Transport': Color(0xFF42A5F5),
-    'Shopping': Color(0xFFAB47BC),
-    'Health': Color(0xFF26A69A),
-    'Other': Color(0xFFFFCA28),
-  };
-
   @override
   void initState() {
     super.initState();
@@ -57,9 +51,6 @@ class _ReportScreenState extends State<ReportScreen> {
     _year = now.year;
     _month = now.month;
   }
-
-  Color _colorFor(String category) =>
-      _categoryColors[category] ?? Colors.blueGrey;
 
   void _previousPeriod() {
     setState(() {
@@ -202,19 +193,20 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget _buildContent() {
     switch (_mode) {
       case _ReportMode.monthly:
-        final monthExpenses =
-            widget.repository.expensesForMonth(_year, _month);
-        final totals = ReportAggregator.categoryTotals(monthExpenses);
+        final lines = widget.repository.reportLinesForMonth(_year, _month);
+        final totals = ReportAggregator.categoryTotals(lines);
+        final breakdown = ReportAggregator.financialTypeBreakdown(lines);
         return totals.isEmpty
             ? _buildEmptyState()
-            : _buildChartAndList(totals);
+            : _buildChartAndList(totals, breakdown);
 
       case _ReportMode.yearly:
-        final yearExpenses = widget.repository.expensesForYear(_year);
-        final totals = ReportAggregator.categoryTotals(yearExpenses);
+        final lines = widget.repository.reportLinesForYear(_year);
+        final totals = ReportAggregator.categoryTotals(lines);
+        final breakdown = ReportAggregator.financialTypeBreakdown(lines);
         return totals.isEmpty
             ? _buildEmptyState()
-            : _buildChartAndList(totals);
+            : _buildChartAndList(totals, breakdown);
 
       case _ReportMode.overview:
         return _buildOverview();
@@ -348,7 +340,8 @@ class _ReportScreenState extends State<ReportScreen> {
     );
   }
 
-  Widget _buildChartAndList(List<CategoryTotal> totals) {
+  Widget _buildChartAndList(
+      List<CategoryTotal> totals, FinancialTypeBreakdown breakdown) {
     final grandTotal = totals.fold(0.0, (sum, ct) => sum + ct.amount);
 
     return SingleChildScrollView(
@@ -362,7 +355,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 sections: totals
                     .map((ct) => PieChartSectionData(
                           value: ct.amount,
-                          color: _colorFor(ct.category),
+                          color: ct.category.color,
                           title: '${ct.percentage.toStringAsFixed(0)}%',
                           radius: 80,
                           titleStyle: const TextStyle(
@@ -382,6 +375,8 @@ class _ReportScreenState extends State<ReportScreen> {
           ...totals.map((ct) => _buildCategoryRow(ct)),
           const Divider(height: 1),
           _buildTotalRow(grandTotal),
+          const Divider(height: 1),
+          _buildTypeBreakdown(breakdown),
           const SizedBox(height: 16),
         ],
       ),
@@ -397,15 +392,16 @@ class _ReportScreenState extends State<ReportScreen> {
             width: 12,
             height: 12,
             decoration: BoxDecoration(
-              color: _colorFor(ct.category),
+              color: ct.category.color,
               shape: BoxShape.circle,
             ),
           ),
           const SizedBox(width: 8),
-          Icon(categoryIcon(ct.category), size: 18, color: Colors.grey),
+          Icon(ct.category.icon, size: 18, color: Colors.grey),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(ct.category, style: const TextStyle(fontSize: 15)),
+            child: Text(ct.category.displayName,
+                style: const TextStyle(fontSize: 15)),
           ),
           Text(
             '${ct.percentage.toStringAsFixed(1)}%',
@@ -435,6 +431,54 @@ class _ReportScreenState extends State<ReportScreen> {
           Text(
             '${total.toStringAsFixed(2)} €',
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypeBreakdown(FinancialTypeBreakdown breakdown) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'BY FINANCIAL TYPE',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
+              letterSpacing: 1.2,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _buildTypeRow(FinancialType.asset, breakdown.assetPct),
+          _buildTypeRow(FinancialType.consumption, breakdown.consumptionPct),
+          _buildTypeRow(FinancialType.insurance, breakdown.insurancePct),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypeRow(FinancialType type, double pct) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Icon(type.icon, size: 16, color: type.color),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(type.displayName,
+                style: const TextStyle(fontSize: 14)),
+          ),
+          Text(
+            '${pct.toStringAsFixed(1)}%',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: type.color,
+            ),
           ),
         ],
       ),

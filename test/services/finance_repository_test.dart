@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/expense.dart';
+import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/fixed_cost.dart';
 import 'package:finance_tracker/models/income_entry.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
@@ -7,7 +8,7 @@ import 'package:finance_tracker/services/finance_repository.dart';
 Expense makeExpense({String id = '1', double amount = 10.0}) => Expense(
       id: id,
       amount: amount,
-      category: 'Food',
+      category: ExpenseCategory.groceries,
       date: DateTime(2024, 1, 1),
     );
 
@@ -258,7 +259,7 @@ void main() {
       final original = Expense(
         id: 'abc',
         amount: 42.5,
-        category: 'Food',
+        category: ExpenseCategory.restaurants,
         date: DateTime(2024, 3, 15),
         note: 'lunch',
       );
@@ -266,6 +267,7 @@ void main() {
       expect(restored.id, original.id);
       expect(restored.amount, original.amount);
       expect(restored.category, original.category);
+      expect(restored.financialType, original.financialType);
       expect(restored.date, original.date);
       expect(restored.note, original.note);
     });

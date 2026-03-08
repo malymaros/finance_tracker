@@ -1,25 +1,101 @@
 import 'package:flutter/material.dart';
 
-class ExpenseCategory {
-  final String name;
-  final IconData icon;
-
-  const ExpenseCategory({required this.name, required this.icon});
+enum ExpenseCategory {
+  housing,
+  groceries,
+  drugstore,
+  transport,
+  insurance,
+  subscriptions,
+  communication,
+  health,
+  restaurants,
+  entertainment,
+  clothing,
+  education,
+  investment,
+  gifts,
+  other,
 }
 
-const List<ExpenseCategory> kExpenseCategories = [
-  ExpenseCategory(name: 'Food', icon: Icons.restaurant),
-  ExpenseCategory(name: 'Transport', icon: Icons.directions_car),
-  ExpenseCategory(name: 'Shopping', icon: Icons.shopping_bag),
-  ExpenseCategory(name: 'Health', icon: Icons.favorite),
-  ExpenseCategory(name: 'Other', icon: Icons.category),
-];
+extension ExpenseCategoryX on ExpenseCategory {
+  String get displayName {
+    switch (this) {
+      case ExpenseCategory.housing:       return 'Housing';
+      case ExpenseCategory.groceries:     return 'Groceries';
+      case ExpenseCategory.drugstore:     return 'Drugstore';
+      case ExpenseCategory.transport:     return 'Transport';
+      case ExpenseCategory.insurance:     return 'Insurance';
+      case ExpenseCategory.subscriptions: return 'Subscriptions';
+      case ExpenseCategory.communication: return 'Communication';
+      case ExpenseCategory.health:        return 'Health';
+      case ExpenseCategory.restaurants:   return 'Restaurants';
+      case ExpenseCategory.entertainment: return 'Entertainment';
+      case ExpenseCategory.clothing:      return 'Clothing';
+      case ExpenseCategory.education:     return 'Education';
+      case ExpenseCategory.investment:    return 'Investment';
+      case ExpenseCategory.gifts:         return 'Gifts';
+      case ExpenseCategory.other:         return 'Other';
+    }
+  }
 
-IconData categoryIcon(String categoryName) {
-  return kExpenseCategories
-      .firstWhere(
-        (c) => c.name == categoryName,
-        orElse: () => const ExpenseCategory(name: '', icon: Icons.category),
-      )
-      .icon;
+  IconData get icon {
+    switch (this) {
+      case ExpenseCategory.housing:       return Icons.home;
+      case ExpenseCategory.groceries:     return Icons.local_grocery_store;
+      case ExpenseCategory.drugstore:     return Icons.local_pharmacy;
+      case ExpenseCategory.transport:     return Icons.directions_car;
+      case ExpenseCategory.insurance:     return Icons.security;
+      case ExpenseCategory.subscriptions: return Icons.subscriptions;
+      case ExpenseCategory.communication: return Icons.phone;
+      case ExpenseCategory.health:        return Icons.favorite;
+      case ExpenseCategory.restaurants:   return Icons.restaurant;
+      case ExpenseCategory.entertainment: return Icons.movie;
+      case ExpenseCategory.clothing:      return Icons.checkroom;
+      case ExpenseCategory.education:     return Icons.school;
+      case ExpenseCategory.investment:    return Icons.trending_up;
+      case ExpenseCategory.gifts:         return Icons.card_giftcard;
+      case ExpenseCategory.other:         return Icons.category;
+    }
+  }
+
+  Color get color {
+    switch (this) {
+      case ExpenseCategory.housing:       return const Color(0xFF8D6E63);
+      case ExpenseCategory.groceries:     return const Color(0xFF66BB6A);
+      case ExpenseCategory.drugstore:     return const Color(0xFF26A69A);
+      case ExpenseCategory.transport:     return const Color(0xFF42A5F5);
+      case ExpenseCategory.insurance:     return const Color(0xFF26C6DA);
+      case ExpenseCategory.subscriptions: return const Color(0xFFAB47BC);
+      case ExpenseCategory.communication: return const Color(0xFF5C6BC0);
+      case ExpenseCategory.health:        return const Color(0xFFEF5350);
+      case ExpenseCategory.restaurants:   return const Color(0xFFFF7043);
+      case ExpenseCategory.entertainment: return const Color(0xFFEC407A);
+      case ExpenseCategory.clothing:      return const Color(0xFF7E57C2);
+      case ExpenseCategory.education:     return const Color(0xFF29B6F6);
+      case ExpenseCategory.investment:    return const Color(0xFF2E7D32);
+      case ExpenseCategory.gifts:         return const Color(0xFFE91E63);
+      case ExpenseCategory.other:         return const Color(0xFF9E9E9E);
+    }
+  }
+
+  /// Parses from persisted value. Handles new enum names ('groceries') and
+  /// legacy free-text strings ('Food', 'Transport', etc.).
+  static ExpenseCategory fromJson(String value) {
+    try {
+      return ExpenseCategory.values.byName(value);
+    } catch (_) {
+      return _fromLegacy(value);
+    }
+  }
+
+  static ExpenseCategory _fromLegacy(String value) {
+    switch (value.toLowerCase()) {
+      case 'food':      return ExpenseCategory.groceries;
+      case 'transport': return ExpenseCategory.transport;
+      case 'shopping':  return ExpenseCategory.clothing;
+      case 'health':    return ExpenseCategory.health;
+      default:          return ExpenseCategory.other;
+    }
+  }
 }

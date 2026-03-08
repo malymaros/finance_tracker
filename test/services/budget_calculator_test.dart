@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/expense.dart';
+import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/services/budget_calculator.dart';
@@ -50,7 +51,7 @@ Expense makeExpense({
     Expense(
       id: '$amount-$year-$month',
       amount: amount,
-      category: 'Food',
+      category: ExpenseCategory.groceries,
       date: DateTime(year, month, 1),
     );
 

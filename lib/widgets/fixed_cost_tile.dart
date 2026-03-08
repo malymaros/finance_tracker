@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/expense_category.dart';
 import '../models/fixed_cost.dart';
 
 class FixedCostTile extends StatelessWidget {
@@ -16,13 +17,13 @@ class FixedCostTile extends StatelessWidget {
 
     return ListTile(
       leading: CircleAvatar(
-        child: Icon(
-          isMonthly ? Icons.repeat : Icons.event_repeat,
-          size: 20,
-        ),
+        backgroundColor: cost.category.color.withAlpha(30),
+        child:
+            Icon(cost.category.icon, size: 20, color: cost.category.color),
       ),
       title: Text(cost.name),
-      subtitle: Text('$recurrenceLabel · from $startLabel'),
+      subtitle: Text(
+          '$recurrenceLabel · ${cost.category.displayName} · from $startLabel'),
       trailing: Text(
         '${cost.amount.toStringAsFixed(2)} €',
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
