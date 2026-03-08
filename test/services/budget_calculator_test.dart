@@ -268,6 +268,124 @@ void main() {
     });
   });
 
+  // ── itemMonthlyContribution ───────────────────────────────────────────────
+
+  group('itemMonthlyContribution', () {
+    test('monthly item returns full amount', () {
+      final item = makeIncome(amount: 3000, frequency: PlanFrequency.monthly);
+      expect(BudgetCalculator.itemMonthlyContribution(item, 2024, 6), 3000);
+    });
+
+    test('yearly item returns amount / 12', () {
+      final item = makeIncome(amount: 1200, frequency: PlanFrequency.yearly);
+      expect(BudgetCalculator.itemMonthlyContribution(item, 2024, 6), 100);
+    });
+
+    test('oneTime item returns amount only in its exact month', () {
+      final item = makeIncome(
+          amount: 500,
+          frequency: PlanFrequency.oneTime,
+          validYear: 2024,
+          validMonth: 3);
+      expect(BudgetCalculator.itemMonthlyContribution(item, 2024, 3), 500);
+      expect(BudgetCalculator.itemMonthlyContribution(item, 2024, 4), 0);
+    });
+  });
+
+  // ── activeItemsForYear ────────────────────────────────────────────────────
+
+  group('activeItemsForYear', () {
+    test('returns empty for empty list', () {
+      expect(BudgetCalculator.activeItemsForYear([], 2024), isEmpty);
+    });
+
+    test('returns item active during the year', () {
+      final items = [makeIncome(validYear: 2024, validMonth: 1)];
+      expect(BudgetCalculator.activeItemsForYear(items, 2024).length, 1);
+    });
+
+    test('excludes item starting after the year', () {
+      final items = [makeIncome(validYear: 2025, validMonth: 1)];
+      expect(BudgetCalculator.activeItemsForYear(items, 2024), isEmpty);
+    });
+
+    test('returns latest version active in the year (last-month-wins)', () {
+      final items = [
+        makeIncome(
+            id: 'v1', seriesId: 's', amount: 3000,
+            validYear: 2024, validMonth: 1),
+        makeIncome(
+            id: 'v2', seriesId: 's', amount: 4500,
+            validYear: 2024, validMonth: 6),
+      ];
+      final result = BudgetCalculator.activeItemsForYear(items, 2024);
+      expect(result.length, 1);
+      expect(result.first.amount, 4500); // v2 is last active version
+    });
+
+    test('returns one entry per series even with multiple versions', () {
+      final items = [
+        makeIncome(id: 'v1', seriesId: 's', validYear: 2024, validMonth: 1),
+        makeIncome(id: 'v2', seriesId: 's', validYear: 2024, validMonth: 6),
+        makeFixedCost(id: 'f1', validYear: 2024, validMonth: 1),
+      ];
+      expect(BudgetCalculator.activeItemsForYear(items, 2024).length, 2);
+    });
+  });
+
+  // ── itemYearlyContribution ────────────────────────────────────────────────
+
+  group('itemYearlyContribution', () {
+    test('monthly item active all year = amount x 12', () {
+      final items = [makeIncome(amount: 3000)];
+      expect(
+          BudgetCalculator.itemYearlyContribution(items.first, items, 2024),
+          36000);
+    });
+
+    test('monthly item active from March = amount x 10', () {
+      final items = [
+        makeIncome(amount: 1000, validYear: 2024, validMonth: 3)
+      ];
+      expect(
+          BudgetCalculator.itemYearlyContribution(items.first, items, 2024),
+          10000);
+    });
+
+    test('yearly item contributes once in anniversary month', () {
+      final items = [
+        makeIncome(
+            amount: 1200,
+            frequency: PlanFrequency.yearly,
+            validYear: 2024,
+            validMonth: 6)
+      ];
+      expect(
+          BudgetCalculator.itemYearlyContribution(items.first, items, 2024),
+          1200);
+    });
+
+    test('item superseded mid-year contributes only while active', () {
+      // v1 active Jan-May (3000), v2 active Jun-Dec (4500)
+      final items = [
+        makeIncome(
+            id: 'v1', seriesId: 's', amount: 3000,
+            validYear: 2024, validMonth: 1),
+        makeIncome(
+            id: 'v2', seriesId: 's', amount: 4500,
+            validYear: 2024, validMonth: 6),
+      ];
+      // v1 active Jan-May = 5 months × 3000 = 15000
+      expect(
+          BudgetCalculator.itemYearlyContribution(items[0], items, 2024),
+          15000);
+      // v2 active Jun-Dec = 7 months × 4500 = 31500
+      expect(
+          BudgetCalculator.itemYearlyContribution(items[1], items, 2024),
+          31500);
+    });
+  });
+
   // ── monthlySummaries ──────────────────────────────────────────────────────
 
   group('monthlySummaries', () {

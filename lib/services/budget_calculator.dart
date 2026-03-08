@@ -120,6 +120,41 @@ class BudgetCalculator {
     return total;
   }
 
+  // ── Per-item display helpers ──────────────────────────────────────────────
+
+  /// Normalized monthly contribution for a single item.
+  /// Use this to display an item's contribution in monthly plan view.
+  static double itemMonthlyContribution(PlanItem item, int year, int month) =>
+      _normalizedContribution(item, year, month);
+
+  /// Returns the latest active version of each series that is active at any
+  /// point during [year]. Iterates all 12 months; last active version wins
+  /// per series (so December's version is the representative for the year).
+  static List<PlanItem> activeItemsForYear(
+      List<PlanItem> allItems, int year) {
+    final result = <String, PlanItem>{};
+    for (int m = 1; m <= 12; m++) {
+      for (final item in activeItemsForMonth(allItems, year, m)) {
+        result[item.seriesId] = item;
+      }
+    }
+    return result.values.toList();
+  }
+
+  /// Total cash-flow contribution of a single item over a full year.
+  /// Checks each month whether the item is the active version in its series,
+  /// then applies cash-flow rules (yearly items fire once in anniversary month).
+  static double itemYearlyContribution(
+      PlanItem item, List<PlanItem> allItems, int year) {
+    double total = 0;
+    for (int m = 1; m <= 12; m++) {
+      if (activeItemsForMonth(allItems, year, m).any((a) => a.id == item.id)) {
+        total += _cashFlowContribution(item, year, m);
+      }
+    }
+    return total;
+  }
+
   // ── Budget status (Expenses tab) ─────────────────────────────────────────
 
   /// Returns [BudgetStatus] for the budget progress bar on the Expenses tab.

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
 import '../services/finance_repository.dart';
+import '../services/plan_repository.dart';
 import 'expense_list_screen.dart';
-import 'fixed_costs/fixed_cost_list_screen.dart';
-import 'income/income_list_screen.dart';
+import 'plan/plan_screen.dart';
 import 'reports/report_screen.dart';
 
 class MainScreen extends StatefulWidget {
   final FinanceRepository repository;
+  final PlanRepository planRepository;
 
-  const MainScreen({super.key, required this.repository});
+  const MainScreen({
+    super.key,
+    required this.repository,
+    required this.planRepository,
+  });
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -24,8 +29,7 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _screens = [
       ExpenseListScreen(repository: widget.repository),
-      IncomeListScreen(repository: widget.repository),
-      FixedCostListScreen(repository: widget.repository),
+      PlanScreen(planRepository: widget.planRepository),
       ReportScreen(repository: widget.repository),
     ];
   }
@@ -44,9 +48,7 @@ class _MainScreenState extends State<MainScreen> {
           NavigationDestination(
               icon: Icon(Icons.receipt_long), label: 'Expenses'),
           NavigationDestination(
-              icon: Icon(Icons.trending_up), label: 'Income'),
-          NavigationDestination(
-              icon: Icon(Icons.repeat), label: 'Fixed Costs'),
+              icon: Icon(Icons.account_balance_outlined), label: 'Plan'),
           NavigationDestination(
               icon: Icon(Icons.pie_chart), label: 'Reports'),
         ],
