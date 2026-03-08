@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+
 import '../models/expense.dart';
 import '../models/expense_category.dart';
-import '../services/expense_service.dart';
+import '../services/finance_repository.dart';
 
 class AddExpenseScreen extends StatefulWidget {
-  final ExpenseService service;
+  final FinanceRepository repository;
 
-  const AddExpenseScreen({super.key, required this.service});
+  const AddExpenseScreen({super.key, required this.repository});
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -39,18 +40,20 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     }
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    widget.service.add(Expense(
+    await widget.repository.addExpense(Expense(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       amount: double.parse(_amountController.text.trim()),
       category: _selectedCategory,
       date: _selectedDate,
-      note: _noteController.text.trim().isEmpty ? null : _noteController.text.trim(),
+      note: _noteController.text.trim().isEmpty
+          ? null
+          : _noteController.text.trim(),
     ));
 
-    Navigator.of(context).pop(true);
+    if (mounted) Navigator.of(context).pop();
   }
 
   @override
@@ -75,9 +78,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               autofocus: true,
               validator: (value) {
-                if (value == null || value.trim().isEmpty) return 'Enter an amount';
+                if (value == null || value.trim().isEmpty) {
+                  return 'Enter an amount';
+                }
                 final parsed = double.tryParse(value.trim());
-                if (parsed == null || parsed <= 0) return 'Enter a valid positive number';
+                if (parsed == null || parsed <= 0) {
+                  return 'Enter a valid positive number';
+                }
                 return null;
               },
             ),
@@ -111,7 +118,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               label: Text(formattedDate),
               style: OutlinedButton.styleFrom(
                 alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
               ),
             ),
             const SizedBox(height: 16),

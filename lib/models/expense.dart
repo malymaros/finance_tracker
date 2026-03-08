@@ -12,4 +12,20 @@ class Expense {
     required this.date,
     this.note,
   });
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'amount': amount,
+        'category': category,
+        'date': date.toIso8601String(),
+        'note': note,
+      };
+
+  factory Expense.fromJson(Map<String, dynamic> json) => Expense(
+        id: json['id'] as String,
+        amount: (json['amount'] as num).toDouble(),
+        category: json['category'] as String,
+        date: DateTime.parse(json['date'] as String),
+        note: json['note'] as String?,
+      );
 }

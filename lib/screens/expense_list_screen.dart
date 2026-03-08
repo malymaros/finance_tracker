@@ -1,48 +1,38 @@
 import 'package:flutter/material.dart';
+
 import '../models/expense.dart';
-import '../services/expense_service.dart';
+import '../services/finance_repository.dart';
 import '../widgets/expense_list_tile.dart';
 import 'add_expense_screen.dart';
 
-class ExpenseListScreen extends StatefulWidget {
-  const ExpenseListScreen({super.key});
+class ExpenseListScreen extends StatelessWidget {
+  final FinanceRepository repository;
 
-  @override
-  State<ExpenseListScreen> createState() => _ExpenseListScreenState();
-}
-
-class _ExpenseListScreenState extends State<ExpenseListScreen> {
-  final ExpenseService _service = ExpenseService();
-  late List<Expense> _expenses;
-
-  @override
-  void initState() {
-    super.initState();
-    _expenses = _service.getAll();
-  }
-
-  Future<void> _navigateToAddExpense() async {
-    final added = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (_) => AddExpenseScreen(service: _service),
-      ),
-    );
-    if (added == true) {
-      setState(() => _expenses = _service.getAll());
-    }
-  }
+  const ExpenseListScreen({super.key, required this.repository});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Expenses'),
-      ),
-      body: _expenses.isEmpty ? _buildEmptyState() : _buildList(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _navigateToAddExpense,
-        tooltip: 'Add Expense',
-        child: const Icon(Icons.add),
+    return ListenableBuilder(
+      listenable: repository,
+      builder: (context, _) {
+        final expenses = repository.expenses;
+        return Scaffold(
+          appBar: AppBar(title: const Text('Expenses')),
+          body: expenses.isEmpty ? _buildEmptyState() : _buildList(expenses),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () => _navigateToAdd(context),
+            tooltip: 'Add Expense',
+            child: const Icon(Icons.add),
+          ),
+        );
+      },
+    );
+  }
+
+  void _navigateToAdd(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AddExpenseScreen(repository: repository),
       ),
     );
   }
@@ -68,12 +58,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     );
   }
 
-  Widget _buildList() {
+  Widget _buildList(List<Expense> expenses) {
     return ListView.separated(
-      itemCount: _expenses.length,
-      separatorBuilder: (context, index) => const Divider(height: 1),
-      itemBuilder: (context, index) =>
-          ExpenseListTile(expense: _expenses[index]),
+      itemCount: expenses.length,
+      separatorBuilder: (_, __) => const Divider(height: 1),
+      itemBuilder: (_, i) => ExpenseListTile(expense: expenses[i]),
     );
   }
 }
