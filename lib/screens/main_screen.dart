@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/year_month.dart';
 import '../services/finance_repository.dart';
 import '../services/plan_repository.dart';
+import '../services/seed_data.dart';
 import 'expense_list_screen.dart';
 import 'plan/plan_screen.dart';
 import 'reports/report_screen.dart';
@@ -54,12 +56,56 @@ class _MainScreenState extends State<MainScreen> {
     setState(() => _selectedIndex = 1);
   }
 
+  Future<void> _resetWithSeedData(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Reset with seed data?'),
+        content: const Text(
+            'This will delete all current data and replace it with dummy data.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Reset'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      await SeedData.reset(widget.repository, widget.planRepository);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
+      body: Stack(
+        children: [
+          IndexedStack(
+            index: _selectedIndex,
+            children: _screens,
+          ),
+          if (kDebugMode)
+            Positioned(
+              bottom: 80,
+              left: 16,
+              child: Opacity(
+                opacity: 0.6,
+                child: FloatingActionButton.small(
+                  heroTag: 'debug_seed',
+                  backgroundColor: Colors.orange,
+                  tooltip: 'Reset with seed data',
+                  onPressed: () => _resetWithSeedData(context),
+                  child: const Icon(Icons.bug_report_outlined,
+                      color: Colors.white, size: 18),
+                ),
+              ),
+            ),
+        ],
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,

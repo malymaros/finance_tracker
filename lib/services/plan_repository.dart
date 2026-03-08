@@ -43,6 +43,12 @@ class PlanRepository extends ChangeNotifier {
     await _save();
   }
 
+  Future<void> clearAll() async {
+    _items.clear();
+    notifyListeners();
+    await _save();
+  }
+
   // ── Persistence ──────────────────────────────────────────────────────────
 
   Future<void> load() async {

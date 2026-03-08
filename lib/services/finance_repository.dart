@@ -94,6 +94,14 @@ class FinanceRepository extends ChangeNotifier {
     await _save();
   }
 
+  Future<void> clearAll() async {
+    _expenses.clear();
+    _income.clear();
+    _fixedCosts.clear();
+    notifyListeners();
+    await _save();
+  }
+
   // ── Expense aggregations ─────────────────────────────────────────────────
 
   List<Expense> expensesForMonth(int year, int month) => _expenses
