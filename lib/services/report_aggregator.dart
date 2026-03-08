@@ -28,6 +28,44 @@ class ReportAggregator {
       ..sort((a, b) => b.amount.compareTo(a.amount));
   }
 
+  /// Collapses any [CategoryTotal] whose percentage is below [thresholdPercent]
+  /// — plus any entry already using [ExpenseCategory.other] — into a single
+  /// trailing "Other" bucket.
+  ///
+  /// Returns the input list unchanged when no categories fall below the
+  /// threshold and no real "other" entries exist.
+  /// The returned list is sorted descending by amount; the aggregated bucket
+  /// is always placed last.
+  static List<CategoryTotal> applyThreshold(
+      List<CategoryTotal> totals, double thresholdPercent) {
+    if (totals.isEmpty) return totals;
+
+    final big = <CategoryTotal>[];
+    double smallAmount = 0;
+    double smallPct = 0;
+
+    for (final ct in totals) {
+      if (ct.category != ExpenseCategory.other &&
+          ct.percentage >= thresholdPercent) {
+        big.add(ct);
+      } else {
+        smallAmount += ct.amount;
+        smallPct += ct.percentage;
+      }
+    }
+
+    if (smallAmount == 0) return totals;
+
+    return [
+      ...big,
+      CategoryTotal(
+        category: ExpenseCategory.other,
+        amount: smallAmount,
+        percentage: smallPct,
+      ),
+    ];
+  }
+
   /// Computes percentage breakdown by financial type across all [lines].
   static FinancialTypeBreakdown financialTypeBreakdown(List<ReportLine> lines) {
     if (lines.isEmpty) {

@@ -33,6 +33,9 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreenState extends State<ReportScreen> {
+  static const _monthlyThresholdPct = 1.0;
+  static const _yearlyThresholdPct = 5.0;
+
   _ReportMode _mode = _ReportMode.monthly;
   late int _year;
   late int _month;
@@ -203,7 +206,8 @@ class _ReportScreenState extends State<ReportScreen> {
           ...BudgetCalculator.planFixedCostReportLinesForMonth(
               widget.planRepository.items, _year, _month),
         ];
-        final totals = ReportAggregator.categoryTotals(lines);
+        final totals = ReportAggregator.applyThreshold(
+            ReportAggregator.categoryTotals(lines), _monthlyThresholdPct);
         final breakdown = ReportAggregator.financialTypeBreakdown(lines);
         return totals.isEmpty
             ? _buildEmptyState()
@@ -215,7 +219,8 @@ class _ReportScreenState extends State<ReportScreen> {
           ...BudgetCalculator.planFixedCostReportLinesForYear(
               widget.planRepository.items, _year),
         ];
-        final totals = ReportAggregator.categoryTotals(lines);
+        final totals = ReportAggregator.applyThreshold(
+            ReportAggregator.categoryTotals(lines), _yearlyThresholdPct);
         final breakdown = ReportAggregator.financialTypeBreakdown(lines);
         return totals.isEmpty
             ? _buildEmptyState()
