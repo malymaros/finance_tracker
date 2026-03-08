@@ -9,7 +9,15 @@ class AddExpenseScreen extends StatefulWidget {
   final FinanceRepository repository;
   final Expense? existing;
 
-  const AddExpenseScreen({super.key, required this.repository, this.existing});
+  /// Pre-fills the date picker. Ignored when [existing] is provided.
+  final DateTime? initialDate;
+
+  const AddExpenseScreen({
+    super.key,
+    required this.repository,
+    this.existing,
+    this.initialDate,
+  });
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -30,7 +38,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final e = widget.existing;
     _selectedCategory = e?.category ?? ExpenseCategory.groceries;
     _selectedFinancialType = e?.financialType ?? FinancialType.consumption;
-    _selectedDate = e?.date ?? DateTime.now();
+    _selectedDate = e?.date ?? widget.initialDate ?? DateTime.now();
     if (e != null) {
       _amountController.text = e.amount.toString();
       _noteController.text = e.note ?? '';

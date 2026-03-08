@@ -25,7 +25,11 @@ void main() {
 
     testWidgets('shows empty state on first load', (tester) async {
       await tester.pumpWidget(wrapInMaterial(repo));
-      expect(find.text('No expenses yet.'), findsOneWidget);
+      // Text includes the current month name — use a partial match.
+      expect(
+        find.textContaining('No expenses in'),
+        findsOneWidget,
+      );
       expect(find.text('Tap + to add one.'), findsOneWidget);
     });
 

@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 
+import '../models/budget_status.dart';
 import '../models/expense.dart';
+import '../models/expense_category.dart';
 import '../services/budget_calculator.dart';
 import '../services/finance_repository.dart';
 import '../services/plan_repository.dart';
 import '../widgets/budget_progress_bar.dart';
+import '../widgets/expense_category_group.dart';
 import '../widgets/expense_list_tile.dart';
+import '../widgets/month_budget_summary.dart';
 import '../widgets/swipeable_tile.dart';
 import 'add_expense_screen.dart';
 
-class ExpenseListScreen extends StatelessWidget {
+enum _ViewMode { items, byCategory }
+
+class ExpenseListScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
 
@@ -20,37 +26,104 @@ class ExpenseListScreen extends StatelessWidget {
   });
 
   @override
+  State<ExpenseListScreen> createState() => _ExpenseListScreenState();
+}
+
+class _ExpenseListScreenState extends State<ExpenseListScreen> {
+  static const _monthNames = [
+    '',
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+  ];
+
+  late int _year;
+  late int _month;
+  _ViewMode _mode = _ViewMode.items;
+
+  @override
+  void initState() {
+    super.initState();
+    final now = DateTime.now();
+    _year = now.year;
+    _month = now.month;
+  }
+
+  void _previousMonth() {
+    setState(() {
+      if (_month == 1) {
+        _month = 12;
+        _year--;
+      } else {
+        _month--;
+      }
+    });
+  }
+
+  void _nextMonth() {
+    setState(() {
+      if (_month == 12) {
+        _month = 1;
+        _year++;
+      } else {
+        _month++;
+      }
+    });
+  }
+
+  bool _isCurrentMonth(DateTime now) =>
+      _year == now.year && _month == now.month;
+
+  bool _isPastMonth(DateTime now) =>
+      DateTime(_year, _month).isBefore(DateTime(now.year, now.month));
+
+  /// Returns today for the current month, last day of the selected month for past months.
+  DateTime _addExpenseInitialDate(DateTime now) {
+    if (_isCurrentMonth(now)) return now;
+    return DateTime(_year, _month + 1, 0); // last day of _month
+  }
+
+  @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
+    final isCurrentMonth = _isCurrentMonth(now);
+    final isPastMonth = _isPastMonth(now);
+
     return ListenableBuilder(
-      listenable: Listenable.merge([repository, planRepository]),
+      listenable: Listenable.merge([widget.repository, widget.planRepository]),
       builder: (context, _) {
-        final expenses = repository.expenses;
-        final actualSpent = repository
-            .expensesForMonth(now.year, now.month)
-            .fold(0.0, (sum, e) => sum + e.amount);
+        final monthExpenses = widget.repository.expensesForMonth(_year, _month)
+          ..sort((a, b) => b.date.compareTo(a.date));
+
+        final actualSpent =
+            monthExpenses.fold(0.0, (sum, e) => sum + e.amount);
+
         final budgetStatus = BudgetCalculator.budgetStatus(
-          planRepository.items,
+          widget.planRepository.items,
           actualSpent,
-          now.year,
-          now.month,
+          _year,
+          _month,
         );
 
         return Scaffold(
           appBar: AppBar(title: const Text('Expenses')),
           body: Column(
             children: [
-              if (budgetStatus != null)
-                BudgetProgressBar(status: budgetStatus),
+              _buildMonthNavigator(),
+              _buildBudgetWidget(budgetStatus, isCurrentMonth, isPastMonth),
+              _buildViewToggle(),
+              const Divider(height: 1),
               Expanded(
-                child: expenses.isEmpty
+                child: monthExpenses.isEmpty
                     ? _buildEmptyState()
-                    : _buildList(context, expenses),
+                    : _mode == _ViewMode.items
+                        ? _buildItemsList(context, monthExpenses)
+                        : _buildCategoryList(monthExpenses),
               ),
             ],
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: () => _navigateToAdd(context),
+            onPressed: () =>
+                _navigateToAdd(context, _addExpenseInitialDate(now)),
             tooltip: 'Add Expense',
             child: const Icon(Icons.add),
           ),
@@ -59,27 +132,108 @@ class ExpenseListScreen extends StatelessWidget {
     );
   }
 
-  void _navigateToAdd(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => AddExpenseScreen(repository: repository),
+  // ── Month navigator ────────────────────────────────────────────────────────
+
+  Widget _buildMonthNavigator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            onPressed: _previousMonth,
+          ),
+          SizedBox(
+            width: 180,
+            child: Text(
+              '${_monthNames[_month]} $_year',
+              textAlign: TextAlign.center,
+              style:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            onPressed: _nextMonth,
+          ),
+        ],
       ),
     );
   }
 
+  // ── Budget widget ──────────────────────────────────────────────────────────
+
+  Widget _buildBudgetWidget(
+      BudgetStatus? status, bool isCurrentMonth, bool isPastMonth) {
+    if (!isPastMonth) {
+      // current month or future: show progress bar if plan exists
+      return status != null
+          ? BudgetProgressBar(status: status)
+          : const SizedBox.shrink();
+    }
+    // past month
+    if (status != null) return MonthBudgetSummary(status: status);
+    return _buildNoBudgetHint();
+  }
+
+  Widget _buildNoBudgetHint() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      child: Row(
+        children: const [
+          Icon(Icons.info_outline, size: 16, color: Colors.grey),
+          SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              'No budget set for this month — add items in the Plan tab.',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── View toggle ────────────────────────────────────────────────────────────
+
+  Widget _buildViewToggle() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      child: SegmentedButton<_ViewMode>(
+        segments: const [
+          ButtonSegment(
+            value: _ViewMode.items,
+            label: Text('Items'),
+            icon: Icon(Icons.list),
+          ),
+          ButtonSegment(
+            value: _ViewMode.byCategory,
+            label: Text('By Category'),
+            icon: Icon(Icons.category_outlined),
+          ),
+        ],
+        selected: {_mode},
+        onSelectionChanged: (s) => setState(() => _mode = s.first),
+      ),
+    );
+  }
+
+  // ── Empty state ────────────────────────────────────────────────────────────
+
   Widget _buildEmptyState() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.receipt_long, size: 64, color: Colors.grey),
-          SizedBox(height: 16),
+          const Icon(Icons.receipt_long, size: 64, color: Colors.grey),
+          const SizedBox(height: 16),
           Text(
-            'No expenses yet.',
-            style: TextStyle(color: Colors.grey, fontSize: 16),
+            'No expenses in ${_monthNames[_month]} $_year.',
+            style: const TextStyle(color: Colors.grey, fontSize: 16),
           ),
-          SizedBox(height: 8),
-          Text(
+          const SizedBox(height: 8),
+          const Text(
             'Tap + to add one.',
             style: TextStyle(color: Colors.grey),
           ),
@@ -88,22 +242,61 @@ class ExpenseListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildList(BuildContext context, List<Expense> expenses) {
+  // ── Mode A: individual items ───────────────────────────────────────────────
+
+  Widget _buildItemsList(BuildContext context, List<Expense> expenses) {
     return ListView.separated(
       itemCount: expenses.length,
       separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (_, i) => SwipeableTile(
         itemId: expenses[i].id,
-        onDelete: () => repository.removeExpense(expenses[i].id),
+        onDelete: () => widget.repository.removeExpense(expenses[i].id),
         onEdit: () => Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => AddExpenseScreen(
-              repository: repository,
+              repository: widget.repository,
               existing: expenses[i],
             ),
           ),
         ),
         child: ExpenseListTile(expense: expenses[i]),
+      ),
+    );
+  }
+
+  // ── Mode B: grouped by category ───────────────────────────────────────────
+
+  Widget _buildCategoryList(List<Expense> expenses) {
+    final groups = <ExpenseCategory, List<Expense>>{};
+    for (final e in expenses) {
+      groups.putIfAbsent(e.category, () => []).add(e);
+    }
+    final sorted = groups.entries.toList()
+      ..sort((a, b) {
+        final ta = a.value.fold(0.0, (s, e) => s + e.amount);
+        final tb = b.value.fold(0.0, (s, e) => s + e.amount);
+        return tb.compareTo(ta);
+      });
+
+    return ListView.separated(
+      itemCount: sorted.length,
+      separatorBuilder: (_, _) => const Divider(height: 1),
+      itemBuilder: (_, i) => ExpenseCategoryGroup(
+        category: sorted[i].key,
+        expenses: sorted[i].value,
+      ),
+    );
+  }
+
+  // ── Navigation ─────────────────────────────────────────────────────────────
+
+  void _navigateToAdd(BuildContext context, DateTime initialDate) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AddExpenseScreen(
+          repository: widget.repository,
+          initialDate: initialDate,
+        ),
       ),
     );
   }
