@@ -1,25 +1,54 @@
 import 'package:flutter/material.dart';
 
 import '../models/expense.dart';
+import '../services/budget_calculator.dart';
 import '../services/finance_repository.dart';
+import '../services/plan_repository.dart';
+import '../widgets/budget_progress_bar.dart';
 import '../widgets/expense_list_tile.dart';
 import '../widgets/swipeable_tile.dart';
 import 'add_expense_screen.dart';
 
 class ExpenseListScreen extends StatelessWidget {
   final FinanceRepository repository;
+  final PlanRepository planRepository;
 
-  const ExpenseListScreen({super.key, required this.repository});
+  const ExpenseListScreen({
+    super.key,
+    required this.repository,
+    required this.planRepository,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
     return ListenableBuilder(
-      listenable: repository,
+      listenable: Listenable.merge([repository, planRepository]),
       builder: (context, _) {
         final expenses = repository.expenses;
+        final actualSpent = repository
+            .expensesForMonth(now.year, now.month)
+            .fold(0.0, (sum, e) => sum + e.amount);
+        final budgetStatus = BudgetCalculator.budgetStatus(
+          planRepository.items,
+          actualSpent,
+          now.year,
+          now.month,
+        );
+
         return Scaffold(
           appBar: AppBar(title: const Text('Expenses')),
-          body: expenses.isEmpty ? _buildEmptyState() : _buildList(context, expenses),
+          body: Column(
+            children: [
+              if (budgetStatus != null)
+                BudgetProgressBar(status: budgetStatus),
+              Expanded(
+                child: expenses.isEmpty
+                    ? _buildEmptyState()
+                    : _buildList(context, expenses),
+              ),
+            ],
+          ),
           floatingActionButton: FloatingActionButton(
             onPressed: () => _navigateToAdd(context),
             tooltip: 'Add Expense',

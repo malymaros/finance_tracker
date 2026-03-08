@@ -3,20 +3,30 @@ import 'package:flutter/material.dart';
 
 import '../../models/category_total.dart';
 import '../../models/expense_category.dart';
+import '../../models/monthly_summary.dart';
+import '../../services/budget_calculator.dart';
 import '../../services/finance_repository.dart';
+import '../../services/plan_repository.dart';
 import '../../services/report_aggregator.dart';
+
+enum _ReportMode { monthly, yearly, overview }
 
 class ReportScreen extends StatefulWidget {
   final FinanceRepository repository;
+  final PlanRepository planRepository;
 
-  const ReportScreen({super.key, required this.repository});
+  const ReportScreen({
+    super.key,
+    required this.repository,
+    required this.planRepository,
+  });
 
   @override
   State<ReportScreen> createState() => _ReportScreenState();
 }
 
 class _ReportScreenState extends State<ReportScreen> {
-  bool _isMonthly = true;
+  _ReportMode _mode = _ReportMode.monthly;
   late int _year;
   late int _month;
 
@@ -24,6 +34,12 @@ class _ReportScreenState extends State<ReportScreen> {
     '',
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
+  ];
+
+  static const _monthAbbr = [
+    '',
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
   ];
 
   static const _categoryColors = {
@@ -47,7 +63,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   void _previousPeriod() {
     setState(() {
-      if (_isMonthly) {
+      if (_mode == _ReportMode.monthly) {
         if (_month == 1) {
           _month = 12;
           _year--;
@@ -62,7 +78,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   void _nextPeriod() {
     setState(() {
-      if (_isMonthly) {
+      if (_mode == _ReportMode.monthly) {
         if (_month == 12) {
           _month = 1;
           _year++;
@@ -80,23 +96,18 @@ class _ReportScreenState extends State<ReportScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Reports')),
       body: ListenableBuilder(
-        listenable: widget.repository,
+        listenable:
+            Listenable.merge([widget.repository, widget.planRepository]),
         builder: (context, _) {
-          final expenses = _isMonthly
-              ? widget.repository.expensesForMonth(_year, _month)
-              : widget.repository.expensesForYear(_year);
-          final totals = ReportAggregator.categoryTotals(expenses);
-
           return Column(
             children: [
               _buildModeToggle(),
-              _buildPeriodNavigator(),
+              if (_mode == _ReportMode.monthly || _mode == _ReportMode.yearly)
+                _buildPeriodNavigator()
+              else
+                _buildYearNavigator(),
               const Divider(height: 1),
-              Expanded(
-                child: totals.isEmpty
-                    ? _buildEmptyState()
-                    : _buildChartAndList(totals),
-              ),
+              Expanded(child: _buildContent()),
             ],
           );
         },
@@ -107,27 +118,34 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget _buildModeToggle() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: SegmentedButton<bool>(
+      child: SegmentedButton<_ReportMode>(
         segments: const [
           ButtonSegment(
-            value: true,
+            value: _ReportMode.monthly,
             label: Text('Monthly'),
             icon: Icon(Icons.calendar_view_month),
           ),
           ButtonSegment(
-            value: false,
+            value: _ReportMode.yearly,
             label: Text('Yearly'),
             icon: Icon(Icons.calendar_today),
           ),
+          ButtonSegment(
+            value: _ReportMode.overview,
+            label: Text('Overview'),
+            icon: Icon(Icons.table_rows_outlined),
+          ),
         ],
-        selected: {_isMonthly},
-        onSelectionChanged: (s) => setState(() => _isMonthly = s.first),
+        selected: {_mode},
+        onSelectionChanged: (s) => setState(() => _mode = s.first),
       ),
     );
   }
 
   Widget _buildPeriodNavigator() {
-    final label = _isMonthly ? '${_monthNames[_month]} $_year' : '$_year';
+    final label = _mode == _ReportMode.monthly
+        ? '${_monthNames[_month]} $_year'
+        : '$_year';
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -149,6 +167,166 @@ class _ReportScreenState extends State<ReportScreen> {
             icon: const Icon(Icons.chevron_right),
             onPressed: _nextPeriod,
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildYearNavigator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            onPressed: () => setState(() => _year--),
+          ),
+          SizedBox(
+            width: 180,
+            child: Text(
+              '$_year',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            onPressed: () => setState(() => _year++),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    switch (_mode) {
+      case _ReportMode.monthly:
+        final monthExpenses =
+            widget.repository.expensesForMonth(_year, _month);
+        final totals = ReportAggregator.categoryTotals(monthExpenses);
+        return totals.isEmpty
+            ? _buildEmptyState()
+            : _buildChartAndList(totals);
+
+      case _ReportMode.yearly:
+        final yearExpenses = widget.repository.expensesForYear(_year);
+        final totals = ReportAggregator.categoryTotals(yearExpenses);
+        return totals.isEmpty
+            ? _buildEmptyState()
+            : _buildChartAndList(totals);
+
+      case _ReportMode.overview:
+        return _buildOverview();
+    }
+  }
+
+  Widget _buildOverview() {
+    final summaries = BudgetCalculator.monthlySummaries(
+      widget.planRepository.items,
+      widget.repository.expenses,
+      _year,
+    );
+    final hasAnyData =
+        summaries.any((s) => s.spendableBudget != 0 || s.actualExpenses != 0);
+
+    if (!hasAnyData) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.table_rows_outlined, size: 64, color: Colors.grey),
+            SizedBox(height: 16),
+            Text(
+              'No plan or expenses for this year.',
+              style: TextStyle(color: Colors.grey, fontSize: 16),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: 12,
+      separatorBuilder: (_, _) => const Divider(height: 1),
+      itemBuilder: (_, i) => _buildOverviewRow(summaries[i]),
+    );
+  }
+
+  Widget _buildOverviewRow(MonthlySummary s) {
+    final diff = s.difference;
+    final hasData = s.spendableBudget != 0 || s.actualExpenses != 0;
+    final diffColor = diff >= 0 ? Colors.green : Colors.red;
+    final diffText = diff >= 0
+        ? '+${diff.toStringAsFixed(0)} €'
+        : '${diff.toStringAsFixed(0)} €';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 36,
+            child: Text(
+              _monthAbbr[s.month],
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (s.spendableBudget > 0)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(3),
+                    child: LinearProgressIndicator(
+                      value: (s.actualExpenses / s.spendableBudget)
+                          .clamp(0.0, 1.0),
+                      minHeight: 6,
+                      backgroundColor: Colors.grey.shade200,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        s.actualExpenses > s.spendableBudget
+                            ? Colors.red
+                            : Colors.teal,
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Budget: ${s.spendableBudget.toStringAsFixed(0)} €',
+                      style:
+                          const TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                    Text(
+                      'Spent: ${s.actualExpenses.toStringAsFixed(0)} €',
+                      style:
+                          const TextStyle(fontSize: 11, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          if (hasData)
+            Text(
+              diffText,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: diffColor,
+              ),
+            )
+          else
+            const Text('—',
+                style: TextStyle(fontSize: 13, color: Colors.grey)),
         ],
       ),
     );

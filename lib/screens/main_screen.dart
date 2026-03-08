@@ -28,9 +28,13 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _screens = [
-      ExpenseListScreen(repository: widget.repository),
+      ExpenseListScreen(
+          repository: widget.repository,
+          planRepository: widget.planRepository),
       PlanScreen(planRepository: widget.planRepository),
-      ReportScreen(repository: widget.repository),
+      ReportScreen(
+          repository: widget.repository,
+          planRepository: widget.planRepository),
     ];
   }
 
