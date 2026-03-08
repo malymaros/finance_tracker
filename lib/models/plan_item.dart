@@ -1,3 +1,5 @@
+import 'expense_category.dart';
+import 'financial_type.dart';
 import 'year_month.dart';
 
 enum PlanItemType { income, fixedCost }
@@ -22,6 +24,12 @@ class PlanItem {
 
   final String? note;
 
+  /// Only relevant for fixedCost items. Null for income items.
+  final ExpenseCategory? category;
+
+  /// Only relevant for fixedCost items. Null for income items.
+  final FinancialType? financialType;
+
   const PlanItem({
     required this.id,
     required this.seriesId,
@@ -31,6 +39,8 @@ class PlanItem {
     required this.frequency,
     required this.validFrom,
     this.note,
+    this.category,
+    this.financialType,
   });
 
   Map<String, dynamic> toJson() => {
@@ -42,17 +52,27 @@ class PlanItem {
         'frequency': frequency.name,
         'validFrom': validFrom.toJson(),
         'note': note,
+        if (category != null) 'category': category!.name,
+        if (financialType != null) 'financialType': financialType!.name,
       };
 
-  factory PlanItem.fromJson(Map<String, dynamic> json) => PlanItem(
-        id: json['id'] as String,
-        seriesId: json['seriesId'] as String,
-        name: json['name'] as String,
-        amount: (json['amount'] as num).toDouble(),
-        type: PlanItemType.values.byName(json['type'] as String),
-        frequency: PlanFrequency.values.byName(json['frequency'] as String),
-        validFrom:
-            YearMonth.fromJson(json['validFrom'] as Map<String, dynamic>),
-        note: json['note'] as String?,
-      );
+  factory PlanItem.fromJson(Map<String, dynamic> json) {
+    final categoryRaw = json['category'] as String?;
+    final financialTypeRaw = json['financialType'] as String?;
+    return PlanItem(
+      id: json['id'] as String,
+      seriesId: json['seriesId'] as String,
+      name: json['name'] as String,
+      amount: (json['amount'] as num).toDouble(),
+      type: PlanItemType.values.byName(json['type'] as String),
+      frequency: PlanFrequency.values.byName(json['frequency'] as String),
+      validFrom: YearMonth.fromJson(json['validFrom'] as Map<String, dynamic>),
+      note: json['note'] as String?,
+      category:
+          categoryRaw != null ? ExpenseCategoryX.fromJson(categoryRaw) : null,
+      financialType: financialTypeRaw != null
+          ? FinancialType.values.byName(financialTypeRaw)
+          : null,
+    );
+  }
 }

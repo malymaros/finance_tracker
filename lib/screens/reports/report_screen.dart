@@ -17,10 +17,15 @@ class ReportScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
 
+  /// Called when the user taps an overview row to navigate to the Plan tab
+  /// for that specific month.
+  final void Function(int year, int month) onNavigateToPlanMonth;
+
   const ReportScreen({
     super.key,
     required this.repository,
     required this.planRepository,
+    required this.onNavigateToPlanMonth,
   });
 
   @override
@@ -254,7 +259,9 @@ class _ReportScreenState extends State<ReportScreen> {
         ? '+${diff.toStringAsFixed(0)} €'
         : '${diff.toStringAsFixed(0)} €';
 
-    return Padding(
+    return InkWell(
+      onTap: () => widget.onNavigateToPlanMonth(_year, s.month),
+      child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
@@ -321,7 +328,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 style: TextStyle(fontSize: 13, color: Colors.grey)),
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildEmptyState() {

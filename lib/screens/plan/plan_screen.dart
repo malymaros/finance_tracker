@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/plan_item.dart';
+import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/plan_repository.dart';
 import '../../widgets/plan_item_tile.dart';
@@ -9,7 +10,15 @@ import 'add_plan_item_screen.dart';
 class PlanScreen extends StatefulWidget {
   final PlanRepository planRepository;
 
-  const PlanScreen({super.key, required this.planRepository});
+  /// When non-null, the screen listens for requested navigation to a specific
+  /// month (set by MainScreen when the user taps an Overview row).
+  final ValueNotifier<YearMonth?>? requestedPeriod;
+
+  const PlanScreen({
+    super.key,
+    required this.planRepository,
+    this.requestedPeriod,
+  });
 
   @override
   State<PlanScreen> createState() => _PlanScreenState();
@@ -32,6 +41,24 @@ class _PlanScreenState extends State<PlanScreen> {
     final now = DateTime.now();
     _year = now.year;
     _month = now.month;
+    widget.requestedPeriod?.addListener(_onRequestedPeriod);
+  }
+
+  @override
+  void dispose() {
+    widget.requestedPeriod?.removeListener(_onRequestedPeriod);
+    super.dispose();
+  }
+
+  void _onRequestedPeriod() {
+    final ym = widget.requestedPeriod!.value;
+    if (ym == null) return;
+    setState(() {
+      _isMonthly = true;
+      _year = ym.year;
+      _month = ym.month;
+    });
+    widget.requestedPeriod!.value = null; // consume
   }
 
   void _previousPeriod() {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/expense_category.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
 import 'swipeable_tile.dart';
@@ -24,8 +25,20 @@ class PlanItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIncome = item.type == PlanItemType.income;
-    final color = isIncome ? Colors.green : Colors.red;
     final sign = isIncome ? '+' : '-';
+
+    // For fixed cost items use the category colour/icon; fall back to
+    // ExpenseCategory.other when the field is not set (legacy data).
+    final category = isIncome ? null : (item.category ?? ExpenseCategory.other);
+    final leadingColor = isIncome ? Colors.green : category!.color;
+    final leadingIcon =
+        isIncome ? Icons.trending_up : category!.icon;
+
+    final subtitleParts = [
+      _frequencyLabel(item.frequency),
+      if (category != null) category.displayName,
+      'from ${_formatYearMonth(item.validFrom)}',
+    ];
 
     return SwipeableTile(
       itemId: item.id,
@@ -33,22 +46,18 @@ class PlanItemTile extends StatelessWidget {
       onEdit: onEdit,
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: color.withValues(alpha: 0.12),
-          child: Icon(
-            isIncome ? Icons.trending_up : Icons.payments_outlined,
-            color: color,
-            size: 20,
-          ),
+          backgroundColor: leadingColor.withValues(alpha: 0.12),
+          child: Icon(leadingIcon, color: leadingColor, size: 20),
         ),
         title: Text(item.name),
         subtitle: Text(
-          '${_frequencyLabel(item.frequency)} · from ${_formatYearMonth(item.validFrom)}',
+          subtitleParts.join(' · '),
           style: const TextStyle(fontSize: 12, color: Colors.grey),
         ),
         trailing: Text(
           '$sign${displayAmount.toStringAsFixed(2)} €',
           style: TextStyle(
-            color: color,
+            color: isIncome ? Colors.green : Colors.red,
             fontWeight: FontWeight.bold,
             fontSize: 15,
           ),

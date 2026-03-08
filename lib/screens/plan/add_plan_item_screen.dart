@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../models/expense_category.dart';
+import '../../models/financial_type.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/plan_repository.dart';
@@ -35,6 +37,8 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   late PlanItemType _type;
   late PlanFrequency _frequency;
   late YearMonth _validFrom;
+  late ExpenseCategory _selectedCategory;
+  late FinancialType _selectedFinancialType;
 
   @override
   void initState() {
@@ -51,10 +55,14 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       _validFrom = e.frequency == PlanFrequency.oneTime
           ? e.validFrom
           : YearMonth.now();
+      _selectedCategory = e.category ?? ExpenseCategory.other;
+      _selectedFinancialType = e.financialType ?? FinancialType.consumption;
     } else {
       _type = PlanItemType.income;
       _frequency = PlanFrequency.monthly;
       _validFrom = YearMonth.now();
+      _selectedCategory = ExpenseCategory.other;
+      _selectedFinancialType = FinancialType.consumption;
     }
   }
 
@@ -89,6 +97,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         _noteController.text.trim().isEmpty ? null : _noteController.text.trim();
 
     final e = widget.existing;
+    final isFixedCost = _type == PlanItemType.fixedCost;
 
     if (e == null) {
       // New item — new series
@@ -102,6 +111,8 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         frequency: _frequency,
         validFrom: _validFrom,
         note: note,
+        category: isFixedCost ? _selectedCategory : null,
+        financialType: isFixedCost ? _selectedFinancialType : null,
       ));
     } else if (_validFrom == e.validFrom) {
       // Same validFrom → fix in place (error correction)
@@ -114,6 +125,8 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         frequency: _frequency,
         validFrom: _validFrom,
         note: note,
+        category: isFixedCost ? _selectedCategory : null,
+        financialType: isFixedCost ? _selectedFinancialType : null,
       ));
     } else {
       // Different validFrom → new version of same series
@@ -127,6 +140,8 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         frequency: _frequency,
         validFrom: _validFrom,
         note: note,
+        category: isFixedCost ? _selectedCategory : null,
+        financialType: isFixedCost ? _selectedFinancialType : null,
       ));
     }
 
@@ -166,7 +181,16 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                 ),
               ],
               selected: {_type},
-              onSelectionChanged: (s) => setState(() => _type = s.first),
+              onSelectionChanged: (s) {
+                final newType = s.first;
+                setState(() {
+                  _type = newType;
+                  if (newType == PlanItemType.fixedCost &&
+                      _frequency == PlanFrequency.oneTime) {
+                    _frequency = PlanFrequency.monthly;
+                  }
+                });
+              },
             ),
             const SizedBox(height: 16),
 
@@ -210,27 +234,71 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                 style: TextStyle(fontSize: 12, color: Colors.grey)),
             const SizedBox(height: 8),
             SegmentedButton<PlanFrequency>(
-              segments: const [
-                ButtonSegment(
+              segments: [
+                const ButtonSegment(
                   value: PlanFrequency.monthly,
                   label: Text('Monthly'),
                   icon: Icon(Icons.repeat),
                 ),
-                ButtonSegment(
+                const ButtonSegment(
                   value: PlanFrequency.yearly,
                   label: Text('Yearly'),
                   icon: Icon(Icons.event_repeat),
                 ),
-                ButtonSegment(
-                  value: PlanFrequency.oneTime,
-                  label: Text('One-time'),
-                  icon: Icon(Icons.looks_one_outlined),
-                ),
+                if (_type == PlanItemType.income)
+                  const ButtonSegment(
+                    value: PlanFrequency.oneTime,
+                    label: Text('One-time'),
+                    icon: Icon(Icons.looks_one_outlined),
+                  ),
               ],
               selected: {_frequency},
               onSelectionChanged: (s) => setState(() => _frequency = s.first),
             ),
             const SizedBox(height: 16),
+
+            // ── Category (fixedCost only) ────────────────────────────────────
+            if (_type == PlanItemType.fixedCost) ...[
+              DropdownButtonFormField<ExpenseCategory>(
+                initialValue: _selectedCategory,
+                decoration: const InputDecoration(
+                  labelText: 'Category',
+                  border: OutlineInputBorder(),
+                ),
+                items: ExpenseCategory.values.map((cat) {
+                  return DropdownMenuItem(
+                    value: cat,
+                    child: Row(
+                      children: [
+                        Icon(cat.icon, size: 20, color: cat.color),
+                        const SizedBox(width: 8),
+                        Text(cat.displayName),
+                      ],
+                    ),
+                  );
+                }).toList(),
+                onChanged: (v) {
+                  if (v != null) setState(() => _selectedCategory = v);
+                },
+              ),
+              const SizedBox(height: 16),
+              const Text('Financial type',
+                  style: TextStyle(fontSize: 12, color: Colors.grey)),
+              const SizedBox(height: 8),
+              SegmentedButton<FinancialType>(
+                segments: FinancialType.values
+                    .map((t) => ButtonSegment(
+                          value: t,
+                          label: Text(t.displayName),
+                          icon: Icon(t.icon),
+                        ))
+                    .toList(),
+                selected: {_selectedFinancialType},
+                onSelectionChanged: (s) =>
+                    setState(() => _selectedFinancialType = s.first),
+              ),
+              const SizedBox(height: 16),
+            ],
 
             // ── Valid from ──────────────────────────────────────────────────
             OutlinedButton.icon(

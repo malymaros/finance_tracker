@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/year_month.dart';
 import '../services/finance_repository.dart';
 import '../services/plan_repository.dart';
 import 'expense_list_screen.dart';
@@ -22,6 +23,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  final _requestedPlanPeriod = ValueNotifier<YearMonth?>(null);
   late final List<Widget> _screens;
 
   @override
@@ -31,11 +33,25 @@ class _MainScreenState extends State<MainScreen> {
       ExpenseListScreen(
           repository: widget.repository,
           planRepository: widget.planRepository),
-      PlanScreen(planRepository: widget.planRepository),
+      PlanScreen(
+          planRepository: widget.planRepository,
+          requestedPeriod: _requestedPlanPeriod),
       ReportScreen(
           repository: widget.repository,
-          planRepository: widget.planRepository),
+          planRepository: widget.planRepository,
+          onNavigateToPlanMonth: _navigateToPlanMonth),
     ];
+  }
+
+  @override
+  void dispose() {
+    _requestedPlanPeriod.dispose();
+    super.dispose();
+  }
+
+  void _navigateToPlanMonth(int year, int month) {
+    _requestedPlanPeriod.value = YearMonth(year, month);
+    setState(() => _selectedIndex = 1);
   }
 
   @override
