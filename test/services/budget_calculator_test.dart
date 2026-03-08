@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
+import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/services/budget_calculator.dart';
@@ -32,6 +33,8 @@ PlanItem makeFixedCost({
   PlanFrequency frequency = PlanFrequency.monthly,
   int validYear = 2024,
   int validMonth = 1,
+  ExpenseCategory? category,
+  FinancialType? financialType,
 }) =>
     PlanItem(
       id: id,
@@ -41,6 +44,8 @@ PlanItem makeFixedCost({
       type: PlanItemType.fixedCost,
       frequency: frequency,
       validFrom: YearMonth(validYear, validMonth),
+      category: category,
+      financialType: financialType,
     );
 
 Expense makeExpense({
@@ -432,6 +437,221 @@ void main() {
       final expenses = [makeExpense(amount: 800, year: 2024, month: 3)];
       final summaries = BudgetCalculator.monthlySummaries(items, expenses, 2024);
       expect(summaries[2].difference, -300);
+    });
+  });
+
+  // ── planFixedCostReportLinesForMonth ──────────────────────────────────────
+
+  group('planFixedCostReportLinesForMonth', () {
+    test('empty plan returns empty list', () {
+      expect(
+        BudgetCalculator.planFixedCostReportLinesForMonth([], 2024, 3),
+        isEmpty,
+      );
+    });
+
+    test('income items are excluded', () {
+      final items = [makeIncome(amount: 3000)];
+      expect(
+        BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 3),
+        isEmpty,
+      );
+    });
+
+    test('monthly fixedCost → line with full amount', () {
+      final items = [
+        makeFixedCost(
+          amount: 800,
+          frequency: PlanFrequency.monthly,
+          category: ExpenseCategory.housing,
+          financialType: FinancialType.consumption,
+        )
+      ];
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 6);
+      expect(lines.length, 1);
+      expect(lines.first.amount, 800);
+      expect(lines.first.category, ExpenseCategory.housing);
+      expect(lines.first.financialType, FinancialType.consumption);
+    });
+
+    test('yearly fixedCost → normalized to amount / 12', () {
+      final items = [
+        makeFixedCost(amount: 1200, frequency: PlanFrequency.yearly)
+      ];
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 6);
+      expect(lines.length, 1);
+      expect(lines.first.amount, 100); // 1200 / 12
+    });
+
+    test('oneTime fixedCost → amount only in its exact month, 0 otherwise', () {
+      final items = [
+        makeFixedCost(
+          amount: 500,
+          frequency: PlanFrequency.oneTime,
+          validYear: 2024,
+          validMonth: 3,
+        )
+      ];
+      final march =
+          BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 3);
+      expect(march.length, 1);
+      expect(march.first.amount, 500);
+
+      final april =
+          BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 4);
+      // oneTime is no longer active in April (validFrom > queried would filter
+      // it, but it is still the active version; _normalizedContribution returns 0)
+      expect(april.every((l) => l.amount == 0), isTrue);
+    });
+
+    test('investment/asset fixedCost — category and financialType propagated',
+        () {
+      // This is the exact bug scenario: user adds a fixed cost with
+      // category=investment, type=asset via the Plan tab.
+      final items = [
+        makeFixedCost(
+          amount: 500,
+          frequency: PlanFrequency.monthly,
+          category: ExpenseCategory.investment,
+          financialType: FinancialType.asset,
+        )
+      ];
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 3);
+      expect(lines.length, 1);
+      expect(lines.first.category, ExpenseCategory.investment);
+      expect(lines.first.financialType, FinancialType.asset);
+      expect(lines.first.amount, 500);
+    });
+
+    test('null category defaults to ExpenseCategory.other', () {
+      final items = [makeFixedCost(amount: 100)]; // no category set
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 3);
+      expect(lines.first.category, ExpenseCategory.other);
+    });
+
+    test('null financialType defaults to FinancialType.consumption', () {
+      final items = [makeFixedCost(amount: 100)]; // no financialType set
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 3);
+      expect(lines.first.financialType, FinancialType.consumption);
+    });
+
+    test('returns one line per active fixedCost item', () {
+      final items = [
+        makeFixedCost(id: 'a', amount: 800),
+        makeFixedCost(id: 'b', amount: 200),
+        makeIncome(id: 'c', amount: 3000),
+      ];
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 6);
+      expect(lines.length, 2);
+    });
+
+    test('item not yet active is excluded', () {
+      final items = [
+        makeFixedCost(amount: 500, validYear: 2025, validMonth: 1)
+      ];
+      expect(
+        BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 12),
+        isEmpty,
+      );
+    });
+  });
+
+  // ── planFixedCostReportLinesForYear ───────────────────────────────────────
+
+  group('planFixedCostReportLinesForYear', () {
+    test('empty plan returns empty list', () {
+      expect(
+        BudgetCalculator.planFixedCostReportLinesForYear([], 2024),
+        isEmpty,
+      );
+    });
+
+    test('income items are excluded', () {
+      final items = [makeIncome(amount: 3000)];
+      expect(
+        BudgetCalculator.planFixedCostReportLinesForYear(items, 2024),
+        isEmpty,
+      );
+    });
+
+    test('monthly fixedCost → 12 lines for a full year', () {
+      final items = [makeFixedCost(amount: 800, frequency: PlanFrequency.monthly)];
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForYear(items, 2024);
+      expect(lines.length, 12);
+      expect(lines.fold(0.0, (s, l) => s + l.amount), 9600); // 800 × 12
+    });
+
+    test('yearly fixedCost → 1 line in its anniversary month', () {
+      final items = [
+        makeFixedCost(
+          amount: 1200,
+          frequency: PlanFrequency.yearly,
+          validYear: 2024,
+          validMonth: 6,
+        )
+      ];
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForYear(items, 2024);
+      expect(lines.length, 1);
+      expect(lines.first.amount, 1200);
+    });
+
+    test('investment/asset fixedCost appears in yearly report', () {
+      // Full regression test for the reported bug
+      final items = [
+        makeFixedCost(
+          amount: 500,
+          frequency: PlanFrequency.monthly,
+          category: ExpenseCategory.investment,
+          financialType: FinancialType.asset,
+        )
+      ];
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForYear(items, 2024);
+      expect(lines.isNotEmpty, isTrue);
+      expect(lines.every((l) => l.category == ExpenseCategory.investment),
+          isTrue);
+      expect(lines.every((l) => l.financialType == FinancialType.asset), isTrue);
+    });
+
+    test('lines with amount == 0 are omitted (oneTime in wrong year)', () {
+      final items = [
+        makeFixedCost(
+          amount: 500,
+          frequency: PlanFrequency.oneTime,
+          validYear: 2023,
+          validMonth: 6,
+        )
+      ];
+      // oneTime from 2023 — no cash-flow contribution in 2024
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForYear(items, 2024);
+      expect(lines, isEmpty);
+    });
+
+    test('total amount equals yearlyFixedCosts for consistent items', () {
+      final items = [
+        makeFixedCost(id: 'a', amount: 500, frequency: PlanFrequency.monthly),
+        makeFixedCost(
+          id: 'b',
+          amount: 1200,
+          frequency: PlanFrequency.yearly,
+          validYear: 2024,
+          validMonth: 3,
+        ),
+      ];
+      final expectedTotal = BudgetCalculator.yearlyFixedCosts(items, 2024);
+      final lines =
+          BudgetCalculator.planFixedCostReportLinesForYear(items, 2024);
+      final linesTotal = lines.fold(0.0, (s, l) => s + l.amount);
+      expect(linesTotal, closeTo(expectedTotal, 0.001));
     });
   });
 }

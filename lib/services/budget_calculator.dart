@@ -1,7 +1,10 @@
 import '../models/budget_status.dart';
 import '../models/expense.dart';
+import '../models/expense_category.dart';
+import '../models/financial_type.dart';
 import '../models/monthly_summary.dart';
 import '../models/plan_item.dart';
+import '../models/report_line.dart';
 import '../models/year_month.dart';
 
 /// Pure static aggregation functions for budget calculations.
@@ -181,6 +184,50 @@ class BudgetCalculator {
       remaining: budget - actualSpent,
       percentUsed: budget > 0 ? (actualSpent / budget) * 100 : 0,
     );
+  }
+
+  // ── Plan fixed-cost report lines ─────────────────────────────────────────
+
+  /// Converts active fixedCost PlanItems for a month into ReportLines,
+  /// using normalized monthly amounts (monthly as-is, yearly /12,
+  /// oneTime only in its exact month).
+  ///
+  /// Falls back to [ExpenseCategory.other] / [FinancialType.consumption]
+  /// when the optional fields are not set on the PlanItem.
+  static List<ReportLine> planFixedCostReportLinesForMonth(
+      List<PlanItem> allItems, int year, int month) {
+    return activeItemsForMonth(allItems, year, month)
+        .where((i) => i.type == PlanItemType.fixedCost)
+        .map((i) => ReportLine(
+              category: i.category ?? ExpenseCategory.other,
+              financialType: i.financialType ?? FinancialType.consumption,
+              amount: _normalizedContribution(i, year, month),
+            ))
+        .toList();
+  }
+
+  /// Converts fixedCost PlanItems for a full year into ReportLines,
+  /// using cash-flow rules (monthly → fires every month, yearly → fires
+  /// once in its anniversary month, oneTime → fires in its exact month).
+  ///
+  /// Lines with amount == 0 are omitted.
+  static List<ReportLine> planFixedCostReportLinesForYear(
+      List<PlanItem> allItems, int year) {
+    final result = <ReportLine>[];
+    for (int m = 1; m <= 12; m++) {
+      for (final item in activeItemsForMonth(allItems, year, m)
+          .where((i) => i.type == PlanItemType.fixedCost)) {
+        final amount = _cashFlowContribution(item, year, m);
+        if (amount > 0) {
+          result.add(ReportLine(
+            category: item.category ?? ExpenseCategory.other,
+            financialType: item.financialType ?? FinancialType.consumption,
+            amount: amount,
+          ));
+        }
+      }
+    }
+    return result;
   }
 
   // ── Monthly overview ─────────────────────────────────────────────────────

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
+import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/fixed_cost.dart';
 import 'package:finance_tracker/models/income_entry.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
@@ -303,14 +304,16 @@ void main() {
   });
 
   group('FixedCost serialization', () {
-    test('toJson and fromJson round-trip', () {
+    test('toJson and fromJson round-trip with all fields', () {
       final original = FixedCost(
         id: 'fc1',
-        name: 'Rent',
-        amount: 800.0,
-        recurrence: Recurrence.monthly,
+        name: 'Insurance',
+        amount: 500.0,
+        recurrence: Recurrence.yearly,
         startYear: 2024,
-        startMonth: 1,
+        startMonth: 3,
+        category: ExpenseCategory.investment,
+        financialType: FinancialType.asset,
       );
       final restored = FixedCost.fromJson(original.toJson());
       expect(restored.id, original.id);
@@ -319,6 +322,124 @@ void main() {
       expect(restored.recurrence, original.recurrence);
       expect(restored.startYear, original.startYear);
       expect(restored.startMonth, original.startMonth);
+      expect(restored.category, original.category);
+      expect(restored.financialType, original.financialType);
+    });
+
+    test('fromJson uses defaults for missing category and financialType', () {
+      final fc = FixedCost.fromJson({
+        'id': '1',
+        'name': 'Rent',
+        'amount': 800.0,
+        'recurrence': 'monthly',
+        'startYear': 2024,
+        'startMonth': 1,
+      });
+      expect(fc.category, ExpenseCategory.other);
+      expect(fc.financialType, FinancialType.consumption);
+    });
+  });
+
+  group('FinanceRepository — reportLinesForMonth', () {
+    test('empty repo returns empty list', () {
+      final repo = FinanceRepository(persist: false);
+      expect(repo.reportLinesForMonth(2024, 3), isEmpty);
+    });
+
+    test('returns one line per expense in the month', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: '1',
+        amount: 50.0,
+        category: ExpenseCategory.groceries,
+        financialType: FinancialType.consumption,
+        date: DateTime(2024, 3, 10),
+      ));
+      await repo.addExpense(Expense(
+        id: '2',
+        amount: 200.0,
+        category: ExpenseCategory.investment,
+        financialType: FinancialType.asset,
+        date: DateTime(2024, 3, 20),
+      ));
+      final lines = repo.reportLinesForMonth(2024, 3);
+      expect(lines.length, 2);
+    });
+
+    test('preserves category and financialType from expense', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: '1',
+        amount: 300.0,
+        category: ExpenseCategory.investment,
+        financialType: FinancialType.asset,
+        date: DateTime(2024, 3, 5),
+      ));
+      final line = repo.reportLinesForMonth(2024, 3).first;
+      expect(line.category, ExpenseCategory.investment);
+      expect(line.financialType, FinancialType.asset);
+      expect(line.amount, 300.0);
+    });
+
+    test('excludes expenses from other months', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: '1',
+        amount: 50.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 3, 1),
+      ));
+      await repo.addExpense(Expense(
+        id: '2',
+        amount: 99.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 4, 1),
+      ));
+      expect(repo.reportLinesForMonth(2024, 3).length, 1);
+      expect(repo.reportLinesForMonth(2024, 4).length, 1);
+      expect(repo.reportLinesForMonth(2024, 5).length, 0);
+    });
+
+    test('does NOT include transaction-level fixed costs', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addFixedCost(makeFixedCost(
+          amount: 800,
+          recurrence: Recurrence.monthly,
+          startYear: 2024,
+          startMonth: 1));
+      // No expenses added — report lines must be empty
+      expect(repo.reportLinesForMonth(2024, 3), isEmpty);
+    });
+  });
+
+  group('FinanceRepository — reportLinesForYear', () {
+    test('empty repo returns empty list', () {
+      expect(FinanceRepository(persist: false).reportLinesForYear(2024), isEmpty);
+    });
+
+    test('returns one line per expense in the year', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+          id: '1', amount: 10, category: ExpenseCategory.groceries,
+          date: DateTime(2024, 1, 1)));
+      await repo.addExpense(Expense(
+          id: '2', amount: 20, category: ExpenseCategory.transport,
+          date: DateTime(2024, 12, 31)));
+      // Expense in different year — excluded
+      await repo.addExpense(Expense(
+          id: '3', amount: 30, category: ExpenseCategory.groceries,
+          date: DateTime(2025, 1, 1)));
+      expect(repo.reportLinesForYear(2024).length, 2);
+    });
+
+    test('does NOT include transaction-level fixed costs', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addFixedCost(makeFixedCost(
+          amount: 800,
+          recurrence: Recurrence.monthly,
+          startYear: 2024,
+          startMonth: 1));
+      expect(repo.reportLinesForYear(2024), isEmpty);
     });
   });
 }

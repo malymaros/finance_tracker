@@ -198,7 +198,11 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget _buildContent() {
     switch (_mode) {
       case _ReportMode.monthly:
-        final lines = widget.repository.reportLinesForMonth(_year, _month);
+        final lines = [
+          ...widget.repository.reportLinesForMonth(_year, _month),
+          ...BudgetCalculator.planFixedCostReportLinesForMonth(
+              widget.planRepository.items, _year, _month),
+        ];
         final totals = ReportAggregator.categoryTotals(lines);
         final breakdown = ReportAggregator.financialTypeBreakdown(lines);
         return totals.isEmpty
@@ -206,7 +210,11 @@ class _ReportScreenState extends State<ReportScreen> {
             : _buildChartAndList(totals, breakdown);
 
       case _ReportMode.yearly:
-        final lines = widget.repository.reportLinesForYear(_year);
+        final lines = [
+          ...widget.repository.reportLinesForYear(_year),
+          ...BudgetCalculator.planFixedCostReportLinesForYear(
+              widget.planRepository.items, _year),
+        ];
         final totals = ReportAggregator.categoryTotals(lines);
         final breakdown = ReportAggregator.financialTypeBreakdown(lines);
         return totals.isEmpty

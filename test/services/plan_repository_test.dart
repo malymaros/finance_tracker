@@ -1,4 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/models/expense_category.dart';
+import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
@@ -134,6 +136,52 @@ void main() {
         'note': null,
       });
       expect(item.note, isNull);
+    });
+
+    test('fixedCost with category and financialType round-trips correctly', () {
+      final original = PlanItem(
+        id: 'fc1',
+        seriesId: 'fc1',
+        name: 'ETF savings',
+        amount: 500.0,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2024, 1),
+        category: ExpenseCategory.investment,
+        financialType: FinancialType.asset,
+      );
+      final restored = PlanItem.fromJson(original.toJson());
+      expect(restored.category, ExpenseCategory.investment);
+      expect(restored.financialType, FinancialType.asset);
+    });
+
+    test('fromJson handles missing category and financialType (null)', () {
+      final item = PlanItem.fromJson({
+        'id': '1',
+        'seriesId': '1',
+        'name': 'Rent',
+        'amount': 800.0,
+        'type': 'fixedCost',
+        'frequency': 'monthly',
+        'validFrom': {'year': 2024, 'month': 1},
+      });
+      expect(item.category, isNull);
+      expect(item.financialType, isNull);
+    });
+
+    test('income item toJson does not write category or financialType keys', () {
+      final item = PlanItem(
+        id: '1',
+        seriesId: '1',
+        name: 'Salary',
+        amount: 3000,
+        type: PlanItemType.income,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2024, 1),
+      );
+      final json = item.toJson();
+      expect(json.containsKey('category'), isFalse);
+      expect(json.containsKey('financialType'), isFalse);
     });
   });
 }

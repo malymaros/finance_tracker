@@ -159,73 +159,30 @@ class FinanceRepository extends ChangeNotifier {
     return total;
   }
 
-  // ── Report lines (expenses + fixed costs combined) ───────────────────────
+  // ── Report lines (expenses only — fixed costs come from PlanRepository) ───
 
-  /// Combined report lines for a single month.
-  /// Expenses: each at their recorded amount.
-  /// Fixed costs active in the month: monthly → full amount, yearly → amount/12.
+  /// Report lines for a single month containing only expense transactions.
+  /// Fixed costs are sourced from PlanItems via BudgetCalculator and merged
+  /// in the reporting layer (ReportScreen).
   List<ReportLine> reportLinesForMonth(int year, int month) {
-    final lines = <ReportLine>[];
-
-    for (final e in expensesForMonth(year, month)) {
-      lines.add(ReportLine(
-          category: e.category,
-          financialType: e.financialType,
-          amount: e.amount));
-    }
-
-    for (final fc in fixedCostsForMonth(year, month)) {
-      final amount = fc.recurrence == Recurrence.yearly
-          ? fc.amount / 12
-          : fc.amount;
-      lines.add(ReportLine(
-          category: fc.category,
-          financialType: fc.financialType,
-          amount: amount));
-    }
-
-    return lines;
+    return expensesForMonth(year, month)
+        .map((e) => ReportLine(
+              category: e.category,
+              financialType: e.financialType,
+              amount: e.amount,
+            ))
+        .toList();
   }
 
-  /// Combined report lines for a full year.
-  /// Expenses: each at their recorded amount.
-  /// Fixed costs: monthly → amount × active months in year, yearly → full amount.
+  /// Report lines for a full year containing only expense transactions.
   List<ReportLine> reportLinesForYear(int year) {
-    final lines = <ReportLine>[];
-
-    for (final e in expensesForYear(year)) {
-      lines.add(ReportLine(
-          category: e.category,
-          financialType: e.financialType,
-          amount: e.amount));
-    }
-
-    for (final fc in _fixedCosts) {
-      if (fc.recurrence == Recurrence.monthly) {
-        double total = 0;
-        for (int m = 1; m <= 12; m++) {
-          if (fc.startYear < year ||
-              (fc.startYear == year && fc.startMonth <= m)) {
-            total += fc.amount;
-          }
-        }
-        if (total > 0) {
-          lines.add(ReportLine(
-              category: fc.category,
-              financialType: fc.financialType,
-              amount: total));
-        }
-      } else {
-        if (fc.startYear <= year) {
-          lines.add(ReportLine(
-              category: fc.category,
-              financialType: fc.financialType,
-              amount: fc.amount));
-        }
-      }
-    }
-
-    return lines;
+    return expensesForYear(year)
+        .map((e) => ReportLine(
+              category: e.category,
+              financialType: e.financialType,
+              amount: e.amount,
+            ))
+        .toList();
   }
 
   // ── Persistence ──────────────────────────────────────────────────────────
