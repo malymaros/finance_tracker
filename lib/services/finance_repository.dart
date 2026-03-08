@@ -39,14 +39,56 @@ class FinanceRepository extends ChangeNotifier {
     await _save();
   }
 
+  Future<void> updateExpense(Expense expense) async {
+    final i = _expenses.indexWhere((e) => e.id == expense.id);
+    if (i == -1) return;
+    _expenses[i] = expense;
+    notifyListeners();
+    await _save();
+  }
+
+  Future<void> removeExpense(String id) async {
+    _expenses.removeWhere((e) => e.id == id);
+    notifyListeners();
+    await _save();
+  }
+
   Future<void> addIncome(IncomeEntry entry) async {
     _income.add(entry);
     notifyListeners();
     await _save();
   }
 
+  Future<void> updateIncome(IncomeEntry entry) async {
+    final i = _income.indexWhere((e) => e.id == entry.id);
+    if (i == -1) return;
+    _income[i] = entry;
+    notifyListeners();
+    await _save();
+  }
+
+  Future<void> removeIncome(String id) async {
+    _income.removeWhere((e) => e.id == id);
+    notifyListeners();
+    await _save();
+  }
+
   Future<void> addFixedCost(FixedCost cost) async {
     _fixedCosts.add(cost);
+    notifyListeners();
+    await _save();
+  }
+
+  Future<void> updateFixedCost(FixedCost cost) async {
+    final i = _fixedCosts.indexWhere((fc) => fc.id == cost.id);
+    if (i == -1) return;
+    _fixedCosts[i] = cost;
+    notifyListeners();
+    await _save();
+  }
+
+  Future<void> removeFixedCost(String id) async {
+    _fixedCosts.removeWhere((fc) => fc.id == id);
     notifyListeners();
     await _save();
   }

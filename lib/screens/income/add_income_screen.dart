@@ -5,8 +5,9 @@ import '../../services/finance_repository.dart';
 
 class AddIncomeScreen extends StatefulWidget {
   final FinanceRepository repository;
+  final IncomeEntry? existing;
 
-  const AddIncomeScreen({super.key, required this.repository});
+  const AddIncomeScreen({super.key, required this.repository, this.existing});
 
   @override
   State<AddIncomeScreen> createState() => _AddIncomeScreenState();
@@ -17,8 +18,20 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  IncomeType _selectedType = IncomeType.monthly;
-  DateTime _selectedDate = DateTime.now();
+  late IncomeType _selectedType;
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    final e = widget.existing;
+    _selectedType = e?.type ?? IncomeType.monthly;
+    _selectedDate = e?.date ?? DateTime.now();
+    if (e != null) {
+      _amountController.text = e.amount.toString();
+      _descriptionController.text = e.description ?? '';
+    }
+  }
 
   @override
   void dispose() {
@@ -40,15 +53,21 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    await widget.repository.addIncome(IncomeEntry(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+    final entry = IncomeEntry(
+      id: widget.existing?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
       amount: double.parse(_amountController.text.trim()),
       date: _selectedDate,
       type: _selectedType,
       description: _descriptionController.text.trim().isEmpty
           ? null
           : _descriptionController.text.trim(),
-    ));
+    );
+
+    if (widget.existing != null) {
+      await widget.repository.updateIncome(entry);
+    } else {
+      await widget.repository.addIncome(entry);
+    }
 
     if (mounted) Navigator.of(context).pop();
   }
@@ -59,7 +78,7 @@ class _AddIncomeScreenState extends State<AddIncomeScreen> {
         '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Income')),
+      appBar: AppBar(title: Text(widget.existing != null ? 'Edit Income' : 'Add Income')),
       body: Form(
         key: _formKey,
         child: ListView(

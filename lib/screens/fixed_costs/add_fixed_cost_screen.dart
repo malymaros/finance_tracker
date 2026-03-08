@@ -5,8 +5,9 @@ import '../../services/finance_repository.dart';
 
 class AddFixedCostScreen extends StatefulWidget {
   final FinanceRepository repository;
+  final FixedCost? existing;
 
-  const AddFixedCostScreen({super.key, required this.repository});
+  const AddFixedCostScreen({super.key, required this.repository, this.existing});
 
   @override
   State<AddFixedCostScreen> createState() => _AddFixedCostScreenState();
@@ -17,8 +18,22 @@ class _AddFixedCostScreenState extends State<AddFixedCostScreen> {
   final _nameController = TextEditingController();
   final _amountController = TextEditingController();
 
-  Recurrence _recurrence = Recurrence.monthly;
-  DateTime _startDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
+  late Recurrence _recurrence;
+  late DateTime _startDate;
+
+  @override
+  void initState() {
+    super.initState();
+    final e = widget.existing;
+    _recurrence = e?.recurrence ?? Recurrence.monthly;
+    _startDate = e != null
+        ? DateTime(e.startYear, e.startMonth, 1)
+        : DateTime(DateTime.now().year, DateTime.now().month, 1);
+    if (e != null) {
+      _nameController.text = e.name;
+      _amountController.text = e.amount.toString();
+    }
+  }
 
   @override
   void dispose() {
@@ -44,14 +59,20 @@ class _AddFixedCostScreenState extends State<AddFixedCostScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    await widget.repository.addFixedCost(FixedCost(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+    final cost = FixedCost(
+      id: widget.existing?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
       name: _nameController.text.trim(),
       amount: double.parse(_amountController.text.trim()),
       recurrence: _recurrence,
       startYear: _startDate.year,
       startMonth: _startDate.month,
-    ));
+    );
+
+    if (widget.existing != null) {
+      await widget.repository.updateFixedCost(cost);
+    } else {
+      await widget.repository.addFixedCost(cost);
+    }
 
     if (mounted) Navigator.of(context).pop();
   }
@@ -62,7 +83,7 @@ class _AddFixedCostScreenState extends State<AddFixedCostScreen> {
         '${_startDate.year}-${_startDate.month.toString().padLeft(2, '0')}';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Fixed Cost')),
+      appBar: AppBar(title: Text(widget.existing != null ? 'Edit Fixed Cost' : 'Add Fixed Cost')),
       body: Form(
         key: _formKey,
         child: ListView(

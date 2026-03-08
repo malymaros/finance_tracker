@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/fixed_cost.dart';
 import '../../services/finance_repository.dart';
 import '../../widgets/fixed_cost_tile.dart';
+import '../../widgets/swipeable_tile.dart';
 import 'add_fixed_cost_screen.dart';
 
 class FixedCostListScreen extends StatelessWidget {
@@ -30,7 +31,7 @@ class FixedCostListScreen extends StatelessWidget {
               Expanded(
                 child: costs.isEmpty
                     ? _buildEmptyState()
-                    : _buildList(costs),
+                    : _buildList(context, costs),
               ),
             ],
           ),
@@ -68,11 +69,23 @@ class FixedCostListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildList(List<FixedCost> costs) {
+  Widget _buildList(BuildContext context, List<FixedCost> costs) {
     return ListView.separated(
       itemCount: costs.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
-      itemBuilder: (_, i) => FixedCostTile(cost: costs[i]),
+      separatorBuilder: (_, _) => const Divider(height: 1),
+      itemBuilder: (_, i) => SwipeableTile(
+        itemId: costs[i].id,
+        onDelete: () => repository.removeFixedCost(costs[i].id),
+        onEdit: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => AddFixedCostScreen(
+              repository: repository,
+              existing: costs[i],
+            ),
+          ),
+        ),
+        child: FixedCostTile(cost: costs[i]),
+      ),
     );
   }
 }

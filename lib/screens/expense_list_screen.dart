@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/expense.dart';
 import '../services/finance_repository.dart';
 import '../widgets/expense_list_tile.dart';
+import '../widgets/swipeable_tile.dart';
 import 'add_expense_screen.dart';
 
 class ExpenseListScreen extends StatelessWidget {
@@ -18,7 +19,7 @@ class ExpenseListScreen extends StatelessWidget {
         final expenses = repository.expenses;
         return Scaffold(
           appBar: AppBar(title: const Text('Expenses')),
-          body: expenses.isEmpty ? _buildEmptyState() : _buildList(expenses),
+          body: expenses.isEmpty ? _buildEmptyState() : _buildList(context, expenses),
           floatingActionButton: FloatingActionButton(
             onPressed: () => _navigateToAdd(context),
             tooltip: 'Add Expense',
@@ -58,11 +59,23 @@ class ExpenseListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildList(List<Expense> expenses) {
+  Widget _buildList(BuildContext context, List<Expense> expenses) {
     return ListView.separated(
       itemCount: expenses.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
-      itemBuilder: (_, i) => ExpenseListTile(expense: expenses[i]),
+      separatorBuilder: (_, _) => const Divider(height: 1),
+      itemBuilder: (_, i) => SwipeableTile(
+        itemId: expenses[i].id,
+        onDelete: () => repository.removeExpense(expenses[i].id),
+        onEdit: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => AddExpenseScreen(
+              repository: repository,
+              existing: expenses[i],
+            ),
+          ),
+        ),
+        child: ExpenseListTile(expense: expenses[i]),
+      ),
     );
   }
 }

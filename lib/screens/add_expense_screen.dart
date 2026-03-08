@@ -6,8 +6,9 @@ import '../services/finance_repository.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final FinanceRepository repository;
+  final Expense? existing;
 
-  const AddExpenseScreen({super.key, required this.repository});
+  const AddExpenseScreen({super.key, required this.repository, this.existing});
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -18,8 +19,20 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
 
-  String _selectedCategory = kExpenseCategories.first.name;
-  DateTime _selectedDate = DateTime.now();
+  late String _selectedCategory;
+  late DateTime _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    final e = widget.existing;
+    _selectedCategory = e?.category ?? kExpenseCategories.first.name;
+    _selectedDate = e?.date ?? DateTime.now();
+    if (e != null) {
+      _amountController.text = e.amount.toString();
+      _noteController.text = e.note ?? '';
+    }
+  }
 
   @override
   void dispose() {
@@ -43,15 +56,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    await widget.repository.addExpense(Expense(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+    final expense = Expense(
+      id: widget.existing?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
       amount: double.parse(_amountController.text.trim()),
       category: _selectedCategory,
       date: _selectedDate,
       note: _noteController.text.trim().isEmpty
           ? null
           : _noteController.text.trim(),
-    ));
+    );
+
+    if (widget.existing != null) {
+      await widget.repository.updateExpense(expense);
+    } else {
+      await widget.repository.addExpense(expense);
+    }
 
     if (mounted) Navigator.of(context).pop();
   }
@@ -62,7 +81,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Expense')),
+      appBar: AppBar(title: Text(widget.existing != null ? 'Edit Expense' : 'Add Expense')),
       body: Form(
         key: _formKey,
         child: ListView(

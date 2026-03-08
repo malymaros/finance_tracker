@@ -75,6 +75,23 @@ void main() {
       await repo.addExpense(makeExpense());
       expect(notified, isTrue);
     });
+
+    test('removeExpense removes by id', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(makeExpense(id: 'a'));
+      await repo.addExpense(makeExpense(id: 'b'));
+      await repo.removeExpense('a');
+      expect(repo.expenses.length, 1);
+      expect(repo.expenses.first.id, 'b');
+    });
+
+    test('updateExpense replaces the matching item', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(makeExpense(id: '1', amount: 10.0));
+      await repo.updateExpense(makeExpense(id: '1', amount: 99.0));
+      expect(repo.expenses.length, 1);
+      expect(repo.expenses.first.amount, 99.0);
+    });
   });
 
   group('FinanceRepository — income', () {
@@ -131,6 +148,23 @@ void main() {
       repo.addListener(() => notified = true);
       await repo.addIncome(makeIncome());
       expect(notified, isTrue);
+    });
+
+    test('removeIncome removes by id', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addIncome(makeIncome(id: 'a'));
+      await repo.addIncome(makeIncome(id: 'b'));
+      await repo.removeIncome('a');
+      expect(repo.income.length, 1);
+      expect(repo.income.first.id, 'b');
+    });
+
+    test('updateIncome replaces the matching item', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addIncome(makeIncome(id: '1', amount: 1000.0));
+      await repo.updateIncome(makeIncome(id: '1', amount: 2000.0));
+      expect(repo.income.length, 1);
+      expect(repo.income.first.amount, 2000.0);
     });
   });
 
@@ -199,6 +233,23 @@ void main() {
       repo.addListener(() => notified = true);
       await repo.addFixedCost(makeFixedCost());
       expect(notified, isTrue);
+    });
+
+    test('removeFixedCost removes by id', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addFixedCost(makeFixedCost(id: 'a'));
+      await repo.addFixedCost(makeFixedCost(id: 'b'));
+      await repo.removeFixedCost('a');
+      expect(repo.fixedCosts.length, 1);
+      expect(repo.fixedCosts.first.id, 'b');
+    });
+
+    test('updateFixedCost replaces the matching item', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addFixedCost(makeFixedCost(id: '1', amount: 800.0));
+      await repo.updateFixedCost(makeFixedCost(id: '1', amount: 1200.0));
+      expect(repo.fixedCosts.length, 1);
+      expect(repo.fixedCosts.first.amount, 1200.0);
     });
   });
 

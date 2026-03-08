@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/income_entry.dart';
 import '../../services/finance_repository.dart';
 import '../../widgets/income_entry_tile.dart';
+import '../../widgets/swipeable_tile.dart';
 import 'add_income_screen.dart';
 
 class IncomeListScreen extends StatelessWidget {
@@ -28,7 +29,7 @@ class IncomeListScreen extends StatelessWidget {
               Expanded(
                 child: income.isEmpty
                     ? _buildEmptyState()
-                    : _buildList(income),
+                    : _buildList(context, income),
               ),
             ],
           ),
@@ -66,11 +67,23 @@ class IncomeListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildList(List<IncomeEntry> income) {
+  Widget _buildList(BuildContext context, List<IncomeEntry> income) {
     return ListView.separated(
       itemCount: income.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
-      itemBuilder: (_, i) => IncomeEntryTile(entry: income[i]),
+      separatorBuilder: (_, _) => const Divider(height: 1),
+      itemBuilder: (_, i) => SwipeableTile(
+        itemId: income[i].id,
+        onDelete: () => repository.removeIncome(income[i].id),
+        onEdit: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => AddIncomeScreen(
+              repository: repository,
+              existing: income[i],
+            ),
+          ),
+        ),
+        child: IncomeEntryTile(entry: income[i]),
+      ),
     );
   }
 }
