@@ -93,6 +93,15 @@ class FinanceRepository extends ChangeNotifier {
     await _save();
   }
 
+  // ── Expense aggregations ─────────────────────────────────────────────────
+
+  List<Expense> expensesForMonth(int year, int month) => _expenses
+      .where((e) => e.date.year == year && e.date.month == month)
+      .toList();
+
+  List<Expense> expensesForYear(int year) =>
+      _expenses.where((e) => e.date.year == year).toList();
+
   // ── Income aggregations ──────────────────────────────────────────────────
 
   List<IncomeEntry> incomeForMonth(int year, int month) => _income

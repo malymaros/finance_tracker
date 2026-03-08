@@ -26,7 +26,7 @@ class _MainScreenState extends State<MainScreen> {
       ExpenseListScreen(repository: widget.repository),
       IncomeListScreen(repository: widget.repository),
       FixedCostListScreen(repository: widget.repository),
-      const ReportScreen(),
+      ReportScreen(repository: widget.repository),
     ];
   }
 
