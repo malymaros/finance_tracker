@@ -1,41 +1,218 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code when working with this repository.
 
-## Commands
+Claude should follow the architectural rules and development workflow defined here.
 
-```bash
-flutter pub get          # Install dependencies
-flutter run              # Run on connected device/emulator
-flutter analyze          # Static analysis (flutter_lints ruleset)
-flutter test             # Run all tests
-flutter test test/foo_test.dart  # Run a single test file
-flutter build apk        # Build Android APK
-```
+--------------------------------------------------
+PROJECT OVERVIEW
+--------------------------------------------------
 
-Hot reload is available during `flutter run` — press `r` in the terminal or save in VS Code.
+Finance Tracker is a Flutter mobile application for tracking personal expenses.
 
-## Architecture
+Primary goal:
+Build a simple, fast, and clean mobile application that allows users to record expenses quickly and analyze spending habits.
 
-This is a Flutter/Dart mobile app targeting Android (and iOS). Currently in early development — `lib/main.dart` contains the default Flutter counter scaffold.
+The project intentionally explores AI-assisted development using Claude Code.
 
-Planned structure per README:
-```
+Target platforms:
+- Android (primary)
+- iOS (secondary)
+
+--------------------------------------------------
+DEVELOPMENT PRIORITIES
+--------------------------------------------------
+
+When implementing features, prioritize:
+
+1. Simplicity
+2. Readability
+3. Small reusable widgets
+4. Clear folder structure
+5. Minimal dependencies
+
+Avoid overengineering.
+
+Do not introduce complex architecture patterns unless necessary.
+
+--------------------------------------------------
+PROJECT STRUCTURE
+--------------------------------------------------
+
+Code should follow this structure:
+
 lib/
-  main.dart       # App entry point, MaterialApp root
-  screens/        # Full-page widgets (one file per screen)
-  widgets/        # Reusable UI components
-  models/         # Data models (e.g. Expense)
-  services/       # Business logic, data access
-```
+  main.dart
+  screens/
+  widgets/
+  models/
+  services/
 
-Planned features: expense entry, listing, monthly overview, categories, charts, shared tracking, CSV export.
+screens/
+Full-page UI components.
 
-Future planned dependencies (not yet added): local DB (Hive or SQLite), REST backend, cloud sync.
+Example:
+ExpenseListScreen
+AddExpenseScreen
 
-## Key Details
+widgets/
+Reusable UI components.
 
-- Dart SDK: `^3.11.1`
-- Linting: `flutter_lints` — enforced via `analysis_options.yaml`; run `flutter analyze` before committing
-- No state management library yet — use `setState` for now until one is chosen
-- No local DB yet — data is in-memory until a persistence layer is added
+Example:
+ExpenseCard
+ExpenseListTile
+
+models/
+Data models.
+
+Example:
+Expense
+
+services/
+Business logic and data access.
+
+Example:
+ExpenseService
+StorageService
+
+--------------------------------------------------
+CODING RULES
+--------------------------------------------------
+
+Follow Flutter best practices.
+
+Rules:
+
+- Keep widgets small
+- Prefer StatelessWidget where possible
+- Extract reusable UI into widgets
+- Avoid deeply nested widgets
+- Keep business logic out of UI files
+
+File guidelines:
+
+One main widget per file.
+
+Example:
+
+ExpenseListScreen.dart
+
+--------------------------------------------------
+STATE MANAGEMENT
+--------------------------------------------------
+
+Current approach:
+
+Use `setState`.
+
+Do NOT introduce:
+
+- Riverpod
+- Bloc
+- Provider
+
+until the project complexity requires it.
+
+--------------------------------------------------
+DATA STORAGE
+--------------------------------------------------
+
+Current state:
+
+In-memory data only.
+
+Future persistence options:
+
+- Hive
+- SQLite
+
+Do not introduce a database yet unless explicitly requested.
+
+--------------------------------------------------
+DEPENDENCY RULES
+--------------------------------------------------
+
+Before adding a new dependency:
+
+- explain why it is needed
+- check if Flutter SDK already provides similar functionality
+- keep dependency count minimal
+
+--------------------------------------------------
+COMMANDS
+--------------------------------------------------
+
+Install dependencies
+
+flutter pub get
+
+Run application
+
+flutter run
+
+Static analysis
+
+flutter analyze
+
+Run tests
+
+flutter test
+
+Build Android APK
+
+flutter build apk
+
+--------------------------------------------------
+HOT RELOAD
+--------------------------------------------------
+
+During development:
+
+Press `r` in the terminal or save the file in VS Code.
+
+--------------------------------------------------
+TESTING
+--------------------------------------------------
+
+When adding logic:
+
+- add unit tests when appropriate
+- place tests inside the `test/` directory
+
+Example:
+
+test/expense_service_test.dart
+
+--------------------------------------------------
+WHEN IMPLEMENTING FEATURES
+--------------------------------------------------
+
+Follow this order:
+
+1. Define model
+2. Implement UI
+3. Add logic/service
+4. Add persistence (later)
+
+--------------------------------------------------
+EXPECTED FIRST FEATURES
+--------------------------------------------------
+
+1. Expense model
+2. Expense list screen
+3. Add expense form
+4. Basic local state management
+
+--------------------------------------------------
+GENERAL GUIDELINES FOR CLAUDE
+--------------------------------------------------
+
+Before making large changes:
+
+- analyze the existing structure
+- keep code consistent with existing patterns
+- prefer incremental changes
+
+If unsure about architecture decisions:
+
+propose a plan before implementing.
