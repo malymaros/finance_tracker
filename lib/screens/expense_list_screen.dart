@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/expense.dart';
 import '../services/expense_service.dart';
 import '../widgets/expense_list_tile.dart';
+import 'add_expense_screen.dart';
 
 class ExpenseListScreen extends StatefulWidget {
   const ExpenseListScreen({super.key});
@@ -20,21 +21,15 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     _expenses = _service.getAll();
   }
 
-  void _addDemoExpense() {
-    final categories = ['Food', 'Transport', 'Shopping', 'Health', 'Other'];
-    final index = _expenses.length % categories.length;
-
-    _service.add(Expense(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      amount: ((_expenses.length + 1) * 7.5),
-      category: categories[index],
-      date: DateTime.now(),
-      note: 'Demo expense #${_expenses.length + 1}',
-    ));
-
-    setState(() {
-      _expenses = _service.getAll();
-    });
+  Future<void> _navigateToAddExpense() async {
+    final added = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(
+        builder: (_) => AddExpenseScreen(service: _service),
+      ),
+    );
+    if (added == true) {
+      setState(() => _expenses = _service.getAll());
+    }
   }
 
   @override
@@ -45,7 +40,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       ),
       body: _expenses.isEmpty ? _buildEmptyState() : _buildList(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addDemoExpense,
+        onPressed: _navigateToAddExpense,
         tooltip: 'Add Expense',
         child: const Icon(Icons.add),
       ),
@@ -76,7 +71,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Widget _buildList() {
     return ListView.separated(
       itemCount: _expenses.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
+      separatorBuilder: (context, index) => const Divider(height: 1),
       itemBuilder: (context, index) =>
           ExpenseListTile(expense: _expenses[index]),
     );

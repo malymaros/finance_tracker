@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/expense.dart';
+import '../models/expense_category.dart';
 
 class ExpenseListTile extends StatelessWidget {
   final Expense expense;
@@ -13,12 +14,12 @@ class ExpenseListTile extends StatelessWidget {
 
     return ListTile(
       leading: CircleAvatar(
-        child: Text(expense.category[0].toUpperCase()),
+        child: Icon(categoryIcon(expense.category), size: 20),
       ),
       title: Text(expense.category),
-      subtitle: Text(expense.note ?? formattedDate),
+      subtitle: Text(expense.note != null ? '${expense.note} · $formattedDate' : formattedDate),
       trailing: Text(
-        '\$${expense.amount.toStringAsFixed(2)}',
+        '${expense.amount.toStringAsFixed(2)} €',
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
     );

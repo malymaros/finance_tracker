@@ -30,7 +30,7 @@ void main() {
       await tester.pumpWidget(wrapInMaterial(ExpenseListTile(
         expense: Expense(id: '1', amount: 25.5, category: 'Food', date: date),
       )));
-      expect(find.text('\$25.50'), findsOneWidget);
+      expect(find.text('25.50 €'), findsOneWidget);
     });
 
     testWidgets('shows note when provided', (tester) async {
@@ -42,7 +42,7 @@ void main() {
             date: date,
             note: 'Bus ticket'),
       )));
-      expect(find.text('Bus ticket'), findsOneWidget);
+      expect(find.text('Bus ticket · 2024-03-05'), findsOneWidget);
     });
 
     testWidgets('shows formatted date when note is null', (tester) async {
@@ -53,11 +53,11 @@ void main() {
       expect(find.text('2024-03-05'), findsOneWidget);
     });
 
-    testWidgets('shows first letter of category in avatar', (tester) async {
+    testWidgets('shows category icon in avatar', (tester) async {
       await tester.pumpWidget(wrapInMaterial(ExpenseListTile(
         expense: Expense(id: '1', amount: 10.0, category: 'Health', date: date),
       )));
-      expect(find.text('H'), findsOneWidget);
+      expect(find.byIcon(Icons.favorite), findsOneWidget);
     });
   });
 }
