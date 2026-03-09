@@ -25,7 +25,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  final _requestedPlanPeriod = ValueNotifier<YearMonth?>(null);
+  final _selectedPeriod = ValueNotifier<YearMonth>(YearMonth.now());
   late final List<Widget> _screens;
 
   @override
@@ -34,26 +34,23 @@ class _MainScreenState extends State<MainScreen> {
     _screens = [
       ExpenseListScreen(
           repository: widget.repository,
-          planRepository: widget.planRepository),
+          planRepository: widget.planRepository,
+          selectedPeriod: _selectedPeriod),
       PlanScreen(
           planRepository: widget.planRepository,
-          requestedPeriod: _requestedPlanPeriod),
+          selectedPeriod: _selectedPeriod),
       ReportScreen(
           repository: widget.repository,
           planRepository: widget.planRepository,
-          onNavigateToPlanMonth: _navigateToPlanMonth),
+          selectedPeriod: _selectedPeriod,
+          onNavigateToPlan: () => setState(() => _selectedIndex = 1)),
     ];
   }
 
   @override
   void dispose() {
-    _requestedPlanPeriod.dispose();
+    _selectedPeriod.dispose();
     super.dispose();
-  }
-
-  void _navigateToPlanMonth(int year, int month) {
-    _requestedPlanPeriod.value = YearMonth(year, month);
-    setState(() => _selectedIndex = 1);
   }
 
   Future<void> _resetWithSeedData(BuildContext context) async {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/expense_list_screen.dart';
 import 'package:finance_tracker/screens/add_expense_screen.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
@@ -9,6 +10,7 @@ Widget wrapInMaterial(FinanceRepository repo) => MaterialApp(
       home: ExpenseListScreen(
         repository: repo,
         planRepository: PlanRepository(persist: false),
+        selectedPeriod: ValueNotifier(YearMonth.now()),
       ),
     );
 

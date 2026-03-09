@@ -6,26 +6,29 @@ import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/financial_type_breakdown.dart';
 import '../../models/monthly_summary.dart';
+import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/finance_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../services/report_aggregator.dart';
+import '../../widgets/period_navigator.dart';
 
 enum _ReportMode { monthly, yearly, overview }
 
 class ReportScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
+  final ValueNotifier<YearMonth> selectedPeriod;
 
-  /// Called when the user taps an overview row to navigate to the Plan tab
-  /// for that specific month.
-  final void Function(int year, int month) onNavigateToPlanMonth;
+  /// Called when the user taps an overview row to navigate to the Plan tab.
+  final VoidCallback onNavigateToPlan;
 
   const ReportScreen({
     super.key,
     required this.repository,
     required this.planRepository,
-    required this.onNavigateToPlanMonth,
+    required this.selectedPeriod,
+    required this.onNavigateToPlan,
   });
 
   @override
@@ -36,14 +39,9 @@ class _ReportScreenState extends State<ReportScreen> {
   static const _pieChartThresholdPct = 10.0;
 
   _ReportMode _mode = _ReportMode.monthly;
-  late int _year;
-  late int _month;
 
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
+  int get _year => widget.selectedPeriod.value.year;
+  int get _month => widget.selectedPeriod.value.month;
 
   static const _monthAbbr = [
     '',
@@ -54,40 +52,16 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    _year = now.year;
-    _month = now.month;
+    widget.selectedPeriod.addListener(_onPeriodChanged);
   }
 
-  void _previousPeriod() {
-    setState(() {
-      if (_mode == _ReportMode.monthly) {
-        if (_month == 1) {
-          _month = 12;
-          _year--;
-        } else {
-          _month--;
-        }
-      } else {
-        _year--;
-      }
-    });
+  @override
+  void dispose() {
+    widget.selectedPeriod.removeListener(_onPeriodChanged);
+    super.dispose();
   }
 
-  void _nextPeriod() {
-    setState(() {
-      if (_mode == _ReportMode.monthly) {
-        if (_month == 12) {
-          _month = 1;
-          _year++;
-        } else {
-          _month++;
-        }
-      } else {
-        _year++;
-      }
-    });
-  }
+  void _onPeriodChanged() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
@@ -100,10 +74,7 @@ class _ReportScreenState extends State<ReportScreen> {
           return Column(
             children: [
               _buildModeToggle(),
-              if (_mode == _ReportMode.monthly || _mode == _ReportMode.yearly)
-                _buildPeriodNavigator()
-              else
-                _buildYearNavigator(),
+              _buildPeriodNavigator(),
               const Divider(height: 1),
               Expanded(child: _buildContent()),
             ],
@@ -141,59 +112,13 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Widget _buildPeriodNavigator() {
-    final label = _mode == _ReportMode.monthly
-        ? '${_monthNames[_month]} $_year'
-        : '$_year';
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.chevron_left),
-            onPressed: _previousPeriod,
-          ),
-          SizedBox(
-            width: 180,
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.chevron_right),
-            onPressed: _nextPeriod,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildYearNavigator() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.chevron_left),
-            onPressed: () => setState(() => _year--),
-          ),
-          SizedBox(
-            width: 180,
-            child: Text(
-              '$_year',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.chevron_right),
-            onPressed: () => setState(() => _year++),
-          ),
-        ],
-      ),
+    final yearOnly = _mode != _ReportMode.monthly;
+    return PeriodNavigator(
+      selected: widget.selectedPeriod.value,
+      yearOnly: yearOnly,
+      onChanged: (ym) => setState(() {
+        widget.selectedPeriod.value = ym;
+      }),
     );
   }
 
@@ -274,7 +199,10 @@ class _ReportScreenState extends State<ReportScreen> {
         : '${diff.toStringAsFixed(0)} €';
 
     return InkWell(
-      onTap: () => widget.onNavigateToPlanMonth(_year, s.month),
+      onTap: () {
+        widget.selectedPeriod.value = YearMonth(_year, s.month);
+        widget.onNavigateToPlan();
+      },
       child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(

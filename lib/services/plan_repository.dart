@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/plan_item.dart';
+import '../models/year_month.dart';
 
 class PlanRepository extends ChangeNotifier {
   final bool _persist;
@@ -16,6 +17,16 @@ class PlanRepository extends ChangeNotifier {
   }
 
   List<PlanItem> get items => List.unmodifiable(_items);
+
+  YearMonth? get earliestDataMonth {
+    if (_items.isEmpty) return null;
+    return _items.map((i) => i.validFrom).reduce((a, b) => a.isBefore(b) ? a : b);
+  }
+
+  YearMonth? get latestDataMonth {
+    if (_items.isEmpty) return null;
+    return _items.map((i) => i.validFrom).reduce((a, b) => a.isAfter(b) ? a : b);
+  }
 
   // ── Mutations ────────────────────────────────────────────────────────────
 

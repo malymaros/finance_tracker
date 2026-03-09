@@ -4,20 +4,18 @@ import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/plan_repository.dart';
+import '../../widgets/period_navigator.dart';
 import '../../widgets/plan_item_tile.dart';
 import 'add_plan_item_screen.dart';
 
 class PlanScreen extends StatefulWidget {
   final PlanRepository planRepository;
-
-  /// When non-null, the screen listens for requested navigation to a specific
-  /// month (set by MainScreen when the user taps an Overview row).
-  final ValueNotifier<YearMonth?>? requestedPeriod;
+  final ValueNotifier<YearMonth> selectedPeriod;
 
   const PlanScreen({
     super.key,
     required this.planRepository,
-    this.requestedPeriod,
+    required this.selectedPeriod,
   });
 
   @override
@@ -25,71 +23,24 @@ class PlanScreen extends StatefulWidget {
 }
 
 class _PlanScreenState extends State<PlanScreen> {
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
-
   bool _isMonthly = true;
-  late int _year;
-  late int _month;
+
+  int get _year => widget.selectedPeriod.value.year;
+  int get _month => widget.selectedPeriod.value.month;
 
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    _year = now.year;
-    _month = now.month;
-    widget.requestedPeriod?.addListener(_onRequestedPeriod);
+    widget.selectedPeriod.addListener(_onPeriodChanged);
   }
 
   @override
   void dispose() {
-    widget.requestedPeriod?.removeListener(_onRequestedPeriod);
+    widget.selectedPeriod.removeListener(_onPeriodChanged);
     super.dispose();
   }
 
-  void _onRequestedPeriod() {
-    final ym = widget.requestedPeriod!.value;
-    if (ym == null) return;
-    setState(() {
-      _isMonthly = true;
-      _year = ym.year;
-      _month = ym.month;
-    });
-    widget.requestedPeriod!.value = null; // consume
-  }
-
-  void _previousPeriod() {
-    setState(() {
-      if (_isMonthly) {
-        if (_month == 1) {
-          _month = 12;
-          _year--;
-        } else {
-          _month--;
-        }
-      } else {
-        _year--;
-      }
-    });
-  }
-
-  void _nextPeriod() {
-    setState(() {
-      if (_isMonthly) {
-        if (_month == 12) {
-          _month = 1;
-          _year++;
-        } else {
-          _month++;
-        }
-      } else {
-        _year++;
-      }
-    });
-  }
+  void _onPeriodChanged() => setState(() {});
 
   double _displayAmount(PlanItem item) {
     final all = widget.planRepository.items;
@@ -194,32 +145,12 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   Widget _buildPeriodNavigator() {
-    final label =
-        _isMonthly ? '${_monthNames[_month]} $_year' : '$_year';
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.chevron_left),
-            onPressed: _previousPeriod,
-          ),
-          SizedBox(
-            width: 180,
-            child: Text(
-              label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                  fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.chevron_right),
-            onPressed: _nextPeriod,
-          ),
-        ],
-      ),
+    return PeriodNavigator(
+      selected: widget.selectedPeriod.value,
+      yearOnly: !_isMonthly,
+      onChanged: (ym) => setState(() {
+        widget.selectedPeriod.value = ym;
+      }),
     );
   }
 

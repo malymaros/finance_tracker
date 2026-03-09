@@ -8,6 +8,7 @@ import '../models/expense.dart';
 import '../models/fixed_cost.dart';
 import '../models/income_entry.dart';
 import '../models/report_line.dart';
+import '../models/year_month.dart';
 
 class FinanceRepository extends ChangeNotifier {
   final bool _persist;
@@ -31,6 +32,26 @@ class FinanceRepository extends ChangeNotifier {
   List<Expense> get expenses => List.unmodifiable(_expenses);
   List<IncomeEntry> get income => List.unmodifiable(_income);
   List<FixedCost> get fixedCosts => List.unmodifiable(_fixedCosts);
+
+  YearMonth? get earliestDataMonth {
+    final candidates = <YearMonth>[
+      ..._expenses.map((e) => YearMonth(e.date.year, e.date.month)),
+      ..._income.map((e) => YearMonth(e.date.year, e.date.month)),
+      ..._fixedCosts.map((fc) => YearMonth(fc.startYear, fc.startMonth)),
+    ];
+    if (candidates.isEmpty) return null;
+    return candidates.reduce((a, b) => a.isBefore(b) ? a : b);
+  }
+
+  YearMonth? get latestDataMonth {
+    final candidates = <YearMonth>[
+      ..._expenses.map((e) => YearMonth(e.date.year, e.date.month)),
+      ..._income.map((e) => YearMonth(e.date.year, e.date.month)),
+      ..._fixedCosts.map((fc) => YearMonth(fc.startYear, fc.startMonth)),
+    ];
+    if (candidates.isEmpty) return null;
+    return candidates.reduce((a, b) => a.isAfter(b) ? a : b);
+  }
 
   // ── Mutations ────────────────────────────────────────────────────────────
 

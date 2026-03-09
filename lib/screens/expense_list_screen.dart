@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/budget_status.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
+import '../models/year_month.dart';
 import '../services/budget_calculator.dart';
 import '../services/finance_repository.dart';
 import '../services/plan_repository.dart';
@@ -10,6 +11,7 @@ import '../widgets/budget_progress_bar.dart';
 import '../widgets/expense_category_group.dart';
 import '../widgets/expense_list_tile.dart';
 import '../widgets/month_budget_summary.dart';
+import '../widgets/period_navigator.dart';
 import '../widgets/swipeable_tile.dart';
 import 'add_expense_screen.dart';
 
@@ -18,11 +20,13 @@ enum _ViewMode { items, byCategory }
 class ExpenseListScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
+  final ValueNotifier<YearMonth> selectedPeriod;
 
   const ExpenseListScreen({
     super.key,
     required this.repository,
     required this.planRepository,
+    required this.selectedPeriod,
   });
 
   @override
@@ -36,39 +40,23 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
 
-  late int _year;
-  late int _month;
+  int get _year => widget.selectedPeriod.value.year;
+  int get _month => widget.selectedPeriod.value.month;
   _ViewMode _mode = _ViewMode.items;
 
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
-    _year = now.year;
-    _month = now.month;
+    widget.selectedPeriod.addListener(_onPeriodChanged);
   }
 
-  void _previousMonth() {
-    setState(() {
-      if (_month == 1) {
-        _month = 12;
-        _year--;
-      } else {
-        _month--;
-      }
-    });
+  @override
+  void dispose() {
+    widget.selectedPeriod.removeListener(_onPeriodChanged);
+    super.dispose();
   }
 
-  void _nextMonth() {
-    setState(() {
-      if (_month == 12) {
-        _month = 1;
-        _year++;
-      } else {
-        _month++;
-      }
-    });
-  }
+  void _onPeriodChanged() => setState(() {});
 
   bool _isCurrentMonth(DateTime now) =>
       _year == now.year && _month == now.month;
@@ -135,30 +123,29 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   // ── Month navigator ────────────────────────────────────────────────────────
 
   Widget _buildMonthNavigator() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.chevron_left),
-            onPressed: _previousMonth,
-          ),
-          SizedBox(
-            width: 180,
-            child: Text(
-              '${_monthNames[_month]} $_year',
-              textAlign: TextAlign.center,
-              style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.chevron_right),
-            onPressed: _nextMonth,
-          ),
-        ],
-      ),
+    final earliest = widget.repository.earliestDataMonth;
+    final latest = widget.repository.latestDataMonth;
+
+    // Expand bounds by one month so users can navigate just beyond actual data
+    final min = earliest == null
+        ? null
+        : (earliest.month == 1
+            ? YearMonth(earliest.year - 1, 12)
+            : YearMonth(earliest.year, earliest.month - 1));
+    final max = latest == null
+        ? null
+        : (latest.month == 12
+            ? YearMonth(latest.year + 1, 1)
+            : YearMonth(latest.year, latest.month + 1));
+
+    return PeriodNavigator(
+      selected: widget.selectedPeriod.value,
+      yearOnly: false,
+      min: min,
+      max: max,
+      onChanged: (ym) => setState(() {
+        widget.selectedPeriod.value = ym;
+      }),
     );
   }
 
