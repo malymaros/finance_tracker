@@ -9,6 +9,11 @@ class YearMonth implements Comparable<YearMonth> {
     return YearMonth(now.year, now.month);
   }
 
+  YearMonth addMonths(int n) {
+    final totalMonths = (year * 12 + month - 1) + n;
+    return YearMonth(totalMonths ~/ 12, totalMonths % 12 + 1);
+  }
+
   bool isBefore(YearMonth other) =>
       year < other.year || (year == other.year && month < other.month);
 

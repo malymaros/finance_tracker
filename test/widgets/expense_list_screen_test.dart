@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/models/period_bounds.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/expense_list_screen.dart';
 import 'package:finance_tracker/screens/add_expense_screen.dart';
@@ -11,6 +12,7 @@ Widget wrapInMaterial(FinanceRepository repo) => MaterialApp(
         repository: repo,
         planRepository: PlanRepository(persist: false),
         selectedPeriod: ValueNotifier(YearMonth.now()),
+        periodBounds: ValueNotifier(const PeriodBounds()),
       ),
     );
 

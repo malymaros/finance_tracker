@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../models/period_bounds.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
@@ -11,11 +12,13 @@ import 'add_plan_item_screen.dart';
 class PlanScreen extends StatefulWidget {
   final PlanRepository planRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
+  final ValueNotifier<PeriodBounds> periodBounds;
 
   const PlanScreen({
     super.key,
     required this.planRepository,
     required this.selectedPeriod,
+    required this.periodBounds,
   });
 
   @override
@@ -145,9 +148,12 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   Widget _buildPeriodNavigator() {
+    final bounds = widget.periodBounds.value;
     return PeriodNavigator(
       selected: widget.selectedPeriod.value,
       yearOnly: !_isMonthly,
+      min: bounds.min,
+      max: bounds.max,
       onChanged: (ym) => setState(() {
         widget.selectedPeriod.value = ym;
       }),

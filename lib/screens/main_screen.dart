@@ -1,8 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../models/period_bounds.dart';
 import '../models/year_month.dart';
 import '../services/finance_repository.dart';
+import '../services/period_bounds_service.dart';
 import '../services/plan_repository.dart';
 import '../services/seed_data.dart';
 import 'expense_list_screen.dart';
@@ -26,30 +28,53 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   final _selectedPeriod = ValueNotifier<YearMonth>(YearMonth.now());
+  final _periodBounds = ValueNotifier<PeriodBounds>(const PeriodBounds());
   late final List<Widget> _screens;
 
   @override
   void initState() {
     super.initState();
+    widget.repository.addListener(_updateBounds);
+    widget.planRepository.addListener(_updateBounds);
+    _updateBounds();
     _screens = [
       ExpenseListScreen(
           repository: widget.repository,
           planRepository: widget.planRepository,
-          selectedPeriod: _selectedPeriod),
+          selectedPeriod: _selectedPeriod,
+          periodBounds: _periodBounds),
       PlanScreen(
           planRepository: widget.planRepository,
-          selectedPeriod: _selectedPeriod),
+          selectedPeriod: _selectedPeriod,
+          periodBounds: _periodBounds),
       ReportScreen(
           repository: widget.repository,
           planRepository: widget.planRepository,
           selectedPeriod: _selectedPeriod,
+          periodBounds: _periodBounds,
           onNavigateToPlan: () => setState(() => _selectedIndex = 1)),
     ];
   }
 
+  void _updateBounds() {
+    final bounds = PeriodBoundsService.compute(
+      financeEarliest: widget.repository.earliestDataMonth,
+      financeLatest: widget.repository.latestDataMonth,
+      planEarliest: widget.planRepository.earliestDataMonth,
+      planLatest: widget.planRepository.latestDataMonth,
+    );
+    _periodBounds.value = bounds;
+    if (!bounds.allows(_selectedPeriod.value)) {
+      _selectedPeriod.value = YearMonth.now();
+    }
+  }
+
   @override
   void dispose() {
+    widget.repository.removeListener(_updateBounds);
+    widget.planRepository.removeListener(_updateBounds);
     _selectedPeriod.dispose();
+    _periodBounds.dispose();
     super.dispose();
   }
 

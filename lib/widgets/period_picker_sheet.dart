@@ -59,6 +59,12 @@ class _PeriodPickerSheetState extends State<_PeriodPickerSheet> {
     return false;
   }
 
+  bool get _prevYearDisabled =>
+      widget.min != null && _pickerYear <= widget.min!.year;
+
+  bool get _nextYearDisabled =>
+      widget.max != null && _pickerYear >= widget.max!.year;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -72,7 +78,9 @@ class _PeriodPickerSheetState extends State<_PeriodPickerSheet> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.chevron_left),
-                  onPressed: () => setState(() => _pickerYear--),
+                  onPressed: _prevYearDisabled
+                      ? null
+                      : () => setState(() => _pickerYear--),
                 ),
                 SizedBox(
                   width: 100,
@@ -87,7 +95,9 @@ class _PeriodPickerSheetState extends State<_PeriodPickerSheet> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.chevron_right),
-                  onPressed: () => setState(() => _pickerYear++),
+                  onPressed: _nextYearDisabled
+                      ? null
+                      : () => setState(() => _pickerYear++),
                 ),
               ],
             ),

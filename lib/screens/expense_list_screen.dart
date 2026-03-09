@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/budget_status.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
+import '../models/period_bounds.dart';
 import '../models/year_month.dart';
 import '../services/budget_calculator.dart';
 import '../services/finance_repository.dart';
@@ -21,12 +22,14 @@ class ExpenseListScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
+  final ValueNotifier<PeriodBounds> periodBounds;
 
   const ExpenseListScreen({
     super.key,
     required this.repository,
     required this.planRepository,
     required this.selectedPeriod,
+    required this.periodBounds,
   });
 
   @override
@@ -123,26 +126,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   // ── Month navigator ────────────────────────────────────────────────────────
 
   Widget _buildMonthNavigator() {
-    final earliest = widget.repository.earliestDataMonth;
-    final latest = widget.repository.latestDataMonth;
-
-    // Expand bounds by one month so users can navigate just beyond actual data
-    final min = earliest == null
-        ? null
-        : (earliest.month == 1
-            ? YearMonth(earliest.year - 1, 12)
-            : YearMonth(earliest.year, earliest.month - 1));
-    final max = latest == null
-        ? null
-        : (latest.month == 12
-            ? YearMonth(latest.year + 1, 1)
-            : YearMonth(latest.year, latest.month + 1));
-
+    final bounds = widget.periodBounds.value;
     return PeriodNavigator(
       selected: widget.selectedPeriod.value,
       yearOnly: false,
-      min: min,
-      max: max,
+      min: bounds.min,
+      max: bounds.max,
       onChanged: (ym) => setState(() {
         widget.selectedPeriod.value = ym;
       }),

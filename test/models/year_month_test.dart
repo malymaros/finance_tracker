@@ -36,6 +36,36 @@ void main() {
     });
   });
 
+  group('YearMonth.addMonths', () {
+    test('adds positive months within year', () {
+      expect(YearMonth(2024, 3).addMonths(2), equals(YearMonth(2024, 5)));
+    });
+
+    test('wraps forward across year boundary', () {
+      expect(YearMonth(2024, 11).addMonths(3), equals(YearMonth(2025, 2)));
+    });
+
+    test('wraps backward across year boundary', () {
+      expect(YearMonth(2024, 1).addMonths(-1), equals(YearMonth(2023, 12)));
+    });
+
+    test('subtracts within year', () {
+      expect(YearMonth(2024, 6).addMonths(-3), equals(YearMonth(2024, 3)));
+    });
+
+    test('adding zero returns same month', () {
+      expect(YearMonth(2024, 6).addMonths(0), equals(YearMonth(2024, 6)));
+    });
+
+    test('wraps from December forward', () {
+      expect(YearMonth(2024, 12).addMonths(1), equals(YearMonth(2025, 1)));
+    });
+
+    test('large addition', () {
+      expect(YearMonth(2024, 1).addMonths(13), equals(YearMonth(2025, 2)));
+    });
+  });
+
   group('YearMonth serialization', () {
     test('toJson and fromJson round-trip', () {
       final original = YearMonth(2024, 11);

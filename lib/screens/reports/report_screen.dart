@@ -6,6 +6,7 @@ import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/financial_type_breakdown.dart';
 import '../../models/monthly_summary.dart';
+import '../../models/period_bounds.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/finance_repository.dart';
@@ -19,6 +20,7 @@ class ReportScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
+  final ValueNotifier<PeriodBounds> periodBounds;
 
   /// Called when the user taps an overview row to navigate to the Plan tab.
   final VoidCallback onNavigateToPlan;
@@ -28,6 +30,7 @@ class ReportScreen extends StatefulWidget {
     required this.repository,
     required this.planRepository,
     required this.selectedPeriod,
+    required this.periodBounds,
     required this.onNavigateToPlan,
   });
 
@@ -113,9 +116,12 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Widget _buildPeriodNavigator() {
     final yearOnly = _mode != _ReportMode.monthly;
+    final bounds = widget.periodBounds.value;
     return PeriodNavigator(
       selected: widget.selectedPeriod.value,
       yearOnly: yearOnly,
+      min: bounds.min,
+      max: bounds.max,
       onChanged: (ym) => setState(() {
         widget.selectedPeriod.value = ym;
       }),
