@@ -1,218 +1,161 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with this repository.
-
-Claude should follow the architectural rules and development workflow defined here.
+Guidance for Claude Code when working in this repository.
 
 --------------------------------------------------
 PROJECT OVERVIEW
 --------------------------------------------------
 
-Finance Tracker is a Flutter mobile application for tracking personal expenses.
+Finance Tracker is a Flutter mobile app for tracking personal expenses,
+planning budgets, and analyzing spending habits.
 
-Primary goal:
-Build a simple, fast, and clean mobile application that allows users to record expenses quickly and analyze spending habits.
-
-The project intentionally explores AI-assisted development using Claude Code.
-
-Target platforms:
-- Android (primary)
-- iOS (secondary)
+Target platforms: Android (primary), iOS (secondary).
 
 --------------------------------------------------
 DEVELOPMENT PRIORITIES
 --------------------------------------------------
 
-When implementing features, prioritize:
+1. Simplicity and readability
+2. Small, reusable widgets
+3. Minimal dependencies
+4. Consistency with existing patterns
 
-1. Simplicity
-2. Readability
-3. Small reusable widgets
-4. Clear folder structure
-5. Minimal dependencies
-
-Avoid overengineering.
-
-Do not introduce complex architecture patterns unless necessary.
+Avoid overengineering. Propose a plan before large changes.
 
 --------------------------------------------------
 PROJECT STRUCTURE
 --------------------------------------------------
 
-Code should follow this structure:
-
 lib/
-  main.dart
-  screens/
-  widgets/
-  models/
-  services/
-
-screens/
-Full-page UI components.
-
-Example:
-ExpenseListScreen
-AddExpenseScreen
-
-widgets/
-Reusable UI components.
-
-Example:
-ExpenseCard
-ExpenseListTile
-
-models/
-Data models.
-
-Example:
-Expense
-
-services/
-Business logic and data access.
-
-Example:
-ExpenseService
-StorageService
+  main.dart                      Entry point; creates repositories, runs app
+  models/                        Data classes and enums
+  screens/                       Full-page UI; subfolders: fixed_costs/, income/, plan/, reports/
+  services/                      Business logic and data access
+  widgets/                       Reusable UI components
 
 --------------------------------------------------
-CODING RULES
+MODELS
 --------------------------------------------------
 
-Follow Flutter best practices.
+Expense          amount, category (ExpenseCategory), financialType, date, note?
+IncomeEntry      amount, date, type (oneTime|monthly), description?
+FixedCost        name, amount, recurrence (monthly|yearly), startYear, startMonth, category, financialType
+PlanItem         name, amount, type (income|fixedCost), frequency, validFrom (YearMonth), seriesId, category?, financialType?
+YearMonth        year, month; implements Comparable
+MonthlySummary   plannedIncome, plannedFixedCosts, spendableBudget, actualExpenses, difference
+BudgetStatus     spendableBudget, actualSpent, remaining, percentUsed, isOverBudget
+CategoryTotal    category, amount, percentage
+ReportLine       category, financialType, amount
 
-Rules:
+ExpenseCategory enum (15 values): housing, groceries, vacation, transport, insurance,
+  subscriptions, communication, health, restaurants, entertainment, clothing,
+  education, investment, gifts, other
+  — each value has .displayName, .icon, .color extensions
 
-- Keep widgets small
-- Prefer StatelessWidget where possible
-- Extract reusable UI into widgets
-- Avoid deeply nested widgets
-- Keep business logic out of UI files
+FinancialType enum: asset | consumption | insurance
+  — each value has .displayName, .icon, .color extensions
 
-File guidelines:
+All models implement toJson() / fromJson(). ExpenseCategoryX.fromJson() handles
+legacy string values via _fromLegacy(); 'drugstore' maps to other.
 
-One main widget per file.
+--------------------------------------------------
+SERVICES
+--------------------------------------------------
 
-Example:
+FinanceRepository   ChangeNotifier; owns expenses, income, fixedCosts lists;
+                    JSON file persistence (finance_data.json via path_provider);
+                    provides reportLinesForMonth/Year helpers
 
-ExpenseListScreen.dart
+PlanRepository      ChangeNotifier; owns planItems list; JSON file persistence
+                    (plan_data.json); supports version control via seriesId
+
+BudgetCalculator    Pure static class; all budget math:
+                    activeItemsForMonth, normalizedMonthlyIncome/FixedCosts,
+                    spendableBudget, budgetStatus, planFixedCostReportLines,
+                    monthlySummaries, cashFlowTotals
+
+ReportAggregator    Pure static class; categoryTotals, applyThreshold (collapses
+                    categories below a % into "Other"), financialTypeBreakdown
+
+SeedData            Debug only; applyIfEmpty (auto-seed on first debug launch),
+                    reset (clear all and reseed)
 
 --------------------------------------------------
 STATE MANAGEMENT
 --------------------------------------------------
 
-Current approach:
+- FinanceRepository and PlanRepository extend ChangeNotifier
+- Screens rebuild via ListenableBuilder(listenable: Listenable.merge([...]))
+- Local UI state (month navigation, view toggles) uses setState
+- Cross-tab signaling: ValueNotifier<YearMonth?> in MainScreen
 
-Use `setState`.
-
-Do NOT introduce:
-
-- Riverpod
-- Bloc
-- Provider
-
-until the project complexity requires it.
+Do NOT introduce Riverpod, Bloc, or Provider.
 
 --------------------------------------------------
-DATA STORAGE
+DATA PERSISTENCE
 --------------------------------------------------
 
-Current state:
+JSON files in getApplicationDocumentsDirectory():
+  finance_data.json  — expenses, income, fixedCosts
+  plan_data.json     — planItems
 
-In-memory data only.
-
-Future persistence options:
-
-- Hive
-- SQLite
-
-Do not introduce a database yet unless explicitly requested.
+Corrupt/missing files silently start fresh. No database; do not add one
+unless explicitly requested.
 
 --------------------------------------------------
-DEPENDENCY RULES
+DEPENDENCIES
 --------------------------------------------------
 
-Before adding a new dependency:
+path_provider  ^2.1.0   — app documents directory for JSON persistence
+fl_chart       ^0.69.0  — pie charts in Reports screen
 
-- explain why it is needed
-- check if Flutter SDK already provides similar functionality
-- keep dependency count minimal
-
---------------------------------------------------
-COMMANDS
---------------------------------------------------
-
-Install dependencies
-
-flutter pub get
-
-Run application
-
-flutter run
-
-Static analysis
-
-flutter analyze
-
-Run tests
-
-flutter test
-
-Build Android APK
-
-flutter build apk
+Before adding a dependency: explain why, check if Flutter SDK covers it,
+keep count minimal.
 
 --------------------------------------------------
-HOT RELOAD
+KEY PATTERNS
 --------------------------------------------------
 
-During development:
+- Enum extensions for .displayName / .icon / .color (never inline in UI)
+- SwipeableTile wraps all list items: swipe-left = delete, swipe-right = edit
+- Month navigation is consistent across screens with Dec↔Jan wraparound
+- Amounts displayed as X.XX €  (toStringAsFixed(2))
+- One widget or screen per file; StatelessWidget unless local state is needed
+- Business logic stays in services, never in UI files
 
-Press `r` in the terminal or save the file in VS Code.
+--------------------------------------------------
+SCREENS
+--------------------------------------------------
+
+MainScreen              Root; 3 tabs: Expenses / Plan / Reports
+ExpenseListScreen       Month view with navigation, budget bar, items/by-category toggle
+AddExpenseScreen        Add/edit expense form
+PlanScreen              Monthly/yearly plan view (income + fixed costs)
+AddPlanItemScreen       Add/edit plan item with type, frequency, validFrom
+ReportScreen            Monthly / yearly / overview modes; pie charts by category
+                        (pie: <10% grouped into Other, list: all categories shown)
+IncomeListScreen        List of income entries
+AddIncomeScreen         Add/edit income form
+FixedCostListScreen     List of fixed costs
+AddFixedCostScreen      Add/edit fixed cost form
 
 --------------------------------------------------
 TESTING
 --------------------------------------------------
 
-When adding logic:
+Place tests in test/ mirroring the lib/ structure.
 
-- add unit tests when appropriate
-- place tests inside the `test/` directory
+Covered: models (Expense, YearMonth), services (FinanceRepository,
+PlanRepository, BudgetCalculator, ReportAggregator), basic widget tests.
 
-Example:
-
-test/expense_service_test.dart
+When adding logic, add unit tests for services and pure functions.
 
 --------------------------------------------------
-WHEN IMPLEMENTING FEATURES
+COMMANDS
 --------------------------------------------------
 
-Follow this order:
-
-1. Define model
-2. Implement UI
-3. Add logic/service
-4. Add persistence (later)
-
---------------------------------------------------
-EXPECTED FIRST FEATURES
---------------------------------------------------
-
-1. Expense model
-2. Expense list screen
-3. Add expense form
-4. Basic local state management
-
---------------------------------------------------
-GENERAL GUIDELINES FOR CLAUDE
---------------------------------------------------
-
-Before making large changes:
-
-- analyze the existing structure
-- keep code consistent with existing patterns
-- prefer incremental changes
-
-If unsure about architecture decisions:
-
-propose a plan before implementing.
+flutter pub get        Install dependencies
+flutter run            Run application
+flutter analyze        Static analysis
+flutter test           Run tests
+flutter build apk      Build Android APK
