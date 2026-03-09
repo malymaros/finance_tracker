@@ -33,8 +33,7 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreenState extends State<ReportScreen> {
-  static const _monthlyThresholdPct = 1.0;
-  static const _yearlyThresholdPct = 5.0;
+  static const _pieChartThresholdPct = 10.0;
 
   _ReportMode _mode = _ReportMode.monthly;
   late int _year;
@@ -206,12 +205,13 @@ class _ReportScreenState extends State<ReportScreen> {
           ...BudgetCalculator.planFixedCostReportLinesForMonth(
               widget.planRepository.items, _year, _month),
         ];
-        final totals = ReportAggregator.applyThreshold(
-            ReportAggregator.categoryTotals(lines), _monthlyThresholdPct);
+        final listTotals = ReportAggregator.categoryTotals(lines);
+        final chartTotals = ReportAggregator.applyThreshold(
+            listTotals, _pieChartThresholdPct);
         final breakdown = ReportAggregator.financialTypeBreakdown(lines);
-        return totals.isEmpty
+        return listTotals.isEmpty
             ? _buildEmptyState()
-            : _buildChartAndList(totals, breakdown);
+            : _buildChartAndList(chartTotals, listTotals, breakdown);
 
       case _ReportMode.yearly:
         final lines = [
@@ -219,12 +219,13 @@ class _ReportScreenState extends State<ReportScreen> {
           ...BudgetCalculator.planFixedCostReportLinesForYear(
               widget.planRepository.items, _year),
         ];
-        final totals = ReportAggregator.applyThreshold(
-            ReportAggregator.categoryTotals(lines), _yearlyThresholdPct);
+        final listTotals = ReportAggregator.categoryTotals(lines);
+        final chartTotals = ReportAggregator.applyThreshold(
+            listTotals, _pieChartThresholdPct);
         final breakdown = ReportAggregator.financialTypeBreakdown(lines);
-        return totals.isEmpty
+        return listTotals.isEmpty
             ? _buildEmptyState()
-            : _buildChartAndList(totals, breakdown);
+            : _buildChartAndList(chartTotals, listTotals, breakdown);
 
       case _ReportMode.overview:
         return _buildOverview();
@@ -361,8 +362,10 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Widget _buildChartAndList(
-      List<CategoryTotal> totals, FinancialTypeBreakdown breakdown) {
-    final grandTotal = totals.fold(0.0, (sum, ct) => sum + ct.amount);
+      List<CategoryTotal> chartTotals,
+      List<CategoryTotal> listTotals,
+      FinancialTypeBreakdown breakdown) {
+    final grandTotal = listTotals.fold(0.0, (sum, ct) => sum + ct.amount);
 
     return SingleChildScrollView(
       child: Column(
@@ -372,7 +375,7 @@ class _ReportScreenState extends State<ReportScreen> {
             height: 220,
             child: PieChart(
               PieChartData(
-                sections: totals
+                sections: chartTotals
                     .map((ct) => PieChartSectionData(
                           value: ct.amount,
                           color: ct.category.color,
@@ -392,7 +395,7 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
           const SizedBox(height: 16),
           const Divider(height: 1),
-          ...totals.map((ct) => _buildCategoryRow(ct)),
+          ...listTotals.map((ct) => _buildCategoryRow(ct)),
           const Divider(height: 1),
           _buildTotalRow(grandTotal),
           const Divider(height: 1),
