@@ -12,10 +12,15 @@ class AddPlanItemScreen extends StatefulWidget {
   /// When non-null the form opens in edit mode.
   final PlanItem? existing;
 
+  /// Pre-selects the item type when opening the form for a new item.
+  /// Ignored when [existing] is non-null.
+  final PlanItemType? initialType;
+
   const AddPlanItemScreen({
     super.key,
     required this.planRepository,
     this.existing,
+    this.initialType,
   });
 
   @override
@@ -58,7 +63,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       _selectedCategory = e.category ?? ExpenseCategory.other;
       _selectedFinancialType = e.financialType ?? FinancialType.consumption;
     } else {
-      _type = PlanItemType.income;
+      _type = widget.initialType ?? PlanItemType.income;
       _frequency = PlanFrequency.monthly;
       _validFrom = YearMonth.now();
       _selectedCategory = ExpenseCategory.other;

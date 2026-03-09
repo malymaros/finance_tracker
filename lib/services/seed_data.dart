@@ -1,7 +1,6 @@
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
-import '../models/fixed_cost.dart';
 import '../models/income_entry.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
@@ -18,9 +17,7 @@ class SeedData {
     FinanceRepository repo,
     PlanRepository planRepo,
   ) async {
-    if (repo.expenses.isEmpty &&
-        repo.fixedCosts.isEmpty &&
-        planRepo.items.isEmpty) {
+    if (repo.expenses.isEmpty && planRepo.items.isEmpty) {
       await _apply(repo, planRepo);
     }
   }
@@ -150,59 +147,6 @@ class SeedData {
       ),
     ];
 
-    // ── Fixed costs (transaction-level) ─────────────────────────────────────
-
-    final fixedCosts = [
-      FixedCost(
-        id: id(), name: 'Rent',
-        amount: 900,
-        recurrence: Recurrence.monthly,
-        startYear: ym(5).year, startMonth: ym(5).month,
-        category: ExpenseCategory.housing,
-        financialType: FinancialType.consumption,
-      ),
-      FixedCost(
-        id: id(), name: 'Health Insurance',
-        amount: 120,
-        recurrence: Recurrence.monthly,
-        startYear: ym(5).year, startMonth: ym(5).month,
-        category: ExpenseCategory.insurance,
-        financialType: FinancialType.insurance,
-      ),
-      FixedCost(
-        id: id(), name: 'Internet',
-        amount: 35,
-        recurrence: Recurrence.monthly,
-        startYear: ym(5).year, startMonth: ym(5).month,
-        category: ExpenseCategory.communication,
-        financialType: FinancialType.consumption,
-      ),
-      FixedCost(
-        id: id(), name: 'Netflix',
-        amount: 15,
-        recurrence: Recurrence.monthly,
-        startYear: ym(5).year, startMonth: ym(5).month,
-        category: ExpenseCategory.subscriptions,
-        financialType: FinancialType.consumption,
-      ),
-      FixedCost(
-        id: id(), name: 'Spotify',
-        amount: 10,
-        recurrence: Recurrence.monthly,
-        startYear: ym(5).year, startMonth: ym(5).month,
-        category: ExpenseCategory.subscriptions,
-        financialType: FinancialType.consumption,
-      ),
-      FixedCost(
-        id: id(), name: 'Car Insurance',
-        amount: 720,
-        recurrence: Recurrence.yearly,
-        startYear: ym(2).year, startMonth: ym(2).month,
-        category: ExpenseCategory.insurance,
-        financialType: FinancialType.insurance,
-      ),
-    ];
-
     // ── Income entries (transaction-level) ───────────────────────────────────
 
     final incomeEntries = [
@@ -280,9 +224,6 @@ class SeedData {
 
     for (final item in planItems) {
       await planRepo.addPlanItem(item);
-    }
-    for (final fc in fixedCosts) {
-      await repo.addFixedCost(fc);
     }
     for (final entry in incomeEntries) {
       await repo.addIncome(entry);

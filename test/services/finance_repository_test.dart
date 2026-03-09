@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
-import 'package:finance_tracker/models/fixed_cost.dart';
 import 'package:finance_tracker/models/income_entry.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 
@@ -24,23 +23,6 @@ IncomeEntry makeIncome({
       amount: amount,
       date: date ?? DateTime(2024, 3, 1),
       type: type,
-    );
-
-FixedCost makeFixedCost({
-  String id = '1',
-  String name = 'Rent',
-  double amount = 800.0,
-  Recurrence recurrence = Recurrence.monthly,
-  int startYear = 2024,
-  int startMonth = 1,
-}) =>
-    FixedCost(
-      id: id,
-      name: name,
-      amount: amount,
-      recurrence: recurrence,
-      startYear: startYear,
-      startMonth: startMonth,
     );
 
 void main() {
@@ -170,91 +152,6 @@ void main() {
     });
   });
 
-  group('FinanceRepository — fixed costs', () {
-    test('starts with no fixed costs', () {
-      expect(FinanceRepository(persist: false).fixedCosts, isEmpty);
-    });
-
-    test('addFixedCost increases list length', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addFixedCost(makeFixedCost());
-      expect(repo.fixedCosts.length, 1);
-    });
-
-    test('monthly fixed cost applies after start month', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addFixedCost(
-          makeFixedCost(recurrence: Recurrence.monthly, startYear: 2024, startMonth: 3));
-      expect(repo.fixedCostsForMonth(2024, 2), isEmpty);
-      expect(repo.fixedCostsForMonth(2024, 3).length, 1);
-      expect(repo.fixedCostsForMonth(2024, 4).length, 1);
-      expect(repo.fixedCostsForMonth(2025, 1).length, 1);
-    });
-
-    test('yearly fixed cost applies only in start month each year', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addFixedCost(
-          makeFixedCost(recurrence: Recurrence.yearly, startYear: 2024, startMonth: 6));
-      expect(repo.fixedCostsForMonth(2024, 5), isEmpty);
-      expect(repo.fixedCostsForMonth(2024, 6).length, 1);
-      expect(repo.fixedCostsForMonth(2024, 7), isEmpty);
-      expect(repo.fixedCostsForMonth(2025, 6).length, 1);
-      expect(repo.fixedCostsForMonth(2023, 6), isEmpty);
-    });
-
-    test('totalFixedCostsForMonth sums correctly', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addFixedCost(makeFixedCost(
-          id: '1', amount: 800, recurrence: Recurrence.monthly, startYear: 2024, startMonth: 1));
-      await repo.addFixedCost(makeFixedCost(
-          id: '2', amount: 50, recurrence: Recurrence.monthly, startYear: 2024, startMonth: 1));
-      expect(repo.totalFixedCostsForMonth(2024, 6), 850.0);
-    });
-
-    test('totalFixedCostsForYear counts monthly costs per active month', () async {
-      final repo = FinanceRepository(persist: false);
-      // Starts July 2024 — active for 6 months in 2024
-      await repo.addFixedCost(makeFixedCost(
-          amount: 100, recurrence: Recurrence.monthly, startYear: 2024, startMonth: 7));
-      expect(repo.totalFixedCostsForYear(2024), 600.0);
-      expect(repo.totalFixedCostsForYear(2025), 1200.0);
-    });
-
-    test('totalFixedCostsForYear includes yearly cost once', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addFixedCost(makeFixedCost(
-          amount: 600, recurrence: Recurrence.yearly, startYear: 2024, startMonth: 3));
-      expect(repo.totalFixedCostsForYear(2023), 0.0);
-      expect(repo.totalFixedCostsForYear(2024), 600.0);
-      expect(repo.totalFixedCostsForYear(2025), 600.0);
-    });
-
-    test('notifies listeners when fixed cost is added', () async {
-      final repo = FinanceRepository(persist: false);
-      var notified = false;
-      repo.addListener(() => notified = true);
-      await repo.addFixedCost(makeFixedCost());
-      expect(notified, isTrue);
-    });
-
-    test('removeFixedCost removes by id', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addFixedCost(makeFixedCost(id: 'a'));
-      await repo.addFixedCost(makeFixedCost(id: 'b'));
-      await repo.removeFixedCost('a');
-      expect(repo.fixedCosts.length, 1);
-      expect(repo.fixedCosts.first.id, 'b');
-    });
-
-    test('updateFixedCost replaces the matching item', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addFixedCost(makeFixedCost(id: '1', amount: 800.0));
-      await repo.updateFixedCost(makeFixedCost(id: '1', amount: 1200.0));
-      expect(repo.fixedCosts.length, 1);
-      expect(repo.fixedCosts.first.amount, 1200.0);
-    });
-  });
-
   group('Expense serialization', () {
     test('toJson and fromJson round-trip', () {
       final original = Expense(
@@ -300,43 +197,6 @@ void main() {
         'description': null,
       });
       expect(entry.description, isNull);
-    });
-  });
-
-  group('FixedCost serialization', () {
-    test('toJson and fromJson round-trip with all fields', () {
-      final original = FixedCost(
-        id: 'fc1',
-        name: 'Insurance',
-        amount: 500.0,
-        recurrence: Recurrence.yearly,
-        startYear: 2024,
-        startMonth: 3,
-        category: ExpenseCategory.investment,
-        financialType: FinancialType.asset,
-      );
-      final restored = FixedCost.fromJson(original.toJson());
-      expect(restored.id, original.id);
-      expect(restored.name, original.name);
-      expect(restored.amount, original.amount);
-      expect(restored.recurrence, original.recurrence);
-      expect(restored.startYear, original.startYear);
-      expect(restored.startMonth, original.startMonth);
-      expect(restored.category, original.category);
-      expect(restored.financialType, original.financialType);
-    });
-
-    test('fromJson uses defaults for missing category and financialType', () {
-      final fc = FixedCost.fromJson({
-        'id': '1',
-        'name': 'Rent',
-        'amount': 800.0,
-        'recurrence': 'monthly',
-        'startYear': 2024,
-        'startMonth': 1,
-      });
-      expect(fc.category, ExpenseCategory.other);
-      expect(fc.financialType, FinancialType.consumption);
     });
   });
 
@@ -399,17 +259,6 @@ void main() {
       expect(repo.reportLinesForMonth(2024, 4).length, 1);
       expect(repo.reportLinesForMonth(2024, 5).length, 0);
     });
-
-    test('does NOT include transaction-level fixed costs', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addFixedCost(makeFixedCost(
-          amount: 800,
-          recurrence: Recurrence.monthly,
-          startYear: 2024,
-          startMonth: 1));
-      // No expenses added — report lines must be empty
-      expect(repo.reportLinesForMonth(2024, 3), isEmpty);
-    });
   });
 
   group('FinanceRepository — reportLinesForYear', () {
@@ -430,16 +279,6 @@ void main() {
           id: '3', amount: 30, category: ExpenseCategory.groceries,
           date: DateTime(2025, 1, 1)));
       expect(repo.reportLinesForYear(2024).length, 2);
-    });
-
-    test('does NOT include transaction-level fixed costs', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addFixedCost(makeFixedCost(
-          amount: 800,
-          recurrence: Recurrence.monthly,
-          startYear: 2024,
-          startMonth: 1));
-      expect(repo.reportLinesForYear(2024), isEmpty);
     });
   });
 }

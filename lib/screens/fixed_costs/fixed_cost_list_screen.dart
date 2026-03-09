@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
 
-import '../../models/fixed_cost.dart';
-import '../../services/finance_repository.dart';
-import '../../widgets/fixed_cost_tile.dart';
-import '../../widgets/swipeable_tile.dart';
-import 'add_fixed_cost_screen.dart';
+import '../../models/plan_item.dart';
+import '../../services/budget_calculator.dart';
+import '../../services/plan_repository.dart';
+import '../../widgets/plan_item_tile.dart';
+import '../plan/add_plan_item_screen.dart';
 
 class FixedCostListScreen extends StatelessWidget {
-  final FinanceRepository repository;
+  final PlanRepository planRepository;
 
-  const FixedCostListScreen({super.key, required this.repository});
+  const FixedCostListScreen({super.key, required this.planRepository});
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: repository,
+      listenable: planRepository,
       builder: (context, _) {
-        final costs = repository.fixedCosts;
         final now = DateTime.now();
-        final monthlyTotal =
-            repository.totalFixedCostsForMonth(now.year, now.month);
-        final yearlyTotal = repository.totalFixedCostsForYear(now.year);
+        final allItems = planRepository.items;
+
+        final costs = BudgetCalculator.activeItemsForMonth(
+                allItems, now.year, now.month)
+            .where((i) => i.type == PlanItemType.fixedCost)
+            .toList();
+
+        final monthlyTotal = BudgetCalculator.normalizedMonthlyFixedCosts(
+            allItems, now.year, now.month);
+        final yearlyTotal =
+            BudgetCalculator.yearlyFixedCosts(allItems, now.year);
 
         return Scaffold(
           appBar: AppBar(title: const Text('Fixed Costs')),
@@ -46,11 +53,12 @@ class FixedCostListScreen extends StatelessWidget {
   }
 
   void _navigateToAdd(BuildContext context) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => AddFixedCostScreen(repository: repository),
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => AddPlanItemScreen(
+        planRepository: planRepository,
+        initialType: PlanItemType.fixedCost,
       ),
-    );
+    ));
   }
 
   Widget _buildEmptyState() {
@@ -69,22 +77,20 @@ class FixedCostListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildList(BuildContext context, List<FixedCost> costs) {
+  Widget _buildList(BuildContext context, List<PlanItem> costs) {
     return ListView.separated(
       itemCount: costs.length,
       separatorBuilder: (_, _) => const Divider(height: 1),
-      itemBuilder: (_, i) => SwipeableTile(
-        itemId: costs[i].id,
-        onDelete: () => repository.removeFixedCost(costs[i].id),
-        onEdit: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => AddFixedCostScreen(
-              repository: repository,
-              existing: costs[i],
-            ),
+      itemBuilder: (_, i) => PlanItemTile(
+        item: costs[i],
+        displayAmount: costs[i].amount,
+        onDelete: () => planRepository.removePlanItem(costs[i].id),
+        onEdit: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) => AddPlanItemScreen(
+            planRepository: planRepository,
+            existing: costs[i],
           ),
-        ),
-        child: FixedCostTile(cost: costs[i]),
+        )),
       ),
     );
   }
