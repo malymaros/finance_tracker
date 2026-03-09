@@ -66,6 +66,14 @@ class ReportAggregator {
     ];
   }
 
+  /// Merges expense report lines with plan fixed-cost report lines into a
+  /// single list. Both sources are combined before passing to aggregators.
+  static List<ReportLine> mergedLines(
+    List<ReportLine> expenseLines,
+    List<ReportLine> planFixedCostLines,
+  ) =>
+      [...expenseLines, ...planFixedCostLines];
+
   /// Computes percentage breakdown by financial type across all [lines].
   static FinancialTypeBreakdown financialTypeBreakdown(List<ReportLine> lines) {
     if (lines.isEmpty) {

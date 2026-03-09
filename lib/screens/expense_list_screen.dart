@@ -242,18 +242,22 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   // ── Mode B: grouped by category ───────────────────────────────────────────
 
-  Widget _buildCategoryList(List<Expense> expenses) {
+  static List<MapEntry<ExpenseCategory, List<Expense>>> _groupedByCategory(
+      List<Expense> expenses) {
     final groups = <ExpenseCategory, List<Expense>>{};
     for (final e in expenses) {
       groups.putIfAbsent(e.category, () => []).add(e);
     }
-    final sorted = groups.entries.toList()
+    return groups.entries.toList()
       ..sort((a, b) {
         final ta = a.value.fold(0.0, (s, e) => s + e.amount);
         final tb = b.value.fold(0.0, (s, e) => s + e.amount);
         return tb.compareTo(ta);
       });
+  }
 
+  Widget _buildCategoryList(List<Expense> expenses) {
+    final sorted = _groupedByCategory(expenses);
     return ListView.separated(
       itemCount: sorted.length,
       separatorBuilder: (_, _) => const Divider(height: 1),

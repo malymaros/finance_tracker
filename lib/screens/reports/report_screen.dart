@@ -131,11 +131,11 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget _buildContent() {
     switch (_mode) {
       case _ReportMode.monthly:
-        final lines = [
-          ...widget.repository.reportLinesForMonth(_year, _month),
-          ...BudgetCalculator.planFixedCostReportLinesForMonth(
+        final lines = ReportAggregator.mergedLines(
+          widget.repository.reportLinesForMonth(_year, _month),
+          BudgetCalculator.planFixedCostReportLinesForMonth(
               widget.planRepository.items, _year, _month),
-        ];
+        );
         final listTotals = ReportAggregator.categoryTotals(lines);
         final chartTotals = ReportAggregator.applyThreshold(
             listTotals, _pieChartThresholdPct);
@@ -145,11 +145,11 @@ class _ReportScreenState extends State<ReportScreen> {
             : _buildChartAndList(chartTotals, listTotals, breakdown);
 
       case _ReportMode.yearly:
-        final lines = [
-          ...widget.repository.reportLinesForYear(_year),
-          ...BudgetCalculator.planFixedCostReportLinesForYear(
+        final lines = ReportAggregator.mergedLines(
+          widget.repository.reportLinesForYear(_year),
+          BudgetCalculator.planFixedCostReportLinesForYear(
               widget.planRepository.items, _year),
-        ];
+        );
         final listTotals = ReportAggregator.categoryTotals(lines);
         final chartTotals = ReportAggregator.applyThreshold(
             listTotals, _pieChartThresholdPct);
@@ -206,7 +206,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
     return InkWell(
       onTap: () {
-        widget.selectedPeriod.value = YearMonth(_year, s.month);
+        widget.selectedPeriod.value = YearMonth(_year, s.period.month);
         widget.onNavigateToPlan();
       },
       child: Padding(
@@ -216,7 +216,7 @@ class _ReportScreenState extends State<ReportScreen> {
           SizedBox(
             width: 36,
             child: Text(
-              _monthAbbr[s.month],
+              _monthAbbr[s.period.month],
               style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,

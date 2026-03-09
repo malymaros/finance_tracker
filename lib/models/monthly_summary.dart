@@ -1,6 +1,7 @@
+import 'year_month.dart';
+
 class MonthlySummary {
-  final int year;
-  final int month;
+  final YearMonth period;
 
   /// Normalized planned income (yearly items divided by 12).
   final double plannedIncome;
@@ -19,8 +20,7 @@ class MonthlySummary {
   final double difference;
 
   const MonthlySummary({
-    required this.year,
-    required this.month,
+    required this.period,
     required this.plannedIncome,
     required this.plannedFixedCosts,
     required this.spendableBudget,

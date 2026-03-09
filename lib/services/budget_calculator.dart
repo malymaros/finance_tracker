@@ -246,8 +246,7 @@ class BudgetCalculator {
           .fold(0.0, (sum, e) => sum + e.amount);
 
       return MonthlySummary(
-        year: year,
-        month: month,
+        period: YearMonth(year, month),
         plannedIncome: income,
         plannedFixedCosts: fixedCosts,
         spendableBudget: spendable,

@@ -402,8 +402,8 @@ void main() {
     test('months are numbered 1 through 12', () {
       final summaries = BudgetCalculator.monthlySummaries([], [], 2024);
       for (int i = 0; i < 12; i++) {
-        expect(summaries[i].month, i + 1);
-        expect(summaries[i].year, 2024);
+        expect(summaries[i].period.month, i + 1);
+        expect(summaries[i].period.year, 2024);
       }
     });
 
