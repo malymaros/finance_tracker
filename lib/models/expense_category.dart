@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 enum ExpenseCategory {
   housing,
   groceries,
-  drugstore,
+  vacation,
   transport,
   insurance,
   subscriptions,
@@ -23,7 +23,7 @@ extension ExpenseCategoryX on ExpenseCategory {
     switch (this) {
       case ExpenseCategory.housing:       return 'Housing';
       case ExpenseCategory.groceries:     return 'Groceries';
-      case ExpenseCategory.drugstore:     return 'Drugstore';
+      case ExpenseCategory.vacation:      return 'Vacation';
       case ExpenseCategory.transport:     return 'Transport';
       case ExpenseCategory.insurance:     return 'Insurance';
       case ExpenseCategory.subscriptions: return 'Subscriptions';
@@ -43,7 +43,7 @@ extension ExpenseCategoryX on ExpenseCategory {
     switch (this) {
       case ExpenseCategory.housing:       return Icons.home;
       case ExpenseCategory.groceries:     return Icons.local_grocery_store;
-      case ExpenseCategory.drugstore:     return Icons.local_pharmacy;
+      case ExpenseCategory.vacation:      return Icons.beach_access;
       case ExpenseCategory.transport:     return Icons.directions_car;
       case ExpenseCategory.insurance:     return Icons.security;
       case ExpenseCategory.subscriptions: return Icons.subscriptions;
@@ -63,7 +63,7 @@ extension ExpenseCategoryX on ExpenseCategory {
     switch (this) {
       case ExpenseCategory.housing:       return const Color(0xFF8D6E63);
       case ExpenseCategory.groceries:     return const Color(0xFF66BB6A);
-      case ExpenseCategory.drugstore:     return const Color(0xFF26A69A);
+      case ExpenseCategory.vacation:      return const Color(0xFFFFA726);
       case ExpenseCategory.transport:     return const Color(0xFF42A5F5);
       case ExpenseCategory.insurance:     return const Color(0xFF26C6DA);
       case ExpenseCategory.subscriptions: return const Color(0xFFAB47BC);
@@ -91,6 +91,7 @@ extension ExpenseCategoryX on ExpenseCategory {
 
   static ExpenseCategory _fromLegacy(String value) {
     switch (value.toLowerCase()) {
+      case 'drugstore': return ExpenseCategory.other;
       case 'food':      return ExpenseCategory.groceries;
       case 'transport': return ExpenseCategory.transport;
       case 'shopping':  return ExpenseCategory.clothing;
