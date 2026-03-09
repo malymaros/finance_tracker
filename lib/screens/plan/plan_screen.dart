@@ -54,8 +54,10 @@ class _PlanScreenState extends State<PlanScreen> {
 
   void _navigateToAdd(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) =>
-          AddPlanItemScreen(planRepository: widget.planRepository),
+      builder: (_) => AddPlanItemScreen(
+        planRepository: widget.planRepository,
+        initialValidFrom: widget.selectedPeriod.value,
+      ),
     ));
   }
 
@@ -64,6 +66,7 @@ class _PlanScreenState extends State<PlanScreen> {
       builder: (_) => AddPlanItemScreen(
         planRepository: widget.planRepository,
         existing: item,
+        initialValidFrom: widget.selectedPeriod.value,
       ),
     ));
   }

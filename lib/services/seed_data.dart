@@ -150,7 +150,7 @@ class SeedData {
     // ── Income entries (transaction-level) ───────────────────────────────────
 
     final incomeEntries = [
-      for (int m = 5; m >= 1; m--)
+      for (int m = 5; m >= 0; m--)
         IncomeEntry(
           id: id(),
           amount: 3500,
@@ -182,6 +182,29 @@ class SeedData {
         );
 
     final expenses = [
+      // ── 5 months ago ───────────────────────────────────────────────────────
+      e(58,  ExpenseCategory.groceries,     d(5, 5)),
+      e(38,  ExpenseCategory.transport,     d(5, 8)),
+      e(90,  ExpenseCategory.housing,       d(5, 10), note: 'Moving costs'),
+      e(45,  ExpenseCategory.restaurants,   d(5, 15)),
+      e(67,  ExpenseCategory.groceries,     d(5, 22)),
+
+      // ── 4 months ago ───────────────────────────────────────────────────────
+      e(72,  ExpenseCategory.groceries,     d(4, 3)),
+      e(25,  ExpenseCategory.transport,     d(4, 6)),
+      e(33,  ExpenseCategory.restaurants,   d(4, 9)),
+      e(110, ExpenseCategory.clothing,      d(4, 14)),
+      e(18,  ExpenseCategory.health,        d(4, 18)),
+      e(60,  ExpenseCategory.groceries,     d(4, 24)),
+
+      // ── 3 months ago ───────────────────────────────────────────────────────
+      e(55,  ExpenseCategory.groceries,     d(3, 2)),
+      e(42,  ExpenseCategory.transport,     d(3, 7)),
+      e(30,  ExpenseCategory.entertainment, d(3, 11)),
+      e(75,  ExpenseCategory.groceries,     d(3, 16)),
+      e(48,  ExpenseCategory.restaurants,   d(3, 20)),
+      e(22,  ExpenseCategory.health,        d(3, 25)),
+
       // ── 2 months ago ───────────────────────────────────────────────────────
       e(65,  ExpenseCategory.groceries,     d(2, 2)),
       e(42,  ExpenseCategory.restaurants,   d(2, 5)),

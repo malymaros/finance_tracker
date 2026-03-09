@@ -16,11 +16,16 @@ class AddPlanItemScreen extends StatefulWidget {
   /// Ignored when [existing] is non-null.
   final PlanItemType? initialType;
 
+  /// Pre-selects the validFrom month for new items or for a new version of a
+  /// recurring item. Defaults to [YearMonth.now] when null.
+  final YearMonth? initialValidFrom;
+
   const AddPlanItemScreen({
     super.key,
     required this.planRepository,
     this.existing,
     this.initialType,
+    this.initialValidFrom,
   });
 
   @override
@@ -56,16 +61,16 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       _type = e.type;
       _frequency = e.frequency;
       // One-time items: keep original validFrom (edit in place).
-      // Recurring items: default to current month (creates new version).
+      // Recurring items: use the selected app period as the new version start.
       _validFrom = e.frequency == PlanFrequency.oneTime
           ? e.validFrom
-          : YearMonth.now();
+          : (widget.initialValidFrom ?? YearMonth.now());
       _selectedCategory = e.category ?? ExpenseCategory.other;
       _selectedFinancialType = e.financialType ?? FinancialType.consumption;
     } else {
       _type = widget.initialType ?? PlanItemType.income;
       _frequency = PlanFrequency.monthly;
-      _validFrom = YearMonth.now();
+      _validFrom = widget.initialValidFrom ?? YearMonth.now();
       _selectedCategory = ExpenseCategory.other;
       _selectedFinancialType = FinancialType.consumption;
     }
