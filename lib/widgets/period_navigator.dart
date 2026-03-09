@@ -31,13 +31,13 @@ class PeriodNavigator extends StatelessWidget {
   bool get _prevDisabled {
     if (min == null) return false;
     if (yearOnly) return selected.year <= min!.year;
-    return selected.year == min!.year && selected.month == min!.month;
+    return !selected.isAfter(min!);
   }
 
   bool get _nextDisabled {
     if (max == null) return false;
     if (yearOnly) return selected.year >= max!.year;
-    return selected.year == max!.year && selected.month == max!.month;
+    return !selected.isBefore(max!);
   }
 
   YearMonth get _prevPeriod {

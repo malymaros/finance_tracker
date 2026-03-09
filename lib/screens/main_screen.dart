@@ -34,7 +34,6 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    widget.repository.addListener(_updateBounds);
     widget.planRepository.addListener(_updateBounds);
     _updateBounds();
     _screens = [
@@ -58,8 +57,6 @@ class _MainScreenState extends State<MainScreen> {
 
   void _updateBounds() {
     final bounds = PeriodBoundsService.compute(
-      financeEarliest: widget.repository.earliestDataMonth,
-      financeLatest: widget.repository.latestDataMonth,
       planEarliest: widget.planRepository.earliestDataMonth,
       planLatest: widget.planRepository.latestDataMonth,
     );
@@ -71,7 +68,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void dispose() {
-    widget.repository.removeListener(_updateBounds);
     widget.planRepository.removeListener(_updateBounds);
     _selectedPeriod.dispose();
     _periodBounds.dispose();

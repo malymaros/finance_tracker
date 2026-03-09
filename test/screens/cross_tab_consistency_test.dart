@@ -9,6 +9,7 @@ import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/expense_list_screen.dart';
 import 'package:finance_tracker/screens/plan/plan_screen.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
+import 'package:finance_tracker/services/period_bounds_service.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -192,34 +193,74 @@ void main() {
     });
   });
 
-  group('PeriodBounds prevents navigation to pre-data periods', () {
-    test('bounds min equals earliest data month (no past buffer)', () {
-      final planRepo = _planRepo(items: [
-        _monthlyIncome(YearMonth(2025, 10)),
-      ]);
+  group('Year-based navigation window', () {
+    test('no plan data: window covers exactly nowYear-1 to nowYear+1', () {
+      final nowYear = YearMonth.now().year;
+      final bounds = PeriodBoundsService.compute();
 
-      // earliestDataMonth is 2025-10; bounds min must equal that, not 2025-09
-      expect(planRepo.earliestDataMonth, equals(YearMonth(2025, 10)));
+      expect(bounds.min, equals(YearMonth(nowYear - 1, 1)));
+      expect(bounds.max, equals(YearMonth(nowYear + 1, 12)));
     });
 
-    test('navigation before earliest data month is disallowed by PeriodBounds', () {
-      const bounds = PeriodBounds(
-        min: YearMonth(2025, 10),
-        max: YearMonth(2026, 4),
-      );
-
-      expect(bounds.allows(YearMonth(2025, 10)), isTrue);
-      expect(bounds.allows(YearMonth(2025, 9)), isFalse); // one month before min
-      expect(bounds.allows(YearMonth(2024, 12)), isFalse); // year before
+    test('current year is always accessible', () {
+      final now = YearMonth.now();
+      final bounds = PeriodBoundsService.compute();
+      expect(bounds.allows(now), isTrue);
     });
 
-    test('navigation one month ahead of latest data is allowed', () {
-      const bounds = PeriodBounds(
-        min: YearMonth(2025, 10),
-        max: YearMonth(2026, 4),
+    test('plan data in current year does not expand window beyond ±1', () {
+      final nowYear = YearMonth.now().year;
+      final bounds = PeriodBoundsService.compute(
+        planEarliest: YearMonth(nowYear, 1),
+        planLatest: YearMonth(nowYear, 12),
       );
-      expect(bounds.allows(YearMonth(2026, 4)), isTrue);
-      expect(bounds.allows(YearMonth(2026, 5)), isFalse);
+      expect(bounds.min, equals(YearMonth(nowYear - 1, 1)));
+      expect(bounds.max, equals(YearMonth(nowYear + 1, 12)));
+    });
+
+    test('plan data in past boundary year expands min by one extra year', () {
+      final nowYear = YearMonth.now().year;
+      // User adds plan in the previous boundary year (nowYear-1)
+      final bounds = PeriodBoundsService.compute(
+        planEarliest: YearMonth(nowYear - 1, 6),
+        planLatest: YearMonth(nowYear, 1),
+      );
+      // nowYear-1 is a data year → min unlocks to Jan of (nowYear-1)-1 = nowYear-2
+      expect(bounds.min, equals(YearMonth(nowYear - 2, 1)));
+      expect(bounds.max, equals(YearMonth(nowYear + 1, 12)));
+    });
+
+    test('plan data in future boundary year expands max by one extra year', () {
+      final nowYear = YearMonth.now().year;
+      // User adds plan in the next boundary year (nowYear+1)
+      final bounds = PeriodBoundsService.compute(
+        planEarliest: YearMonth(nowYear, 1),
+        planLatest: YearMonth(nowYear + 1, 3),
+      );
+      // nowYear+1 is a data year → max unlocks to Dec of (nowYear+1)+1 = nowYear+2
+      expect(bounds.min, equals(YearMonth(nowYear - 1, 1)));
+      expect(bounds.max, equals(YearMonth(nowYear + 2, 12)));
+    });
+
+    test('only plan data drives expansion — finance repo has no effect', () {
+      final nowYear = YearMonth.now().year;
+      // Bounds computed without finance repo data (as per architecture decision)
+      final bounds = PeriodBoundsService.compute(
+        planEarliest: null,
+        planLatest: null,
+      );
+      // Window must NOT expand just because finance data exists far in the past
+      expect(bounds.min, equals(YearMonth(nowYear - 1, 1)));
+      expect(bounds.max, equals(YearMonth(nowYear + 1, 12)));
+    });
+
+    test('PeriodBounds.allows correctly gates months outside the year window', () {
+      final nowYear = YearMonth.now().year;
+      final bounds = PeriodBoundsService.compute();
+      // Just outside min (December of nowYear-2)
+      expect(bounds.allows(YearMonth(nowYear - 2, 12)), isFalse);
+      // Just outside max (January of nowYear+2)
+      expect(bounds.allows(YearMonth(nowYear + 2, 1)), isFalse);
     });
   });
 
@@ -263,6 +304,90 @@ void main() {
       expect(period.value, equals(YearMonth.now()));
 
       period.dispose();
+    });
+  });
+
+  group('Cross-tab bounds consistency', () {
+    test('all tabs see the same PeriodBounds ValueNotifier instance', () {
+      // Verifies that the single ValueNotifier<PeriodBounds> in MainScreen is
+      // the same object passed to every tab — not a copy.
+      final nowYear = YearMonth.now().year;
+      final planRepo = _planRepo();
+      final bounds = ValueNotifier<PeriodBounds>(
+        PeriodBoundsService.compute(
+          planEarliest: planRepo.earliestDataMonth,
+          planLatest: planRepo.latestDataMonth,
+        ),
+      );
+
+      // Simulate another tab reading the same notifier
+      final expenseTabBounds = bounds.value;
+      final planTabBounds = bounds.value;
+      final reportTabBounds = bounds.value;
+
+      expect(expenseTabBounds.min, equals(YearMonth(nowYear - 1, 1)));
+      expect(planTabBounds.min, equals(YearMonth(nowYear - 1, 1)));
+      expect(reportTabBounds.min, equals(YearMonth(nowYear - 1, 1)));
+
+      bounds.dispose();
+    });
+
+    test('adding plan item updates bounds and all tabs see the expanded window', () async {
+      final nowYear = YearMonth.now().year;
+      final planRepo = _planRepo();
+
+      // Initial bounds — no plan data
+      var bounds = PeriodBoundsService.compute(
+        planEarliest: planRepo.earliestDataMonth,
+        planLatest: planRepo.latestDataMonth,
+      );
+      expect(bounds.min, equals(YearMonth(nowYear - 1, 1)));
+
+      // User adds plan item in the past boundary year
+      final pastBoundaryYear = nowYear - 1;
+      await planRepo.addPlanItem(_monthlyIncome(YearMonth(pastBoundaryYear, 6)));
+
+      // Bounds recomputed — window expands
+      bounds = PeriodBoundsService.compute(
+        planEarliest: planRepo.earliestDataMonth,
+        planLatest: planRepo.latestDataMonth,
+      );
+      expect(bounds.min, equals(YearMonth(nowYear - 2, 1)));
+    });
+
+    testWidgets('ExpenseListScreen and PlanScreen reflect the same bounds update',
+        (tester) async {
+      final nowYear = YearMonth.now().year;
+      final period = ValueNotifier<YearMonth>(YearMonth.now());
+      final boundsNotifier = ValueNotifier<PeriodBounds>(
+        PeriodBoundsService.compute(),
+      );
+      final repo = _financeRepo();
+      final planRepo = _planRepo();
+
+      await tester.pumpWidget(MaterialApp(
+        home: ExpenseListScreen(
+          repository: repo,
+          planRepository: planRepo,
+          selectedPeriod: period,
+          periodBounds: boundsNotifier,
+        ),
+      ));
+
+      // Both tabs use the same boundsNotifier; update it and verify
+      // ExpenseListScreen re-reads it on rebuild.
+      final expandedBounds = PeriodBoundsService.compute(
+        planEarliest: YearMonth(nowYear - 1, 3),
+        planLatest: YearMonth(nowYear, 1),
+      );
+      boundsNotifier.value = expandedBounds;
+      await tester.pump();
+
+      // The expanded window now includes Jan of nowYear-2.
+      expect(boundsNotifier.value.min, equals(YearMonth(nowYear - 2, 1)));
+
+      period.dispose();
+      boundsNotifier.dispose();
     });
   });
 }
