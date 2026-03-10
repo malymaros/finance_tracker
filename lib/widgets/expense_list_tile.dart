@@ -19,7 +19,7 @@ class ExpenseListTile extends StatelessWidget {
       leading: CircleAvatar(
         backgroundColor: expense.category.color.withAlpha(30),
         child: Icon(expense.category.icon,
-            size: 20, color: expense.category.color),
+            size: 20, color: expense.category.color.withAlpha(180)),
       ),
       title: Text(expense.category.displayName),
       subtitle: Text(
