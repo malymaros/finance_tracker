@@ -15,6 +15,7 @@ import '../widgets/month_budget_summary.dart';
 import '../widgets/period_navigator.dart';
 import '../widgets/swipeable_tile.dart';
 import 'add_expense_screen.dart';
+import 'expense_detail_screen.dart';
 
 enum _ViewMode { items, byCategory }
 
@@ -25,6 +26,7 @@ class ExpenseListScreen extends StatefulWidget {
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
   final VoidCallback onOpenSaves;
+  final VoidCallback? onResetWithSeedData;
 
   const ExpenseListScreen({
     super.key,
@@ -34,6 +36,7 @@ class ExpenseListScreen extends StatefulWidget {
     required this.periodBounds,
     required this.onClearAll,
     required this.onOpenSaves,
+    this.onResetWithSeedData,
   });
 
   @override
@@ -81,11 +84,15 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return PopupMenuButton<String>(
       onSelected: (value) {
         if (value == 'saves') widget.onOpenSaves();
+        if (value == 'reset_seed') widget.onResetWithSeedData?.call();
         if (value == 'clear_all') widget.onClearAll();
       },
-      itemBuilder: (_) => const [
-        PopupMenuItem(value: 'saves', child: Text('Saves')),
-        PopupMenuItem(value: 'clear_all', child: Text('Delete all data')),
+      itemBuilder: (_) => [
+        const PopupMenuItem(value: 'saves', child: Text('Saves')),
+        if (widget.onResetWithSeedData != null)
+          const PopupMenuItem(
+              value: 'reset_seed', child: Text('Reset with dummy data')),
+        const PopupMenuItem(value: 'clear_all', child: Text('Delete all data')),
       ],
     );
   }
@@ -115,6 +122,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Expenses'),
+            scrolledUnderElevation: 0,
             actions: [_buildOverflowMenu()],
           ),
           body: Column(
@@ -255,7 +263,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             ),
           ),
         ),
-        child: ExpenseListTile(expense: expenses[i]),
+        child: ExpenseListTile(
+        expense: expenses[i],
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(
+          builder: (_) =>
+              ExpenseDetailScreen(expense: expenses[i]),
+        )),
+      ),
       ),
     );
   }

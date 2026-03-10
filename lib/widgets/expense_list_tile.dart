@@ -4,8 +4,9 @@ import '../models/expense_category.dart';
 
 class ExpenseListTile extends StatelessWidget {
   final Expense expense;
+  final VoidCallback? onTap;
 
-  const ExpenseListTile({super.key, required this.expense});
+  const ExpenseListTile({super.key, required this.expense, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +14,7 @@ class ExpenseListTile extends StatelessWidget {
         '${expense.date.year}-${expense.date.month.toString().padLeft(2, '0')}-${expense.date.day.toString().padLeft(2, '0')}';
 
     return ListTile(
+      onTap: onTap,
       leading: CircleAvatar(
         backgroundColor: expense.category.color.withAlpha(30),
         child: Icon(expense.category.icon,

@@ -60,7 +60,7 @@ class _SavesScreenState extends State<SavesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Saves')),
+      appBar: AppBar(title: const Text('Saves'), scrolledUnderElevation: 0),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _saves.isEmpty

@@ -44,13 +44,17 @@ class _MainScreenState extends State<MainScreen> {
           selectedPeriod: _selectedPeriod,
           periodBounds: _periodBounds,
           onClearAll: () => _clearAllData(context),
-          onOpenSaves: () => _openSaves(context)),
+          onOpenSaves: () => _openSaves(context),
+          onResetWithSeedData:
+              kDebugMode ? () => _resetWithSeedData(context) : null),
       PlanScreen(
           planRepository: widget.planRepository,
           selectedPeriod: _selectedPeriod,
           periodBounds: _periodBounds,
           onClearAll: () => _clearAllData(context),
-          onOpenSaves: () => _openSaves(context)),
+          onOpenSaves: () => _openSaves(context),
+          onResetWithSeedData:
+              kDebugMode ? () => _resetWithSeedData(context) : null),
       ReportScreen(
           repository: widget.repository,
           planRepository: widget.planRepository,
@@ -58,7 +62,9 @@ class _MainScreenState extends State<MainScreen> {
           periodBounds: _periodBounds,
           onNavigateToPlan: () => setState(() => _selectedIndex = 1),
           onClearAll: () => _clearAllData(context),
-          onOpenSaves: () => _openSaves(context)),
+          onOpenSaves: () => _openSaves(context),
+          onResetWithSeedData:
+              kDebugMode ? () => _resetWithSeedData(context) : null),
     ];
   }
 
@@ -146,29 +152,9 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          IndexedStack(
-            index: _selectedIndex,
-            children: _screens,
-          ),
-          if (kDebugMode)
-            Positioned(
-              bottom: 80,
-              left: 16,
-              child: Opacity(
-                opacity: 0.6,
-                child: FloatingActionButton.small(
-                  heroTag: 'debug_seed',
-                  backgroundColor: Colors.orange,
-                  tooltip: 'Reset with seed data',
-                  onPressed: () => _resetWithSeedData(context),
-                  child: const Icon(Icons.bug_report_outlined,
-                      color: Colors.white, size: 18),
-                ),
-              ),
-            ),
-        ],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _screens,
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,

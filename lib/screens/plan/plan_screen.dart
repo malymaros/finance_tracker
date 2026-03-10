@@ -8,6 +8,7 @@ import '../../services/plan_repository.dart';
 import '../../widgets/period_navigator.dart';
 import '../../widgets/plan_item_tile.dart';
 import 'add_plan_item_screen.dart';
+import 'plan_item_detail_screen.dart';
 
 class PlanScreen extends StatefulWidget {
   final PlanRepository planRepository;
@@ -15,6 +16,7 @@ class PlanScreen extends StatefulWidget {
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
   final VoidCallback onOpenSaves;
+  final VoidCallback? onResetWithSeedData;
 
   const PlanScreen({
     super.key,
@@ -23,6 +25,7 @@ class PlanScreen extends StatefulWidget {
     required this.periodBounds,
     required this.onClearAll,
     required this.onOpenSaves,
+    this.onResetWithSeedData,
   });
 
   @override
@@ -80,15 +83,21 @@ class _PlanScreenState extends State<PlanScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Plan'),
+        scrolledUnderElevation: 0,
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'saves') widget.onOpenSaves();
+              if (value == 'reset_seed') widget.onResetWithSeedData?.call();
               if (value == 'clear_all') widget.onClearAll();
             },
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'saves', child: Text('Saves')),
-              PopupMenuItem(value: 'clear_all', child: Text('Delete all data')),
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'saves', child: Text('Saves')),
+              if (widget.onResetWithSeedData != null)
+                const PopupMenuItem(
+                    value: 'reset_seed', child: Text('Reset with dummy data')),
+              const PopupMenuItem(
+                  value: 'clear_all', child: Text('Delete all data')),
             ],
           ),
         ],
@@ -267,6 +276,9 @@ class _PlanScreenState extends State<PlanScreen> {
                 onDelete: () =>
                     widget.planRepository.removePlanItem(item.id),
                 onEdit: () => _navigateToEdit(context, item),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => PlanItemDetailScreen(item: item),
+                )),
               )),
         ],
         if (fixedCostItems.isNotEmpty) ...[
@@ -277,6 +289,9 @@ class _PlanScreenState extends State<PlanScreen> {
                 onDelete: () =>
                     widget.planRepository.removePlanItem(item.id),
                 onEdit: () => _navigateToEdit(context, item),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => PlanItemDetailScreen(item: item),
+                )),
               )),
         ],
         const SizedBox(height: 80), // FAB clearance

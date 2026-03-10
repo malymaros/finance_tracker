@@ -13,6 +13,7 @@ class PlanItemTile extends StatelessWidget {
 
   final VoidCallback onDelete;
   final VoidCallback onEdit;
+  final VoidCallback? onTap;
 
   const PlanItemTile({
     super.key,
@@ -20,6 +21,7 @@ class PlanItemTile extends StatelessWidget {
     required this.displayAmount,
     required this.onDelete,
     required this.onEdit,
+    this.onTap,
   });
 
   @override
@@ -46,6 +48,7 @@ class PlanItemTile extends StatelessWidget {
       onDelete: onDelete,
       onEdit: onEdit,
       child: ListTile(
+        onTap: onTap,
         leading: CircleAvatar(
           backgroundColor: leadingColor.withValues(alpha: 0.12),
           child: Icon(leadingIcon, color: leadingColor, size: 20),
