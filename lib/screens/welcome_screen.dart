@@ -1,4 +1,4 @@
-import 'dart:math' show pi, sin;
+import 'dart:math' show Random, pi, sin;
 
 import 'package:flutter/material.dart';
 
@@ -113,14 +113,22 @@ class _TossableCoin extends StatefulWidget {
 }
 
 class _TossableCoinState extends State<_TossableCoin>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _anim;
+  late final AnimationController _glowController;
+  late final Animation<double> _glowAnim;
 
   // 3D perspective strength — keep small for a subtle, realistic effect.
   static const _perspective = 0.0012;
   // Maximum upward lift in logical pixels at the arc peak.
   static const _maxLift = 28.0;
+  // Glow colors matching AppColors.income / AppColors.expense.
+  static const _glowSuccess = Color(0xFF059669);
+  static const _glowFailure = Color(0xFFDC2626);
+
+  bool? _tossResult;   // null = no active result
+  bool _glowActive = false;
 
   @override
   void initState() {
@@ -133,59 +141,179 @@ class _TossableCoinState extends State<_TossableCoin>
       parent: _controller,
       curve: Curves.easeInOut,
     );
+
+    _glowController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    );
+    // Linear — phase curves are computed manually in the builder so
+    // each vapor layer can be shaped independently.
+    _glowAnim = CurvedAnimation(
+      parent: _glowController,
+      curve: Curves.linear,
+    );
+
+    // When the flip animation completes, fire the glow.
+    _controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        setState(() => _glowActive = true);
+        _glowController.forward(from: 0.0).then((_) {
+          if (mounted) {
+            setState(() {
+              _glowActive = false;
+              _tossResult = null;
+            });
+          }
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _glowController.dispose();
     super.dispose();
+  }
+
+  // ── Vapor phase helpers ───────────────────────────────────────────────────
+
+  // Returns a 0→1→0 envelope for the spread size.
+  // Expansion uses easeOut (fast initial spread that slows to a creep);
+  // recession uses easeIn (lingers, then gradually pulls away).
+  static double _vaporPhase(double t) {
+    if (t < 0.45) {
+      final p = t / 0.45;
+      return p * (2 - p); // easeOut
+    } else if (t < 0.55) {
+      return 1.0; // peak plateau
+    } else {
+      final p = (t - 0.55) / 0.45;
+      return 1.0 - (p * p); // easeIn recede
+    }
+  }
+
+  // Returns a 0→1→0 envelope for opacity, rising slightly faster than
+  // spread so the color blooms with the expansion and fades last.
+  static double _vaporAlpha(double t) {
+    if (t < 0.35) {
+      return t / 0.35;
+    } else if (t < 0.60) {
+      return 1.0;
+    } else {
+      return 1.0 - (t - 0.60) / 0.40;
+    }
   }
 
   // Called by both tap (below) and swipe (from _WelcomeScreenState).
   void _toss() {
     if (_controller.isAnimating) return;
+    _tossResult = Random().nextBool();
+    _glowController.reset();
+    setState(() => _glowActive = false);
     _controller.forward(from: 0.0);
   }
 
   @override
   Widget build(BuildContext context) {
+    final glowColor = (_tossResult == true) ? _glowSuccess : _glowFailure;
+
     return GestureDetector(
       onTap: _toss,
-      child: AnimatedBuilder(
-        animation: _anim,
-        builder: (context, child) {
-          final t = _anim.value; // 0.0 → 1.0
+      child: SizedBox(
+        width: 180,
+        height: 180,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // VAPOR LAYER — three concentric shadow rings, each slightly
+            // time-lagged so the mist feels like it drifts outward organically.
+            if (_glowActive)
+              AnimatedBuilder(
+                animation: _glowAnim,
+                builder: (context, _) {
+                  final t = _glowAnim.value;
+                  // Each outer ring trails by ~0.07 s (scaled to 0–1 range).
+                  final t2 = (t - 0.07).clamp(0.0, 1.0);
+                  final t3 = (t - 0.14).clamp(0.0, 1.0);
 
-          // Two full X-axis rotations (0 → 4π).
-          // Ends exactly at 0 mod 2π so the coin lands in its original
-          // orientation with no visual jump.
-          final angle = 4 * pi * t;
+                  // Phase and alpha for each ring.
+                  final ph1 = _vaporPhase(t);
+                  final ph2 = _vaporPhase(t2);
+                  final ph3 = _vaporPhase(t3);
+                  final al1 = _vaporAlpha(t);
+                  final al2 = _vaporAlpha(t2);
+                  final al3 = _vaporAlpha(t3);
 
-          // Smooth vertical arc: 0 at start, peaks at t = 0.5, 0 at end.
-          final lift = -_maxLift * sin(t * pi);
+                  return Container(
+                    width: 180,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        // Inner core — tightest, most opaque.
+                        BoxShadow(
+                          color: glowColor
+                              .withAlpha((al1 * 0.40 * 255).round()),
+                          blurRadius: ph1 * 30,
+                          spreadRadius: ph1 * 4,
+                        ),
+                        // Mid vapor — wider, translucent.
+                        BoxShadow(
+                          color: glowColor
+                              .withAlpha((al2 * 0.25 * 255).round()),
+                          blurRadius: ph2 * 64,
+                          spreadRadius: ph2 * 10,
+                        ),
+                        // Outer wisp — barely visible, very diffuse.
+                        BoxShadow(
+                          color: glowColor
+                              .withAlpha((al3 * 0.14 * 255).round()),
+                          blurRadius: ph3 * 100,
+                          spreadRadius: ph3 * 18,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
 
-          // Subtle scale swell — the coin feels closer at the apex.
-          final scale = 1.0 + 0.05 * sin(t * pi);
+            // COIN — the existing flip animation, unchanged.
+            AnimatedBuilder(
+              animation: _anim,
+              builder: (context, child) {
+                final t = _anim.value; // 0.0 → 1.0
 
-          return Transform.translate(
-            offset: Offset(0, lift),
-            child: Transform(
-              alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, _perspective)
-                ..rotateX(angle),
-              child: Transform.scale(
-                scale: scale,
-                child: child,
+                // Two full X-axis rotations (0 → 4π).
+                // Ends exactly at 0 mod 2π so the coin lands in its original
+                // orientation with no visual jump.
+                final angle = 4 * pi * t;
+
+                // Smooth vertical arc: 0 at start, peaks at t = 0.5, 0 at end.
+                final lift = -_maxLift * sin(t * pi);
+
+                // Subtle scale swell — the coin feels closer at the apex.
+                final scale = 1.0 + 0.05 * sin(t * pi);
+
+                return Transform.translate(
+                  offset: Offset(0, lift),
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.identity()
+                      ..setEntry(3, 2, _perspective)
+                      ..rotateX(angle),
+                    child: Transform.scale(scale: scale, child: child),
+                  ),
+                );
+              },
+              // child is built once and reused across every animation frame.
+              child: Image.asset(
+                'assets/icons/app_icon.png',
+                width: 180,
+                height: 180,
               ),
             ),
-          );
-        },
-        // child is built once and reused across every animation frame.
-        child: Image.asset(
-          'assets/icons/app_icon.png',
-          width: 180,
-          height: 180,
+          ],
         ),
       ),
     );
