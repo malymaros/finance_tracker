@@ -1,127 +1,100 @@
 # Finance Tracker
 
-Mobile application for tracking personal expenses built with Flutter and developed with the assistance of Claude Code.
+A personal finance tracking app built with Flutter. Tracks expenses, plans
+monthly budgets, and visualises spending — all stored locally on device.
 
-This project explores AI-assisted development using Claude Code to design, implement, and evolve the application architecture.
+Built with AI-assisted development using Claude Code.
 
-The goal is to build a simple but powerful finance tracking tool while experimenting with AI-driven software development workflows.
+## Features
 
-## AI-Assisted Development
-
-This project is built with the help of Claude Code.
-
-Claude Code is used to:
-
-* assist with Flutter UI implementation
-* generate widgets and screens
-* design application architecture
-* improve developer productivity
-* experiment with AI-assisted coding workflows
-
-The project intentionally integrates AI tooling into the development process to evaluate how modern coding agents can support real-world application development.
-
-## Features (planned)
-
-* Add expense
-* List expenses
-* Monthly spending overview
-* Expense categories
-* Graphs and statistics
-* Shared expense tracking
-* Export to CSV
+- **Expense tracking** — log expenses with 15 categories and financial type tags
+  (asset / consumption / insurance)
+- **Budget planning** — define monthly income and fixed costs; app calculates
+  spendable budget automatically
+- **Plan versioning** — recurring plan items track history via series IDs; edits
+  create new versions from a chosen month
+- **Reports** — monthly, yearly, and multi-year overview modes; pie charts by
+  category with a financial type breakdown
+- **Budget progress bar** — live remaining budget with over/under status per month
+- **Save / load snapshots** — create up to 5 named local backups; restore any
+  snapshot to replace live data
+- **Period navigation** — consistent month/year navigation across all tabs with
+  shared bounds derived from plan data
+- **Welcome screen** — animated entry screen with coin toss interaction and
+  haptic feedback
 
 ## Tech Stack
 
-Frontend
-
-* Flutter
-* Dart
-
-Development tools
-
-* VS Code
-* Claude Code AI agent
-
-Platform
-
-* Android SDK
-* Flutter tooling
-
-Future planned components
-
-* Local database (Hive / SQLite)
-* REST API backend
-* Cloud synchronization
-* Data analytics
+| Layer | Technology |
+|---|---|
+| UI framework | Flutter / Dart |
+| Charts | fl_chart |
+| Local storage | path_provider (JSON files) |
+| Haptics | haptic_feedback |
+| AI tooling | Claude Code |
 
 ## Project Structure
 
+```
 lib/
+  main.dart           Entry point; wires repositories and launches app
+  models/             Domain data classes and enums
+  services/           Business logic, calculations, persistence
+  screens/            Full-page UI (subfolders: plan/, reports/, income/, fixed_costs/)
+  widgets/            Reusable UI components
+  theme/              AppColors constants and buildAppTheme()
 
-* main.dart (application entry point)
-* screens/
-* widgets/
-* models/
-* services/
-
-android/
-
-* Android build configuration
-
-ios/
-
-* iOS build configuration
+.claude/
+  skills/             Project-specific Claude Code skill definitions
+```
 
 ## Getting Started
 
-### Requirements
+**Requirements:** Flutter SDK, Android Studio or VS Code, Android/iOS SDK
 
-* Flutter SDK
-* Android Studio
-* Android SDK
-* VS Code
-
-Check environment:
-
-```
+```bash
+# Check environment
 flutter doctor
-```
 
-### Run the project
+# Clone and enter project
+git clone https://github.com/malymaros/finance_tracker.git
+cd finance_tracker
 
-Clone the repository
-
-```
-git clone https://github.com/YOUR_USERNAME/finance-tracker.git
-```
-
-Enter the project directory
-
-```
-cd finance-tracker
-```
-
-Install dependencies
-
-```
+# Install dependencies
 flutter pub get
-```
 
-Run the application
-
-```
+# Run
 flutter run
+
+# Analyze
+flutter analyze
+
+# Test
+flutter test
+
+# Build APK
+flutter build apk
 ```
+
+## Claude Code Skills
+
+This project ships with skill definitions in `.claude/skills/` that guide
+Claude Code's behaviour when working in this repository:
+
+| Skill | Purpose |
+|---|---|
+| `architect` | Proposes architecture before implementation |
+| `flutter-dev` | Implements Flutter code following project patterns |
+| `git-commit-manager` | Manages safe, well-scoped commits |
+| `tester` | Maintains test coverage |
+| `code-reviewer` | Structured code reviews |
+| `refactoring-guardian` | Safe refactors without behaviour changes |
+| `ux-designer` | Reviews and improves interaction design |
 
 ## Development Philosophy
 
-The project focuses on:
-
-* simple architecture
-* fast UI iteration
-* AI-assisted development
-* experimentation with modern developer tools
-
-## Future Ideas
-
-* Automatic
+- Minimal dependencies — Flutter SDK first, packages only when clearly justified
+- Business logic in services, never in widgets
+- `setState` only — no Provider, Riverpod, or Bloc
+- One widget/screen per file
+- All colors and theme values centralised in `lib/theme/app_theme.dart`

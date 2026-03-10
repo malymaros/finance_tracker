@@ -32,6 +32,10 @@ lib/
   screens/                       Full-page UI; subfolders: fixed_costs/, income/, plan/, reports/
   services/                      Business logic and data access
   widgets/                       Reusable UI components
+  theme/                         AppColors constants and buildAppTheme()
+
+.claude/
+  skills/                        Project-specific Claude Code skill definitions
 
 --------------------------------------------------
 MODELS
@@ -46,6 +50,7 @@ MonthlySummary   plannedIncome, plannedFixedCosts, spendableBudget, actualExpens
 BudgetStatus     spendableBudget, actualSpent, remaining, percentUsed, isOverBudget
 CategoryTotal    category, amount, percentage
 ReportLine       category, financialType, amount
+SaveSlot         id, name, createdAt, expenseCount, incomeCount, planItemCount, isDamaged
 
 ExpenseCategory enum (15 values): housing, groceries, vacation, transport, insurance,
   subscriptions, communication, health, restaurants, entertainment, clothing,
@@ -64,10 +69,12 @@ SERVICES
 
 FinanceRepository   ChangeNotifier; owns expenses, income, fixedCosts lists;
                     JSON file persistence (finance_data.json via path_provider);
-                    provides reportLinesForMonth/Year helpers
+                    provides reportLinesForMonth/Year helpers;
+                    exposes restoreFromSnapshot(expenses, income)
 
 PlanRepository      ChangeNotifier; owns planItems list; JSON file persistence
-                    (plan_data.json); supports version control via seriesId
+                    (plan_data.json); supports version control via seriesId;
+                    exposes restoreFromSnapshot(items)
 
 BudgetCalculator    Pure static class; all budget math:
                     activeItemsForMonth, normalizedMonthlyIncome/FixedCosts,
@@ -76,6 +83,15 @@ BudgetCalculator    Pure static class; all budget math:
 
 ReportAggregator    Pure static class; categoryTotals, applyThreshold (collapses
                     categories below a % into "Other"), financialTypeBreakdown
+
+SaveLoadService     Pure static; local named snapshots saved to
+                    getApplicationDocumentsDirectory()/saves/save_{id}.json;
+                    cap of 5 non-damaged saves; methods: listSaves, createSave,
+                    loadSave, deleteSave; damaged files surfaced with isDamaged flag
+
+PeriodBoundsService Pure static; computes period navigation min/max bounds;
+                    default ±1 year from now; expands by 1 extra year if plan
+                    data exists at a boundary year
 
 SeedData            Debug only; applyIfEmpty (auto-seed on first debug launch),
                     reset (clear all and reseed)
@@ -96,8 +112,9 @@ DATA PERSISTENCE
 --------------------------------------------------
 
 JSON files in getApplicationDocumentsDirectory():
-  finance_data.json  — expenses, income, fixedCosts
-  plan_data.json     — planItems
+  finance_data.json        — expenses, income, fixedCosts
+  plan_data.json           — planItems
+  saves/save_{id}.json     — named snapshots (max 5)
 
 Corrupt/missing files silently start fresh. No database; do not add one
 unless explicitly requested.
@@ -106,8 +123,9 @@ unless explicitly requested.
 DEPENDENCIES
 --------------------------------------------------
 
-path_provider  ^2.1.0   — app documents directory for JSON persistence
-fl_chart       ^0.69.0  — pie charts in Reports screen
+path_provider     ^2.1.0   — app documents directory for JSON persistence
+fl_chart          ^0.69.0  — pie charts in Reports screen
+haptic_feedback   ^0.6.4   — tactile feedback on welcome screen coin toss
 
 Before adding a dependency: explain why, check if Flutter SDK covers it,
 keep count minimal.
@@ -122,22 +140,35 @@ KEY PATTERNS
 - Amounts displayed as X.XX €  (toStringAsFixed(2))
 - One widget or screen per file; StatelessWidget unless local state is needed
 - Business logic stays in services, never in UI files
+- AppColors in lib/theme/app_theme.dart — all semantic + brand colors as constants;
+  never use raw Color literals in screens or widgets
+- buildAppTheme() in lib/theme/app_theme.dart centralises all ThemeData;
+  no inline theme overrides in individual screens
+- Navy/gold brand identity: AppColors.navy (0xFF0D1B4B) + AppColors.gold (0xFFD4A853)
+  used exclusively for app chrome (AppBar + NavigationBar); body stays light/white
+- onOpenSaves / onClearAll VoidCallbacks wired from MainScreen down to all tab screens
 
 --------------------------------------------------
 SCREENS
 --------------------------------------------------
 
+WelcomeScreen           Animated entry screen; coin toss interaction with vapor
+                        result effect and haptic feedback; navigates to MainScreen
+                        via mainScreenBuilder callback using pushReplacement
 MainScreen              Root; 3 tabs: Expenses / Plan / Reports
 ExpenseListScreen       Month view with navigation, budget bar, items/by-category toggle
 AddExpenseScreen        Add/edit expense form
+ExpenseDetailScreen     Read-only expense detail; opened by tapping item in list view
 PlanScreen              Monthly/yearly plan view (income + fixed costs)
 AddPlanItemScreen       Add/edit plan item with type, frequency, validFrom
+PlanItemDetailScreen    Read-only plan item detail; opened by tapping item in plan list
 ReportScreen            Monthly / yearly / overview modes; pie charts by category
                         (pie: <10% grouped into Other, list: all categories shown)
 IncomeListScreen        List of income entries
 AddIncomeScreen         Add/edit income form
 FixedCostListScreen     List of fixed costs
 AddFixedCostScreen      Add/edit fixed cost form
+SavesScreen             List / create / load / delete named local snapshots (max 5)
 
 --------------------------------------------------
 TESTING
