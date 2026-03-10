@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/budget_status.dart';
+import '../theme/app_theme.dart';
 
 /// Compact past-month budget result card.
 /// Shows whether the user saved money or went over budget.
@@ -13,11 +14,12 @@ class MonthBudgetSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     final isOver = status.isOverBudget;
     final diff = status.remaining.abs();
+    final statusColor = isOver ? AppColors.expense : AppColors.income;
 
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -27,7 +29,7 @@ class MonthBudgetSummary extends StatelessWidget {
                   isOver
                       ? Icons.warning_amber_rounded
                       : Icons.check_circle_outline,
-                  color: isOver ? Colors.red : Colors.green,
+                  color: statusColor,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
@@ -38,22 +40,28 @@ class MonthBudgetSummary extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: isOver ? Colors.red : Colors.green,
+                    color: statusColor,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Spent: ${status.actualSpent.toStringAsFixed(2)} €',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textMuted,
+                  ),
                 ),
                 Text(
                   'Budget: ${status.spendableBudget.toStringAsFixed(2)} €',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textMuted,
+                  ),
                 ),
               ],
             ),

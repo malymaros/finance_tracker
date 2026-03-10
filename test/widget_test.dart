@@ -9,6 +9,7 @@ void main() {
     final planRepo = PlanRepository(persist: false);
     await tester.pumpWidget(
         FinanceTrackerApp(repository: repo, planRepository: planRepo));
-    expect(find.text('Expenses'), findsWidgets);
+    expect(find.text('Finance Tracker'), findsOneWidget);
+    expect(find.text('Get Started'), findsOneWidget);
   });
 }

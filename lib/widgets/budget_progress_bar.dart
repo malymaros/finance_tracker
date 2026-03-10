@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/budget_status.dart';
+import '../theme/app_theme.dart';
 
 class BudgetProgressBar extends StatelessWidget {
   final BudgetStatus status;
@@ -12,11 +13,11 @@ class BudgetProgressBar extends StatelessWidget {
     final progress = (status.percentUsed / 100).clamp(0.0, 1.0);
     final Color barColor;
     if (status.isOverBudget) {
-      barColor = Colors.red;
+      barColor = AppColors.expense;
     } else if (status.percentUsed >= 75) {
-      barColor = Colors.orange;
+      barColor = AppColors.warning;
     } else {
-      barColor = Colors.green;
+      barColor = AppColors.income;
     }
 
     final isOver = status.isOverBudget;
@@ -25,7 +26,7 @@ class BudgetProgressBar extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -34,41 +35,50 @@ class BudgetProgressBar extends StatelessWidget {
               children: [
                 const Text(
                   "This month's budget",
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textMuted,
+                  ),
                 ),
                 Text(
                   isOver
                       ? '${(-remaining).toStringAsFixed(2)} € over'
                       : '${remaining.toStringAsFixed(2)} € left',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: isOver ? Colors.red : Colors.green,
+                    color: isOver ? AppColors.expense : AppColors.income,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(5),
               child: LinearProgressIndicator(
                 value: progress,
                 minHeight: 8,
-                backgroundColor: Colors.grey.shade200,
+                backgroundColor: AppColors.border,
                 valueColor: AlwaysStoppedAnimation<Color>(barColor),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Spent: ${status.actualSpent.toStringAsFixed(2)} €',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textMuted,
+                  ),
                 ),
                 Text(
                   'Budget: ${status.spendableBudget.toStringAsFixed(2)} €',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textMuted,
+                  ),
                 ),
               ],
             ),

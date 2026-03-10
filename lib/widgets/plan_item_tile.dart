@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/expense_category.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
+import '../theme/app_theme.dart';
 import 'swipeable_tile.dart';
 
 class PlanItemTile extends StatelessWidget {
@@ -32,9 +33,9 @@ class PlanItemTile extends StatelessWidget {
     // For fixed cost items use the category colour/icon; fall back to
     // ExpenseCategory.other when the field is not set (legacy data).
     final category = isIncome ? null : (item.category ?? ExpenseCategory.other);
-    final leadingColor = isIncome ? Colors.green : category!.color;
-    final leadingIcon =
-        isIncome ? Icons.trending_up : category!.icon;
+    final leadingColor = isIncome ? AppColors.income : category!.color;
+    final leadingIcon = isIncome ? Icons.trending_up : category!.icon;
+    final amountColor = isIncome ? AppColors.income : AppColors.expense;
 
     final subtitleParts = [
       _frequencyLabel(item.frequency),
@@ -50,18 +51,18 @@ class PlanItemTile extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         leading: CircleAvatar(
-          backgroundColor: leadingColor.withValues(alpha: 0.12),
+          backgroundColor: leadingColor.withAlpha(30),
           child: Icon(leadingIcon, color: leadingColor, size: 20),
         ),
         title: Text(item.name),
         subtitle: Text(
           subtitleParts.join(' · '),
-          style: const TextStyle(fontSize: 12, color: Colors.grey),
+          style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
         ),
         trailing: Text(
           '$sign${displayAmount.toStringAsFixed(2)} €',
           style: TextStyle(
-            color: isIncome ? Colors.green : Colors.red,
+            color: amountColor,
             fontWeight: FontWeight.bold,
             fontSize: 15,
           ),

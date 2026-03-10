@@ -4,6 +4,7 @@ import '../models/save_slot.dart';
 import '../services/finance_repository.dart';
 import '../services/plan_repository.dart';
 import '../services/save_load_service.dart';
+import '../theme/app_theme.dart';
 import '../widgets/save_slot_tile.dart';
 
 class SavesScreen extends StatefulWidget {
@@ -112,11 +113,11 @@ class _SavesScreenState extends State<SavesScreen> {
 
   Widget _buildCapBanner() {
     return Container(
-      color: Colors.amber.shade100,
+      color: AppColors.warning.withAlpha(20),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: const Row(
         children: [
-          Icon(Icons.info_outline, color: Colors.amber),
+          Icon(Icons.info_outline, color: AppColors.warning),
           SizedBox(width: 8),
           Expanded(
             child: Text(

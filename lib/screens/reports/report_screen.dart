@@ -12,6 +12,7 @@ import '../../services/budget_calculator.dart';
 import '../../services/finance_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../services/report_aggregator.dart';
+import '../../theme/app_theme.dart';
 import '../../widgets/period_navigator.dart';
 
 enum _ReportMode { monthly, yearly, overview }
@@ -225,7 +226,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget _buildOverviewRow(MonthlySummary s) {
     final diff = s.difference;
     final hasData = s.spendableBudget != 0 || s.actualExpenses != 0;
-    final diffColor = diff >= 0 ? Colors.green : Colors.red;
+    final diffColor = diff >= 0 ? AppColors.income : AppColors.expense;
     final diffText = diff >= 0
         ? '+${diff.toStringAsFixed(0)} €'
         : '${diff.toStringAsFixed(0)} €';
@@ -260,11 +261,11 @@ class _ReportScreenState extends State<ReportScreen> {
                       value: (s.actualExpenses / s.spendableBudget)
                           .clamp(0.0, 1.0),
                       minHeight: 6,
-                      backgroundColor: Colors.grey.shade200,
+                      backgroundColor: AppColors.border,
                       valueColor: AlwaysStoppedAnimation<Color>(
                         s.actualExpenses > s.spendableBudget
-                            ? Colors.red
-                            : Colors.teal,
+                            ? AppColors.expense
+                            : AppColors.income,
                       ),
                     ),
                   ),
@@ -371,24 +372,15 @@ class _ReportScreenState extends State<ReportScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
-          Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-              color: ct.category.color,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Icon(ct.category.icon, size: 18, color: Colors.grey),
-          const SizedBox(width: 8),
+          Icon(ct.category.icon, size: 20, color: ct.category.color),
+          const SizedBox(width: 12),
           Expanded(
             child: Text(ct.category.displayName,
                 style: const TextStyle(fontSize: 15)),
           ),
           Text(
             '${ct.percentage.toStringAsFixed(1)}%',
-            style: const TextStyle(color: Colors.grey, fontSize: 13),
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 13),
           ),
           const SizedBox(width: 12),
           Text(
@@ -446,21 +438,36 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Widget _buildTypeRow(FinancialType type, double pct) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
         children: [
-          Icon(type.icon, size: 16, color: type.color),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(type.displayName,
-                style: const TextStyle(fontSize: 14)),
+          Row(
+            children: [
+              Icon(type.icon, size: 16, color: type.color),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(type.displayName,
+                    style: const TextStyle(fontSize: 14)),
+              ),
+              Text(
+                '${pct.toStringAsFixed(1)}%',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: type.color,
+                ),
+              ),
+            ],
           ),
-          Text(
-            '${pct.toStringAsFixed(1)}%',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: type.color,
+          const SizedBox(height: 5),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(3),
+            child: LinearProgressIndicator(
+              value: (pct / 100).clamp(0.0, 1.0),
+              minHeight: 4,
+              backgroundColor: AppColors.border,
+              valueColor: AlwaysStoppedAnimation<Color>(
+                  type.color.withAlpha(160)),
             ),
           ),
         ],

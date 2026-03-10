@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
+import '../theme/app_theme.dart';
 
 class ExpenseDetailScreen extends StatelessWidget {
   final Expense expense;
@@ -32,14 +33,16 @@ class ExpenseDetailScreen extends StatelessWidget {
         children: [
           _buildAmountCard(context),
           const SizedBox(height: 16),
-          _buildDetailsCard(),
+          _buildDetailsCard(context),
         ],
       ),
     );
   }
 
   Widget _buildAmountCard(BuildContext context) {
+    final tint = Theme.of(context).colorScheme.primary.withAlpha(12);
     return Card(
+      color: tint,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
         child: Center(
@@ -55,7 +58,7 @@ class ExpenseDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailsCard() {
+  Widget _buildDetailsCard(BuildContext context) {
     return Card(
       child: Column(
         children: [
@@ -75,7 +78,7 @@ class ExpenseDetailScreen extends StatelessWidget {
           const Divider(height: 1, indent: 56),
           _buildDetailRow(
             icon: Icons.calendar_today_outlined,
-            iconColor: Colors.grey,
+            iconColor: AppColors.textMuted,
             label: 'Date',
             value: _formatDate(expense.date),
           ),
@@ -83,7 +86,7 @@ class ExpenseDetailScreen extends StatelessWidget {
             const Divider(height: 1, indent: 56),
             _buildDetailRow(
               icon: Icons.notes_outlined,
-              iconColor: Colors.grey,
+              iconColor: AppColors.textMuted,
               label: 'Note',
               value: expense.note!,
             ),
@@ -111,7 +114,10 @@ class ExpenseDetailScreen extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textMuted,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(value, style: const TextStyle(fontSize: 15)),

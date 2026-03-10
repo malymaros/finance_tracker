@@ -5,6 +5,7 @@ import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/plan_repository.dart';
+import '../../theme/app_theme.dart';
 import '../../widgets/period_navigator.dart';
 import '../../widgets/plan_item_tile.dart';
 import 'add_plan_item_screen.dart';
@@ -193,38 +194,42 @@ class _PlanScreenState extends State<PlanScreen> {
   Widget _buildSummaryCard(double totalIncome, double totalFixedCosts) {
     final spendable = totalIncome - totalFixedCosts;
     final isPositive = spendable >= 0;
+    final spendableColor = isPositive ? AppColors.income : AppColors.expense;
     final periodLabel = _isMonthly ? 'this month' : 'this year';
 
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('Spendable $periodLabel',
-                    style:
-                        const TextStyle(fontSize: 13, color: Colors.grey)),
-                Text(
-                  '${isPositive ? '+' : ''}${spendable.toStringAsFixed(2)} €',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: isPositive ? Colors.green : Colors.red,
-                  ),
-                ),
-              ],
+            Text(
+              'Spendable $periodLabel',
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.textMuted,
+              ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
+            Text(
+              '${isPositive ? '+' : ''}${spendable.toStringAsFixed(2)} €',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: spendableColor,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Divider(height: 1, color: AppColors.border),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
                   child: _SummaryLine(
                     label: 'Income',
                     amount: totalIncome,
-                    color: Colors.green,
+                    color: AppColors.income,
                     align: CrossAxisAlignment.start,
                   ),
                 ),
@@ -232,7 +237,7 @@ class _PlanScreenState extends State<PlanScreen> {
                   child: _SummaryLine(
                     label: 'Fixed costs',
                     amount: totalFixedCosts,
-                    color: Colors.red,
+                    color: AppColors.expense,
                     align: CrossAxisAlignment.end,
                   ),
                 ),
@@ -309,16 +314,31 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-      child: Text(
-        title.toUpperCase(),
-        style: const TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.bold,
-          color: Colors.grey,
-          letterSpacing: 1.2,
-        ),
+    final primary = Theme.of(context).colorScheme.primary;
+    return Container(
+      color: AppColors.surface,
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+      child: Row(
+        children: [
+          Container(
+            width: 3,
+            height: 14,
+            decoration: BoxDecoration(
+              color: primary,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title.toUpperCase(),
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textMuted,
+              letterSpacing: 1.1,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -342,12 +362,23 @@ class _SummaryLine extends StatelessWidget {
     return Column(
       crossAxisAlignment: align,
       children: [
-        Text(label,
-            style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        Text(
+          label.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textMuted,
+            letterSpacing: 0.8,
+          ),
+        ),
+        const SizedBox(height: 2),
         Text(
           '${amount.toStringAsFixed(2)} €',
           style: TextStyle(
-              fontSize: 14, fontWeight: FontWeight.w600, color: color),
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
         ),
       ],
     );

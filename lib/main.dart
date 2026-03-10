@@ -2,7 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'screens/main_screen.dart';
+import 'screens/welcome_screen.dart';
 import 'services/finance_repository.dart';
+import 'theme/app_theme.dart';
 import 'services/fixed_cost_migration.dart';
 import 'services/plan_repository.dart';
 import 'services/seed_data.dart';
@@ -34,11 +36,13 @@ class FinanceTrackerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Finance Tracker',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-        useMaterial3: true,
+      theme: buildAppTheme(),
+      home: WelcomeScreen(
+        mainScreenBuilder: () => MainScreen(
+          repository: repository,
+          planRepository: planRepository,
+        ),
       ),
-      home: MainScreen(repository: repository, planRepository: planRepository),
     );
   }
 }

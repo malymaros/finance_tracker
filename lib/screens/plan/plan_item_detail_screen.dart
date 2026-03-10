@@ -4,6 +4,7 @@ import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
+import '../../theme/app_theme.dart';
 
 class PlanItemDetailScreen extends StatelessWidget {
   final PlanItem item;
@@ -45,9 +46,11 @@ class PlanItemDetailScreen extends StatelessWidget {
   }
 
   Widget _buildHeaderCard(BuildContext context, bool isIncome) {
+    final typeColor = isIncome ? AppColors.income : AppColors.expense;
     return Card(
+      color: typeColor.withAlpha(10),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         child: Column(
           children: [
             Text(
@@ -58,19 +61,19 @@ class PlanItemDetailScreen extends StatelessWidget {
                   ?.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Container(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
               decoration: BoxDecoration(
-                color: (isIncome ? Colors.green : Colors.red)
-                    .withValues(alpha: 0.12),
+                color: typeColor.withAlpha(20),
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: typeColor.withAlpha(60)),
               ),
               child: Text(
                 isIncome ? 'Income' : 'Fixed Cost',
                 style: TextStyle(
-                  color: isIncome ? Colors.green : Colors.red,
+                  color: typeColor,
                   fontWeight: FontWeight.w600,
                   fontSize: 13,
                 ),
@@ -83,6 +86,7 @@ class PlanItemDetailScreen extends StatelessWidget {
   }
 
   Widget _buildDetailsCard(bool isIncome) {
+    final typeColor = isIncome ? AppColors.income : AppColors.expense;
     final amountSuffix = switch (item.frequency) {
       PlanFrequency.monthly => '/ month',
       PlanFrequency.yearly => '/ year',
@@ -94,14 +98,14 @@ class PlanItemDetailScreen extends StatelessWidget {
         children: [
           _buildDetailRow(
             icon: Icons.euro_outlined,
-            iconColor: isIncome ? Colors.green : Colors.red,
+            iconColor: typeColor,
             label: 'Amount',
             value: '${item.amount.toStringAsFixed(2)} € $amountSuffix',
           ),
           const Divider(height: 1, indent: 56),
           _buildDetailRow(
             icon: Icons.repeat_outlined,
-            iconColor: Colors.grey,
+            iconColor: AppColors.textMuted,
             label: 'Frequency',
             value: _frequencyLabel(item.frequency),
           ),
@@ -126,7 +130,7 @@ class PlanItemDetailScreen extends StatelessWidget {
           const Divider(height: 1, indent: 56),
           _buildDetailRow(
             icon: Icons.calendar_today_outlined,
-            iconColor: Colors.grey,
+            iconColor: AppColors.textMuted,
             label: 'Active from',
             value: _formatYearMonth(item.validFrom),
           ),
@@ -134,7 +138,7 @@ class PlanItemDetailScreen extends StatelessWidget {
             const Divider(height: 1, indent: 56),
             _buildDetailRow(
               icon: Icons.event_outlined,
-              iconColor: Colors.grey,
+              iconColor: AppColors.textMuted,
               label: 'Active until',
               value: item.validTo != null
                   ? _formatYearMonth(item.validTo!)
@@ -147,7 +151,7 @@ class PlanItemDetailScreen extends StatelessWidget {
             const Divider(height: 1, indent: 56),
             _buildDetailRow(
               icon: Icons.notes_outlined,
-              iconColor: Colors.grey,
+              iconColor: AppColors.textMuted,
               label: 'Note',
               value: item.note!,
             ),
@@ -175,7 +179,10 @@ class PlanItemDetailScreen extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: AppColors.textMuted,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(value, style: const TextStyle(fontSize: 15)),
