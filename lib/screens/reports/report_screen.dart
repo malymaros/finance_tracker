@@ -105,7 +105,6 @@ class _ReportScreenState extends State<ReportScreen> {
             children: [
               _buildModeToggle(),
               _buildPeriodNavigator(),
-              const Divider(height: 1),
               Expanded(child: _buildContent()),
             ],
           );
@@ -116,7 +115,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Widget _buildModeToggle() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       child: SegmentedButton<_ReportMode>(
         segments: const [
           ButtonSegment(
@@ -331,9 +330,9 @@ class _ReportScreenState extends State<ReportScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           SizedBox(
-            height: 220,
+            height: 250,
             child: PieChart(
               PieChartData(
                 sections: chartTotals
@@ -341,7 +340,7 @@ class _ReportScreenState extends State<ReportScreen> {
                           value: ct.amount,
                           color: ct.category.color,
                           title: '${ct.percentage.toStringAsFixed(0)}%',
-                          radius: 80,
+                          radius: 90,
                           titleStyle: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -354,12 +353,10 @@ class _ReportScreenState extends State<ReportScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 16),
-          const Divider(height: 1),
+          const SizedBox(height: 8),
           ...listTotals.map((ct) => _buildCategoryRow(ct)),
           const Divider(height: 1),
           _buildTotalRow(grandTotal),
-          const Divider(height: 1),
           _buildTypeBreakdown(breakdown),
           const SizedBox(height: 16),
         ],
@@ -372,7 +369,7 @@ class _ReportScreenState extends State<ReportScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
-          Icon(ct.category.icon, size: 20, color: ct.category.color),
+          Icon(ct.category.icon, size: 20, color: ct.category.color.withAlpha(180)),
           const SizedBox(width: 12),
           Expanded(
             child: Text(ct.category.displayName,
