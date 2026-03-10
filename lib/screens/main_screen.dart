@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/period_bounds.dart';
+import '../theme/app_theme.dart';
 import '../models/year_month.dart';
 import '../services/finance_repository.dart';
 import '../services/period_bounds_service.dart';
@@ -156,17 +157,31 @@ class _MainScreenState extends State<MainScreen> {
         index: _selectedIndex,
         children: _screens,
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-        destinations: const [
-          NavigationDestination(
-              icon: Icon(Icons.receipt_long), label: 'Expenses'),
-          NavigationDestination(
-              icon: Icon(Icons.account_balance_outlined), label: 'Plan'),
-          NavigationDestination(
-              icon: Icon(Icons.pie_chart), label: 'Reports'),
-        ],
+      bottomNavigationBar: DecoratedBox(
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: AppColors.navyBorder)),
+        ),
+        child: NavigationBar(
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.receipt_long_outlined),
+              selectedIcon: Icon(Icons.receipt_long),
+              label: 'Expenses',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.account_balance_outlined),
+              selectedIcon: Icon(Icons.account_balance),
+              label: 'Plan',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.pie_chart_outline),
+              selectedIcon: Icon(Icons.pie_chart),
+              label: 'Reports',
+            ),
+          ],
+        ),
       ),
     );
   }
