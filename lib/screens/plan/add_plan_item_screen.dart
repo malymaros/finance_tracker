@@ -47,6 +47,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   late PlanItemType _type;
   late PlanFrequency _frequency;
   late YearMonth _validFrom;
+  YearMonth? _validTo;
   late ExpenseCategory _selectedCategory;
   late FinancialType _selectedFinancialType;
 
@@ -65,6 +66,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       _validFrom = e.frequency == PlanFrequency.oneTime
           ? e.validFrom
           : (widget.initialValidFrom ?? YearMonth.now());
+      _validTo = e.validTo;
       _selectedCategory = e.category ?? ExpenseCategory.other;
       _selectedFinancialType = e.financialType ?? FinancialType.consumption;
     } else {
@@ -98,8 +100,24 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     }
   }
 
+  Future<void> _pickValidTo() async {
+    final current = _validTo ?? _validFrom.addMonths(11);
+    final initial = DateTime(current.year, current.month, 1);
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      helpText: 'Select end month (day is ignored)',
+    );
+    if (picked != null) {
+      setState(() => _validTo = YearMonth(picked.year, picked.month));
+    }
+  }
+
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_validTo != null && _validTo!.isBefore(_validFrom)) return;
 
     final name = _nameController.text.trim();
     final amount = double.parse(_amountController.text.trim());
@@ -120,6 +138,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         type: _type,
         frequency: _frequency,
         validFrom: _validFrom,
+        validTo: isFixedCost ? _validTo : null,
         note: note,
         category: isFixedCost ? _selectedCategory : null,
         financialType: isFixedCost ? _selectedFinancialType : null,
@@ -134,12 +153,13 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         type: _type,
         frequency: _frequency,
         validFrom: _validFrom,
+        validTo: isFixedCost ? _validTo : null,
         note: note,
         category: isFixedCost ? _selectedCategory : null,
         financialType: isFixedCost ? _selectedFinancialType : null,
       ));
     } else {
-      // Different validFrom → new version of same series
+      // Different validFrom → new version of same series (validTo defaults to null)
       final newId = DateTime.now().millisecondsSinceEpoch.toString();
       await widget.planRepository.addPlanItem(PlanItem(
         id: newId,
@@ -149,6 +169,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         type: _type,
         frequency: _frequency,
         validFrom: _validFrom,
+        validTo: isFixedCost ? _validTo : null,
         note: note,
         category: isFixedCost ? _selectedCategory : null,
         financialType: isFixedCost ? _selectedFinancialType : null,
@@ -156,6 +177,54 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     }
 
     if (mounted) Navigator.of(context).pop();
+  }
+
+  Widget _buildEndDateSection() {
+    final hasEndDate = _validTo != null;
+    final validToLabel = hasEndDate
+        ? '${_monthNames[_validTo!.month]} ${_validTo!.year}'
+        : null;
+    final isInvalid = hasEndDate && _validTo!.isBefore(_validFrom);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Switch(
+              value: hasEndDate,
+              onChanged: (on) => setState(() {
+                _validTo = on ? _validFrom.addMonths(11) : null;
+              }),
+            ),
+            const SizedBox(width: 8),
+            const Text('Set end date',
+                style: TextStyle(fontSize: 14)),
+          ],
+        ),
+        if (hasEndDate) ...[
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: _pickValidTo,
+            icon: const Icon(Icons.event_busy, size: 18),
+            label: Text('Until: $validToLabel'),
+            style: OutlinedButton.styleFrom(
+              alignment: Alignment.centerLeft,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            ),
+          ),
+          if (isInvalid)
+            const Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: Text(
+                'End month must be after start month.',
+                style: TextStyle(fontSize: 12, color: Colors.red),
+              ),
+            ),
+        ],
+      ],
+    );
   }
 
   @override
@@ -336,6 +405,12 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                   ),
                 ),
               ),
+            const SizedBox(height: 16),
+
+            // ── End date (fixedCost recurring only) ─────────────────────────
+            if (_type == PlanItemType.fixedCost &&
+                _frequency != PlanFrequency.oneTime)
+              _buildEndDateSection(),
             const SizedBox(height: 16),
 
             // ── Note ────────────────────────────────────────────────────────

@@ -23,6 +23,7 @@ class ExpenseListScreen extends StatefulWidget {
   final PlanRepository planRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
+  final VoidCallback onClearAll;
 
   const ExpenseListScreen({
     super.key,
@@ -30,6 +31,7 @@ class ExpenseListScreen extends StatefulWidget {
     required this.planRepository,
     required this.selectedPeriod,
     required this.periodBounds,
+    required this.onClearAll,
   });
 
   @override
@@ -73,6 +75,20 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return DateTime(_year, _month + 1, 0); // last day of _month
   }
 
+  Widget _buildOverflowMenu() {
+    return PopupMenuButton<String>(
+      onSelected: (value) {
+        if (value == 'clear_all') widget.onClearAll();
+      },
+      itemBuilder: (_) => const [
+        PopupMenuItem(
+          value: 'clear_all',
+          child: Text('Delete all data'),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
@@ -96,7 +112,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         );
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Expenses')),
+          appBar: AppBar(
+            title: const Text('Expenses'),
+            actions: [_buildOverflowMenu()],
+          ),
           body: Column(
             children: [
               _buildMonthNavigator(),

@@ -72,6 +72,7 @@ void main() {
           planRepository: planRepo,
           selectedPeriod: period,
           periodBounds: bounds,
+          onClearAll: () {},
         ),
       ));
 
@@ -98,6 +99,7 @@ void main() {
           planRepository: planRepo,
           selectedPeriod: period,
           periodBounds: bounds,
+          onClearAll: () {},
         ),
       ));
 
@@ -122,6 +124,7 @@ void main() {
           planRepository: planRepo,
           selectedPeriod: period,
           periodBounds: bounds,
+          onClearAll: () {},
         ),
       ));
 
@@ -153,6 +156,7 @@ void main() {
           planRepository: planRepo,
           selectedPeriod: period,
           periodBounds: bounds,
+          onClearAll: () {},
         ),
       ));
       await tester.pump();
@@ -175,6 +179,7 @@ void main() {
           planRepository: planRepo,
           selectedPeriod: period,
           periodBounds: bounds,
+          onClearAll: () {},
         ),
       ));
 
@@ -371,6 +376,7 @@ void main() {
           planRepository: planRepo,
           selectedPeriod: period,
           periodBounds: boundsNotifier,
+          onClearAll: () {},
         ),
       ));
 

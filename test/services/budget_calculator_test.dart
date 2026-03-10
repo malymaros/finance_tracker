@@ -193,22 +193,24 @@ void main() {
       expect(BudgetCalculator.yearlyIncome(items, 2024), 51000);
     });
 
-    test('yearly income item appears once in its anniversary month', () {
-      // Yearly bonus of 1000 in June
+    test('yearly income item distributed over active months', () {
+      // Yearly bonus of 1000, starts June 2024 (active Jun–Dec = 7 months)
       final items = [
         makeIncome(amount: 1000, frequency: PlanFrequency.yearly, validYear: 2024, validMonth: 6)
       ];
-      expect(BudgetCalculator.yearlyIncome(items, 2024), 1000);
-      expect(BudgetCalculator.yearlyIncome(items, 2025), 1000);
+      // 2024: 7 months × (1000/12) ≈ 583.33
+      expect(BudgetCalculator.yearlyIncome(items, 2024), closeTo(7 * (1000 / 12), 0.01));
+      // 2025: full year = 12 × (1000/12) = 1000
+      expect(BudgetCalculator.yearlyIncome(items, 2025), closeTo(1000.0, 0.01));
     });
 
     test('yearly income item not counted before it starts', () {
-      // Starts August 2024 — only fires in August
+      // Starts August 2024 — active Aug–Dec = 5 months
       final items = [
         makeIncome(amount: 500, frequency: PlanFrequency.yearly, validYear: 2024, validMonth: 8)
       ];
-      // Fires in August 2024 only (not Jan-Jul)
-      expect(BudgetCalculator.yearlyIncome(items, 2024), 500);
+      // 5 months × (500/12) ≈ 208.33
+      expect(BudgetCalculator.yearlyIncome(items, 2024), closeTo(5 * (500 / 12), 0.01));
     });
 
     test('oneTime income counted once in its month', () {
@@ -228,11 +230,12 @@ void main() {
       expect(BudgetCalculator.yearlyFixedCosts(items, 2024), 9600);
     });
 
-    test('yearly fixedCost appears once in anniversary month', () {
+    test('yearly fixedCost is distributed over active months', () {
+      // Starts June 2024 — active Jun–Dec = 7 months × (240/12) = 140
       final items = [
         makeFixedCost(amount: 240, frequency: PlanFrequency.yearly, validYear: 2024, validMonth: 6)
       ];
-      expect(BudgetCalculator.yearlyFixedCosts(items, 2024), 240);
+      expect(BudgetCalculator.yearlyFixedCosts(items, 2024), closeTo(140.0, 0.01));
     });
   });
 
@@ -358,7 +361,8 @@ void main() {
           10000);
     });
 
-    test('yearly item contributes once in anniversary month', () {
+    test('yearly item is distributed over active months', () {
+      // Starts June 2024 — active Jun–Dec = 7 months × (1200/12) = 700
       final items = [
         makeIncome(
             amount: 1200,
@@ -368,7 +372,7 @@ void main() {
       ];
       expect(
           BudgetCalculator.itemYearlyContribution(items.first, items, 2024),
-          1200);
+          closeTo(700.0, 0.01));
     });
 
     test('item superseded mid-year contributes only while active', () {
@@ -588,7 +592,8 @@ void main() {
       expect(lines.fold(0.0, (s, l) => s + l.amount), 9600); // 800 × 12
     });
 
-    test('yearly fixedCost → 1 line in its anniversary month', () {
+    test('yearly fixedCost → 1 line per active month, normalized amount', () {
+      // Starts June 2024 — active Jun–Dec = 7 months × (1200/12) = 100/month
       final items = [
         makeFixedCost(
           amount: 1200,
@@ -599,8 +604,8 @@ void main() {
       ];
       final lines =
           BudgetCalculator.planFixedCostReportLinesForYear(items, 2024);
-      expect(lines.length, 1);
-      expect(lines.first.amount, 1200);
+      expect(lines.length, 7);
+      expect(lines.fold(0.0, (s, l) => s + l.amount), closeTo(700.0, 0.01));
     });
 
     test('investment/asset fixedCost appears in yearly report', () {

@@ -8,7 +8,7 @@ import 'swipeable_tile.dart';
 class PlanItemTile extends StatelessWidget {
   final PlanItem item;
 
-  /// Pre-computed display amount (monthly normalized or yearly cash-flow).
+  /// Pre-computed display amount (monthly or yearly normalized contribution).
   final double displayAmount;
 
   final VoidCallback onDelete;
@@ -38,6 +38,7 @@ class PlanItemTile extends StatelessWidget {
       _frequencyLabel(item.frequency),
       if (category != null) category.displayName,
       'from ${_formatYearMonth(item.validFrom)}',
+      if (item.validTo != null) 'until ${_formatYearMonth(item.validTo!)}',
     ];
 
     return SwipeableTile(

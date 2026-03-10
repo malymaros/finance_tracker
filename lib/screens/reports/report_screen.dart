@@ -24,6 +24,7 @@ class ReportScreen extends StatefulWidget {
 
   /// Called when the user taps an overview row to navigate to the Plan tab.
   final VoidCallback onNavigateToPlan;
+  final VoidCallback onClearAll;
 
   const ReportScreen({
     super.key,
@@ -32,6 +33,7 @@ class ReportScreen extends StatefulWidget {
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onNavigateToPlan,
+    required this.onClearAll,
   });
 
   @override
@@ -69,7 +71,22 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Reports')),
+      appBar: AppBar(
+        title: const Text('Reports'),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'clear_all') widget.onClearAll();
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: 'clear_all',
+                child: Text('Delete all data'),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: ListenableBuilder(
         listenable:
             Listenable.merge([widget.repository, widget.planRepository]),

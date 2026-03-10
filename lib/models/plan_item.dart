@@ -22,6 +22,10 @@ class PlanItem {
   /// For one-time items, this is the exact month the item applies.
   final YearMonth validFrom;
 
+  /// The last month this item is active (inclusive). Null means no end date.
+  /// Only meaningful for fixedCost items; always null for income items.
+  final YearMonth? validTo;
+
   final String? note;
 
   /// Only relevant for fixedCost items. Null for income items.
@@ -38,6 +42,7 @@ class PlanItem {
     required this.type,
     required this.frequency,
     required this.validFrom,
+    this.validTo,
     this.note,
     this.category,
     this.financialType,
@@ -51,6 +56,7 @@ class PlanItem {
         'type': type.name,
         'frequency': frequency.name,
         'validFrom': validFrom.toJson(),
+        if (validTo != null) 'validTo': validTo!.toJson(),
         'note': note,
         if (category != null) 'category': category!.name,
         if (financialType != null) 'financialType': financialType!.name,
@@ -67,6 +73,9 @@ class PlanItem {
       type: PlanItemType.values.byName(json['type'] as String),
       frequency: PlanFrequency.values.byName(json['frequency'] as String),
       validFrom: YearMonth.fromJson(json['validFrom'] as Map<String, dynamic>),
+      validTo: json['validTo'] != null
+          ? YearMonth.fromJson(json['validTo'] as Map<String, dynamic>)
+          : null,
       note: json['note'] as String?,
       category:
           categoryRaw != null ? ExpenseCategoryX.fromJson(categoryRaw) : null,

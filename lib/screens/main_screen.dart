@@ -41,17 +41,20 @@ class _MainScreenState extends State<MainScreen> {
           repository: widget.repository,
           planRepository: widget.planRepository,
           selectedPeriod: _selectedPeriod,
-          periodBounds: _periodBounds),
+          periodBounds: _periodBounds,
+          onClearAll: () => _clearAllData(context)),
       PlanScreen(
           planRepository: widget.planRepository,
           selectedPeriod: _selectedPeriod,
-          periodBounds: _periodBounds),
+          periodBounds: _periodBounds,
+          onClearAll: () => _clearAllData(context)),
       ReportScreen(
           repository: widget.repository,
           planRepository: widget.planRepository,
           selectedPeriod: _selectedPeriod,
           periodBounds: _periodBounds,
-          onNavigateToPlan: () => setState(() => _selectedIndex = 1)),
+          onNavigateToPlan: () => setState(() => _selectedIndex = 1),
+          onClearAll: () => _clearAllData(context)),
     ];
   }
 
@@ -72,6 +75,35 @@ class _MainScreenState extends State<MainScreen> {
     _selectedPeriod.dispose();
     _periodBounds.dispose();
     super.dispose();
+  }
+
+  Future<void> _clearAllData(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Delete all data?'),
+        content: const Text(
+            'This will permanently delete all expenses, income, plan items, and fixed costs. This cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+                backgroundColor: Colors.red),
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete all'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      await Future.wait([
+        widget.repository.clearAll(),
+        widget.planRepository.clearAll(),
+      ]);
+    }
   }
 
   Future<void> _resetWithSeedData(BuildContext context) async {

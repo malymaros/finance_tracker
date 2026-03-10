@@ -32,7 +32,9 @@ class BudgetCalculator {
       }
     }
 
-    return bySeriesId.values.toList();
+    return bySeriesId.values
+        .where((i) => i.validTo == null || i.validTo!.isAtOrAfter(queried))
+        .toList();
   }
 
   // ── Normalized monthly contributions ─────────────────────────────────────
@@ -78,47 +80,30 @@ class BudgetCalculator {
         normalizedMonthlyFixedCosts(allItems, year, month);
   }
 
-  // ── Cash-flow yearly totals ───────────────────────────────────────────────
+  // ── Normalized yearly totals ──────────────────────────────────────────────
 
-  /// Cash-flow contribution of a single item for a given month.
-  /// Used for yearly totals where yearly items appear once in their anniversary
-  /// month rather than being spread across 12 months.
-  static double _cashFlowContribution(PlanItem item, int year, int month) {
-    switch (item.frequency) {
-      case PlanFrequency.monthly:
-        return item.amount;
-      case PlanFrequency.yearly:
-        // Fires once per year in validFrom.month (the anniversary month).
-        return item.validFrom.month == month ? item.amount : 0.0;
-      case PlanFrequency.oneTime:
-        return (item.validFrom.year == year && item.validFrom.month == month)
-            ? item.amount
-            : 0.0;
-    }
-  }
-
-  /// Yearly total income using cash-flow rules.
+  /// Yearly total income using normalized monthly amounts.
   /// Each month uses the active version for that month, correctly reflecting
-  /// mid-year changes (e.g. salary increase in March).
+  /// mid-year starts, end dates, and salary changes.
   static double yearlyIncome(List<PlanItem> allItems, int year) {
     double total = 0;
     for (int m = 1; m <= 12; m++) {
       final active = activeItemsForMonth(allItems, year, m)
           .where((i) => i.type == PlanItemType.income);
       total += active.fold(
-          0.0, (sum, i) => sum + _cashFlowContribution(i, year, m));
+          0.0, (sum, i) => sum + _normalizedContribution(i, year, m));
     }
     return total;
   }
 
-  /// Yearly total fixed costs using cash-flow rules.
+  /// Yearly total fixed costs using normalized monthly amounts.
   static double yearlyFixedCosts(List<PlanItem> allItems, int year) {
     double total = 0;
     for (int m = 1; m <= 12; m++) {
       final active = activeItemsForMonth(allItems, year, m)
           .where((i) => i.type == PlanItemType.fixedCost);
       total += active.fold(
-          0.0, (sum, i) => sum + _cashFlowContribution(i, year, m));
+          0.0, (sum, i) => sum + _normalizedContribution(i, year, m));
     }
     return total;
   }
@@ -144,15 +129,14 @@ class BudgetCalculator {
     return result.values.toList();
   }
 
-  /// Total cash-flow contribution of a single item over a full year.
-  /// Checks each month whether the item is the active version in its series,
-  /// then applies cash-flow rules (yearly items fire once in anniversary month).
+  /// Total normalized contribution of a single item over a full year.
+  /// Checks each month whether the item is the active version in its series.
   static double itemYearlyContribution(
       PlanItem item, List<PlanItem> allItems, int year) {
     double total = 0;
     for (int m = 1; m <= 12; m++) {
       if (activeItemsForMonth(allItems, year, m).any((a) => a.id == item.id)) {
-        total += _cashFlowContribution(item, year, m);
+        total += _normalizedContribution(item, year, m);
       }
     }
     return total;
@@ -207,8 +191,7 @@ class BudgetCalculator {
   }
 
   /// Converts fixedCost PlanItems for a full year into ReportLines,
-  /// using cash-flow rules (monthly → fires every month, yearly → fires
-  /// once in its anniversary month, oneTime → fires in its exact month).
+  /// using normalized monthly amounts summed across all active months.
   ///
   /// Lines with amount == 0 are omitted.
   static List<ReportLine> planFixedCostReportLinesForYear(
@@ -217,7 +200,7 @@ class BudgetCalculator {
     for (int m = 1; m <= 12; m++) {
       for (final item in activeItemsForMonth(allItems, year, m)
           .where((i) => i.type == PlanItemType.fixedCost)) {
-        final amount = _cashFlowContribution(item, year, m);
+        final amount = _normalizedContribution(item, year, m);
         if (amount > 0) {
           result.add(ReportLine(
             category: item.category ?? ExpenseCategory.other,

@@ -13,12 +13,14 @@ class PlanScreen extends StatefulWidget {
   final PlanRepository planRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
+  final VoidCallback onClearAll;
 
   const PlanScreen({
     super.key,
     required this.planRepository,
     required this.selectedPeriod,
     required this.periodBounds,
+    required this.onClearAll,
   });
 
   @override
@@ -74,7 +76,22 @@ class _PlanScreenState extends State<PlanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Plan')),
+      appBar: AppBar(
+        title: const Text('Plan'),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'clear_all') widget.onClearAll();
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: 'clear_all',
+                child: Text('Delete all data'),
+              ),
+            ],
+          ),
+        ],
+      ),
       body: ListenableBuilder(
         listenable: widget.planRepository,
         builder: (context, _) {
