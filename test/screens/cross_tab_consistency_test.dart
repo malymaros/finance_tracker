@@ -73,6 +73,7 @@ void main() {
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
+          onOpenSaves: () {},
         ),
       ));
 
@@ -100,6 +101,7 @@ void main() {
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
+          onOpenSaves: () {},
         ),
       ));
 
@@ -125,6 +127,7 @@ void main() {
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
+          onOpenSaves: () {},
         ),
       ));
 
@@ -157,6 +160,7 @@ void main() {
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
+          onOpenSaves: () {},
         ),
       ));
       await tester.pump();
@@ -180,6 +184,7 @@ void main() {
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
+          onOpenSaves: () {},
         ),
       ));
 
@@ -377,6 +382,7 @@ void main() {
           selectedPeriod: period,
           periodBounds: boundsNotifier,
           onClearAll: () {},
+          onOpenSaves: () {},
         ),
       ));
 

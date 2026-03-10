@@ -25,6 +25,7 @@ class ReportScreen extends StatefulWidget {
   /// Called when the user taps an overview row to navigate to the Plan tab.
   final VoidCallback onNavigateToPlan;
   final VoidCallback onClearAll;
+  final VoidCallback onOpenSaves;
 
   const ReportScreen({
     super.key,
@@ -34,6 +35,7 @@ class ReportScreen extends StatefulWidget {
     required this.periodBounds,
     required this.onNavigateToPlan,
     required this.onClearAll,
+    required this.onOpenSaves,
   });
 
   @override
@@ -76,13 +78,12 @@ class _ReportScreenState extends State<ReportScreen> {
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
+              if (value == 'saves') widget.onOpenSaves();
               if (value == 'clear_all') widget.onClearAll();
             },
             itemBuilder: (_) => const [
-              PopupMenuItem(
-                value: 'clear_all',
-                child: Text('Delete all data'),
-              ),
+              PopupMenuItem(value: 'saves', child: Text('Saves')),
+              PopupMenuItem(value: 'clear_all', child: Text('Delete all data')),
             ],
           ),
         ],

@@ -95,6 +95,18 @@ class FinanceRepository extends ChangeNotifier {
     await _save();
   }
 
+  Future<void> restoreFromSnapshot(
+      List<Expense> expenses, List<IncomeEntry> income) async {
+    _expenses
+      ..clear()
+      ..addAll(expenses);
+    _income
+      ..clear()
+      ..addAll(income);
+    notifyListeners();
+    await _save();
+  }
+
   // ── Expense aggregations ─────────────────────────────────────────────────
 
   List<Expense> expensesForMonth(int year, int month) => _expenses

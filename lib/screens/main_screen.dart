@@ -10,6 +10,7 @@ import '../services/seed_data.dart';
 import 'expense_list_screen.dart';
 import 'plan/plan_screen.dart';
 import 'reports/report_screen.dart';
+import 'saves_screen.dart';
 
 class MainScreen extends StatefulWidget {
   final FinanceRepository repository;
@@ -42,19 +43,22 @@ class _MainScreenState extends State<MainScreen> {
           planRepository: widget.planRepository,
           selectedPeriod: _selectedPeriod,
           periodBounds: _periodBounds,
-          onClearAll: () => _clearAllData(context)),
+          onClearAll: () => _clearAllData(context),
+          onOpenSaves: () => _openSaves(context)),
       PlanScreen(
           planRepository: widget.planRepository,
           selectedPeriod: _selectedPeriod,
           periodBounds: _periodBounds,
-          onClearAll: () => _clearAllData(context)),
+          onClearAll: () => _clearAllData(context),
+          onOpenSaves: () => _openSaves(context)),
       ReportScreen(
           repository: widget.repository,
           planRepository: widget.planRepository,
           selectedPeriod: _selectedPeriod,
           periodBounds: _periodBounds,
           onNavigateToPlan: () => setState(() => _selectedIndex = 1),
-          onClearAll: () => _clearAllData(context)),
+          onClearAll: () => _clearAllData(context),
+          onOpenSaves: () => _openSaves(context)),
     ];
   }
 
@@ -75,6 +79,15 @@ class _MainScreenState extends State<MainScreen> {
     _selectedPeriod.dispose();
     _periodBounds.dispose();
     super.dispose();
+  }
+
+  void _openSaves(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => SavesScreen(
+        repository: widget.repository,
+        planRepository: widget.planRepository,
+      ),
+    ));
   }
 
   Future<void> _clearAllData(BuildContext context) async {

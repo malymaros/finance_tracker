@@ -60,6 +60,14 @@ class PlanRepository extends ChangeNotifier {
     await _save();
   }
 
+  Future<void> restoreFromSnapshot(List<PlanItem> items) async {
+    _items
+      ..clear()
+      ..addAll(items);
+    notifyListeners();
+    await _save();
+  }
+
   // ── Persistence ──────────────────────────────────────────────────────────
 
   Future<void> load() async {

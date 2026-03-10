@@ -14,6 +14,7 @@ Widget wrapInMaterial(FinanceRepository repo) => MaterialApp(
         selectedPeriod: ValueNotifier(YearMonth.now()),
         periodBounds: ValueNotifier(const PeriodBounds()),
         onClearAll: () {},
+        onOpenSaves: () {},
       ),
     );
 

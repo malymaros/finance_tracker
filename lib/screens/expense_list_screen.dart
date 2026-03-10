@@ -24,6 +24,7 @@ class ExpenseListScreen extends StatefulWidget {
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
+  final VoidCallback onOpenSaves;
 
   const ExpenseListScreen({
     super.key,
@@ -32,6 +33,7 @@ class ExpenseListScreen extends StatefulWidget {
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onClearAll,
+    required this.onOpenSaves,
   });
 
   @override
@@ -78,13 +80,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Widget _buildOverflowMenu() {
     return PopupMenuButton<String>(
       onSelected: (value) {
+        if (value == 'saves') widget.onOpenSaves();
         if (value == 'clear_all') widget.onClearAll();
       },
       itemBuilder: (_) => const [
-        PopupMenuItem(
-          value: 'clear_all',
-          child: Text('Delete all data'),
-        ),
+        PopupMenuItem(value: 'saves', child: Text('Saves')),
+        PopupMenuItem(value: 'clear_all', child: Text('Delete all data')),
       ],
     );
   }
