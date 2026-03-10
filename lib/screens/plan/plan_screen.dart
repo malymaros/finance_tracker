@@ -275,33 +275,41 @@ class _PlanScreenState extends State<PlanScreen> {
       children: [
         if (incomeItems.isNotEmpty) ...[
           const _SectionHeader(title: 'Income'),
-          ...incomeItems.map((item) => PlanItemTile(
-                item: item,
-                displayAmount: _displayAmount(item),
-                onDelete: () =>
-                    widget.planRepository.removePlanItem(item.id),
-                onEdit: () => _navigateToEdit(context, item),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => PlanItemDetailScreen(item: item),
-                )),
-              )),
+          ...incomeItems.map((item) => _buildItemTile(context, item)),
         ],
         if (fixedCostItems.isNotEmpty) ...[
           const _SectionHeader(title: 'Fixed Costs'),
-          ...fixedCostItems.map((item) => PlanItemTile(
-                item: item,
-                displayAmount: _displayAmount(item),
-                onDelete: () =>
-                    widget.planRepository.removePlanItem(item.id),
-                onEdit: () => _navigateToEdit(context, item),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => PlanItemDetailScreen(item: item),
-                )),
-              )),
+          ...fixedCostItems.map((item) => _buildItemTile(context, item)),
         ],
         const SizedBox(height: 80), // FAB clearance
       ],
     );
+  }
+
+  Widget _buildItemTile(BuildContext context, PlanItem item) {
+    return PlanItemTile(
+      item: item,
+      displayAmount: _displayAmount(item),
+      onDelete: () => widget.planRepository.removePlanItem(item.id),
+      onEdit: () => _navigateToEdit(context, item),
+      onTap: () => _openDetail(context, item),
+    );
+  }
+
+  void _openDetail(BuildContext context, PlanItem item) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (routeContext) => PlanItemDetailScreen(
+        item: item,
+        onEdit: () {
+          Navigator.of(routeContext).pop();
+          _navigateToEdit(context, item);
+        },
+        onDelete: () {
+          Navigator.of(routeContext).pop();
+          widget.planRepository.removePlanItem(item.id);
+        },
+      ),
+    ));
   }
 }
 

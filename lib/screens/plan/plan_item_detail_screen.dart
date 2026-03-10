@@ -9,13 +9,24 @@ import '../../theme/app_theme.dart';
 class PlanItemDetailScreen extends StatelessWidget {
   final PlanItem item;
 
+  /// Called when the user taps Edit in the AppBar.
+  final VoidCallback? onEdit;
+
+  /// Called when the user taps Delete in the AppBar.
+  final VoidCallback? onDelete;
+
   static const _monthNames = [
     '',
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
 
-  const PlanItemDetailScreen({super.key, required this.item});
+  const PlanItemDetailScreen({
+    super.key,
+    required this.item,
+    this.onEdit,
+    this.onDelete,
+  });
 
   String _formatYearMonth(YearMonth ym) => '${_monthNames[ym.month]} ${ym.year}';
 
@@ -33,6 +44,21 @@ class PlanItemDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Plan Item'),
         scrolledUnderElevation: 0,
+        actions: [
+          if (onEdit != null)
+            IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: 'Edit',
+              onPressed: onEdit,
+            ),
+          if (onDelete != null)
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              tooltip: 'Delete',
+              color: AppColors.expense,
+              onPressed: onDelete,
+            ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

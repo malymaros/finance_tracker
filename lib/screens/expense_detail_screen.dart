@@ -8,13 +8,26 @@ import '../theme/app_theme.dart';
 class ExpenseDetailScreen extends StatelessWidget {
   final Expense expense;
 
+  /// Called when the user taps Edit in the AppBar.
+  /// The caller is responsible for popping this screen before navigating.
+  final VoidCallback? onEdit;
+
+  /// Called when the user taps Delete in the AppBar.
+  /// The caller is responsible for popping this screen before deleting.
+  final VoidCallback? onDelete;
+
   static const _monthNames = [
     '',
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
 
-  const ExpenseDetailScreen({super.key, required this.expense});
+  const ExpenseDetailScreen({
+    super.key,
+    required this.expense,
+    this.onEdit,
+    this.onDelete,
+  });
 
   String _formatDate(DateTime dt) {
     final day = dt.day.toString().padLeft(2, '0');
@@ -27,6 +40,21 @@ class ExpenseDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Expense'),
         scrolledUnderElevation: 0,
+        actions: [
+          if (onEdit != null)
+            IconButton(
+              icon: const Icon(Icons.edit_outlined),
+              tooltip: 'Edit',
+              onPressed: onEdit,
+            ),
+          if (onDelete != null)
+            IconButton(
+              icon: const Icon(Icons.delete_outline),
+              tooltip: 'Delete',
+              color: AppColors.expense,
+              onPressed: onDelete,
+            ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),

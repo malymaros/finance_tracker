@@ -32,7 +32,6 @@ class SaveSlotTile extends StatelessWidget {
     return SwipeableTile(
       itemId: slot.id,
       onDelete: onDelete,
-      onEdit: () {},
       child: slot.isDamaged
           ? _buildDamagedTile()
           : _buildNormalTile(context),

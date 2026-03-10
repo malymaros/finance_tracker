@@ -252,26 +252,35 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return ListView.separated(
       itemCount: expenses.length,
       separatorBuilder: (_, _) => const Divider(height: 1),
-      itemBuilder: (_, i) => SwipeableTile(
-        itemId: expenses[i].id,
-        onDelete: () => widget.repository.removeExpense(expenses[i].id),
-        onEdit: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => AddExpenseScreen(
-              repository: widget.repository,
-              existing: expenses[i],
-            ),
+      itemBuilder: (_, i) {
+        final expense = expenses[i];
+        return SwipeableTile(
+          itemId: expense.id,
+          onDelete: () => widget.repository.removeExpense(expense.id),
+          onEdit: () => _navigateToEdit(context, expense),
+          child: ExpenseListTile(
+            expense: expense,
+            onTap: () => _openDetail(context, expense),
           ),
-        ),
-        child: ExpenseListTile(
-        expense: expenses[i],
-        onTap: () => Navigator.of(context).push(MaterialPageRoute(
-          builder: (_) =>
-              ExpenseDetailScreen(expense: expenses[i]),
-        )),
-      ),
-      ),
+        );
+      },
     );
+  }
+
+  void _openDetail(BuildContext context, Expense expense) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (routeContext) => ExpenseDetailScreen(
+        expense: expense,
+        onEdit: () {
+          Navigator.of(routeContext).pop();
+          _navigateToEdit(context, expense);
+        },
+        onDelete: () {
+          Navigator.of(routeContext).pop();
+          widget.repository.removeExpense(expense.id);
+        },
+      ),
+    ));
   }
 
   // ── Mode B: grouped by category ───────────────────────────────────────────
@@ -310,6 +319,17 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         builder: (_) => AddExpenseScreen(
           repository: widget.repository,
           initialDate: initialDate,
+        ),
+      ),
+    );
+  }
+
+  void _navigateToEdit(BuildContext context, Expense expense) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => AddExpenseScreen(
+          repository: widget.repository,
+          existing: expense,
         ),
       ),
     );

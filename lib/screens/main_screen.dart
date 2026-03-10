@@ -29,6 +29,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+  late final PageController _pageController;
   final _selectedPeriod = ValueNotifier<YearMonth>(YearMonth.now());
   final _periodBounds = ValueNotifier<PeriodBounds>(const PeriodBounds());
   late final List<Widget> _screens;
@@ -36,36 +37,43 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
     widget.planRepository.addListener(_updateBounds);
     _updateBounds();
     _screens = [
-      ExpenseListScreen(
-          repository: widget.repository,
-          planRepository: widget.planRepository,
-          selectedPeriod: _selectedPeriod,
-          periodBounds: _periodBounds,
-          onClearAll: () => _clearAllData(context),
-          onOpenSaves: () => _openSaves(context),
-          onResetWithSeedData:
-              kDebugMode ? () => _resetWithSeedData(context) : null),
-      PlanScreen(
-          planRepository: widget.planRepository,
-          selectedPeriod: _selectedPeriod,
-          periodBounds: _periodBounds,
-          onClearAll: () => _clearAllData(context),
-          onOpenSaves: () => _openSaves(context),
-          onResetWithSeedData:
-              kDebugMode ? () => _resetWithSeedData(context) : null),
-      ReportScreen(
-          repository: widget.repository,
-          planRepository: widget.planRepository,
-          selectedPeriod: _selectedPeriod,
-          periodBounds: _periodBounds,
-          onNavigateToPlan: () => setState(() => _selectedIndex = 1),
-          onClearAll: () => _clearAllData(context),
-          onOpenSaves: () => _openSaves(context),
-          onResetWithSeedData:
-              kDebugMode ? () => _resetWithSeedData(context) : null),
+      _KeepAliveTab(
+        child: ExpenseListScreen(
+            repository: widget.repository,
+            planRepository: widget.planRepository,
+            selectedPeriod: _selectedPeriod,
+            periodBounds: _periodBounds,
+            onClearAll: () => _clearAllData(context),
+            onOpenSaves: () => _openSaves(context),
+            onResetWithSeedData:
+                kDebugMode ? () => _resetWithSeedData(context) : null),
+      ),
+      _KeepAliveTab(
+        child: PlanScreen(
+            planRepository: widget.planRepository,
+            selectedPeriod: _selectedPeriod,
+            periodBounds: _periodBounds,
+            onClearAll: () => _clearAllData(context),
+            onOpenSaves: () => _openSaves(context),
+            onResetWithSeedData:
+                kDebugMode ? () => _resetWithSeedData(context) : null),
+      ),
+      _KeepAliveTab(
+        child: ReportScreen(
+            repository: widget.repository,
+            planRepository: widget.planRepository,
+            selectedPeriod: _selectedPeriod,
+            periodBounds: _periodBounds,
+            onNavigateToPlan: () => _navigateToTab(1),
+            onClearAll: () => _clearAllData(context),
+            onOpenSaves: () => _openSaves(context),
+            onResetWithSeedData:
+                kDebugMode ? () => _resetWithSeedData(context) : null),
+      ),
     ];
   }
 
@@ -80,11 +88,22 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
+  void _navigateToTab(int index) {
+    if (_selectedIndex == index) return;
+    setState(() => _selectedIndex = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
   @override
   void dispose() {
     widget.planRepository.removeListener(_updateBounds);
     _selectedPeriod.dispose();
     _periodBounds.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -153,8 +172,9 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (i) => setState(() => _selectedIndex = i),
         children: _screens,
       ),
       bottomNavigationBar: DecoratedBox(
@@ -163,7 +183,7 @@ class _MainScreenState extends State<MainScreen> {
         ),
         child: NavigationBar(
           selectedIndex: _selectedIndex,
-          onDestinationSelected: (i) => setState(() => _selectedIndex = i),
+          onDestinationSelected: _navigateToTab,
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.receipt_long_outlined),
@@ -184,5 +204,28 @@ class _MainScreenState extends State<MainScreen> {
         ),
       ),
     );
+  }
+}
+
+// ── Keep-alive wrapper for PageView tabs ──────────────────────────────────────
+
+class _KeepAliveTab extends StatefulWidget {
+  final Widget child;
+
+  const _KeepAliveTab({required this.child});
+
+  @override
+  State<_KeepAliveTab> createState() => _KeepAliveTabState();
+}
+
+class _KeepAliveTabState extends State<_KeepAliveTab>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context); // required by AutomaticKeepAliveClientMixin
+    return widget.child;
   }
 }

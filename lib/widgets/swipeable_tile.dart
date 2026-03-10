@@ -1,53 +1,78 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
+/// Wraps a list tile so that a long press reveals an action sheet with
+/// Edit (optional) and Delete options.
+///
+/// The swipe-based Dismissible was removed to eliminate gesture conflicts with
+/// full-screen horizontal swipe tab navigation.
 class SwipeableTile extends StatelessWidget {
   final String itemId;
   final Widget child;
   final VoidCallback onDelete;
-  final VoidCallback onEdit;
+
+  /// Pass null to suppress the Edit action in the bottom sheet.
+  final VoidCallback? onEdit;
 
   const SwipeableTile({
     super.key,
     required this.itemId,
     required this.child,
     required this.onDelete,
-    required this.onEdit,
+    this.onEdit,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Dismissible(
-      key: ValueKey(itemId),
-      direction: DismissDirection.horizontal,
-      background: _buildDeleteBackground(),
-      secondaryBackground: _buildEditBackground(),
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.endToStart) {
-          onEdit();
-          return false;
-        }
-        return true;
-      },
-      onDismissed: (_) => onDelete(),
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onLongPress: () => _showActionSheet(context),
       child: child,
     );
   }
 
-  Widget _buildDeleteBackground() {
-    return Container(
-      color: Colors.red,
-      alignment: Alignment.centerLeft,
-      padding: const EdgeInsets.only(left: 24),
-      child: const Icon(Icons.delete, color: Colors.white, size: 28),
-    );
-  }
-
-  Widget _buildEditBackground() {
-    return Container(
-      color: Colors.green,
-      alignment: Alignment.centerRight,
-      padding: const EdgeInsets.only(right: 24),
-      child: const Icon(Icons.build, color: Colors.white, size: 28),
+  void _showActionSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 36,
+              height: 4,
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            if (onEdit != null)
+              ListTile(
+                leading: const Icon(Icons.edit_outlined),
+                title: const Text('Edit'),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  onEdit!();
+                },
+              ),
+            ListTile(
+              leading:
+                  const Icon(Icons.delete_outline, color: AppColors.expense),
+              title: const Text(
+                'Delete',
+                style: TextStyle(color: AppColors.expense),
+              ),
+              onTap: () {
+                Navigator.pop(sheetContext);
+                onDelete();
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
     );
   }
 }
