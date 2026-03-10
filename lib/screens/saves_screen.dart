@@ -142,46 +142,14 @@ class _SavesScreenState extends State<SavesScreen> {
   }
 
   Future<void> _showSaveDialog() async {
-    final controller = TextEditingController(text: _defaultSaveName());
-    final formKey = GlobalKey<FormState>();
-    String? nameToSave;
-
-    await showDialog<void>(
+    final name = await showDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Save current data'),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: controller,
-            maxLength: 50,
-            decoration: const InputDecoration(labelText: 'Save name'),
-            validator: (v) =>
-                (v == null || v.trim().isEmpty) ? 'Name cannot be empty' : null,
-            autofocus: true,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () {
-              if (!formKey.currentState!.validate()) return;
-              nameToSave = controller.text.trim();
-              Navigator.of(ctx).pop();
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      ),
+      builder: (_) => _SaveNameDialog(initialName: _defaultSaveName()),
     );
-    controller.dispose();
 
-    if (nameToSave != null && mounted) {
+    if (name != null && mounted) {
       await SaveLoadService.createSave(
-        nameToSave!,
+        name,
         widget.repository,
         widget.planRepository,
       );
@@ -190,6 +158,7 @@ class _SavesScreenState extends State<SavesScreen> {
   }
 
   Future<void> _confirmLoad(SaveSlot slot) async {
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -256,5 +225,66 @@ class _SavesScreenState extends State<SavesScreen> {
       await SaveLoadService.deleteSave(slot.id);
       await _loadList();
     }
+  }
+}
+
+// ── Save name dialog ──────────────────────────────────────────────────────────
+
+class _SaveNameDialog extends StatefulWidget {
+  final String initialName;
+
+  const _SaveNameDialog({required this.initialName});
+
+  @override
+  State<_SaveNameDialog> createState() => _SaveNameDialogState();
+}
+
+class _SaveNameDialogState extends State<_SaveNameDialog> {
+  late final TextEditingController _controller;
+  bool _showError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialName);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Save current data'),
+      content: TextField(
+        controller: _controller,
+        maxLength: 50,
+        autofocus: true,
+        decoration: InputDecoration(
+          labelText: 'Save name',
+          errorText: _showError ? 'Name cannot be empty' : null,
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () {
+            final name = _controller.text.trim();
+            if (name.isEmpty) {
+              setState(() => _showError = true);
+              return;
+            }
+            Navigator.of(context).pop(name);
+          },
+          child: const Text('Save'),
+        ),
+      ],
+    );
   }
 }
