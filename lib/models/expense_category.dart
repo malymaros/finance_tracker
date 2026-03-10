@@ -15,6 +15,7 @@ enum ExpenseCategory {
   education,
   investment,
   gifts,
+  taxes,
   other,
 }
 
@@ -35,6 +36,7 @@ extension ExpenseCategoryX on ExpenseCategory {
       case ExpenseCategory.education:     return 'Education';
       case ExpenseCategory.investment:    return 'Investment';
       case ExpenseCategory.gifts:         return 'Gifts';
+      case ExpenseCategory.taxes:         return 'Taxes';
       case ExpenseCategory.other:         return 'Other';
     }
   }
@@ -55,6 +57,7 @@ extension ExpenseCategoryX on ExpenseCategory {
       case ExpenseCategory.education:     return Icons.school;
       case ExpenseCategory.investment:    return Icons.trending_up;
       case ExpenseCategory.gifts:         return Icons.card_giftcard;
+      case ExpenseCategory.taxes:         return Icons.account_balance;
       case ExpenseCategory.other:         return Icons.category;
     }
   }
@@ -75,6 +78,7 @@ extension ExpenseCategoryX on ExpenseCategory {
       case ExpenseCategory.education:     return const Color(0xFF29B6F6);
       case ExpenseCategory.investment:    return const Color(0xFF2E7D32);
       case ExpenseCategory.gifts:         return const Color(0xFFE91E63);
+      case ExpenseCategory.taxes:         return const Color(0xFF546E7A);
       case ExpenseCategory.other:         return const Color(0xFF9E9E9E);
     }
   }
