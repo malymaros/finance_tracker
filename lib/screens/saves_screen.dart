@@ -144,6 +144,7 @@ class _SavesScreenState extends State<SavesScreen> {
   Future<void> _showSaveDialog() async {
     final controller = TextEditingController(text: _defaultSaveName());
     final formKey = GlobalKey<FormState>();
+    String? nameToSave;
 
     await showDialog<void>(
       context: context,
@@ -166,15 +167,10 @@ class _SavesScreenState extends State<SavesScreen> {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            onPressed: () async {
+            onPressed: () {
               if (!formKey.currentState!.validate()) return;
+              nameToSave = controller.text.trim();
               Navigator.of(ctx).pop();
-              await SaveLoadService.createSave(
-                controller.text.trim(),
-                widget.repository,
-                widget.planRepository,
-              );
-              await _loadList();
             },
             child: const Text('Save'),
           ),
@@ -182,6 +178,15 @@ class _SavesScreenState extends State<SavesScreen> {
       ),
     );
     controller.dispose();
+
+    if (nameToSave != null && mounted) {
+      await SaveLoadService.createSave(
+        nameToSave!,
+        widget.repository,
+        widget.planRepository,
+      );
+      await _loadList();
+    }
   }
 
   Future<void> _confirmLoad(SaveSlot slot) async {
