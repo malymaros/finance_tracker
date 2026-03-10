@@ -116,14 +116,19 @@ test/
   screens/
   widgets/
 
-Examples:
+Examples matching actual source files:
 
 - test/models/expense_test.dart
-- test/models/fixed_cost_test.dart
-- test/services/financial_plan_service_test.dart
-- test/services/report_service_test.dart
-- test/screens/expenses_screen_test.dart
-- test/widgets/month_selector_test.dart
+- test/models/year_month_test.dart
+- test/services/finance_repository_test.dart
+- test/services/plan_repository_test.dart
+- test/services/budget_calculator_test.dart
+- test/services/report_aggregator_test.dart
+- test/services/save_load_service_test.dart
+- test/services/period_bounds_service_test.dart
+- test/screens/expense_list_screen_test.dart
+- test/screens/add_plan_item_screen_test.dart
+- test/widgets/period_navigator_test.dart
 
 If a file in `lib/` contains important behavior, ensure there is a corresponding test file or justified coverage elsewhere.
 
@@ -213,11 +218,13 @@ TEST FILE MAPPING
 
 Aim for one primary source file -> one corresponding primary test file where practical.
 
-Examples:
+Examples matching actual source files:
 
-- lib/models/expense.dart -> test/models/expense_test.dart
-- lib/services/report_service.dart -> test/services/report_service_test.dart
-- lib/screens/expenses_screen.dart -> test/screens/expenses_screen_test.dart
+- lib/models/expense.dart → test/models/expense_test.dart
+- lib/services/budget_calculator.dart → test/services/budget_calculator_test.dart
+- lib/services/report_aggregator.dart → test/services/report_aggregator_test.dart
+- lib/services/save_load_service.dart → test/services/save_load_service_test.dart
+- lib/screens/expense_list_screen.dart → test/screens/expense_list_screen_test.dart
 
 If multiple source files are tightly coupled in one feature, feature-level grouping is acceptable, but coverage must remain clear.
 

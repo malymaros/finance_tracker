@@ -74,6 +74,7 @@ lib/
   services/
   screens/
   widgets/
+  theme/        ← AppColors constants and buildAppTheme()
 
 Layer responsibilities:
 
@@ -213,13 +214,17 @@ Services contain:
 - filtering
 - domain rules
 
-Examples:
+Actual services in the codebase:
 
-- ExpenseService
-- FinancialPlanService
-- ReportService
-- PeriodService
-- ImportService
+- `FinanceRepository` — ChangeNotifier; expenses, income, fixedCosts; `restoreFromSnapshot`
+- `PlanRepository` — ChangeNotifier; planItems; version history via seriesId; `restoreFromSnapshot`
+- `BudgetCalculator` — pure static; all budget math
+- `ReportAggregator` — pure static; categoryTotals, financialTypeBreakdown, applyThreshold
+- `SaveLoadService` — pure static; local named snapshots; listSaves, createSave, loadSave, deleteSave
+- `PeriodBoundsService` — pure static; computes navigation min/max bounds
+- `SeedData` — debug only
+
+Do **not** invent service names that do not exist above.
 
 Services must return clean data structures that screens can render.
 
@@ -237,6 +242,17 @@ Navigator.push(
 )
 
 Avoid complex routing frameworks unless approved.
+
+--------------------------------------------------
+DESIGN SYSTEM RULES
+--------------------------------------------------
+
+All colors must come from `AppColors` in `lib/theme/app_theme.dart`.
+
+- Never use raw `Color(...)` literals in screens or widgets
+- Never use `Colors.green`, `Colors.red`, `Colors.grey` inline — use `AppColors.income`, `AppColors.expense`, `AppColors.textMuted`
+- `buildAppTheme()` is the single source of truth for all ThemeData — do not override theme inline in screens
+- Navy/gold identity: `AppColors.navy` + `AppColors.gold` are used for app chrome only (AppBar + NavigationBar); do not apply to body content
 
 --------------------------------------------------
 COMMON UI PATTERNS
@@ -260,6 +276,18 @@ FloatingActionButton with Icons.add.
 Forms:
 
 Prefer bottom sheets for quick input when appropriate.
+
+SwipeableTile pattern:
+
+All list items must be wrapped in SwipeableTile.
+- swipe-left = delete action
+- swipe-right = edit action
+- pass `onEdit: () {}` if edit is not applicable
+
+Callback wiring pattern:
+
+Tab screens receive `VoidCallback onOpenSaves` and `VoidCallback onClearAll` from MainScreen.
+These are wired through MainScreen and must be passed down consistently to all tab screens.
 
 --------------------------------------------------
 CODE QUALITY RULES

@@ -262,6 +262,26 @@ Improve usability through:
 Avoid relying solely on color to convey meaning.
 
 --------------------------------------------------
+DESIGN SYSTEM CONSTRAINTS
+--------------------------------------------------
+
+The app has an established design token system that all UX proposals must respect.
+
+**Colors:**
+- All colors must come from `AppColors` in `lib/theme/app_theme.dart`
+- Do NOT propose raw `Color(...)` values or `Colors.*` references in screens or widgets
+- Semantic tokens: `AppColors.income` (green), `AppColors.expense` (red), `AppColors.warning` (amber), `AppColors.textMuted` (grey), `AppColors.surface`, `AppColors.border`
+- Brand chrome tokens: `AppColors.navy` (deep blue) + `AppColors.gold` (warm gold) — used exclusively for AppBar and NavigationBar
+
+**Brand identity:**
+- AppBar and NavigationBar use navy background with gold titles and icons
+- Body/content area stays light (white / `AppColors.surface`)
+- Do not apply navy/gold to body cards, lists, or form fields
+
+**Theme:**
+- `buildAppTheme()` owns all ThemeData — propose theme changes there, not as inline overrides
+
+--------------------------------------------------
 CONSTRAINTS
 --------------------------------------------------
 
@@ -272,6 +292,7 @@ UX improvements must respect these technical constraints:
 - maintain Material 3 design language
 - do not introduce new state management frameworks
 - do not require architectural redesign
+- all color values must reference AppColors constants
 
 --------------------------------------------------
 WORKFLOW

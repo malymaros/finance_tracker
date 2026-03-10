@@ -93,13 +93,15 @@ Widgets **must never contain financial calculations**.
 
 # Folder Structure
 
+```
 lib/
-
-main.dart  
-models/  
-services/  
-screens/  
-widgets/
+  main.dart
+  models/
+  services/
+  screens/
+  widgets/
+  theme/        ← AppColors constants and buildAppTheme()
+```
 
 Rules:
 
@@ -107,6 +109,7 @@ Rules:
 - `services/` contain business logic and calculations
 - `screens/` orchestrate UI behavior
 - `widgets/` render reusable UI components
+- `theme/` contains `AppColors` and `buildAppTheme()` — the single source of truth for all colors and ThemeData
 
 Business logic **must never be placed in widgets**.
 
@@ -146,20 +149,23 @@ Default assumption:
 
 Always verify that domain concepts remain consistent.
 
-Typical domain models include:
+Actual domain models in the codebase:
 
-- Expense
-- IncomeItem
-- FixedCostItem
-- ExpenseCategory
-- FinancialType
-- Period (YearMonth)
-- FinancialPlan
-- MonthlySummary
-- YearlySummary
-- ReportData
+- `Expense` — amount, category, financialType, date, note?
+- `IncomeEntry` — amount, date, type (oneTime|monthly), description?
+- `FixedCost` — name, amount, recurrence, startYear, startMonth, category, financialType
+- `PlanItem` — name, amount, type (income|fixedCost), frequency, validFrom (YearMonth), seriesId
+- `YearMonth` — year, month; implements Comparable
+- `MonthlySummary` — plannedIncome, plannedFixedCosts, spendableBudget, actualExpenses, difference
+- `BudgetStatus` — spendableBudget, actualSpent, remaining, percentUsed, isOverBudget
+- `CategoryTotal` — category, amount, percentage
+- `ReportLine` — category, financialType, amount
+- `SaveSlot` — id, name, createdAt, expenseCount, incomeCount, planItemCount, isDamaged
+- `PeriodBounds` — min, max (YearMonth)
+- `ExpenseCategory` enum (15 values) with .displayName, .icon, .color extensions
+- `FinancialType` enum (asset|consumption|insurance) with .displayName, .icon, .color extensions
 
-Avoid duplicating similar concepts across different models.
+Do **not** invent model names that do not exist above. Reuse or extend existing models.
 
 If a concept already exists, **reuse or extend it instead of creating parallel structures**.
 
@@ -169,26 +175,30 @@ If a concept already exists, **reuse or extend it instead of creating parallel s
 
 Services contain all business logic.
 
-Typical service responsibilities:
+Actual services in the codebase:
 
-### ExpenseService
+### FinanceRepository
+ChangeNotifier. Owns `expenses`, `income`, `fixedCosts`. JSON persistence via `finance_data.json`. Exposes `reportLinesForMonth/Year` and `restoreFromSnapshot`.
 
-- store expenses
-- filter expenses by period
-- add/update/delete expenses
+### PlanRepository
+ChangeNotifier. Owns `planItems`. JSON persistence via `plan_data.json`. Supports version history via `seriesId`. Exposes `restoreFromSnapshot`.
 
-### FinancialPlanService
+### BudgetCalculator
+Pure static. All budget math: `activeItemsForMonth`, `normalizedMonthlyIncome/FixedCosts`, `spendableBudget`, `budgetStatus`, `monthlySummaries`, `cashFlowTotals`.
 
-- calculate monthly plans
-- compute spending budgets
-- evaluate overspending vs savings
+### ReportAggregator
+Pure static. `categoryTotals`, `applyThreshold` (collapses categories below % into "Other"), `financialTypeBreakdown`.
 
-### ReportService
+### SaveLoadService
+Pure static. Local named snapshots in `saves/save_{id}.json`. Max 5 non-damaged saves. Methods: `listSaves`, `createSave`, `loadSave`, `deleteSave`.
 
-- aggregate expenses
-- compute category distributions
-- compute financial type ratios
-- generate pie chart data
+### PeriodBoundsService
+Pure static. Computes period navigation bounds (default ±1 year; expands if plan data exists at boundary year).
+
+### SeedData
+Debug only. `applyIfEmpty`, `reset`.
+
+Do **not** invent service names that do not exist above.
 
 Services must return **clean data structures for UI consumption**.
 
@@ -228,6 +238,19 @@ Avoid duplicating logic for:
 - financial type distribution
 
 Duplicated financial logic is considered an **architectural defect**.
+
+---
+
+# Design System Rules
+
+The app has a centralised design token system.
+
+- `AppColors` in `lib/theme/app_theme.dart` — all semantic + brand color constants
+- `buildAppTheme()` — the single source of truth for all `ThemeData`
+- Never propose raw `Color(...)` literals in screens or widgets
+- Navy/gold brand identity: `AppColors.navy` + `AppColors.gold` for app chrome (AppBar + NavigationBar); body surfaces remain light/white
+
+Any architecture proposal that introduces new UI surfaces must reference `AppColors` and respect the existing theme structure.
 
 ---
 
