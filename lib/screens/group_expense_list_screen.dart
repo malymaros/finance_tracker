@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/expense.dart';
-import '../models/year_month.dart';
 import '../services/finance_repository.dart';
 import '../theme/app_theme.dart';
 import '../widgets/expense_list_tile.dart';
@@ -13,13 +12,11 @@ import 'expense_detail_screen.dart';
 /// for the given [period].
 class GroupExpenseListScreen extends StatefulWidget {
   final String groupName;
-  final YearMonth period;
   final FinanceRepository repository;
 
   const GroupExpenseListScreen({
     super.key,
     required this.groupName,
-    required this.period,
     required this.repository,
   });
 
@@ -29,19 +26,9 @@ class GroupExpenseListScreen extends StatefulWidget {
 }
 
 class _GroupExpenseListScreenState extends State<GroupExpenseListScreen> {
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
-
-  String get _periodLabel =>
-      '${_monthNames[widget.period.month]} ${widget.period.year}';
-
-  List<Expense> _expensesForPeriod() =>
-      widget.repository
-          .expensesForGroup(
-              widget.groupName, widget.period.year, widget.period.month)
+  List<Expense> _allGroupExpenses() =>
+      widget.repository.expenses
+          .where((e) => e.group == widget.groupName)
           .toList()
         ..sort((a, b) => b.date.compareTo(a.date));
 
@@ -50,27 +37,12 @@ class _GroupExpenseListScreenState extends State<GroupExpenseListScreen> {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        toolbarHeight: 56,
-        title: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(widget.groupName),
-            Text(
-              _periodLabel,
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w400,
-                color: AppColors.gold,
-                letterSpacing: 0.2,
-              ),
-            ),
-          ],
-        ),
+        title: Text(widget.groupName),
       ),
       body: ListenableBuilder(
         listenable: widget.repository,
         builder: (context, _) {
-          final expenses = _expensesForPeriod();
+          final expenses = _allGroupExpenses();
 
           if (expenses.isEmpty) return _buildEmptyState();
 
@@ -148,7 +120,7 @@ class _GroupExpenseListScreenState extends State<GroupExpenseListScreen> {
           const Icon(Icons.folder_open, size: 64, color: Colors.grey),
           const SizedBox(height: 16),
           Text(
-            'No expenses in "${widget.groupName}"\nfor $_periodLabel.',
+            'No expenses in "${widget.groupName}".',
             style: const TextStyle(color: Colors.grey, fontSize: 16),
             textAlign: TextAlign.center,
           ),

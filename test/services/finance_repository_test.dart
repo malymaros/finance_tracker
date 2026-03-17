@@ -249,6 +249,109 @@ void main() {
     });
   });
 
+  group('FinanceRepository — groupSummariesForMonth', () {
+    test('returns groups visible in the month with all-time expenses', () async {
+      final repo = FinanceRepository(persist: false);
+      // Jan expense
+      await repo.addExpense(Expense(
+        id: '1', amount: 100.0, category: ExpenseCategory.vacation,
+        date: DateTime(2024, 1, 10), group: 'Vacation',
+      ));
+      // Dec expense — same group
+      await repo.addExpense(Expense(
+        id: '2', amount: 100.0, category: ExpenseCategory.vacation,
+        date: DateTime(2024, 12, 5), group: 'Vacation',
+      ));
+
+      final janSummaries = repo.groupSummariesForMonth(2024, 1);
+      expect(janSummaries.length, 1);
+      expect(janSummaries.first.key, 'Vacation');
+      // All-time total: both expenses, not just January
+      expect(janSummaries.first.value.length, 2);
+      expect(janSummaries.first.value.fold(0.0, (s, e) => s + e.amount), 200.0);
+
+      final decSummaries = repo.groupSummariesForMonth(2024, 12);
+      expect(decSummaries.length, 1);
+      expect(decSummaries.first.value.fold(0.0, (s, e) => s + e.amount), 200.0);
+    });
+
+    test('excludes groups with no expense in the month', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: '1', amount: 50.0, category: ExpenseCategory.vacation,
+        date: DateTime(2024, 3, 1), group: 'Vacation',
+      ));
+
+      // June has no expenses — group should not appear
+      expect(repo.groupSummariesForMonth(2024, 6), isEmpty);
+    });
+
+    test('returns multiple groups sorted by all-time total descending', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: '1', amount: 30.0, category: ExpenseCategory.groceries,
+        date: DateTime(2024, 3, 1), group: 'Birthday',
+      ));
+      await repo.addExpense(Expense(
+        id: '2', amount: 200.0, category: ExpenseCategory.vacation,
+        date: DateTime(2024, 3, 5), group: 'Vacation',
+      ));
+      // Extra Vacation expense in a different month — counted in all-time total
+      await repo.addExpense(Expense(
+        id: '3', amount: 150.0, category: ExpenseCategory.vacation,
+        date: DateTime(2024, 1, 10), group: 'Vacation',
+      ));
+
+      final summaries = repo.groupSummariesForMonth(2024, 3);
+      expect(summaries.length, 2);
+      // Vacation all-time = 350, Birthday = 30 → Vacation first
+      expect(summaries[0].key, 'Vacation');
+      expect(summaries[0].value.fold(0.0, (s, e) => s + e.amount), 350.0);
+      expect(summaries[1].key, 'Birthday');
+    });
+
+    test('returns empty when no expenses in month', () {
+      final repo = FinanceRepository(persist: false);
+      expect(repo.groupSummariesForMonth(2024, 3), isEmpty);
+    });
+  });
+
+  group('FinanceRepository — cross-month group totalling', () {
+    test('all expenses for a group are accessible regardless of month', () async {
+      // Jan 100€ + Dec 100€ — both months should be able to see 200€ total
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: '1',
+        amount: 100.0,
+        category: ExpenseCategory.vacation,
+        date: DateTime(2024, 1, 10),
+        group: 'Vacation',
+      ));
+      await repo.addExpense(Expense(
+        id: '2',
+        amount: 100.0,
+        category: ExpenseCategory.vacation,
+        date: DateTime(2024, 12, 5),
+        group: 'Vacation',
+      ));
+
+      // All-time total for the group
+      final allForGroup =
+          repo.expenses.where((e) => e.group == 'Vacation').toList();
+      final total = allForGroup.fold(0.0, (s, e) => s + e.amount);
+
+      expect(allForGroup.length, 2);
+      expect(total, 200.0);
+
+      // Group is visible in January (has ≥1 expense there)
+      expect(repo.expensesForGroup('Vacation', 2024, 1).length, 1);
+      // Group is visible in December (has ≥1 expense there)
+      expect(repo.expensesForGroup('Vacation', 2024, 12).length, 1);
+      // Group is NOT visible in a month with no expense
+      expect(repo.expensesForGroup('Vacation', 2024, 6), isEmpty);
+    });
+  });
+
   group('FinanceRepository — restoreFromSnapshot preserves group', () {
     test('group field is preserved after restoreFromSnapshot', () async {
       final repo = FinanceRepository(persist: false);

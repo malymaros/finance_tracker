@@ -116,10 +116,33 @@ class FinanceRepository extends ChangeNotifier {
   List<Expense> expensesForYear(int year) =>
       _expenses.where((e) => e.date.year == year).toList();
 
+  /// Period-scoped group filter. Kept as a general-purpose helper;
+  /// not used by the groups view (which uses [groupSummariesForMonth] instead).
   List<Expense> expensesForGroup(String group, int year, int month) =>
       expensesForMonth(year, month)
           .where((e) => e.group == group)
           .toList();
+
+  /// Returns groups that are visible in [year]/[month] — i.e. have at least
+  /// one expense in that period — each paired with ALL their expenses across
+  /// all time, sorted by all-time total descending.
+  List<MapEntry<String, List<Expense>>> groupSummariesForMonth(
+      int year, int month) {
+    final groupNamesInMonth = expensesForMonth(year, month)
+        .where((e) => e.group != null)
+        .map((e) => e.group!)
+        .toSet();
+
+    return groupNamesInMonth.map((name) {
+      final all = _expenses.where((e) => e.group == name).toList();
+      return MapEntry(name, all);
+    }).toList()
+      ..sort((a, b) {
+        final ta = a.value.fold(0.0, (s, e) => s + e.amount);
+        final tb = b.value.fold(0.0, (s, e) => s + e.amount);
+        return tb.compareTo(ta);
+      });
+  }
 
   // ── Income aggregations ──────────────────────────────────────────────────
 

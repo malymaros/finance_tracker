@@ -341,34 +341,22 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   // ── Mode C: grouped by user-defined group ──────────────────────────────────
 
   Widget _buildGroupList(List<Expense> monthExpenses) {
-    final expensesWithGroup =
-        monthExpenses.where((e) => e.group != null).toList();
-
-    if (expensesWithGroup.isEmpty) {
+    if (!monthExpenses.any((e) => e.group != null)) {
       final hasAnyGroups =
           widget.repository.expenses.any((e) => e.group != null);
       return hasAnyGroups ? _buildNoGroupExpensesState() : _buildNoGroupsState();
     }
 
-    final groups = <String, List<Expense>>{};
-    for (final e in expensesWithGroup) {
-      groups.putIfAbsent(e.group!, () => []).add(e);
-    }
-
-    final sorted = groups.entries.toList()
-      ..sort((a, b) {
-        final ta = a.value.fold(0.0, (s, e) => s + e.amount);
-        final tb = b.value.fold(0.0, (s, e) => s + e.amount);
-        return tb.compareTo(ta);
-      });
+    final summaries =
+        widget.repository.groupSummariesForMonth(_year, _month);
 
     return ListView.separated(
-      itemCount: sorted.length,
+      itemCount: summaries.length,
       separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (_, i) => ExpenseGroupTile(
-        groupName: sorted[i].key,
-        expenses: sorted[i].value,
-        onTap: () => _navigateToGroupDetail(sorted[i].key),
+        groupName: summaries[i].key,
+        expenses: summaries[i].value,
+        onTap: () => _navigateToGroupDetail(summaries[i].key),
       ),
     );
   }
@@ -417,7 +405,6 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       MaterialPageRoute(
         builder: (_) => GroupExpenseListScreen(
           groupName: groupName,
-          period: widget.selectedPeriod.value,
           repository: widget.repository,
         ),
       ),
