@@ -344,7 +344,9 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                   labelText: 'Category',
                   border: OutlineInputBorder(),
                 ),
-                items: ExpenseCategory.values.map((cat) {
+                items: (ExpenseCategory.values.toList()
+                      ..sort((a, b) => a.displayName.compareTo(b.displayName)))
+                    .map((cat) {
                   return DropdownMenuItem(
                     value: cat,
                     child: Row(
