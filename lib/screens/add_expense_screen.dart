@@ -130,7 +130,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 border: OutlineInputBorder(),
               ),
               items: (ExpenseCategory.values.toList()
-                    ..sort((a, b) => a.displayName.compareTo(b.displayName)))
+                    ..sort((a, b) {
+                      if (a == ExpenseCategory.other) return 1;
+                      if (b == ExpenseCategory.other) return -1;
+                      return a.displayName.compareTo(b.displayName);
+                    }))
                   .map((cat) {
                 return DropdownMenuItem(
                   value: cat,
