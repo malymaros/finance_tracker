@@ -5,13 +5,17 @@ import '../../models/category_total.dart';
 import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/financial_type_breakdown.dart';
+import '../../models/monthly_pdf_data.dart';
 import '../../models/monthly_summary.dart';
 import '../../models/period_bounds.dart';
 import '../../models/year_month.dart';
+import '../../models/yearly_pdf_data.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/finance_repository.dart';
+import '../../services/pdf_report_service.dart';
 import '../../services/plan_repository.dart';
 import '../../services/report_aggregator.dart';
+import '../../services/share_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/period_navigator.dart';
 
@@ -49,6 +53,7 @@ class _ReportScreenState extends State<ReportScreen> {
   static const _pieChartThresholdPct = 10.0;
 
   _ReportMode _mode = _ReportMode.monthly;
+  bool _isGeneratingPdf = false;
 
   int get _year => widget.selectedPeriod.value.year;
   int get _month => widget.selectedPeriod.value.month;
@@ -57,6 +62,12 @@ class _ReportScreenState extends State<ReportScreen> {
     '',
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+
+  static const _monthNames = [
+    '',
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
   ];
 
   @override
@@ -80,6 +91,24 @@ class _ReportScreenState extends State<ReportScreen> {
         title: const Text('Reports'),
         scrolledUnderElevation: 0,
         actions: [
+          if (_mode != _ReportMode.overview)
+            if (_isGeneratingPdf)
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Center(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+              )
+            else
+              IconButton(
+                icon: const Icon(Icons.picture_as_pdf_outlined),
+                tooltip: 'Export PDF',
+                onPressed: _onExportPdf,
+              ),
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'saves') widget.onOpenSaves();
@@ -112,6 +141,134 @@ class _ReportScreenState extends State<ReportScreen> {
       ),
     );
   }
+
+  // ── PDF export ────────────────────────────────────────────────────────────
+
+  Future<void> _onExportPdf() async {
+    if (_isGeneratingPdf) return;
+    setState(() => _isGeneratingPdf = true);
+    try {
+      switch (_mode) {
+        case _ReportMode.monthly:
+          await _exportMonthlyPdf();
+        case _ReportMode.yearly:
+          await _exportYearlyPdf();
+        case _ReportMode.overview:
+          await _exportYearlyPdf();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to generate PDF: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isGeneratingPdf = false);
+    }
+  }
+
+  Future<void> _exportMonthlyPdf() async {
+    final lines = ReportAggregator.mergedLines(
+      widget.repository.reportLinesForMonth(_year, _month),
+      BudgetCalculator.planFixedCostReportLinesForMonth(
+          widget.planRepository.items, _year, _month),
+    );
+    final listTotals = ReportAggregator.categoryTotals(lines);
+    final breakdown = ReportAggregator.financialTypeBreakdown(lines);
+    final grandTotal = listTotals.fold(0.0, (s, ct) => s + ct.amount);
+    final budgetStatus = BudgetCalculator.budgetStatus(
+      widget.planRepository.items,
+      widget.repository
+          .expensesForMonth(_year, _month)
+          .fold(0.0, (s, e) => s + e.amount),
+      _year,
+      _month,
+    );
+    final groupSummaries =
+        widget.repository.groupSummariesForMonth(_year, _month);
+    final expenses = widget.repository.expensesForMonth(_year, _month)
+      ..sort((a, b) => b.date.compareTo(a.date));
+
+    final data = MonthlyPdfData(
+      year: _year,
+      month: _month,
+      categoryTotals: listTotals,
+      breakdown: breakdown,
+      grandTotal: grandTotal,
+      budgetStatus: budgetStatus,
+      groupSummaries: groupSummaries,
+      expenses: expenses,
+    );
+
+    final bytes = await PdfReportService.generateMonthlyReport(data);
+    final filename =
+        'finance_${_monthNames[_month].toLowerCase()}_$_year.pdf';
+    await ShareService.sharePdf(bytes, filename);
+  }
+
+  Future<void> _exportYearlyPdf() async {
+    final lines = ReportAggregator.mergedLines(
+      widget.repository.reportLinesForYear(_year),
+      BudgetCalculator.planFixedCostReportLinesForYear(
+          widget.planRepository.items, _year),
+    );
+    final listTotals = ReportAggregator.categoryTotals(lines);
+    final breakdown = ReportAggregator.financialTypeBreakdown(lines);
+    final grandTotal = listTotals.fold(0.0, (s, ct) => s + ct.amount);
+    final summaries = BudgetCalculator.monthlySummaries(
+      widget.planRepository.items,
+      widget.repository.expenses,
+      _year,
+    );
+    final now = DateTime.now();
+    final isPartialYear = _year == now.year;
+    final categoryMonthlyAmounts = _buildCategoryMonthlyAmounts();
+
+    final data = YearlyPdfData(
+      year: _year,
+      categoryTotals: listTotals,
+      breakdown: breakdown,
+      grandTotal: grandTotal,
+      monthlySummaries: summaries,
+      isPartialYear: isPartialYear,
+      categoryMonthlyAmounts: categoryMonthlyAmounts,
+    );
+
+    final bytes = await PdfReportService.generateYearlyReport(data);
+    final filename = 'finance_yearly_$_year.pdf';
+    await ShareService.sharePdf(bytes, filename);
+  }
+
+  /// Builds a per-category list of 12 monthly expense amounts for the current
+  /// year. Index 0 = January, 11 = December. Fixed-cost plan lines are
+  /// included alongside actual expenses.
+  Map<ExpenseCategory, List<double>> _buildCategoryMonthlyAmounts() {
+    final result = <ExpenseCategory, List<double>>{};
+
+    for (var month = 1; month <= 12; month++) {
+      final lines = ReportAggregator.mergedLines(
+        widget.repository.reportLinesForMonth(_year, month),
+        BudgetCalculator.planFixedCostReportLinesForMonth(
+            widget.planRepository.items, _year, month),
+      );
+      for (final line in lines) {
+        result.putIfAbsent(line.category, () => List.filled(12, 0.0));
+        result[line.category]![month - 1] += line.amount;
+      }
+    }
+
+    // Sort by annual total descending.
+    final sorted = result.entries.toList()
+      ..sort((a, b) {
+        final ta = a.value.fold(0.0, (s, v) => s + v);
+        final tb = b.value.fold(0.0, (s, v) => s + v);
+        return tb.compareTo(ta);
+      });
+
+    return Map.fromEntries(sorted);
+  }
+
+  // ── Mode toggle ───────────────────────────────────────────────────────────
 
   Widget _buildModeToggle() {
     return Padding(
