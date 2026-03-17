@@ -41,7 +41,7 @@ lib/
 MODELS
 --------------------------------------------------
 
-Expense          amount, category (ExpenseCategory), financialType, date, note?
+Expense          amount, category (ExpenseCategory), financialType, date, note?, group?
 IncomeEntry      amount, date, type (oneTime|monthly), description?
 FixedCost        name, amount, recurrence (monthly|yearly), startYear, startMonth, category, financialType
 PlanItem         name, amount, type (income|fixedCost), frequency, validFrom (YearMonth), seriesId, category?, financialType?
@@ -52,10 +52,11 @@ CategoryTotal    category, amount, percentage
 ReportLine       category, financialType, amount
 SaveSlot         id, name, createdAt, expenseCount, incomeCount, planItemCount, isDamaged
 
-ExpenseCategory enum (15 values): housing, groceries, vacation, transport, insurance,
+ExpenseCategory enum (17 values): housing, groceries, vacation, transport, insurance,
   subscriptions, communication, health, restaurants, entertainment, clothing,
-  education, investment, gifts, other
+  education, investment, gifts, taxes, medications, other
   — each value has .displayName, .icon, .color extensions
+  — alphabetically sorted in category pickers; 'other' always pinned last
 
 FinancialType enum: asset | consumption | insurance
   — each value has .displayName, .icon, .color extensions
@@ -67,9 +68,9 @@ legacy string values via _fromLegacy(); 'drugstore' maps to other.
 SERVICES
 --------------------------------------------------
 
-FinanceRepository   ChangeNotifier; owns expenses, income, fixedCosts lists;
+FinanceRepository   ChangeNotifier; owns expenses, income lists;
                     JSON file persistence (finance_data.json via path_provider);
-                    provides reportLinesForMonth/Year helpers;
+                    provides expensesForMonth/Year/Group and reportLinesForMonth/Year helpers;
                     exposes restoreFromSnapshot(expenses, income)
 
 PlanRepository      ChangeNotifier; owns planItems list; JSON file persistence
@@ -135,7 +136,7 @@ KEY PATTERNS
 --------------------------------------------------
 
 - Enum extensions for .displayName / .icon / .color (never inline in UI)
-- SwipeableTile wraps all list items: swipe-left = delete, swipe-right = edit
+- SwipeableTile wraps all list items: long-press → bottom sheet with Edit / Delete actions
 - Month navigation is consistent across screens with Dec↔Jan wraparound
 - Amounts displayed as X.XX €  (toStringAsFixed(2))
 - One widget or screen per file; StatelessWidget unless local state is needed
@@ -156,9 +157,11 @@ WelcomeScreen           Animated entry screen; coin toss interaction with vapor
                         result effect and haptic feedback; navigates to MainScreen
                         via mainScreenBuilder callback using pushReplacement
 MainScreen              Root; 3 tabs: Expenses / Plan / Reports
-ExpenseListScreen       Month view with navigation, budget bar, items/by-category toggle
-AddExpenseScreen        Add/edit expense form
+ExpenseListScreen       Month view with navigation, budget bar, three-mode toggle (items/category/groups)
+AddExpenseScreen        Add/edit expense form; includes optional free-text group field
 ExpenseDetailScreen     Read-only expense detail; opened by tapping item in list view
+CategoryExpenseListScreen  Drill-down from category view; shows individual expenses for one category + period
+GroupExpenseListScreen  Drill-down from groups view; shows individual expenses for one group + period
 PlanScreen              Monthly/yearly plan view (income + fixed costs)
 AddPlanItemScreen       Add/edit plan item with type, frequency, validFrom
 PlanItemDetailScreen    Read-only plan item detail; opened by tapping item in plan list

@@ -216,7 +216,7 @@ Services contain:
 
 Actual services in the codebase:
 
-- `FinanceRepository` — ChangeNotifier; expenses, income, fixedCosts; `restoreFromSnapshot`
+- `FinanceRepository` — ChangeNotifier; expenses, income; filtering helpers incl. `expensesForGroup(group, year, month)`; `restoreFromSnapshot(expenses, income)`
 - `PlanRepository` — ChangeNotifier; planItems; version history via seriesId; `restoreFromSnapshot`
 - `BudgetCalculator` — pure static; all budget math
 - `ReportAggregator` — pure static; categoryTotals, financialTypeBreakdown, applyThreshold

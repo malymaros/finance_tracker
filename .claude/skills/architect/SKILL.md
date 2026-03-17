@@ -151,7 +151,7 @@ Always verify that domain concepts remain consistent.
 
 Actual domain models in the codebase:
 
-- `Expense` — amount, category, financialType, date, note?
+- `Expense` — amount, category, financialType, date, note?, group?
 - `IncomeEntry` — amount, date, type (oneTime|monthly), description?
 - `FixedCost` — name, amount, recurrence, startYear, startMonth, category, financialType
 - `PlanItem` — name, amount, type (income|fixedCost), frequency, validFrom (YearMonth), seriesId
@@ -162,7 +162,7 @@ Actual domain models in the codebase:
 - `ReportLine` — category, financialType, amount
 - `SaveSlot` — id, name, createdAt, expenseCount, incomeCount, planItemCount, isDamaged
 - `PeriodBounds` — min, max (YearMonth)
-- `ExpenseCategory` enum (15 values) with .displayName, .icon, .color extensions
+- `ExpenseCategory` enum (17 values: housing, groceries, vacation, transport, insurance, subscriptions, communication, health, restaurants, entertainment, clothing, education, investment, gifts, taxes, medications, other) with .displayName, .icon, .color extensions; alphabetically sorted in pickers, `other` pinned last
 - `FinancialType` enum (asset|consumption|insurance) with .displayName, .icon, .color extensions
 
 Do **not** invent model names that do not exist above. Reuse or extend existing models.
