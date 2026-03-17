@@ -8,11 +8,13 @@ import '../models/expense_category.dart';
 class ExpenseCategoryGroup extends StatelessWidget {
   final ExpenseCategory category;
   final List<Expense> expenses;
+  final VoidCallback? onTap;
 
   const ExpenseCategoryGroup({
     super.key,
     required this.category,
     required this.expenses,
+    this.onTap,
   });
 
   @override
@@ -21,6 +23,7 @@ class ExpenseCategoryGroup extends StatelessWidget {
     final count = expenses.length;
 
     return ListTile(
+      onTap: onTap,
       leading: CircleAvatar(
         backgroundColor: category.color.withAlpha(30),
         child: Icon(category.icon, size: 20, color: category.color),

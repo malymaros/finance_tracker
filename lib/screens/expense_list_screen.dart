@@ -15,6 +15,7 @@ import '../widgets/month_budget_summary.dart';
 import '../widgets/period_navigator.dart';
 import '../widgets/swipeable_tile.dart';
 import 'add_expense_screen.dart';
+import 'category_expense_list_screen.dart';
 import 'expense_detail_screen.dart';
 
 enum _ViewMode { items, byCategory }
@@ -307,11 +308,25 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       itemBuilder: (_, i) => ExpenseCategoryGroup(
         category: sorted[i].key,
         expenses: sorted[i].value,
+        onTap: () => _navigateToCategoryDetail(context, sorted[i].key),
       ),
     );
   }
 
   // ── Navigation ─────────────────────────────────────────────────────────────
+
+  void _navigateToCategoryDetail(
+      BuildContext context, ExpenseCategory category) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CategoryExpenseListScreen(
+          category: category,
+          period: widget.selectedPeriod.value,
+          repository: widget.repository,
+        ),
+      ),
+    );
+  }
 
   void _navigateToAdd(BuildContext context, DateTime initialDate) {
     Navigator.of(context).push(
