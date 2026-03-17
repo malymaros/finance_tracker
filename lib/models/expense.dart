@@ -9,6 +9,10 @@ class Expense {
   final DateTime date;
   final String? note;
 
+  /// Optional user-defined group name (free text).
+  /// Null means the expense is not assigned to any group.
+  final String? group;
+
   Expense({
     required this.id,
     required this.amount,
@@ -16,6 +20,7 @@ class Expense {
     required this.date,
     this.financialType = FinancialType.consumption,
     this.note,
+    this.group,
   });
 
   Map<String, dynamic> toJson() => {
@@ -25,6 +30,7 @@ class Expense {
         'financialType': financialType.name,
         'date': date.toIso8601String(),
         'note': note,
+        'group': group,
       };
 
   factory Expense.fromJson(Map<String, dynamic> json) => Expense(
@@ -36,5 +42,9 @@ class Expense {
             : FinancialType.consumption,
         date: DateTime.parse(json['date'] as String),
         note: json['note'] as String?,
+        // 'group' is the current key; 'groupId' is the legacy key from a prior
+        // implementation that stored entity IDs — treat any old values as null
+        // since IDs are meaningless without the entity list.
+        group: json['group'] as String?,
       );
 }

@@ -10,6 +10,7 @@ import '../services/finance_repository.dart';
 import '../services/plan_repository.dart';
 import '../widgets/budget_progress_bar.dart';
 import '../widgets/expense_category_group.dart';
+import '../widgets/expense_group_tile.dart';
 import '../widgets/expense_list_tile.dart';
 import '../widgets/month_budget_summary.dart';
 import '../widgets/period_navigator.dart';
@@ -17,8 +18,8 @@ import '../widgets/swipeable_tile.dart';
 import 'add_expense_screen.dart';
 import 'category_expense_list_screen.dart';
 import 'expense_detail_screen.dart';
-
-enum _ViewMode { items, byCategory }
+import 'group_expense_list_screen.dart';
+enum _ViewMode { items, byCategory, byGroup }
 
 class ExpenseListScreen extends StatefulWidget {
   final FinanceRepository repository;
@@ -124,7 +125,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           appBar: AppBar(
             title: const Text('Expenses'),
             scrolledUnderElevation: 0,
-            actions: [_buildOverflowMenu()],
+            actions: [
+              _buildOverflowMenu(),
+            ],
           ),
           body: Column(
             children: [
@@ -133,11 +136,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               _buildViewToggle(),
               const Divider(height: 1),
               Expanded(
-                child: monthExpenses.isEmpty
-                    ? _buildEmptyState()
-                    : _mode == _ViewMode.items
-                        ? _buildItemsList(context, monthExpenses)
-                        : _buildCategoryList(monthExpenses),
+                child: _mode == _ViewMode.byGroup
+                    ? _buildGroupList(monthExpenses)
+                    : monthExpenses.isEmpty
+                        ? _buildEmptyState()
+                        : _mode == _ViewMode.items
+                            ? _buildItemsList(context, monthExpenses)
+                            : _buildCategoryList(monthExpenses),
               ),
             ],
           ),
@@ -214,8 +219,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           ),
           ButtonSegment(
             value: _ViewMode.byCategory,
-            label: Text('By Category'),
+            label: Text('Category'),
             icon: Icon(Icons.category_outlined),
+          ),
+          ButtonSegment(
+            value: _ViewMode.byGroup,
+            label: Text('Groups'),
+            icon: Icon(Icons.folder_outlined),
           ),
         ],
         selected: {_mode},
@@ -321,6 +331,92 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       MaterialPageRoute(
         builder: (_) => CategoryExpenseListScreen(
           category: category,
+          period: widget.selectedPeriod.value,
+          repository: widget.repository,
+        ),
+      ),
+    );
+  }
+
+  // ── Mode C: grouped by user-defined group ──────────────────────────────────
+
+  Widget _buildGroupList(List<Expense> monthExpenses) {
+    final expensesWithGroup =
+        monthExpenses.where((e) => e.group != null).toList();
+
+    if (expensesWithGroup.isEmpty) {
+      final hasAnyGroups =
+          widget.repository.expenses.any((e) => e.group != null);
+      return hasAnyGroups ? _buildNoGroupExpensesState() : _buildNoGroupsState();
+    }
+
+    final groups = <String, List<Expense>>{};
+    for (final e in expensesWithGroup) {
+      groups.putIfAbsent(e.group!, () => []).add(e);
+    }
+
+    final sorted = groups.entries.toList()
+      ..sort((a, b) {
+        final ta = a.value.fold(0.0, (s, e) => s + e.amount);
+        final tb = b.value.fold(0.0, (s, e) => s + e.amount);
+        return tb.compareTo(ta);
+      });
+
+    return ListView.separated(
+      itemCount: sorted.length,
+      separatorBuilder: (_, _) => const Divider(height: 1),
+      itemBuilder: (_, i) => ExpenseGroupTile(
+        groupName: sorted[i].key,
+        expenses: sorted[i].value,
+        onTap: () => _navigateToGroupDetail(sorted[i].key),
+      ),
+    );
+  }
+
+  Widget _buildNoGroupsState() {
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.folder_outlined, size: 64, color: Colors.grey),
+          SizedBox(height: 16),
+          Text(
+            'No groups yet.',
+            style: TextStyle(color: Colors.grey, fontSize: 16),
+          ),
+          SizedBox(height: 8),
+          Text(
+            'Add a group when creating\nor editing an expense.',
+            style: TextStyle(color: Colors.grey),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoGroupExpensesState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.folder_open, size: 64, color: Colors.grey),
+          const SizedBox(height: 16),
+          Text(
+            'No group expenses in\n${_monthNames[_month]} $_year.',
+            style: const TextStyle(color: Colors.grey, fontSize: 16),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _navigateToGroupDetail(String groupName) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => GroupExpenseListScreen(
+          groupName: groupName,
           period: widget.selectedPeriod.value,
           repository: widget.repository,
         ),

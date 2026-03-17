@@ -152,6 +152,130 @@ void main() {
     });
   });
 
+  group('FinanceRepository — expensesForGroup', () {
+    test('returns expenses matching group and period', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: '1',
+        amount: 50.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 3, 1),
+        group: 'Vacation',
+      ));
+      await repo.addExpense(Expense(
+        id: '2',
+        amount: 30.0,
+        category: ExpenseCategory.transport,
+        date: DateTime(2024, 3, 10),
+        group: 'Vacation',
+      ));
+      await repo.addExpense(Expense(
+        id: '3',
+        amount: 20.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 3, 5),
+        group: 'Birthday',
+      ));
+
+      final result = repo.expensesForGroup('Vacation', 2024, 3);
+      expect(result.length, 2);
+      expect(result.map((e) => e.id), containsAll(['1', '2']));
+    });
+
+    test('excludes expenses with different group name', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: '1',
+        amount: 100.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 3, 1),
+        group: 'Vacation',
+      ));
+      await repo.addExpense(Expense(
+        id: '2',
+        amount: 40.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 3, 5),
+        group: 'Birthday',
+      ));
+
+      expect(repo.expensesForGroup('Vacation', 2024, 3).length, 1);
+      expect(repo.expensesForGroup('Birthday', 2024, 3).length, 1);
+    });
+
+    test('excludes expenses with no group', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: '1',
+        amount: 10.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 3, 1),
+      ));
+      await repo.addExpense(Expense(
+        id: '2',
+        amount: 20.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 3, 5),
+        group: 'Vacation',
+      ));
+
+      expect(repo.expensesForGroup('Vacation', 2024, 3).length, 1);
+    });
+
+    test('excludes expenses outside the requested period', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: '1',
+        amount: 50.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 3, 1),
+        group: 'Vacation',
+      ));
+      await repo.addExpense(Expense(
+        id: '2',
+        amount: 50.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 4, 1),
+        group: 'Vacation',
+      ));
+
+      expect(repo.expensesForGroup('Vacation', 2024, 3).length, 1);
+      expect(repo.expensesForGroup('Vacation', 2024, 4).length, 1);
+    });
+
+    test('returns empty when no expenses match', () {
+      final repo = FinanceRepository(persist: false);
+      expect(repo.expensesForGroup('Vacation', 2024, 3), isEmpty);
+    });
+  });
+
+  group('FinanceRepository — restoreFromSnapshot preserves group', () {
+    test('group field is preserved after restoreFromSnapshot', () async {
+      final repo = FinanceRepository(persist: false);
+      final expenses = [
+        Expense(
+          id: '1',
+          amount: 75.0,
+          category: ExpenseCategory.vacation,
+          date: DateTime(2024, 6, 1),
+          group: 'Summer Trip',
+        ),
+        Expense(
+          id: '2',
+          amount: 30.0,
+          category: ExpenseCategory.groceries,
+          date: DateTime(2024, 6, 5),
+        ),
+      ];
+
+      await repo.restoreFromSnapshot(expenses, []);
+
+      expect(repo.expenses.length, 2);
+      expect(repo.expenses.firstWhere((e) => e.id == '1').group, 'Summer Trip');
+      expect(repo.expenses.firstWhere((e) => e.id == '2').group, isNull);
+    });
+  });
+
   group('Expense serialization', () {
     test('toJson and fromJson round-trip', () {
       final original = Expense(

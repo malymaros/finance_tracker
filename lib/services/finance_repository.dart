@@ -116,6 +116,11 @@ class FinanceRepository extends ChangeNotifier {
   List<Expense> expensesForYear(int year) =>
       _expenses.where((e) => e.date.year == year).toList();
 
+  List<Expense> expensesForGroup(String group, int year, int month) =>
+      expensesForMonth(year, month)
+          .where((e) => e.group == group)
+          .toList();
+
   // ── Income aggregations ──────────────────────────────────────────────────
 
   List<IncomeEntry> incomeForMonth(int year, int month) => _income

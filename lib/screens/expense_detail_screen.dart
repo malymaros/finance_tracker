@@ -110,6 +110,15 @@ class ExpenseDetailScreen extends StatelessWidget {
             label: 'Date',
             value: _formatDate(expense.date),
           ),
+          if (expense.group != null) ...[
+            const Divider(height: 1, indent: 56),
+            _buildDetailRow(
+              icon: Icons.folder_outlined,
+              iconColor: AppColors.textMuted,
+              label: 'Group',
+              value: expense.group!,
+            ),
+          ],
           if (expense.note != null) ...[
             const Divider(height: 1, indent: 56),
             _buildDetailRow(

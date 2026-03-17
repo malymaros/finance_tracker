@@ -23,9 +23,11 @@ class ExpenseListTile extends StatelessWidget {
       ),
       title: Text(expense.category.displayName),
       subtitle: Text(
-        expense.note != null
-            ? '${expense.note} · $formattedDate'
-            : formattedDate,
+        [
+          if (expense.note != null) expense.note!,
+          formattedDate,
+          if (expense.group != null) expense.group!,
+        ].join(' · '),
         style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
       ),
       trailing: Text(

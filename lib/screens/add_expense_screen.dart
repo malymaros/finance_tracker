@@ -27,6 +27,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   final _noteController = TextEditingController();
+  final _groupController = TextEditingController();
 
   late ExpenseCategory _selectedCategory;
   late FinancialType _selectedFinancialType;
@@ -42,6 +43,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     if (e != null) {
       _amountController.text = e.amount.toString();
       _noteController.text = e.note ?? '';
+      _groupController.text = e.group ?? '';
     }
   }
 
@@ -49,6 +51,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   void dispose() {
     _amountController.dispose();
     _noteController.dispose();
+    _groupController.dispose();
     super.dispose();
   }
 
@@ -75,6 +78,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       note: _noteController.text.trim().isEmpty
           ? null
           : _noteController.text.trim(),
+      group: _groupController.text.trim().isEmpty
+          ? null
+          : _groupController.text.trim(),
     );
 
     if (widget.existing != null) {
@@ -192,6 +198,17 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 border: OutlineInputBorder(),
               ),
               maxLines: 2,
+            ),
+            const SizedBox(height: 16),
+
+            // ── Group ────────────────────────────────────────────────────────
+            TextFormField(
+              controller: _groupController,
+              decoration: const InputDecoration(
+                labelText: 'Group (optional)',
+                hintText: 'e.g. Vacation, Birthday',
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 24),
 

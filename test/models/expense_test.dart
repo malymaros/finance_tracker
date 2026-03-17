@@ -111,6 +111,45 @@ void main() {
         expect(restored.financialType, expense.financialType);
         expect(restored.date, expense.date);
         expect(restored.note, expense.note);
+        expect(restored.group, isNull);
+      });
+
+      test('toJson and fromJson round-trip preserves group', () {
+        final expense = Expense(
+          id: 'g1',
+          amount: 150.0,
+          category: ExpenseCategory.vacation,
+          date: date,
+          group: 'Summer Trip',
+        );
+
+        final restored = Expense.fromJson(expense.toJson());
+
+        expect(restored.group, 'Summer Trip');
+      });
+
+      test('group defaults to null when missing from JSON (backward compat)', () {
+        final json = {
+          'id': 'old5',
+          'amount': 10.0,
+          'category': 'groceries',
+          'financialType': 'consumption',
+          'date': date.toIso8601String(),
+          'note': null,
+        };
+        final expense = Expense.fromJson(json);
+        expect(expense.group, isNull);
+      });
+
+      test('group null is preserved through round-trip', () {
+        final expense = Expense(
+          id: 'ng1',
+          amount: 20.0,
+          category: ExpenseCategory.groceries,
+          date: date,
+        );
+        final restored = Expense.fromJson(expense.toJson());
+        expect(restored.group, isNull);
       });
 
       test('fromJson handles missing financialType (legacy records)', () {
