@@ -442,6 +442,81 @@ void main() {
       final summaries = BudgetCalculator.monthlySummaries(items, expenses, 2024);
       expect(summaries[2].difference, -300);
     });
+
+    test('no plan items: all months have zero income and fixed costs', () {
+      final summaries = BudgetCalculator.monthlySummaries([], [], 2024);
+      for (final s in summaries) {
+        expect(s.plannedIncome, 0);
+        expect(s.plannedFixedCosts, 0);
+        expect(s.spendableBudget, 0);
+        expect(s.actualExpenses, 0);
+      }
+    });
+
+    test('income starting mid-year: months before validFrom have zero income', () {
+      // Income starts April 2024 (month 4)
+      final items = [makeIncome(id: 'i', amount: 3000, validMonth: 4)];
+      final summaries = BudgetCalculator.monthlySummaries(items, [], 2024);
+
+      // January–March: no income
+      for (int m = 0; m < 3; m++) {
+        expect(summaries[m].plannedIncome, 0,
+            reason: 'month ${m + 1} should have zero income');
+      }
+      // April–December: income active
+      for (int m = 3; m < 12; m++) {
+        expect(summaries[m].plannedIncome, 3000,
+            reason: 'month ${m + 1} should have income');
+      }
+    });
+
+    test('fixedCost expiring mid-year: months after validTo have zero cost', () {
+      // Rent active Jan–Jun 2024 only
+      final rent = PlanItem(
+        id: 'r',
+        seriesId: 'r',
+        name: 'Rent',
+        amount: 1000,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2024, 1),
+        validTo: YearMonth(2024, 6),
+      );
+      final summaries = BudgetCalculator.monthlySummaries([rent], [], 2024);
+
+      // January–June: cost active
+      for (int m = 0; m < 6; m++) {
+        expect(summaries[m].plannedFixedCosts, 1000,
+            reason: 'month ${m + 1} should have fixed cost');
+      }
+      // July–December: cost expired
+      for (int m = 6; m < 12; m++) {
+        expect(summaries[m].plannedFixedCosts, 0,
+            reason: 'month ${m + 1} cost should be zero after validTo');
+      }
+    });
+
+    test('spendableBudget is income minus fixedCosts each month', () {
+      final items = [
+        makeIncome(id: 'i', amount: 3000),
+        makeFixedCost(id: 'f', amount: 800),
+      ];
+      final summaries = BudgetCalculator.monthlySummaries(items, [], 2024);
+      for (final s in summaries) {
+        expect(s.spendableBudget,
+            closeTo(s.plannedIncome - s.plannedFixedCosts, 0.001));
+      }
+    });
+
+    test('difference is spendableBudget minus actualExpenses each month', () {
+      final items = [makeIncome(id: 'i', amount: 2000)];
+      final expenses = [makeExpense(amount: 500, year: 2024, month: 5)];
+      final summaries = BudgetCalculator.monthlySummaries(items, expenses, 2024);
+      for (final s in summaries) {
+        expect(s.difference,
+            closeTo(s.spendableBudget - s.actualExpenses, 0.001));
+      }
+    });
   });
 
   // ── planFixedCostReportLinesForMonth ──────────────────────────────────────

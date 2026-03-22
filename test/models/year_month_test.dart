@@ -78,4 +78,65 @@ void main() {
       expect(YearMonth(2024, 12).toString(), '2024-12');
     });
   });
+
+  group('YearMonth.monthNames', () {
+    test('has 13 entries (index 0 is empty sentinel)', () {
+      expect(YearMonth.monthNames.length, 13);
+    });
+
+    test('index 0 is empty string', () {
+      expect(YearMonth.monthNames[0], '');
+    });
+
+    test('index 1 is January', () {
+      expect(YearMonth.monthNames[1], 'January');
+    });
+
+    test('index 12 is December', () {
+      expect(YearMonth.monthNames[12], 'December');
+    });
+
+    test('all months are present in order', () {
+      const expected = [
+        '', 'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December',
+      ];
+      expect(YearMonth.monthNames, expected);
+    });
+  });
+
+  group('YearMonth.monthAbbreviations', () {
+    test('has 13 entries (index 0 is empty sentinel)', () {
+      expect(YearMonth.monthAbbreviations.length, 13);
+    });
+
+    test('index 0 is empty string', () {
+      expect(YearMonth.monthAbbreviations[0], '');
+    });
+
+    test('index 1 is Jan', () {
+      expect(YearMonth.monthAbbreviations[1], 'Jan');
+    });
+
+    test('index 12 is Dec', () {
+      expect(YearMonth.monthAbbreviations[12], 'Dec');
+    });
+
+    test('all abbreviations are 3 characters (except sentinel)', () {
+      for (int i = 1; i <= 12; i++) {
+        expect(YearMonth.monthAbbreviations[i].length, 3,
+            reason: 'index $i should be 3 chars');
+      }
+    });
+
+    test('abbreviations are prefixes of full names', () {
+      for (int i = 1; i <= 12; i++) {
+        expect(
+          YearMonth.monthNames[i].startsWith(YearMonth.monthAbbreviations[i]),
+          isTrue,
+          reason: 'monthNames[$i] should start with monthAbbreviations[$i]',
+        );
+      }
+    });
+  });
 }

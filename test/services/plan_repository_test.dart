@@ -99,6 +99,43 @@ void main() {
       await repo.removePlanItem('1');
       expect(notified, isTrue);
     });
+
+    test('notifies listeners on update', () async {
+      final repo = PlanRepository(persist: false, seed: [makeItem(id: '1')]);
+      var notified = false;
+      repo.addListener(() => notified = true);
+      await repo.updatePlanItem(makeItem(id: '1', amount: 9999));
+      expect(notified, isTrue);
+    });
+
+    test('restoreFromSnapshot replaces all items', () async {
+      final repo = PlanRepository(
+        persist: false,
+        seed: [makeItem(id: 'old1'), makeItem(id: 'old2')],
+      );
+
+      final newItems = [makeItem(id: 'new1', amount: 7777)];
+      await repo.restoreFromSnapshot(newItems);
+
+      expect(repo.items.length, 1);
+      expect(repo.items.first.id, 'new1');
+      expect(repo.items.first.amount, 7777);
+    });
+
+    test('restoreFromSnapshot with empty list clears all items', () async {
+      final repo =
+          PlanRepository(persist: false, seed: [makeItem(), makeItem(id: '2')]);
+      await repo.restoreFromSnapshot([]);
+      expect(repo.items, isEmpty);
+    });
+
+    test('restoreFromSnapshot notifies listeners', () async {
+      final repo = PlanRepository(persist: false, seed: [makeItem()]);
+      var notified = false;
+      repo.addListener(() => notified = true);
+      await repo.restoreFromSnapshot([]);
+      expect(notified, isTrue);
+    });
   });
 
   group('PlanItem serialization', () {
@@ -182,6 +219,52 @@ void main() {
       final json = item.toJson();
       expect(json.containsKey('category'), isFalse);
       expect(json.containsKey('financialType'), isFalse);
+    });
+
+    test('validTo round-trips correctly when set', () {
+      final original = PlanItem(
+        id: '1',
+        seriesId: '1',
+        name: 'Rent',
+        amount: 900,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2024, 1),
+        validTo: YearMonth(2024, 6),
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+      final restored = PlanItem.fromJson(original.toJson());
+      expect(restored.validTo, equals(YearMonth(2024, 6)));
+    });
+
+    test('validTo is null when omitted from JSON', () {
+      final item = PlanItem.fromJson({
+        'id': '1',
+        'seriesId': '1',
+        'name': 'Internet',
+        'amount': 30.0,
+        'type': 'fixedCost',
+        'frequency': 'monthly',
+        'validFrom': {'year': 2024, 'month': 1},
+      });
+      expect(item.validTo, isNull);
+    });
+
+    test('validTo null round-trips to null', () {
+      final original = PlanItem(
+        id: '1',
+        seriesId: '1',
+        name: 'Internet',
+        amount: 30,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2024, 1),
+        category: ExpenseCategory.subscriptions,
+        financialType: FinancialType.consumption,
+      );
+      final restored = PlanItem.fromJson(original.toJson());
+      expect(restored.validTo, isNull);
     });
   });
 }

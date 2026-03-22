@@ -200,6 +200,159 @@ void main() {
     });
   });
 
+  group('ReportAggregator.mergedLines', () {
+    test('returns combined list of both inputs', () {
+      final expense = [makeLine(category: ExpenseCategory.groceries, amount: 50)];
+      final fixed = [makeLine(category: ExpenseCategory.housing, amount: 800)];
+      final merged = ReportAggregator.mergedLines(expense, fixed);
+      expect(merged.length, 2);
+    });
+
+    test('returns expense lines when fixed list is empty', () {
+      final expense = [makeLine(amount: 100)];
+      final merged = ReportAggregator.mergedLines(expense, []);
+      expect(merged.length, 1);
+      expect(merged.first.amount, 100);
+    });
+
+    test('returns fixed lines when expense list is empty', () {
+      final fixed = [makeLine(category: ExpenseCategory.housing, amount: 800)];
+      final merged = ReportAggregator.mergedLines([], fixed);
+      expect(merged.length, 1);
+      expect(merged.first.category, ExpenseCategory.housing);
+    });
+
+    test('returns empty list when both inputs are empty', () {
+      expect(ReportAggregator.mergedLines([], []), isEmpty);
+    });
+
+    test('category totals on merged lines combine correctly', () {
+      // Same category from two sources → amounts summed
+      final expense = [
+        makeLine(category: ExpenseCategory.groceries, amount: 100),
+      ];
+      final fixed = [
+        makeLine(category: ExpenseCategory.groceries, amount: 200),
+        makeLine(category: ExpenseCategory.housing, amount: 800),
+      ];
+      final totals =
+          ReportAggregator.categoryTotals(ReportAggregator.mergedLines(expense, fixed));
+      final groceries =
+          totals.firstWhere((ct) => ct.category == ExpenseCategory.groceries);
+      expect(groceries.amount, 300);
+    });
+  });
+
+  group('ReportAggregator.buildReportData', () {
+    test('returns empty ReportData for empty lines', () {
+      final data = ReportAggregator.buildReportData([], 5.0);
+      expect(data.listTotals, isEmpty);
+      expect(data.chartTotals, isEmpty);
+      expect(data.grandTotal, 0);
+      expect(data.breakdown.assetPct, 0);
+      expect(data.breakdown.consumptionPct, 0);
+      expect(data.breakdown.insurancePct, 0);
+    });
+
+    test('grandTotal equals sum of listTotals amounts', () {
+      final lines = [
+        makeLine(category: ExpenseCategory.groceries, amount: 300),
+        makeLine(category: ExpenseCategory.transport, amount: 200),
+        makeLine(category: ExpenseCategory.housing, amount: 500),
+      ];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      final summed = data.listTotals.fold(0.0, (s, ct) => s + ct.amount);
+      expect(data.grandTotal, closeTo(summed, 0.001));
+      expect(data.grandTotal, closeTo(1000, 0.001));
+    });
+
+    test('listTotals contains all categories regardless of threshold', () {
+      // groceries = 95%, transport = 3%, clothing = 2%
+      final lines = [
+        makeLine(category: ExpenseCategory.groceries, amount: 950),
+        makeLine(category: ExpenseCategory.transport, amount: 30),
+        makeLine(category: ExpenseCategory.clothing, amount: 20),
+      ];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      // listTotals must show all 3 real categories, not collapsed
+      expect(data.listTotals.length, 3);
+      expect(
+        data.listTotals.map((ct) => ct.category).toList(),
+        containsAll([
+          ExpenseCategory.groceries,
+          ExpenseCategory.transport,
+          ExpenseCategory.clothing,
+        ]),
+      );
+    });
+
+    test('chartTotals applies threshold (small slices collapsed to Other)', () {
+      // groceries = 95%, transport = 3%, clothing = 2%
+      final lines = [
+        makeLine(category: ExpenseCategory.groceries, amount: 950),
+        makeLine(category: ExpenseCategory.transport, amount: 30),
+        makeLine(category: ExpenseCategory.clothing, amount: 20),
+      ];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      // chartTotals should collapse transport + clothing into Other
+      expect(data.chartTotals.length, 2);
+      expect(data.chartTotals.any((ct) => ct.category == ExpenseCategory.other),
+          isTrue);
+    });
+
+    test('breakdown reflects financial type distribution', () {
+      final lines = [
+        makeLine(
+            financialType: FinancialType.asset,
+            category: ExpenseCategory.investment,
+            amount: 500),
+        makeLine(
+            financialType: FinancialType.consumption,
+            category: ExpenseCategory.groceries,
+            amount: 500),
+      ];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      expect(data.breakdown.assetPct, closeTo(50.0, 0.001));
+      expect(data.breakdown.consumptionPct, closeTo(50.0, 0.001));
+      expect(data.breakdown.insurancePct, closeTo(0.0, 0.001));
+    });
+
+    test('listTotals is sorted descending by amount', () {
+      final lines = [
+        makeLine(category: ExpenseCategory.transport, amount: 100),
+        makeLine(category: ExpenseCategory.housing, amount: 800),
+        makeLine(category: ExpenseCategory.groceries, amount: 400),
+      ];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      expect(data.listTotals[0].category, ExpenseCategory.housing);
+      expect(data.listTotals[1].category, ExpenseCategory.groceries);
+      expect(data.listTotals[2].category, ExpenseCategory.transport);
+    });
+
+    test('listTotals and chartTotals differ when threshold collapses categories', () {
+      // housing=92%, transport=4%, clothing=4%: both small ones collapse to Other
+      final lines = [
+        makeLine(category: ExpenseCategory.housing, amount: 920),
+        makeLine(category: ExpenseCategory.transport, amount: 40),
+        makeLine(category: ExpenseCategory.clothing, amount: 40),
+      ];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      // listTotals: all 3 real categories
+      expect(data.listTotals.length, 3);
+      // chartTotals: housing + Other (transport + clothing collapsed)
+      expect(data.chartTotals.length, 2);
+      expect(data.chartTotals.last.category, ExpenseCategory.other);
+    });
+
+    test('single line: listTotals == chartTotals (both unsuppressed)', () {
+      final lines = [makeLine(category: ExpenseCategory.groceries, amount: 500)];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      expect(data.listTotals.length, 1);
+      expect(data.chartTotals.length, 1);
+      expect(data.listTotals.first.category, data.chartTotals.first.category);
+    });
+  });
+
   group('ReportAggregator.financialTypeBreakdown', () {
     test('returns all zeros for empty list', () {
       final b = ReportAggregator.financialTypeBreakdown([]);
