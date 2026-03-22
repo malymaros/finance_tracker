@@ -1,5 +1,7 @@
 import 'dart:math' show Random, pi, sin;
 
+import 'package:flutter/services.dart';
+
 import 'package:flutter/material.dart';
 
 // ── WelcomeScreen ─────────────────────────────────────────────────────────────
@@ -331,43 +333,85 @@ class _GetStartedButton extends StatefulWidget {
   State<_GetStartedButton> createState() => _GetStartedButtonState();
 }
 
-class _GetStartedButtonState extends State<_GetStartedButton> {
-  bool _pressed = false;
+class _GetStartedButtonState extends State<_GetStartedButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scale;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      // Press-down is near-instant so even the quickest tap shows a clear snap.
+      duration: const Duration(milliseconds: 40),
+      // Release animates back smoothly, giving the spring-back feel.
+      reverseDuration: const Duration(milliseconds: 220),
+    );
+    _scale = Tween<double>(begin: 1.0, end: 0.93).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeIn,
+        reverseCurve: Curves.easeOut,
+      ),
+    );
+    _opacity = Tween<double>(begin: 1.0, end: 0.75).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Curves.easeIn,
+        reverseCurve: Curves.easeOut,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onTapDown(TapDownDetails _) {
+    HapticFeedback.lightImpact();
+    _controller.value = 1.0; // instant snap — no animation needed on press-down
+  }
+
+  void _onTapUp(TapUpDetails _) {
+    _controller.reverse(); // animated spring-back
+    Future.delayed(const Duration(milliseconds: 160), widget.onPressed);
+  }
+
+  void _onTapCancel() => _controller.reverse();
 
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme.primary;
 
     return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) {
-        setState(() => _pressed = false);
-        widget.onPressed();
-      },
-      onTapCancel: () => setState(() => _pressed = false),
-      child: AnimatedScale(
-        scale: _pressed ? 0.96 : 1.0,
-        duration: const Duration(milliseconds: 80),
-        curve: Curves.easeOut,
-        child: AnimatedOpacity(
-          opacity: _pressed ? 0.82 : 1.0,
-          duration: const Duration(milliseconds: 80),
-          child: Container(
-            width: double.infinity,
-            height: 54,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(27),
-            ),
-            alignment: Alignment.center,
-            child: const Text(
-              'Get Started',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
-              ),
+      onTapDown: _onTapDown,
+      onTapUp: _onTapUp,
+      onTapCancel: _onTapCancel,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) => Transform.scale(
+          scale: _scale.value,
+          child: Opacity(opacity: _opacity.value, child: child),
+        ),
+        child: Container(
+          width: double.infinity,
+          height: 54,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(27),
+          ),
+          alignment: Alignment.center,
+          child: const Text(
+            'Get Started',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
             ),
           ),
         ),
