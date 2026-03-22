@@ -4,6 +4,7 @@ import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
 import '../services/finance_repository.dart';
+import '../theme/app_theme.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final FinanceRepository repository;
@@ -161,7 +162,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
             // ── Financial type ───────────────────────────────────────────────
             const Text('Financial type',
-                style: TextStyle(fontSize: 12, color: Colors.grey)),
+                style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
             const SizedBox(height: 8),
             SegmentedButton<FinancialType>(
               segments: FinancialType.values

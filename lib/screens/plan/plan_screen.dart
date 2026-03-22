@@ -254,13 +254,13 @@ class _PlanScreenState extends State<PlanScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.account_balance_outlined, size: 64, color: Colors.grey),
+          Icon(Icons.account_balance_outlined, size: 64, color: AppColors.textMuted),
           SizedBox(height: 16),
           Text('No plan items yet.',
-              style: TextStyle(color: Colors.grey, fontSize: 16)),
+              style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
           SizedBox(height: 8),
           Text('Tap + to add income or fixed costs.',
-              style: TextStyle(color: Colors.grey)),
+              style: TextStyle(color: AppColors.textMuted)),
         ],
       ),
     );

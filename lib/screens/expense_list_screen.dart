@@ -8,6 +8,7 @@ import '../models/year_month.dart';
 import '../services/budget_calculator.dart';
 import '../services/finance_repository.dart';
 import '../services/plan_repository.dart';
+import '../theme/app_theme.dart';
 import '../widgets/budget_progress_bar.dart';
 import '../widgets/expense_category_group.dart';
 import '../widgets/expense_group_tile.dart';
@@ -46,12 +47,6 @@ class ExpenseListScreen extends StatefulWidget {
 }
 
 class _ExpenseListScreenState extends State<ExpenseListScreen> {
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
-
   int get _year => widget.selectedPeriod.value.year;
   int get _month => widget.selectedPeriod.value.month;
   _ViewMode _mode = _ViewMode.items;
@@ -192,12 +187,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       child: Row(
         children: const [
-          Icon(Icons.info_outline, size: 16, color: Colors.grey),
+          Icon(Icons.info_outline, size: 16, color: AppColors.textMuted),
           SizedBox(width: 6),
           Expanded(
             child: Text(
               'No budget set for this month — add items in the Plan tab.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(fontSize: 12, color: AppColors.textMuted),
             ),
           ),
         ],
@@ -241,16 +236,16 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.receipt_long, size: 64, color: Colors.grey),
+          const Icon(Icons.receipt_long, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
-            'No expenses in ${_monthNames[_month]} $_year.',
-            style: const TextStyle(color: Colors.grey, fontSize: 16),
+            'No expenses in ${YearMonth.monthNames[_month]} $_year.',
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
           const SizedBox(height: 8),
           const Text(
             'Tap + to add one.',
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: AppColors.textMuted),
           ),
         ],
       ),
@@ -366,16 +361,16 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.folder_outlined, size: 64, color: Colors.grey),
+          Icon(Icons.folder_outlined, size: 64, color: AppColors.textMuted),
           SizedBox(height: 16),
           Text(
             'No groups yet.',
-            style: TextStyle(color: Colors.grey, fontSize: 16),
+            style: TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
           SizedBox(height: 8),
           Text(
             'Add a group when creating\nor editing an expense.',
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: AppColors.textMuted),
             textAlign: TextAlign.center,
           ),
         ],
@@ -388,11 +383,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.folder_open, size: 64, color: Colors.grey),
+          const Icon(Icons.folder_open, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
-            'No group expenses in\n${_monthNames[_month]} $_year.',
-            style: const TextStyle(color: Colors.grey, fontSize: 16),
+            'No group expenses in\n${YearMonth.monthNames[_month]} $_year.',
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
             textAlign: TextAlign.center,
           ),
         ],

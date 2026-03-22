@@ -5,6 +5,7 @@ import '../../models/financial_type.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/plan_repository.dart';
+import '../../theme/app_theme.dart';
 
 class AddPlanItemScreen extends StatefulWidget {
   final PlanRepository planRepository;
@@ -33,12 +34,6 @@ class AddPlanItemScreen extends StatefulWidget {
 }
 
 class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
-
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _amountController = TextEditingController();
@@ -182,7 +177,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   Widget _buildEndDateSection() {
     final hasEndDate = _validTo != null;
     final validToLabel = hasEndDate
-        ? '${_monthNames[_validTo!.month]} ${_validTo!.year}'
+        ? '${YearMonth.monthNames[_validTo!.month]} ${_validTo!.year}'
         : null;
     final isInvalid = hasEndDate && _validTo!.isBefore(_validFrom);
 
@@ -219,7 +214,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               padding: EdgeInsets.only(top: 6),
               child: Text(
                 'End month must be after start month.',
-                style: TextStyle(fontSize: 12, color: Colors.red),
+                style: TextStyle(fontSize: 12, color: AppColors.expense),
               ),
             ),
         ],
@@ -231,7 +226,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   Widget build(BuildContext context) {
     final isEditing = widget.existing != null;
     final validFromLabel =
-        '${_monthNames[_validFrom.month]} ${_validFrom.year}';
+        '${YearMonth.monthNames[_validFrom.month]} ${_validFrom.year}';
 
     return Scaffold(
       appBar: AppBar(
@@ -244,7 +239,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
           children: [
             // ── Type ────────────────────────────────────────────────────────
             const Text('Type',
-                style: TextStyle(fontSize: 12, color: Colors.grey)),
+                style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
             const SizedBox(height: 8),
             SegmentedButton<PlanItemType>(
               segments: const [
@@ -310,7 +305,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
 
             // ── Frequency ───────────────────────────────────────────────────
             const Text('Frequency',
-                style: TextStyle(fontSize: 12, color: Colors.grey)),
+                style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
             const SizedBox(height: 8),
             SegmentedButton<PlanFrequency>(
               segments: [
@@ -368,7 +363,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               ),
               const SizedBox(height: 16),
               const Text('Financial type',
-                  style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
               const SizedBox(height: 8),
               SegmentedButton<FinancialType>(
                 segments: FinancialType.values
@@ -406,7 +401,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                   style: TextStyle(
                     fontSize: 12,
                     color: _validFrom == widget.existing!.validFrom
-                        ? Colors.grey
+                        ? AppColors.textMuted
                         : Theme.of(context).colorScheme.primary,
                   ),
                 ),

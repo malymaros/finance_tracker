@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../models/year_month.dart';
+import '../theme/app_theme.dart';
 
-const _monthNames = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-];
 
 Future<void> showPeriodPicker({
   required BuildContext context,
@@ -121,9 +118,9 @@ class _PeriodPickerSheetState extends State<_PeriodPickerSheet> {
                         },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
-                    foregroundColor: disabled ? Colors.grey : null,
+                    foregroundColor: disabled ? AppColors.textMuted : null,
                   ),
-                  child: Text(_monthNames[i]),
+                  child: Text(YearMonth.monthAbbreviations[monthIndex]),
                 );
               }),
             ),

@@ -130,7 +130,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-                backgroundColor: Colors.red),
+                backgroundColor: AppColors.expense),
             onPressed: () => Navigator.of(context).pop(true),
             child: const Text('Delete all'),
           ),

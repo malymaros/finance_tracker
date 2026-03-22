@@ -5,7 +5,6 @@ import 'screens/main_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'services/finance_repository.dart';
 import 'theme/app_theme.dart';
-import 'services/fixed_cost_migration.dart';
 import 'services/plan_repository.dart';
 import 'services/seed_data.dart';
 
@@ -14,7 +13,6 @@ void main() async {
   final repository = FinanceRepository();
   final planRepository = PlanRepository();
   await Future.wait([repository.load(), planRepository.load()]);
-  await FixedCostMigration.migrateIfNeeded(planRepository);
   if (kDebugMode) {
     await SeedData.applyIfEmpty(repository, planRepository);
   }

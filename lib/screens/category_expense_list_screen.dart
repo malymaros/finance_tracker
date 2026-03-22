@@ -149,11 +149,11 @@ class _CategoryExpenseListScreenState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(widget.category.icon, size: 64, color: Colors.grey),
+          Icon(widget.category.icon, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
             'No ${widget.category.displayName} expenses\nin $_periodLabel.',
-            style: const TextStyle(color: Colors.grey, fontSize: 16),
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
             textAlign: TextAlign.center,
           ),
         ],

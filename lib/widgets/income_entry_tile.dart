@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/income_entry.dart';
+import '../theme/app_theme.dart';
 
 class IncomeEntryTile extends StatelessWidget {
   final IncomeEntry entry;
@@ -31,7 +32,7 @@ class IncomeEntryTile extends StatelessWidget {
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 16,
-          color: Colors.green,
+          color: AppColors.income,
         ),
       ),
     );

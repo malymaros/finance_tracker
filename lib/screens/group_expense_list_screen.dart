@@ -117,11 +117,11 @@ class _GroupExpenseListScreenState extends State<GroupExpenseListScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.folder_open, size: 64, color: Colors.grey),
+          const Icon(Icons.folder_open, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
             'No expenses in "${widget.groupName}".',
-            style: const TextStyle(color: Colors.grey, fontSize: 16),
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
             textAlign: TextAlign.center,
           ),
         ],

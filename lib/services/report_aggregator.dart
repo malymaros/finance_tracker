@@ -2,6 +2,7 @@ import '../models/category_total.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
 import '../models/financial_type_breakdown.dart';
+import '../models/report_data.dart';
 import '../models/report_line.dart';
 
 /// Pure aggregation functions for the spending report.
@@ -80,6 +81,23 @@ class ReportAggregator {
       List<ReportLine> lines, FinancialType type) {
     return categoryTotals(
         lines.where((l) => l.financialType == type).toList());
+  }
+
+  /// Assembles a complete [ReportData] for a single period from pre-merged
+  /// [lines]. Calls [categoryTotals], [applyThreshold], and
+  /// [financialTypeBreakdown] internally so callers have a single entry point.
+  static ReportData buildReportData(
+      List<ReportLine> lines, double thresholdPct) {
+    final listTotals = categoryTotals(lines);
+    final chartTotals = applyThreshold(listTotals, thresholdPct);
+    final breakdown = financialTypeBreakdown(lines);
+    final grandTotal = listTotals.fold(0.0, (s, ct) => s + ct.amount);
+    return ReportData(
+      listTotals: listTotals,
+      chartTotals: chartTotals,
+      breakdown: breakdown,
+      grandTotal: grandTotal,
+    );
   }
 
   /// Computes percentage breakdown by financial type across all [lines].

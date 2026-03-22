@@ -47,17 +47,11 @@ class CategoryReportDetailScreen extends StatefulWidget {
 
 class _CategoryReportDetailScreenState
     extends State<CategoryReportDetailScreen> {
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
-
   bool get _isYearly => widget.month == null;
 
   String get _periodLabel => _isYearly
       ? '${widget.year}'
-      : '${_monthNames[widget.month!]} ${widget.year}';
+      : '${YearMonth.monthNames[widget.month!]} ${widget.year}';
 
   // ── Data helpers ──────────────────────────────────────────────────────────
 

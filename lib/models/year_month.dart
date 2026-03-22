@@ -2,6 +2,18 @@ class YearMonth implements Comparable<YearMonth> {
   final int year;
   final int month;
 
+  static const List<String> monthNames = [
+    '',
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+  ];
+
+  static const List<String> monthAbbreviations = [
+    '',
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+
   const YearMonth(this.year, this.month);
 
   factory YearMonth.now() {

@@ -152,14 +152,8 @@ class BudgetCalculator {
     final hasIncome = active.any((i) => i.type == PlanItemType.income);
     if (!hasIncome) return null;
 
-    final income = active
-        .where((i) => i.type == PlanItemType.income)
-        .fold(0.0, (sum, i) => sum + _normalizedContribution(i, year, month));
-
-    final fixedCosts = active
-        .where((i) => i.type == PlanItemType.fixedCost)
-        .fold(0.0, (sum, i) => sum + _normalizedContribution(i, year, month));
-
+    final income = normalizedMonthlyIncome(allItems, year, month);
+    final fixedCosts = normalizedMonthlyFixedCosts(allItems, year, month);
     final budget = income - fixedCosts;
 
     return BudgetStatus(

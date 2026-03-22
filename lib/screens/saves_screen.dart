@@ -80,13 +80,13 @@ class _SavesScreenState extends State<SavesScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.save_outlined, size: 64, color: Colors.grey),
+          Icon(Icons.save_outlined, size: 64, color: AppColors.textMuted),
           SizedBox(height: 16),
           Text('No saves yet.',
-              style: TextStyle(color: Colors.grey, fontSize: 16)),
+              style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
           SizedBox(height: 8),
           Text('Tap the button below to save current data.',
-              style: TextStyle(color: Colors.grey)),
+              style: TextStyle(color: AppColors.textMuted)),
         ],
       ),
     );
@@ -214,7 +214,7 @@ class _SavesScreenState extends State<SavesScreen> {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.expense),
             onPressed: () => Navigator.of(ctx).pop(true),
             child: const Text('Delete'),
           ),

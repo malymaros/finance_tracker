@@ -69,17 +69,6 @@ class _ReportScreenState extends State<ReportScreen> {
   int get _year => widget.selectedPeriod.value.year;
   int get _month => widget.selectedPeriod.value.month;
 
-  static const _monthAbbr = [
-    '',
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
-
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
 
   @override
   void initState() {
@@ -188,9 +177,7 @@ class _ReportScreenState extends State<ReportScreen> {
       BudgetCalculator.planFixedCostReportLinesForMonth(
           widget.planRepository.items, _year, _month),
     );
-    final listTotals = ReportAggregator.categoryTotals(lines);
-    final breakdown = ReportAggregator.financialTypeBreakdown(lines);
-    final grandTotal = listTotals.fold(0.0, (s, ct) => s + ct.amount);
+    final data = ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
     final budgetStatus = BudgetCalculator.budgetStatus(
       widget.planRepository.items,
       widget.repository
@@ -204,20 +191,20 @@ class _ReportScreenState extends State<ReportScreen> {
     final expenses = widget.repository.expensesForMonth(_year, _month)
       ..sort((a, b) => b.date.compareTo(a.date));
 
-    final data = MonthlyPdfData(
+    final pdfData = MonthlyPdfData(
       year: _year,
       month: _month,
-      categoryTotals: listTotals,
-      breakdown: breakdown,
-      grandTotal: grandTotal,
+      categoryTotals: data.listTotals,
+      breakdown: data.breakdown,
+      grandTotal: data.grandTotal,
       budgetStatus: budgetStatus,
       groupSummaries: groupSummaries,
       expenses: expenses,
     );
 
-    final bytes = await PdfReportService.generateMonthlyReport(data);
+    final bytes = await PdfReportService.generateMonthlyReport(pdfData);
     final filename =
-        'finance_${_monthNames[_month].toLowerCase()}_$_year.pdf';
+        'finance_${YearMonth.monthNames[_month].toLowerCase()}_$_year.pdf';
     await ShareService.sharePdf(bytes, filename);
   }
 
@@ -227,9 +214,7 @@ class _ReportScreenState extends State<ReportScreen> {
       BudgetCalculator.planFixedCostReportLinesForYear(
           widget.planRepository.items, _year),
     );
-    final listTotals = ReportAggregator.categoryTotals(lines);
-    final breakdown = ReportAggregator.financialTypeBreakdown(lines);
-    final grandTotal = listTotals.fold(0.0, (s, ct) => s + ct.amount);
+    final data = ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
     final summaries = BudgetCalculator.monthlySummaries(
       widget.planRepository.items,
       widget.repository.expenses,
@@ -239,17 +224,17 @@ class _ReportScreenState extends State<ReportScreen> {
     final isPartialYear = _year == now.year;
     final categoryMonthlyAmounts = _buildCategoryMonthlyAmounts();
 
-    final data = YearlyPdfData(
+    final pdfData = YearlyPdfData(
       year: _year,
-      categoryTotals: listTotals,
-      breakdown: breakdown,
-      grandTotal: grandTotal,
+      categoryTotals: data.listTotals,
+      breakdown: data.breakdown,
+      grandTotal: data.grandTotal,
       monthlySummaries: summaries,
       isPartialYear: isPartialYear,
       categoryMonthlyAmounts: categoryMonthlyAmounts,
     );
 
-    final bytes = await PdfReportService.generateYearlyReport(data);
+    final bytes = await PdfReportService.generateYearlyReport(pdfData);
     final filename = 'finance_yearly_$_year.pdf';
     await ShareService.sharePdf(bytes, filename);
   }
@@ -337,13 +322,15 @@ class _ReportScreenState extends State<ReportScreen> {
           BudgetCalculator.planFixedCostReportLinesForMonth(
               widget.planRepository.items, _year, _month),
         );
-        final listTotals = ReportAggregator.categoryTotals(lines);
-        final chartTotals = ReportAggregator.applyThreshold(
-            listTotals, _pieChartThresholdPct);
-        final breakdown = ReportAggregator.financialTypeBreakdown(lines);
-        return listTotals.isEmpty
+        final reportData =
+            ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
+        return reportData.listTotals.isEmpty
             ? _buildEmptyState()
-            : _buildChartAndList(chartTotals, listTotals, breakdown);
+            : _buildChartAndList(
+                reportData.chartTotals,
+                reportData.listTotals,
+                reportData.breakdown,
+              );
 
       case _ReportMode.yearly:
         final lines = ReportAggregator.mergedLines(
@@ -351,13 +338,15 @@ class _ReportScreenState extends State<ReportScreen> {
           BudgetCalculator.planFixedCostReportLinesForYear(
               widget.planRepository.items, _year),
         );
-        final listTotals = ReportAggregator.categoryTotals(lines);
-        final chartTotals = ReportAggregator.applyThreshold(
-            listTotals, _pieChartThresholdPct);
-        final breakdown = ReportAggregator.financialTypeBreakdown(lines);
-        return listTotals.isEmpty
+        final reportData =
+            ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
+        return reportData.listTotals.isEmpty
             ? _buildEmptyState()
-            : _buildChartAndList(chartTotals, listTotals, breakdown);
+            : _buildChartAndList(
+                reportData.chartTotals,
+                reportData.listTotals,
+                reportData.breakdown,
+              );
 
       case _ReportMode.overview:
         return _buildOverview();
@@ -378,11 +367,11 @@ class _ReportScreenState extends State<ReportScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.table_rows_outlined, size: 64, color: Colors.grey),
+            Icon(Icons.table_rows_outlined, size: 64, color: AppColors.textMuted),
             SizedBox(height: 16),
             Text(
               'No plan or expenses for this year.',
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+              style: TextStyle(color: AppColors.textMuted, fontSize: 16),
             ),
           ],
         ),
@@ -417,11 +406,11 @@ class _ReportScreenState extends State<ReportScreen> {
           SizedBox(
             width: 36,
             child: Text(
-              _monthAbbr[s.period.month],
+              YearMonth.monthAbbreviations[s.period.month],
               style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey),
+                  color: AppColors.textMuted),
             ),
           ),
           Expanded(
@@ -450,12 +439,12 @@ class _ReportScreenState extends State<ReportScreen> {
                     Text(
                       'Budget: ${s.spendableBudget.toStringAsFixed(0)} €',
                       style:
-                          const TextStyle(fontSize: 11, color: Colors.grey),
+                          const TextStyle(fontSize: 11, color: AppColors.textMuted),
                     ),
                     Text(
                       'Spent: ${s.actualExpenses.toStringAsFixed(0)} €',
                       style:
-                          const TextStyle(fontSize: 11, color: Colors.grey),
+                          const TextStyle(fontSize: 11, color: AppColors.textMuted),
                     ),
                   ],
                 ),
@@ -474,7 +463,7 @@ class _ReportScreenState extends State<ReportScreen> {
             )
           else
             const Text('—',
-                style: TextStyle(fontSize: 13, color: Colors.grey)),
+                style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
         ],
       ),
     ));
@@ -485,11 +474,11 @@ class _ReportScreenState extends State<ReportScreen> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.pie_chart_outline, size: 64, color: Colors.grey),
+          Icon(Icons.pie_chart_outline, size: 64, color: AppColors.textMuted),
           SizedBox(height: 16),
           Text(
             'No expenses for this period.',
-            style: TextStyle(color: Colors.grey, fontSize: 16),
+            style: TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
         ],
       ),
@@ -637,7 +626,7 @@ class _ReportScreenState extends State<ReportScreen> {
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
-              color: Colors.grey,
+              color: AppColors.textMuted,
               letterSpacing: 1.2,
             ),
           ),
