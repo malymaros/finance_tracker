@@ -141,11 +141,14 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               ),
             ],
           ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () =>
-                _navigateToAdd(context, _addExpenseInitialDate(now)),
-            tooltip: 'Add Expense',
-            child: const Icon(Icons.add),
+          floatingActionButton: Opacity(
+            opacity: 0.6,
+            child: FloatingActionButton(
+              onPressed: () =>
+                  _navigateToAdd(context, _addExpenseInitialDate(now)),
+              tooltip: 'Add Expense',
+              child: const Icon(Icons.add),
+            ),
           ),
         );
       },

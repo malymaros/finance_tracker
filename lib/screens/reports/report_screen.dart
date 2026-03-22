@@ -528,15 +528,14 @@ class _ReportScreenState extends State<ReportScreen> {
                   final isSelected = ct.category == _selectedCategory;
                   return PieChartSectionData(
                     value: ct.amount,
-                    color: isAggOther
-                        ? ct.category.color.withAlpha(120)
-                        : ct.category.color,
+                    color: isAggOther ? Colors.white : ct.category.color,
+                    borderSide: isAggOther
+                        ? const BorderSide(color: Colors.black, width: 2)
+                        : BorderSide.none,
                     title: '${ct.percentage.toStringAsFixed(0)}%',
                     radius: isSelected ? 98.0 : 90.0,
                     titleStyle: TextStyle(
-                      color: isAggOther
-                          ? Colors.white.withAlpha(128)
-                          : Colors.white,
+                      color: isAggOther ? Colors.black87 : Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 13,
                     ),

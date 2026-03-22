@@ -246,7 +246,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                 ButtonSegment(
                   value: PlanItemType.income,
                   label: Text('Income'),
-                  icon: Icon(Icons.trending_up),
+                  icon: Icon(Icons.savings),
                 ),
                 ButtonSegment(
                   value: PlanItemType.fixedCost,

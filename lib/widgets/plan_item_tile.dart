@@ -34,7 +34,7 @@ class PlanItemTile extends StatelessWidget {
     // ExpenseCategory.other when the field is not set (legacy data).
     final category = isIncome ? null : (item.category ?? ExpenseCategory.other);
     final leadingColor = isIncome ? AppColors.income : category!.color;
-    final leadingIcon = isIncome ? Icons.trending_up : category!.icon;
+    final leadingIcon = isIncome ? Icons.savings : category!.icon;
     final amountColor = isIncome ? AppColors.income : AppColors.expense;
 
     final subtitleParts = [

@@ -13,17 +13,17 @@ extension FinancialTypeX on FinancialType {
 
   IconData get icon {
     switch (this) {
-      case FinancialType.asset:       return Icons.trending_up;
-      case FinancialType.consumption: return Icons.shopping_cart;
-      case FinancialType.insurance:   return Icons.security;
+      case FinancialType.asset:       return Icons.show_chart;
+      case FinancialType.consumption: return Icons.payments;
+      case FinancialType.insurance:   return Icons.health_and_safety;
     }
   }
 
   Color get color {
     switch (this) {
-      case FinancialType.asset:       return const Color(0xFF1E88E5);
-      case FinancialType.consumption: return const Color(0xFFFF7043);
-      case FinancialType.insurance:   return const Color(0xFF00897B);
+      case FinancialType.asset:       return const Color(0xFF43A047);
+      case FinancialType.consumption: return const Color(0xFFE53935);
+      case FinancialType.insurance:   return const Color(0xFF1565C0);
     }
   }
 }

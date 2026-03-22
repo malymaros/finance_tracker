@@ -148,10 +148,13 @@ class _PlanScreenState extends State<PlanScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _navigateToAdd(context),
-        tooltip: 'Add Plan Item',
-        child: const Icon(Icons.add),
+      floatingActionButton: Opacity(
+        opacity: 0.6,
+        child: FloatingActionButton(
+          onPressed: () => _navigateToAdd(context),
+          tooltip: 'Add Plan Item',
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }
