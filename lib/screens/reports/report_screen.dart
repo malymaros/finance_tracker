@@ -18,6 +18,8 @@ import '../../services/report_aggregator.dart';
 import '../../services/share_service.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/period_navigator.dart';
+import '../../widgets/report_category_row.dart';
+import 'category_report_detail_screen.dart';
 
 enum _ReportMode { monthly, yearly, overview }
 
@@ -55,6 +57,15 @@ class _ReportScreenState extends State<ReportScreen> {
   _ReportMode _mode = _ReportMode.monthly;
   bool _isGeneratingPdf = false;
 
+  ExpenseCategory? _selectedCategory;
+  late final ScrollController _scrollController;
+
+  // One stable GlobalKey per category — assigned to each ReportCategoryRow so
+  // Scrollable.ensureVisible can locate the highlighted row after a pie tap.
+  final _categoryRowKeys = <ExpenseCategory, GlobalKey>{
+    for (final cat in ExpenseCategory.values) cat: GlobalKey(),
+  };
+
   int get _year => widget.selectedPeriod.value.year;
   int get _month => widget.selectedPeriod.value.month;
 
@@ -73,16 +84,20 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     widget.selectedPeriod.addListener(_onPeriodChanged);
   }
 
   @override
   void dispose() {
+    _scrollController.dispose();
     widget.selectedPeriod.removeListener(_onPeriodChanged);
     super.dispose();
   }
 
-  void _onPeriodChanged() => setState(() {});
+  void _onPeriodChanged() => setState(() {
+        _selectedCategory = null;
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -292,7 +307,10 @@ class _ReportScreenState extends State<ReportScreen> {
           ),
         ],
         selected: {_mode},
-        onSelectionChanged: (s) => setState(() => _mode = s.first),
+        onSelectionChanged: (s) => setState(() {
+          _mode = s.first;
+          _selectedCategory = null;
+        }),
       ),
     );
   }
@@ -484,7 +502,12 @@ class _ReportScreenState extends State<ReportScreen> {
       FinancialTypeBreakdown breakdown) {
     final grandTotal = listTotals.fold(0.0, (sum, ct) => sum + ct.amount);
 
+    // True when applyThreshold has collapsed small categories into one bucket.
+    // In that case the "Other" pie slice is an aggregate and is not interactive.
+    final hasAggregatedOther = chartTotals.length < listTotals.length;
+
     return SingleChildScrollView(
+      controller: _scrollController,
       child: Column(
         children: [
           const SizedBox(height: 8),
@@ -492,26 +515,63 @@ class _ReportScreenState extends State<ReportScreen> {
             height: 250,
             child: PieChart(
               PieChartData(
-                sections: chartTotals
-                    .map((ct) => PieChartSectionData(
-                          value: ct.amount,
-                          color: ct.category.color,
-                          title: '${ct.percentage.toStringAsFixed(0)}%',
-                          radius: 90,
-                          titleStyle: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13,
-                          ),
-                        ))
-                    .toList(),
+                pieTouchData: PieTouchData(
+                  touchCallback: (FlTouchEvent event, PieTouchResponse? response) {
+                    if (!event.isInterestedForInteractions) return;
+                    final index =
+                        response?.touchedSection?.touchedSectionIndex;
+                    if (index == null ||
+                        index < 0 ||
+                        index >= chartTotals.length) {
+                      return;
+                    }
+                    final tapped = chartTotals[index].category;
+                    if (tapped == ExpenseCategory.other && hasAggregatedOther) {
+                      return;
+                    }
+                    setState(() => _selectedCategory = tapped);
+                    _scrollToCategory(tapped);
+                  },
+                ),
+                sections: chartTotals.map((ct) {
+                  final isAggOther = ct.category == ExpenseCategory.other &&
+                      hasAggregatedOther;
+                  final isSelected = ct.category == _selectedCategory;
+                  return PieChartSectionData(
+                    value: ct.amount,
+                    color: isAggOther
+                        ? ct.category.color.withAlpha(120)
+                        : ct.category.color,
+                    title: '${ct.percentage.toStringAsFixed(0)}%',
+                    radius: isSelected ? 98.0 : 90.0,
+                    titleStyle: TextStyle(
+                      color: isAggOther
+                          ? Colors.white.withAlpha(128)
+                          : Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 13,
+                    ),
+                  );
+                }).toList(),
                 centerSpaceRadius: 36,
                 sectionsSpace: 2,
               ),
             ),
           ),
           const SizedBox(height: 8),
-          ...listTotals.map((ct) => _buildCategoryRow(ct)),
+          ...listTotals.map((ct) {
+            final isAggOther = ct.category == ExpenseCategory.other &&
+                hasAggregatedOther;
+            return ReportCategoryRow(
+              key: _categoryRowKeys[ct.category],
+              ct: ct,
+              isSelected: _selectedCategory == ct.category,
+              isInteractive: !isAggOther,
+              onTap: isAggOther
+                  ? null
+                  : () => _navigateToCategoryDetail(ct.category),
+            );
+          }),
           const Divider(height: 1),
           _buildTotalRow(grandTotal),
           _buildTypeBreakdown(breakdown),
@@ -521,29 +581,29 @@ class _ReportScreenState extends State<ReportScreen> {
     );
   }
 
-  Widget _buildCategoryRow(CategoryTotal ct) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          Icon(ct.category.icon, size: 20, color: ct.category.color.withAlpha(180)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(ct.category.displayName,
-                style: const TextStyle(fontSize: 15)),
-          ),
-          Text(
-            '${ct.percentage.toStringAsFixed(1)}%',
-            style: const TextStyle(color: AppColors.textMuted, fontSize: 13),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            '${ct.amount.toStringAsFixed(2)} €',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-        ],
+  void _scrollToCategory(ExpenseCategory category) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = _categoryRowKeys[category]?.currentContext;
+      if (ctx == null) return;
+      Scrollable.ensureVisible(
+        ctx,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        alignment: 0.5,
+      );
+    });
+  }
+
+  void _navigateToCategoryDetail(ExpenseCategory category) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => CategoryReportDetailScreen(
+        category: category,
+        year: _year,
+        month: _mode == _ReportMode.monthly ? _month : null,
+        repository: widget.repository,
+        planRepository: widget.planRepository,
       ),
-    );
+    ));
   }
 
   Widget _buildTotalRow(double total) {

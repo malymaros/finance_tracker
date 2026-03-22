@@ -74,6 +74,14 @@ class ReportAggregator {
   ) =>
       [...expenseLines, ...planFixedCostLines];
 
+  /// Returns [CategoryTotal]s for lines whose [financialType] matches [type],
+  /// sorted descending by amount. Useful for financial-type drill-down (v2).
+  static List<CategoryTotal> categoryTotalsForType(
+      List<ReportLine> lines, FinancialType type) {
+    return categoryTotals(
+        lines.where((l) => l.financialType == type).toList());
+  }
+
   /// Computes percentage breakdown by financial type across all [lines].
   static FinancialTypeBreakdown financialTypeBreakdown(List<ReportLine> lines) {
     if (lines.isEmpty) {
