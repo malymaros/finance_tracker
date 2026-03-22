@@ -1,7 +1,6 @@
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
-import '../models/income_entry.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
 import 'finance_repository.dart';
@@ -147,22 +146,6 @@ class SeedData {
       ),
     ];
 
-    // ── Income entries (transaction-level) ───────────────────────────────────
-
-    final incomeEntries = [
-      for (int m = 5; m >= 0; m--)
-        IncomeEntry(
-          id: id(),
-          amount: 3500,
-          date: d(m, 1),
-          type: IncomeType.monthly,
-          description: 'Salary',
-        ),
-      IncomeEntry(id: id(), amount: 500, date: d(4, 15), type: IncomeType.oneTime, description: 'Freelance project'),
-      IncomeEntry(id: id(), amount: 500, date: d(2, 15), type: IncomeType.oneTime, description: 'Freelance project'),
-      IncomeEntry(id: id(), amount: 500, date: d(1, 15), type: IncomeType.oneTime, description: 'Freelance project'),
-    ];
-
     // ── Expenses ─────────────────────────────────────────────────────────────
 
     Expense e(
@@ -247,9 +230,6 @@ class SeedData {
 
     for (final item in planItems) {
       await planRepo.addPlanItem(item);
-    }
-    for (final entry in incomeEntries) {
-      await repo.addIncome(entry);
     }
     for (final expense in expenses) {
       await repo.addExpense(expense);

@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/expense.dart';
-import '../models/income_entry.dart';
 import '../models/plan_item.dart';
 import '../models/save_slot.dart';
 import 'finance_repository.dart';
@@ -41,7 +40,6 @@ class SaveLoadService {
           name: filename,
           createdAt: file.lastModifiedSync(),
           expenseCount: 0,
-          incomeCount: 0,
           planItemCount: 0,
           isDamaged: true,
         ));
@@ -69,14 +67,12 @@ class SaveLoadService {
         name: name,
         createdAt: DateTime.now(),
         expenseCount: financeRepo.expenses.length,
-        incomeCount: financeRepo.income.length,
         planItemCount: planRepo.items.length,
       );
 
       final data = {
         ...slot.toJson(),
         'expenses': financeRepo.expenses.map((e) => e.toJson()).toList(),
-        'income': financeRepo.income.map((e) => e.toJson()).toList(),
         'planItems': planRepo.items.map((e) => e.toJson()).toList(),
       };
 
@@ -102,14 +98,11 @@ class SaveLoadService {
       final expenses = (json['expenses'] as List? ?? [])
           .map((e) => Expense.fromJson(e as Map<String, dynamic>))
           .toList();
-      final income = (json['income'] as List? ?? [])
-          .map((e) => IncomeEntry.fromJson(e as Map<String, dynamic>))
-          .toList();
       final planItems = (json['planItems'] as List? ?? [])
           .map((e) => PlanItem.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      await financeRepo.restoreFromSnapshot(expenses, income);
+      await financeRepo.restoreFromSnapshot(expenses);
       await planRepo.restoreFromSnapshot(planItems);
       return true;
     } catch (_) {

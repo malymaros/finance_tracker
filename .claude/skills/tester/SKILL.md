@@ -120,14 +120,17 @@ Examples matching actual source files:
 
 - test/models/expense_test.dart
 - test/models/year_month_test.dart
+- test/models/report_data_test.dart
 - test/services/finance_repository_test.dart
 - test/services/plan_repository_test.dart
 - test/services/budget_calculator_test.dart
 - test/services/report_aggregator_test.dart
 - test/services/save_load_service_test.dart
 - test/services/period_bounds_service_test.dart
-- test/screens/expense_list_screen_test.dart
+- test/screens/add_expense_screen_test.dart
+- test/screens/plan_screen_test.dart
 - test/screens/add_plan_item_screen_test.dart
+- test/screens/cross_tab_consistency_test.dart
 - test/widgets/period_navigator_test.dart
 
 If a file in `lib/` contains important behavior, ensure there is a corresponding test file or justified coverage elsewhere.

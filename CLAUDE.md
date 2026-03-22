@@ -29,7 +29,7 @@ PROJECT STRUCTURE
 lib/
   main.dart                      Entry point; creates repositories, runs app
   models/                        Data classes and enums
-  screens/                       Full-page UI; subfolders: fixed_costs/, income/, plan/, reports/
+  screens/                       Full-page UI; subfolders: plan/, reports/
   services/                      Business logic and data access
   widgets/                       Reusable UI components
   theme/                         AppColors constants and buildAppTheme()
@@ -42,15 +42,15 @@ MODELS
 --------------------------------------------------
 
 Expense          amount, category (ExpenseCategory), financialType, date, note?, group?
-IncomeEntry      amount, date, type (oneTime|monthly), description?
-FixedCost        name, amount, recurrence (monthly|yearly), startYear, startMonth, category, financialType
-PlanItem         name, amount, type (income|fixedCost), frequency, validFrom (YearMonth), seriesId, category?, financialType?
+PlanItem         name, amount, type (income|fixedCost), frequency, validFrom (YearMonth), validTo (YearMonth)?,
+                 seriesId, category?, financialType?
+ReportData       listTotals (all categories), chartTotals (threshold-collapsed), breakdown, grandTotal
 YearMonth        year, month; implements Comparable
 MonthlySummary   plannedIncome, plannedFixedCosts, spendableBudget, actualExpenses, difference
 BudgetStatus     spendableBudget, actualSpent, remaining, percentUsed, isOverBudget
 CategoryTotal    category, amount, percentage
 ReportLine       category, financialType, amount
-SaveSlot         id, name, createdAt, expenseCount, incomeCount, planItemCount, isDamaged
+SaveSlot         id, name, createdAt, expenseCount, planItemCount, isDamaged
 
 ExpenseCategory enum (17 values): housing, groceries, vacation, transport, insurance,
   subscriptions, communication, health, restaurants, entertainment, clothing,
@@ -71,7 +71,7 @@ SERVICES
 FinanceRepository   ChangeNotifier; owns expenses, income lists;
                     JSON file persistence (finance_data.json via path_provider);
                     provides expensesForMonth/Year/Group and reportLinesForMonth/Year helpers;
-                    exposes restoreFromSnapshot(expenses, income)
+                    exposes restoreFromSnapshot(expenses)
 
 PlanRepository      ChangeNotifier; owns planItems list; JSON file persistence
                     (plan_data.json); supports version control via seriesId;
@@ -82,8 +82,10 @@ BudgetCalculator    Pure static class; all budget math:
                     spendableBudget, budgetStatus, planFixedCostReportLines,
                     monthlySummaries, cashFlowTotals
 
-ReportAggregator    Pure static class; categoryTotals, applyThreshold (collapses
-                    categories below a % into "Other"), financialTypeBreakdown
+ReportAggregator    Pure static class; mergedLines (deduplicates plan + actual lines),
+                    categoryTotals, applyThreshold (collapses categories below a %
+                    into "Other"), financialTypeBreakdown, buildReportData (assembles
+                    full ReportData from lines + threshold in one call)
 
 SaveLoadService     Pure static; local named snapshots saved to
                     getApplicationDocumentsDirectory()/saves/save_{id}.json;
@@ -166,11 +168,8 @@ PlanScreen              Monthly/yearly plan view (income + fixed costs)
 AddPlanItemScreen       Add/edit plan item with type, frequency, validFrom
 PlanItemDetailScreen    Read-only plan item detail; opened by tapping item in plan list
 ReportScreen            Monthly / yearly / overview modes; pie charts by category
-                        (pie: <10% grouped into Other, list: all categories shown)
-IncomeListScreen        List of income entries
-AddIncomeScreen         Add/edit income form
-FixedCostListScreen     List of fixed costs
-AddFixedCostScreen      Add/edit fixed cost form
+                        (pie: <5% grouped into Other, list: all categories shown);
+                        drill-down into category detail; PDF export
 SavesScreen             List / create / load / delete named local snapshots (max 5)
 
 --------------------------------------------------

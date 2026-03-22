@@ -3,7 +3,6 @@ class SaveSlot {
   final String name;
   final DateTime createdAt;
   final int expenseCount;
-  final int incomeCount;
   final int planItemCount;
   final bool isDamaged;
 
@@ -12,7 +11,6 @@ class SaveSlot {
     required this.name,
     required this.createdAt,
     required this.expenseCount,
-    required this.incomeCount,
     required this.planItemCount,
     this.isDamaged = false,
   });
@@ -22,7 +20,6 @@ class SaveSlot {
         'name': name,
         'createdAt': createdAt.toIso8601String(),
         'expenseCount': expenseCount,
-        'incomeCount': incomeCount,
         'planItemCount': planItemCount,
       };
 
@@ -31,7 +28,6 @@ class SaveSlot {
         name: json['name'] as String,
         createdAt: DateTime.parse(json['createdAt'] as String),
         expenseCount: json['expenseCount'] as int,
-        incomeCount: json['incomeCount'] as int,
         planItemCount: json['planItemCount'] as int,
       );
 }

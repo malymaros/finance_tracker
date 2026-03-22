@@ -219,7 +219,7 @@ Actual services in the codebase:
 - `FinanceRepository` — ChangeNotifier; expenses, income; filtering helpers incl. `expensesForGroup(group, year, month)`; `restoreFromSnapshot(expenses, income)`
 - `PlanRepository` — ChangeNotifier; planItems; version history via seriesId; `restoreFromSnapshot`
 - `BudgetCalculator` — pure static; all budget math
-- `ReportAggregator` — pure static; categoryTotals, financialTypeBreakdown, applyThreshold
+- `ReportAggregator` — pure static; mergedLines, categoryTotals, applyThreshold, financialTypeBreakdown, buildReportData
 - `SaveLoadService` — pure static; local named snapshots; listSaves, createSave, loadSave, deleteSave
 - `PeriodBoundsService` — pure static; computes navigation min/max bounds
 - `SeedData` — debug only

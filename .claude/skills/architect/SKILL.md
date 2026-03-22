@@ -152,9 +152,8 @@ Always verify that domain concepts remain consistent.
 Actual domain models in the codebase:
 
 - `Expense` — amount, category, financialType, date, note?, group?
-- `IncomeEntry` — amount, date, type (oneTime|monthly), description?
-- `FixedCost` — name, amount, recurrence, startYear, startMonth, category, financialType
-- `PlanItem` — name, amount, type (income|fixedCost), frequency, validFrom (YearMonth), seriesId
+- `PlanItem` — name, amount, type (income|fixedCost), frequency, validFrom (YearMonth), validTo (YearMonth)?, seriesId, category?, financialType?
+- `ReportData` — listTotals (all categories), chartTotals (threshold-collapsed), breakdown, grandTotal
 - `YearMonth` — year, month; implements Comparable
 - `MonthlySummary` — plannedIncome, plannedFixedCosts, spendableBudget, actualExpenses, difference
 - `BudgetStatus` — spendableBudget, actualSpent, remaining, percentUsed, isOverBudget
@@ -187,7 +186,7 @@ ChangeNotifier. Owns `planItems`. JSON persistence via `plan_data.json`. Support
 Pure static. All budget math: `activeItemsForMonth`, `normalizedMonthlyIncome/FixedCosts`, `spendableBudget`, `budgetStatus`, `monthlySummaries`, `cashFlowTotals`.
 
 ### ReportAggregator
-Pure static. `categoryTotals`, `applyThreshold` (collapses categories below % into "Other"), `financialTypeBreakdown`.
+Pure static. `mergedLines` (deduplicates plan + actual lines), `categoryTotals`, `applyThreshold` (collapses categories below % into "Other"), `financialTypeBreakdown`, `buildReportData` (assembles full `ReportData` in one call).
 
 ### SaveLoadService
 Pure static. Local named snapshots in `saves/save_{id}.json`. Max 5 non-damaged saves. Methods: `listSaves`, `createSave`, `loadSave`, `deleteSave`.

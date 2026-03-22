@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/save_slot.dart';
+import '../models/year_month.dart';
 import '../theme/app_theme.dart';
 import 'swipeable_tile.dart';
 
@@ -8,11 +9,6 @@ class SaveSlotTile extends StatelessWidget {
   final SaveSlot slot;
   final VoidCallback onLoad;
   final VoidCallback onDelete;
-
-  static const _monthAbbr = [
-    '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
 
   const SaveSlotTile({
     super.key,
@@ -23,7 +19,7 @@ class SaveSlotTile extends StatelessWidget {
 
   String _formatDate(DateTime dt) {
     final day = dt.day.toString().padLeft(2, '0');
-    final month = _monthAbbr[dt.month];
+    final month = YearMonth.monthAbbreviations[dt.month];
     return '$day $month ${dt.year}';
   }
 

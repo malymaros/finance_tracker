@@ -7,7 +7,7 @@ Built with AI-assisted development using Claude Code.
 
 ## Features
 
-- **Expense tracking** — log expenses with 15 categories and financial type tags
+- **Expense tracking** — log expenses with 17 categories and financial type tags
   (asset / consumption / insurance)
 - **Budget planning** — define monthly income and fixed costs; app calculates
   spendable budget automatically
@@ -40,7 +40,7 @@ lib/
   main.dart           Entry point; wires repositories and launches app
   models/             Domain data classes and enums
   services/           Business logic, calculations, persistence
-  screens/            Full-page UI (subfolders: plan/, reports/, income/, fixed_costs/)
+  screens/            Full-page UI (subfolders: plan/, reports/)
   widgets/            Reusable UI components
   theme/              AppColors constants and buildAppTheme()
 
@@ -88,7 +88,7 @@ Claude Code's behaviour when working in this repository:
 | `git-commit-manager` | Manages safe, well-scoped commits |
 | `tester` | Maintains test coverage |
 | `code-reviewer` | Structured code reviews |
-| `refactoring-guardian` | Safe refactors without behaviour changes |
+| `refactoring guardian` | Safe refactors without behaviour changes |
 | `ux-designer` | Reviews and improves interaction design |
 
 ## Development Philosophy

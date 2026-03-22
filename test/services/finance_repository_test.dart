@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
-import 'package:finance_tracker/models/income_entry.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 
 Expense makeExpense({String id = '1', double amount = 10.0}) => Expense(
@@ -10,19 +9,6 @@ Expense makeExpense({String id = '1', double amount = 10.0}) => Expense(
       amount: amount,
       category: ExpenseCategory.groceries,
       date: DateTime(2024, 1, 1),
-    );
-
-IncomeEntry makeIncome({
-  String id = '1',
-  double amount = 1000.0,
-  DateTime? date,
-  IncomeType type = IncomeType.monthly,
-}) =>
-    IncomeEntry(
-      id: id,
-      amount: amount,
-      date: date ?? DateTime(2024, 3, 1),
-      type: type,
     );
 
 void main() {
@@ -75,80 +61,6 @@ void main() {
       await repo.updateExpense(makeExpense(id: '1', amount: 99.0));
       expect(repo.expenses.length, 1);
       expect(repo.expenses.first.amount, 99.0);
-    });
-  });
-
-  group('FinanceRepository — income', () {
-    test('starts with no income', () {
-      expect(FinanceRepository(persist: false).income, isEmpty);
-    });
-
-    test('addIncome increases list length', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addIncome(makeIncome());
-      expect(repo.income.length, 1);
-    });
-
-    test('income preserves all fields', () async {
-      final repo = FinanceRepository(persist: false);
-      final date = DateTime(2024, 5, 10);
-      await repo.addIncome(IncomeEntry(
-        id: 'x',
-        amount: 2500.0,
-        date: date,
-        type: IncomeType.oneTime,
-        description: 'Bonus',
-      ));
-      final stored = repo.income.first;
-      expect(stored.id, 'x');
-      expect(stored.amount, 2500.0);
-      expect(stored.date, date);
-      expect(stored.type, IncomeType.oneTime);
-      expect(stored.description, 'Bonus');
-    });
-
-    test('incomeForMonth filters by year and month', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addIncome(makeIncome(id: '1', date: DateTime(2024, 3, 1)));
-      await repo.addIncome(makeIncome(id: '2', date: DateTime(2024, 3, 15)));
-      await repo.addIncome(makeIncome(id: '3', date: DateTime(2024, 4, 1)));
-      expect(repo.incomeForMonth(2024, 3).length, 2);
-      expect(repo.incomeForMonth(2024, 4).length, 1);
-      expect(repo.incomeForMonth(2024, 5).length, 0);
-    });
-
-    test('totalIncomeForMonth sums correctly', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addIncome(makeIncome(amount: 1000, date: DateTime(2024, 3, 1)));
-      await repo.addIncome(makeIncome(amount: 500, date: DateTime(2024, 3, 15)));
-      await repo.addIncome(makeIncome(amount: 200, date: DateTime(2024, 4, 1)));
-      expect(repo.totalIncomeForMonth(2024, 3), 1500.0);
-      expect(repo.totalIncomeForMonth(2024, 4), 200.0);
-    });
-
-    test('notifies listeners when income is added', () async {
-      final repo = FinanceRepository(persist: false);
-      var notified = false;
-      repo.addListener(() => notified = true);
-      await repo.addIncome(makeIncome());
-      expect(notified, isTrue);
-    });
-
-    test('removeIncome removes by id', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addIncome(makeIncome(id: 'a'));
-      await repo.addIncome(makeIncome(id: 'b'));
-      await repo.removeIncome('a');
-      expect(repo.income.length, 1);
-      expect(repo.income.first.id, 'b');
-    });
-
-    test('updateIncome replaces the matching item', () async {
-      final repo = FinanceRepository(persist: false);
-      await repo.addIncome(makeIncome(id: '1', amount: 1000.0));
-      await repo.updateIncome(makeIncome(id: '1', amount: 2000.0));
-      expect(repo.income.length, 1);
-      expect(repo.income.first.amount, 2000.0);
     });
   });
 
@@ -371,7 +283,7 @@ void main() {
         ),
       ];
 
-      await repo.restoreFromSnapshot(expenses, []);
+      await repo.restoreFromSnapshot(expenses);
 
       expect(repo.expenses.length, 2);
       expect(repo.expenses.firstWhere((e) => e.id == '1').group, 'Summer Trip');
@@ -395,35 +307,6 @@ void main() {
       expect(restored.financialType, original.financialType);
       expect(restored.date, original.date);
       expect(restored.note, original.note);
-    });
-  });
-
-  group('IncomeEntry serialization', () {
-    test('toJson and fromJson round-trip', () {
-      final original = IncomeEntry(
-        id: 'i1',
-        amount: 1500.0,
-        date: DateTime(2024, 4, 1),
-        type: IncomeType.monthly,
-        description: 'Salary',
-      );
-      final restored = IncomeEntry.fromJson(original.toJson());
-      expect(restored.id, original.id);
-      expect(restored.amount, original.amount);
-      expect(restored.date, original.date);
-      expect(restored.type, original.type);
-      expect(restored.description, original.description);
-    });
-
-    test('fromJson handles null description', () {
-      final entry = IncomeEntry.fromJson({
-        'id': '1',
-        'amount': 100.0,
-        'date': '2024-01-01T00:00:00.000',
-        'type': 'oneTime',
-        'description': null,
-      });
-      expect(entry.description, isNull);
     });
   });
 

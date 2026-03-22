@@ -1,9 +1,9 @@
 import 'expense_category.dart';
 import 'financial_type.dart';
 
-/// Lightweight aggregation unit produced by [FinanceRepository] from both
-/// [Expense] and [FixedCost] entries so that [ReportAggregator] can process
-/// them uniformly without depending on the concrete model types.
+/// Lightweight aggregation unit produced by [FinanceRepository] from expense
+/// transactions, and by [BudgetCalculator] from plan fixed-cost items, so that
+/// [ReportAggregator] can process them uniformly.
 class ReportLine {
   final ExpenseCategory category;
   final FinancialType financialType;
