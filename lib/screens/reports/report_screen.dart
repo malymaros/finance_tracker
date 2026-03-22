@@ -52,7 +52,7 @@ class ReportScreen extends StatefulWidget {
 }
 
 class _ReportScreenState extends State<ReportScreen> {
-  static const _pieChartThresholdPct = 10.0;
+  static const _pieChartThresholdPct = 5.0;
 
   _ReportMode _mode = _ReportMode.monthly;
   bool _isGeneratingPdf = false;
