@@ -34,6 +34,7 @@ class FinanceTrackerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Finance Tracker',
+      debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       home: WelcomeScreen(
         mainScreenBuilder: () => MainScreen(

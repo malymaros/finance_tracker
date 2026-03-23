@@ -84,6 +84,7 @@ class _PlanScreenState extends State<PlanScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Plan'),
+        automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
         actions: [
           PopupMenuButton<String>(

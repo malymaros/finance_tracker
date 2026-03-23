@@ -119,6 +119,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         return Scaffold(
           appBar: AppBar(
             title: const Text('Expenses'),
+            automaticallyImplyLeading: false,
             scrolledUnderElevation: 0,
             actions: [
               _buildOverflowMenu(),

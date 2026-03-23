@@ -23,7 +23,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   static const _swipeVelocityThreshold = 400.0;
 
   void _onGetStarted(BuildContext context) {
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => widget.mainScreenBuilder()),
     );
   }
@@ -87,7 +87,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   _GetStartedButton(onPressed: () => _onGetStarted(context)),
                   const SizedBox(height: 20),
                   const Text(
-                    'Version 0.1.0',
+                    'Version 1.0.0',
                     style: TextStyle(
                       color: Color(0xFF3D5480),
                       fontSize: 12,

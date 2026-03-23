@@ -93,6 +93,7 @@ class _ReportScreenState extends State<ReportScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Reports'),
+        automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
         actions: [
           if (_mode != _ReportMode.overview)
