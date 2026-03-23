@@ -294,7 +294,7 @@ class _PlanScreenState extends State<PlanScreen> {
     return PlanItemTile(
       item: item,
       displayAmount: _displayAmount(item),
-      onDelete: () => widget.planRepository.removePlanItem(item.id),
+      onDelete: () => _confirmAndDelete(context, item),
       onEdit: () => _navigateToEdit(context, item),
       onTap: () => _openDetail(context, item),
     );
@@ -310,10 +310,51 @@ class _PlanScreenState extends State<PlanScreen> {
         },
         onDelete: () {
           Navigator.of(routeContext).pop();
-          widget.planRepository.removePlanItem(item.id);
+          _confirmAndDelete(context, item);
         },
       ),
     ));
+  }
+
+  Future<void> _confirmAndDelete(BuildContext context, PlanItem item) async {
+    final from = widget.selectedPeriod.value;
+    final isFullDelete = item.validFrom == from;
+
+    final String message;
+    if (isFullDelete) {
+      message = '"${item.name}" will be removed entirely.';
+    } else {
+      final fromLabel =
+          '${YearMonth.monthNames[from.month]} ${from.year}';
+      final prevMonth = from.addMonths(-1);
+      final prevLabel =
+          '${YearMonth.monthNames[prevMonth.month]} ${prevMonth.year}';
+      message =
+          '"${item.name}" will stop from $fromLabel onwards.\n$prevLabel and earlier will remain planned.';
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Remove plan item'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.expense),
+            child: const Text('Remove'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      widget.planRepository.removePlanItemFrom(item.id, from);
+    }
   }
 }
 

@@ -24,6 +24,13 @@ class BudgetCalculator {
     final bySeriesId = <String, PlanItem>{};
 
     for (final item in allItems) {
+      if (item.frequency == PlanFrequency.oneTime) {
+        // One-time items are only active in their exact validFrom month.
+        if (item.validFrom == queried) {
+          bySeriesId[item.seriesId] = item;
+        }
+        continue;
+      }
       if (item.validFrom.isAtOrBefore(queried)) {
         final current = bySeriesId[item.seriesId];
         if (current == null || item.validFrom.isAfter(current.validFrom)) {

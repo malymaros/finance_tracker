@@ -108,6 +108,30 @@ void main() {
       ];
       expect(BudgetCalculator.activeItemsForMonth(items, 2024, 6).length, 2);
     });
+
+    test('oneTime item is active only in its exact validFrom month', () {
+      final items = [
+        makeIncome(
+            frequency: PlanFrequency.oneTime, validYear: 2024, validMonth: 3),
+      ];
+      expect(BudgetCalculator.activeItemsForMonth(items, 2024, 3).length, 1);
+    });
+
+    test('oneTime item is NOT active in the month after its validFrom', () {
+      final items = [
+        makeIncome(
+            frequency: PlanFrequency.oneTime, validYear: 2024, validMonth: 3),
+      ];
+      expect(BudgetCalculator.activeItemsForMonth(items, 2024, 4), isEmpty);
+    });
+
+    test('oneTime item is NOT active in the month before its validFrom', () {
+      final items = [
+        makeIncome(
+            frequency: PlanFrequency.oneTime, validYear: 2024, validMonth: 3),
+      ];
+      expect(BudgetCalculator.activeItemsForMonth(items, 2024, 2), isEmpty);
+    });
   });
 
   // ── normalizedMonthlyIncome ───────────────────────────────────────────────
@@ -274,6 +298,24 @@ void main() {
       final status = BudgetCalculator.budgetStatus(items, 1500, 2024, 6)!;
       expect(status.isOverBudget, isTrue);
       expect(status.remaining, -500);
+    });
+
+    test('returns null in a month after a oneTime income item — regression',
+        () {
+      // Before the activeItemsForMonth fix, a oneTime income item leaked into
+      // all months after its validFrom, causing budgetStatus to return non-null
+      // (hasIncome = true) even in months where it had no contribution.
+      final items = [
+        makeIncome(
+            amount: 500,
+            frequency: PlanFrequency.oneTime,
+            validYear: 2024,
+            validMonth: 3),
+      ];
+      // March: one-time income is active → budgetStatus is non-null
+      expect(BudgetCalculator.budgetStatus(items, 0, 2024, 3), isNotNull);
+      // April: one-time income is NOT active → budgetStatus must be null
+      expect(BudgetCalculator.budgetStatus(items, 0, 2024, 4), isNull);
     });
   });
 
@@ -580,8 +622,9 @@ void main() {
 
       final april =
           BudgetCalculator.planFixedCostReportLinesForMonth(items, 2024, 4);
-      // oneTime is no longer active in April (validFrom > queried would filter
-      // it, but it is still the active version; _normalizedContribution returns 0)
+      // The oneTime item is no longer active in April — activeItemsForMonth
+      // excludes it for any month other than its exact validFrom. The list is
+      // empty, so every() vacuously returns true.
       expect(april.every((l) => l.amount == 0), isTrue);
     });
 

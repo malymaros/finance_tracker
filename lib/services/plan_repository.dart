@@ -54,6 +54,54 @@ class PlanRepository extends ChangeNotifier {
     await _save();
   }
 
+  /// Stops the income/cost series from [from] onwards.
+  ///
+  /// - If the active version starts exactly on [from]: removes it entirely,
+  ///   plus any later versions in the same series.
+  /// - If the active version started before [from]: sets its validTo to the
+  ///   month before [from] so prior months remain planned, then removes any
+  ///   later versions in the same series (validFrom >= [from]).
+  Future<void> removePlanItemFrom(String id, YearMonth from) async {
+    final item = _items.firstWhere((e) => e.id == id);
+
+    // Remove the active version by ID.
+    _items.removeWhere((e) => e.id == id);
+
+    // Remove any later versions in the same series (validFrom >= from).
+    _items.removeWhere((e) =>
+        e.seriesId == item.seriesId && e.validFrom.isAtOrAfter(from));
+
+    // If the active version started before [from], add it back with validTo
+    // set to the month before [from] so prior months remain intact.
+    if (item.validFrom.isBefore(from)) {
+      _items.add(PlanItem(
+        id: item.id,
+        seriesId: item.seriesId,
+        name: item.name,
+        amount: item.amount,
+        type: item.type,
+        frequency: item.frequency,
+        validFrom: item.validFrom,
+        validTo: from.addMonths(-1),
+        note: item.note,
+        category: item.category,
+        financialType: item.financialType,
+      ));
+    }
+
+    notifyListeners();
+    await _save();
+  }
+
+  /// Removes all versions in [seriesId] whose validFrom is strictly after [after].
+  /// Used after an edit to truncate superseded future versions.
+  Future<void> removeFutureVersions(String seriesId, YearMonth after) async {
+    _items.removeWhere(
+        (e) => e.seriesId == seriesId && e.validFrom.isAfter(after));
+    notifyListeners();
+    await _save();
+  }
+
   Future<void> clearAll() async {
     _items.clear();
     notifyListeners();

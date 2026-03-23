@@ -267,4 +267,144 @@ void main() {
       expect(restored.validTo, isNull);
     });
   });
+
+  group('removePlanItemFrom', () {
+    PlanItem itemAt(String id, String seriesId, int year, int month) => PlanItem(
+          id: id,
+          seriesId: seriesId,
+          name: 'Item $id',
+          amount: 1000,
+          type: PlanItemType.income,
+          frequency: PlanFrequency.monthly,
+          validFrom: YearMonth(year, month),
+        );
+
+    test('deleting from validFrom month removes item entirely', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('a', 'a', 2024, 1));
+      await repo.removePlanItemFrom('a', YearMonth(2024, 1));
+      expect(repo.items, isEmpty);
+    });
+
+    test('deleting from a later month truncates: item remains with validTo set',
+        () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('a', 'a', 2024, 1));
+      await repo.removePlanItemFrom('a', YearMonth(2024, 3));
+      expect(repo.items.length, 1);
+      expect(repo.items.first.validTo, YearMonth(2024, 2));
+    });
+
+    test('truncated item keeps its original validFrom', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('a', 'a', 2024, 1));
+      await repo.removePlanItemFrom('a', YearMonth(2024, 3));
+      expect(repo.items.first.validFrom, YearMonth(2024, 1));
+    });
+
+    test('deleting from a later month removes later versions in the same series',
+        () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('v1', 's', 2024, 1));
+      await repo.addPlanItem(itemAt('v2', 's', 2024, 6));
+      // v1 is the active version in March; deleting from March removes v1
+      // (truncated to Feb) and also removes v2 since its validFrom >= March.
+      await repo.removePlanItemFrom('v1', YearMonth(2024, 3));
+      expect(repo.items.length, 1);
+      expect(repo.items.first.id, 'v1');
+      expect(repo.items.first.validTo, YearMonth(2024, 2));
+    });
+
+    test(
+        'deleting mid-chain: earlier predecessor is preserved, '
+        'target and later versions are removed', () async {
+      // v1 Jan, v2 Apr, v3 Aug — all same series.
+      // Deleting v2 from Apr: v1 should be untouched, v2+v3 gone.
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('v1', 's', 2024, 1));
+      await repo.addPlanItem(itemAt('v2', 's', 2024, 4));
+      await repo.addPlanItem(itemAt('v3', 's', 2024, 8));
+      await repo.removePlanItemFrom('v2', YearMonth(2024, 4));
+      expect(repo.items.length, 1);
+      expect(repo.items.first.id, 'v1');
+      expect(repo.items.first.validTo, isNull); // v1 was not modified
+    });
+
+    test(
+        'deleting from a month after start truncates active version '
+        'and drops all later versions in the series', () async {
+      // v1 Jan, v2 Apr, v3 Aug — deleting v2 from June (active version is v2).
+      // Expected: v1 untouched, v2 truncated to May, v3 removed.
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('v1', 's', 2024, 1));
+      await repo.addPlanItem(itemAt('v2', 's', 2024, 4));
+      await repo.addPlanItem(itemAt('v3', 's', 2024, 8));
+      await repo.removePlanItemFrom('v2', YearMonth(2024, 6));
+      // v1 remains unchanged
+      final v1 = repo.items.firstWhere((e) => e.id == 'v1');
+      expect(v1.validTo, isNull);
+      // v2 remains but is truncated to May
+      final v2 = repo.items.firstWhere((e) => e.id == 'v2');
+      expect(v2.validTo, YearMonth(2024, 5));
+      // v3 is gone
+      expect(repo.items.any((e) => e.id == 'v3'), isFalse);
+    });
+  });
+
+  group('removeFutureVersions', () {
+    PlanItem itemAt(String id, String seriesId, int year, int month) => PlanItem(
+          id: id,
+          seriesId: seriesId,
+          name: 'Item $id',
+          amount: 1000,
+          type: PlanItemType.income,
+          frequency: PlanFrequency.monthly,
+          validFrom: YearMonth(year, month),
+        );
+
+    test('does not remove the item at exactly the given month', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('v1', 's', 2024, 1));
+      await repo.addPlanItem(itemAt('v2', 's', 2024, 6));
+      await repo.removeFutureVersions('s', YearMonth(2024, 6));
+      expect(repo.items.any((e) => e.id == 'v2'), isTrue);
+    });
+
+    test('removes items with validFrom strictly after the given month',
+        () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('v1', 's', 2024, 1));
+      await repo.addPlanItem(itemAt('v2', 's', 2024, 6));
+      await repo.removeFutureVersions('s', YearMonth(2024, 1));
+      expect(repo.items.length, 1);
+      expect(repo.items.first.id, 'v1');
+    });
+
+    test('does not touch items in a different series', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('a1', 'a', 2024, 1));
+      await repo.addPlanItem(itemAt('a2', 'a', 2024, 6));
+      await repo.addPlanItem(itemAt('b1', 'b', 2024, 3));
+      await repo.removeFutureVersions('a', YearMonth(2024, 1));
+      expect(repo.items.any((e) => e.id == 'b1'), isTrue);
+    });
+
+    test('no-op when no items qualify', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('v1', 's', 2024, 1));
+      await repo.removeFutureVersions('s', YearMonth(2024, 12));
+      expect(repo.items.length, 1);
+    });
+
+    test('removes multiple future versions in one call', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(itemAt('v1', 's', 2024, 1));
+      await repo.addPlanItem(itemAt('v2', 's', 2024, 4));
+      await repo.addPlanItem(itemAt('v3', 's', 2024, 8));
+      await repo.addPlanItem(itemAt('v4', 's', 2024, 11));
+      await repo.removeFutureVersions('s', YearMonth(2024, 1));
+      expect(repo.items.length, 1);
+      expect(repo.items.first.id, 'v1');
+    });
+  });
 }

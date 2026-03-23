@@ -56,9 +56,11 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       _noteController.text = e.note ?? '';
       _type = e.type;
       _frequency = e.frequency;
-      // One-time items: keep original validFrom (edit in place).
-      // Recurring items: use the selected app period as the new version start.
-      _validFrom = e.frequency == PlanFrequency.oneTime
+      // Income edits and one-time items: always start from the item's own
+      // validFrom — income is always updated in place, no new version.
+      // Fixed cost recurring edits: use the selected period as the new version start.
+      _validFrom = (e.type == PlanItemType.income ||
+              e.frequency == PlanFrequency.oneTime)
           ? e.validFrom
           : (widget.initialValidFrom ?? YearMonth.now());
       _validTo = e.validTo;
@@ -122,6 +124,9 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     final e = widget.existing;
     final isFixedCost = _type == PlanItemType.fixedCost;
 
+    // validTo applies to both income and fixedCost for monthly/yearly frequency.
+    final savedValidTo = _frequency != PlanFrequency.oneTime ? _validTo : null;
+
     if (e == null) {
       // New item — new series
       final newId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -133,13 +138,14 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         type: _type,
         frequency: _frequency,
         validFrom: _validFrom,
-        validTo: isFixedCost ? _validTo : null,
+        validTo: savedValidTo,
         note: note,
         category: isFixedCost ? _selectedCategory : null,
         financialType: isFixedCost ? _selectedFinancialType : null,
       ));
-    } else if (_validFrom == e.validFrom) {
-      // Same validFrom → fix in place (error correction)
+    } else if (!isFixedCost) {
+      // Income edit: always update in place. The change applies to the whole
+      // item (all months). No new version, no cascade.
       await widget.planRepository.updatePlanItem(PlanItem(
         id: e.id,
         seriesId: e.seriesId,
@@ -148,13 +154,28 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         type: _type,
         frequency: _frequency,
         validFrom: _validFrom,
-        validTo: isFixedCost ? _validTo : null,
+        validTo: savedValidTo,
         note: note,
-        category: isFixedCost ? _selectedCategory : null,
-        financialType: isFixedCost ? _selectedFinancialType : null,
+        category: null,
+        financialType: null,
+      ));
+    } else if (_validFrom == e.validFrom) {
+      // Fixed cost, same validFrom → fix in place (error correction only).
+      await widget.planRepository.updatePlanItem(PlanItem(
+        id: e.id,
+        seriesId: e.seriesId,
+        name: name,
+        amount: amount,
+        type: _type,
+        frequency: _frequency,
+        validFrom: _validFrom,
+        validTo: savedValidTo,
+        note: note,
+        category: _selectedCategory,
+        financialType: _selectedFinancialType,
       ));
     } else {
-      // Different validFrom → new version of same series (validTo defaults to null)
+      // Fixed cost, different validFrom → new version + truncate future versions.
       final newId = DateTime.now().millisecondsSinceEpoch.toString();
       await widget.planRepository.addPlanItem(PlanItem(
         id: newId,
@@ -164,11 +185,12 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         type: _type,
         frequency: _frequency,
         validFrom: _validFrom,
-        validTo: isFixedCost ? _validTo : null,
+        validTo: savedValidTo,
         note: note,
-        category: isFixedCost ? _selectedCategory : null,
-        financialType: isFixedCost ? _selectedFinancialType : null,
+        category: _selectedCategory,
+        financialType: _selectedFinancialType,
       ));
+      await widget.planRepository.removeFutureVersions(e.seriesId, _validFrom);
     }
 
     if (mounted) Navigator.of(context).pop();
@@ -391,7 +413,9 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                     horizontal: 12, vertical: 16),
               ),
             ),
-            if (isEditing && _frequency != PlanFrequency.oneTime)
+            if (isEditing &&
+                _type == PlanItemType.fixedCost &&
+                _frequency != PlanFrequency.oneTime)
               Padding(
                 padding: const EdgeInsets.only(top: 6),
                 child: Text(
@@ -408,9 +432,8 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               ),
             const SizedBox(height: 16),
 
-            // ── End date (fixedCost recurring only) ─────────────────────────
-            if (_type == PlanItemType.fixedCost &&
-                _frequency != PlanFrequency.oneTime)
+            // ── End date (income or fixedCost, recurring only) ──────────────
+            if (_frequency != PlanFrequency.oneTime)
               _buildEndDateSection(),
             const SizedBox(height: 16),
 
