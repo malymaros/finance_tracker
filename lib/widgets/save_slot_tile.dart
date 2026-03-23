@@ -9,12 +9,14 @@ class SaveSlotTile extends StatelessWidget {
   final SaveSlot slot;
   final VoidCallback onLoad;
   final VoidCallback onDelete;
+  final VoidCallback? onTap;
 
   const SaveSlotTile({
     super.key,
     required this.slot,
     required this.onLoad,
     required this.onDelete,
+    this.onTap,
   });
 
   String _formatDate(DateTime dt) {
@@ -39,6 +41,7 @@ class SaveSlotTile extends StatelessWidget {
     final subtitle =
         '${_formatDate(slot.createdAt)} · ${slot.expenseCount} expenses · ${slot.planItemCount} plan items';
     return ListTile(
+      onTap: onTap,
       leading: CircleAvatar(
         backgroundColor: primary.withAlpha(20),
         child: Icon(Icons.save_outlined, color: primary),
@@ -58,6 +61,7 @@ class SaveSlotTile extends StatelessWidget {
 
   Widget _buildDamagedTile() {
     return ListTile(
+      onTap: onTap,
       leading: CircleAvatar(
         backgroundColor: AppColors.warning.withAlpha(25),
         child: const Icon(Icons.warning_amber_outlined,
