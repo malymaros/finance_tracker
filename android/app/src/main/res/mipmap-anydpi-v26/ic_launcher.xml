@@ -2,8 +2,10 @@
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
   <background android:drawable="@color/ic_launcher_background"/>
   <foreground>
-      <inset
-          android:drawable="@drawable/ic_launcher_foreground"
-          android:inset="16%" />
+    <layer-list>
+      <item
+          android:top="4dp"
+          android:drawable="@drawable/ic_launcher_foreground"/>
+    </layer-list>
   </foreground>
 </adaptive-icon>
