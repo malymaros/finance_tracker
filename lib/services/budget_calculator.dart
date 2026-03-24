@@ -2,6 +2,7 @@ import '../models/budget_status.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
+import '../models/monthly_overview_summary.dart';
 import '../models/monthly_summary.dart';
 import '../models/plan_item.dart';
 import '../models/report_line.dart';
@@ -236,6 +237,57 @@ class BudgetCalculator {
         spendableBudget: spendable,
         actualExpenses: actual,
         difference: spendable - actual,
+      );
+    });
+  }
+
+  // ── Money-flow overview ───────────────────────────────────────────────────
+
+  /// Produces a [MonthlyOverviewSummary] for each of the 12 months in [year].
+  ///
+  /// Each summary captures:
+  /// - [earned]      — normalized planned income
+  /// - [consumption] — all lines with financialType consumption or insurance
+  /// - [assets]      — all lines with financialType asset
+  /// - [result]      — earned minus all allocated money
+  ///
+  /// Lines are merged from actual [expenses] and active fixed-cost plan items.
+  static List<MonthlyOverviewSummary> monthlyOverviewSummaries(
+      List<PlanItem> allItems, List<Expense> expenses, int year) {
+    return List.generate(12, (i) {
+      final month = i + 1;
+      final earned = normalizedMonthlyIncome(allItems, year, month);
+
+      // Build merged lines: actual expenses + plan fixed costs.
+      final expenseLines = expenses
+          .where((e) => e.date.year == year && e.date.month == month)
+          .map((e) => ReportLine(
+                category: e.category,
+                financialType: e.financialType,
+                amount: e.amount,
+              ));
+      final planLines =
+          planFixedCostReportLinesForMonth(allItems, year, month);
+      final allLines = [...expenseLines, ...planLines];
+
+      double consumption = 0;
+      double assets = 0;
+      for (final line in allLines) {
+        switch (line.financialType) {
+          case FinancialType.asset:
+            assets += line.amount;
+          case FinancialType.consumption:
+          case FinancialType.insurance:
+            consumption += line.amount;
+        }
+      }
+
+      return MonthlyOverviewSummary(
+        period: YearMonth(year, month),
+        earned: earned,
+        consumption: consumption,
+        assets: assets,
+        result: earned - consumption - assets,
       );
     });
   }

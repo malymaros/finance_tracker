@@ -6,7 +6,6 @@ import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/financial_type_breakdown.dart';
 import '../../models/monthly_pdf_data.dart';
-import '../../models/monthly_summary.dart';
 import '../../models/period_bounds.dart';
 import '../../models/year_month.dart';
 import '../../models/yearly_pdf_data.dart';
@@ -17,6 +16,7 @@ import '../../services/plan_repository.dart';
 import '../../services/report_aggregator.dart';
 import '../../services/share_service.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/overview_month_row.dart';
 import '../../widgets/period_navigator.dart';
 import '../../widgets/report_category_row.dart';
 import 'category_report_detail_screen.dart';
@@ -355,13 +355,12 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Widget _buildOverview() {
-    final summaries = BudgetCalculator.monthlySummaries(
+    final summaries = BudgetCalculator.monthlyOverviewSummaries(
       widget.planRepository.items,
       widget.repository.expenses,
       _year,
     );
-    final hasAnyData =
-        summaries.any((s) => s.spendableBudget != 0 || s.actualExpenses != 0);
+    final hasAnyData = summaries.any((s) => s.hasData);
 
     if (!hasAnyData) {
       return const Center(
@@ -371,7 +370,7 @@ class _ReportScreenState extends State<ReportScreen> {
             Icon(Icons.table_rows_outlined, size: 64, color: AppColors.textMuted),
             SizedBox(height: 16),
             Text(
-              'No plan or expenses for this year.',
+              'No income or spending data for this year.',
               style: TextStyle(color: AppColors.textMuted, fontSize: 16),
             ),
           ],
@@ -383,91 +382,14 @@ class _ReportScreenState extends State<ReportScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       itemCount: 12,
       separatorBuilder: (_, _) => const Divider(height: 1),
-      itemBuilder: (_, i) => _buildOverviewRow(summaries[i]),
-    );
-  }
-
-  Widget _buildOverviewRow(MonthlySummary s) {
-    final diff = s.difference;
-    final hasData = s.spendableBudget != 0 || s.actualExpenses != 0;
-    final diffColor = diff >= 0 ? AppColors.income : AppColors.expense;
-    final diffText = diff >= 0
-        ? '+${diff.toStringAsFixed(0)} €'
-        : '${diff.toStringAsFixed(0)} €';
-
-    return InkWell(
-      onTap: () {
-        widget.selectedPeriod.value = YearMonth(_year, s.period.month);
-        widget.onNavigateToPlan();
-      },
-      child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 36,
-            child: Text(
-              YearMonth.monthAbbreviations[s.period.month],
-              style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textMuted),
-            ),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (s.spendableBudget > 0)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(3),
-                    child: LinearProgressIndicator(
-                      value: (s.actualExpenses / s.spendableBudget)
-                          .clamp(0.0, 1.0),
-                      minHeight: 6,
-                      backgroundColor: AppColors.border,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        s.actualExpenses > s.spendableBudget
-                            ? AppColors.expense
-                            : AppColors.income,
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Budget: ${s.spendableBudget.toStringAsFixed(0)} €',
-                      style:
-                          const TextStyle(fontSize: 11, color: AppColors.textMuted),
-                    ),
-                    Text(
-                      'Spent: ${s.actualExpenses.toStringAsFixed(0)} €',
-                      style:
-                          const TextStyle(fontSize: 11, color: AppColors.textMuted),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 12),
-          if (hasData)
-            Text(
-              diffText,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: diffColor,
-              ),
-            )
-          else
-            const Text('—',
-                style: TextStyle(fontSize: 13, color: AppColors.textMuted)),
-        ],
+      itemBuilder: (_, i) => OverviewMonthRow(
+        summary: summaries[i],
+        onTap: () {
+          widget.selectedPeriod.value = YearMonth(_year, summaries[i].period.month);
+          widget.onNavigateToPlan();
+        },
       ),
-    ));
+    );
   }
 
   Widget _buildEmptyState() {
