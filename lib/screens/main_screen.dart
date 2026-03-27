@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../models/period_bounds.dart';
@@ -7,7 +6,6 @@ import '../models/year_month.dart';
 import '../services/finance_repository.dart';
 import '../services/period_bounds_service.dart';
 import '../services/plan_repository.dart';
-import '../services/seed_data.dart';
 import 'expense_list_screen.dart';
 import 'plan/plan_screen.dart';
 import 'reports/report_screen.dart';
@@ -48,9 +46,7 @@ class _MainScreenState extends State<MainScreen> {
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onClearAll: () => _clearAllData(context),
-            onOpenSaves: () => _openSaves(context),
-            onResetWithSeedData:
-                kDebugMode ? () => _resetWithSeedData(context) : null),
+            onOpenSaves: () => _openSaves(context)),
       ),
       _KeepAliveTab(
         child: PlanScreen(
@@ -58,9 +54,7 @@ class _MainScreenState extends State<MainScreen> {
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onClearAll: () => _clearAllData(context),
-            onOpenSaves: () => _openSaves(context),
-            onResetWithSeedData:
-                kDebugMode ? () => _resetWithSeedData(context) : null),
+            onOpenSaves: () => _openSaves(context)),
       ),
       _KeepAliveTab(
         child: ReportScreen(
@@ -70,9 +64,7 @@ class _MainScreenState extends State<MainScreen> {
             periodBounds: _periodBounds,
             onNavigateToPlan: () => _navigateToTab(1),
             onClearAll: () => _clearAllData(context),
-            onOpenSaves: () => _openSaves(context),
-            onResetWithSeedData:
-                kDebugMode ? () => _resetWithSeedData(context) : null),
+            onOpenSaves: () => _openSaves(context)),
       ),
     ];
   }
@@ -142,30 +134,6 @@ class _MainScreenState extends State<MainScreen> {
         widget.repository.clearAll(),
         widget.planRepository.clearAll(),
       ]);
-    }
-  }
-
-  Future<void> _resetWithSeedData(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Reset with seed data?'),
-        content: const Text(
-            'This will delete all current data and replace it with dummy data.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Reset'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true && context.mounted) {
-      await SeedData.reset(widget.repository, widget.planRepository);
     }
   }
 

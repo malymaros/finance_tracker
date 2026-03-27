@@ -33,7 +33,6 @@ class ReportScreen extends StatefulWidget {
   final VoidCallback onNavigateToPlan;
   final VoidCallback onClearAll;
   final VoidCallback onOpenSaves;
-  final VoidCallback? onResetWithSeedData;
 
   const ReportScreen({
     super.key,
@@ -44,7 +43,6 @@ class ReportScreen extends StatefulWidget {
     required this.onNavigateToPlan,
     required this.onClearAll,
     required this.onOpenSaves,
-    this.onResetWithSeedData,
   });
 
   @override
@@ -117,14 +115,10 @@ class _ReportScreenState extends State<ReportScreen> {
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'saves') widget.onOpenSaves();
-              if (value == 'reset_seed') widget.onResetWithSeedData?.call();
               if (value == 'clear_all') widget.onClearAll();
             },
             itemBuilder: (_) => [
               const PopupMenuItem(value: 'saves', child: Text('Saves')),
-              if (widget.onResetWithSeedData != null)
-                const PopupMenuItem(
-                    value: 'reset_seed', child: Text('Reset with dummy data')),
               const PopupMenuItem(
                   value: 'clear_all', child: Text('Delete all data')),
             ],

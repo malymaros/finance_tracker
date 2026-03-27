@@ -17,7 +17,6 @@ class PlanScreen extends StatefulWidget {
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
   final VoidCallback onOpenSaves;
-  final VoidCallback? onResetWithSeedData;
 
   const PlanScreen({
     super.key,
@@ -26,7 +25,6 @@ class PlanScreen extends StatefulWidget {
     required this.periodBounds,
     required this.onClearAll,
     required this.onOpenSaves,
-    this.onResetWithSeedData,
   });
 
   @override
@@ -90,14 +88,10 @@ class _PlanScreenState extends State<PlanScreen> {
           PopupMenuButton<String>(
             onSelected: (value) {
               if (value == 'saves') widget.onOpenSaves();
-              if (value == 'reset_seed') widget.onResetWithSeedData?.call();
               if (value == 'clear_all') widget.onClearAll();
             },
             itemBuilder: (_) => [
               const PopupMenuItem(value: 'saves', child: Text('Saves')),
-              if (widget.onResetWithSeedData != null)
-                const PopupMenuItem(
-                    value: 'reset_seed', child: Text('Reset with dummy data')),
               const PopupMenuItem(
                   value: 'clear_all', child: Text('Delete all data')),
             ],

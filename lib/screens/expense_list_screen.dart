@@ -36,7 +36,6 @@ class ExpenseListScreen extends StatefulWidget {
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
   final VoidCallback onOpenSaves;
-  final VoidCallback? onResetWithSeedData;
 
   const ExpenseListScreen({
     super.key,
@@ -46,7 +45,6 @@ class ExpenseListScreen extends StatefulWidget {
     required this.periodBounds,
     required this.onClearAll,
     required this.onOpenSaves,
-    this.onResetWithSeedData,
   });
 
   @override
@@ -90,16 +88,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         if (value == 'import_expenses') _navigateToImport();
         if (value == 'export_expenses') _handleExport();
         if (value == 'saves') widget.onOpenSaves();
-        if (value == 'reset_seed') widget.onResetWithSeedData?.call();
         if (value == 'clear_all') widget.onClearAll();
       },
       itemBuilder: (_) => [
         const PopupMenuItem(value: 'import_expenses', child: Text('Import Expenses')),
         const PopupMenuItem(value: 'export_expenses', child: Text('Export Expenses')),
         const PopupMenuItem(value: 'saves', child: Text('Saves')),
-        if (widget.onResetWithSeedData != null)
-          const PopupMenuItem(
-              value: 'reset_seed', child: Text('Reset with dummy data')),
         const PopupMenuItem(value: 'clear_all', child: Text('Delete all data')),
       ],
     );
