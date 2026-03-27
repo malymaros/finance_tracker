@@ -78,25 +78,26 @@ void main() {
   });
 
   group('PlanScreen — with plan items', () {
-    testWidgets('shows income item name in list', (tester) async {
+    testWidgets('shows income summary tile when income items exist', (tester) async {
       final repo = PlanRepository(persist: false, seed: [_income()]);
       await tester.pumpWidget(_wrapScreen(repo));
-      expect(find.text('Salary'), findsOneWidget);
+      // PlanIncomeSummaryTile shows "Income" title and item count
+      expect(find.text('Income'), findsOneWidget);
+      expect(find.text('1 item'), findsOneWidget);
     });
 
-    testWidgets('shows INCOME section header', (tester) async {
+    testWidgets('shows income summary tile label', (tester) async {
       final repo = PlanRepository(persist: false, seed: [_income()]);
       await tester.pumpWidget(_wrapScreen(repo));
-      // "INCOME" appears in both the section header and summary card label
-      expect(find.text('INCOME'), findsWidgets);
+      expect(find.text('Income'), findsOneWidget);
     });
 
-    testWidgets('shows FIXED COSTS section header', (tester) async {
+    testWidgets('shows fixed costs summary tile when fixed cost items exist', (tester) async {
       final repo = PlanRepository(
           persist: false, seed: [_income(), _fixedCost()]);
       await tester.pumpWidget(_wrapScreen(repo));
-      // "FIXED COSTS" appears in both the section header and summary card label
-      expect(find.text('FIXED COSTS'), findsWidgets);
+      // PlanFixedCostsSummaryTile shows "Fixed Costs" title
+      expect(find.text('Fixed Costs'), findsOneWidget);
     });
 
     testWidgets('summary card shows correct spendable amount', (tester) async {
@@ -117,7 +118,8 @@ void main() {
       await repo.addPlanItem(_income());
       await tester.pump();
 
-      expect(find.text('Salary'), findsOneWidget);
+      // Income summary tile appears; individual item names are behind drill-down
+      expect(find.text('Income'), findsOneWidget);
     });
   });
 

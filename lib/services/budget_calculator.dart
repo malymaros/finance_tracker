@@ -241,6 +241,40 @@ class BudgetCalculator {
     });
   }
 
+  // ── Plan category breakdown ──────────────────────────────────────────────
+
+  /// Groups [activeFixedCostItems] by category, summing each item's display
+  /// amount for the given period. Returns a map sorted by total descending.
+  ///
+  /// In monthly mode uses [itemMonthlyContribution]; in yearly mode uses
+  /// [itemYearlyContribution] (which correctly handles validity windows).
+  static Map<ExpenseCategory, ({double total, int count})> planCategoryTotals(
+    List<PlanItem> activeFixedCostItems,
+    List<PlanItem> allItems,
+    int year,
+    int month,
+    bool isMonthly,
+  ) {
+    final map = <ExpenseCategory, ({double total, int count})>{};
+    for (final item in activeFixedCostItems) {
+      final cat = item.category ?? ExpenseCategory.other;
+      final amount = isMonthly
+          ? itemMonthlyContribution(item, year, month)
+          : itemYearlyContribution(item, allItems, year);
+      final existing = map[cat];
+      if (existing == null) {
+        map[cat] = (total: amount, count: 1);
+      } else {
+        map[cat] = (total: existing.total + amount, count: existing.count + 1);
+      }
+    }
+    final sorted = Map.fromEntries(
+      map.entries.toList()
+        ..sort((a, b) => b.value.total.compareTo(a.value.total)),
+    );
+    return sorted;
+  }
+
   // ── Money-flow overview ───────────────────────────────────────────────────
 
   /// Produces a [MonthlyOverviewSummary] for each of the 12 months in [year].

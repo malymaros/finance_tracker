@@ -195,8 +195,8 @@ void main() {
       await planRepo.addPlanItem(_monthlyIncome(YearMonth.now()));
       await tester.pump();
 
-      // Screen now shows the item
-      expect(find.text('Salary'), findsOneWidget);
+      // Screen now shows the income summary tile; individual item names are behind drill-down
+      expect(find.text('Income'), findsOneWidget);
 
       period.dispose();
       bounds.dispose();

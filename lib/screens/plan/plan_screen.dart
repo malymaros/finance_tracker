@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../models/expense_category.dart';
 import '../../models/period_bounds.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
@@ -7,8 +8,12 @@ import '../../services/budget_calculator.dart';
 import '../../services/plan_repository.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/period_navigator.dart';
+import '../../widgets/plan_category_tile.dart';
+import '../../widgets/plan_fixed_costs_summary_tile.dart';
+import '../../widgets/plan_income_summary_tile.dart';
 import '../../widgets/plan_item_tile.dart';
 import 'add_plan_item_screen.dart';
+import 'plan_category_detail_screen.dart';
 import 'plan_item_detail_screen.dart';
 
 class PlanScreen extends StatefulWidget {
@@ -33,6 +38,8 @@ class PlanScreen extends StatefulWidget {
 
 class _PlanScreenState extends State<PlanScreen> {
   bool _isMonthly = true;
+  bool _incomeExpanded = false;
+  bool _fixedCostsExpanded = false;
 
   int get _year => widget.selectedPeriod.value.year;
   int get _month => widget.selectedPeriod.value.month;
@@ -75,215 +82,6 @@ class _PlanScreenState extends State<PlanScreen> {
         initialValidFrom: widget.selectedPeriod.value,
       ),
     ));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Plan'),
-        automaticallyImplyLeading: false,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.save_outlined),
-          tooltip: 'Saves',
-          onPressed: () => widget.onOpenSaves(),
-        ),
-      ),
-      body: ListenableBuilder(
-        listenable: widget.planRepository,
-        builder: (context, _) {
-          final all = widget.planRepository.items;
-
-          final List<PlanItem> displayItems;
-          final double totalIncome;
-          final double totalFixedCosts;
-
-          if (_isMonthly) {
-            displayItems =
-                BudgetCalculator.activeItemsForMonth(all, _year, _month);
-            totalIncome =
-                BudgetCalculator.normalizedMonthlyIncome(all, _year, _month);
-            totalFixedCosts =
-                BudgetCalculator.normalizedMonthlyFixedCosts(all, _year, _month);
-          } else {
-            displayItems = BudgetCalculator.activeItemsForYear(all, _year);
-            totalIncome = BudgetCalculator.yearlyIncome(all, _year);
-            totalFixedCosts = BudgetCalculator.yearlyFixedCosts(all, _year);
-          }
-
-          final incomeItems = displayItems
-              .where((i) => i.type == PlanItemType.income)
-              .toList();
-          final fixedCostItems = displayItems
-              .where((i) => i.type == PlanItemType.fixedCost)
-              .toList();
-
-          return Column(
-            children: [
-              _buildModeToggle(),
-              _buildPeriodNavigator(),
-              _buildSummaryCard(totalIncome, totalFixedCosts),
-              const Divider(height: 1),
-              Expanded(
-                child: displayItems.isEmpty
-                    ? _buildEmptyState()
-                    : _buildItemList(
-                        context, incomeItems, fixedCostItems),
-              ),
-            ],
-          );
-        },
-      ),
-      floatingActionButton: Opacity(
-        opacity: 0.6,
-        child: FloatingActionButton(
-          onPressed: () => _navigateToAdd(context),
-          tooltip: 'Add Plan Item',
-          child: const Icon(Icons.add),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildModeToggle() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: SegmentedButton<bool>(
-        segments: const [
-          ButtonSegment(
-            value: true,
-            label: Text('Monthly'),
-            icon: Icon(Icons.calendar_view_month),
-          ),
-          ButtonSegment(
-            value: false,
-            label: Text('Yearly'),
-            icon: Icon(Icons.calendar_today),
-          ),
-        ],
-        selected: {_isMonthly},
-        onSelectionChanged: (s) => setState(() => _isMonthly = s.first),
-      ),
-    );
-  }
-
-  Widget _buildPeriodNavigator() {
-    final bounds = widget.periodBounds.value;
-    return PeriodNavigator(
-      selected: widget.selectedPeriod.value,
-      yearOnly: !_isMonthly,
-      min: bounds.min,
-      max: bounds.max,
-      onChanged: (ym) => setState(() {
-        widget.selectedPeriod.value = ym;
-      }),
-    );
-  }
-
-  Widget _buildSummaryCard(double totalIncome, double totalFixedCosts) {
-    final spendable = totalIncome - totalFixedCosts;
-    final isPositive = spendable >= 0;
-    final spendableColor = isPositive ? AppColors.income : AppColors.expense;
-    final periodLabel = _isMonthly ? 'this month' : 'this year';
-
-    return Card(
-      margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Spendable $periodLabel',
-              style: const TextStyle(
-                fontSize: 12,
-                color: AppColors.textMuted,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${isPositive ? '+' : ''}${spendable.toStringAsFixed(2)} €',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: spendableColor,
-              ),
-            ),
-            const SizedBox(height: 12),
-            const Divider(height: 1, color: AppColors.border),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: _SummaryLine(
-                    label: 'Income',
-                    amount: totalIncome,
-                    color: AppColors.income,
-                    align: CrossAxisAlignment.start,
-                  ),
-                ),
-                Expanded(
-                  child: _SummaryLine(
-                    label: 'Fixed costs',
-                    amount: totalFixedCosts,
-                    color: AppColors.expense,
-                    align: CrossAxisAlignment.end,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEmptyState() {
-    return const Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.account_balance_outlined, size: 64, color: AppColors.textMuted),
-          SizedBox(height: 16),
-          Text('No plan items yet.',
-              style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
-          SizedBox(height: 8),
-          Text('Tap + to add income or fixed costs.',
-              style: TextStyle(color: AppColors.textMuted)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildItemList(
-    BuildContext context,
-    List<PlanItem> incomeItems,
-    List<PlanItem> fixedCostItems,
-  ) {
-    return ListView(
-      children: [
-        if (incomeItems.isNotEmpty) ...[
-          const _SectionHeader(title: 'Income'),
-          ...incomeItems.map((item) => _buildItemTile(context, item)),
-        ],
-        if (fixedCostItems.isNotEmpty) ...[
-          const _SectionHeader(title: 'Fixed Costs'),
-          ...fixedCostItems.map((item) => _buildItemTile(context, item)),
-        ],
-        const SizedBox(height: 80), // FAB clearance
-      ],
-    );
-  }
-
-  Widget _buildItemTile(BuildContext context, PlanItem item) {
-    return PlanItemTile(
-      item: item,
-      displayAmount: _displayAmount(item),
-      onDelete: () => _confirmAndDelete(context, item),
-      onEdit: () => _navigateToEdit(context, item),
-      onTap: () => _openDetail(context, item),
-    );
   }
 
   void _openDetail(BuildContext context, PlanItem item) {
@@ -342,83 +140,228 @@ class _PlanScreenState extends State<PlanScreen> {
       widget.planRepository.removePlanItemFrom(item.id, from);
     }
   }
-}
 
-// ── Private helpers ───────────────────────────────────────────────────────────
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-
-  const _SectionHeader({required this.title});
+  void _navigateToCategoryDetail(
+      BuildContext context, ExpenseCategory category) {
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => PlanCategoryDetailScreen(
+        title: category.displayName,
+        categoryFilter: category,
+        selectedPeriod: widget.selectedPeriod.value,
+        isMonthly: _isMonthly,
+        planRepository: widget.planRepository,
+      ),
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
-    return Container(
-      color: AppColors.surface,
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-      child: Row(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Plan'),
+        automaticallyImplyLeading: false,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.save_outlined),
+          tooltip: 'Saves',
+          onPressed: () => widget.onOpenSaves(),
+        ),
+      ),
+      body: ListenableBuilder(
+        listenable: widget.planRepository,
+        builder: (context, _) {
+          final all = widget.planRepository.items;
+
+          final List<PlanItem> displayItems;
+          final double totalIncome;
+          final double totalFixedCosts;
+
+          if (_isMonthly) {
+            displayItems =
+                BudgetCalculator.activeItemsForMonth(all, _year, _month);
+            totalIncome =
+                BudgetCalculator.normalizedMonthlyIncome(all, _year, _month);
+            totalFixedCosts =
+                BudgetCalculator.normalizedMonthlyFixedCosts(all, _year, _month);
+          } else {
+            displayItems = BudgetCalculator.activeItemsForYear(all, _year);
+            totalIncome = BudgetCalculator.yearlyIncome(all, _year);
+            totalFixedCosts = BudgetCalculator.yearlyFixedCosts(all, _year);
+          }
+
+          final spendable = totalIncome - totalFixedCosts;
+          final incomeItems = displayItems
+              .where((i) => i.type == PlanItemType.income)
+              .toList();
+          final fixedCostItems = displayItems
+              .where((i) => i.type == PlanItemType.fixedCost)
+              .toList();
+          final categoryTotals = BudgetCalculator.planCategoryTotals(
+            fixedCostItems, all, _year, _month, _isMonthly,
+          );
+
+          return Column(
+            children: [
+              _buildModeToggle(),
+              _buildPeriodNavigator(),
+              _buildSummaryCard(spendable),
+              const Divider(height: 1),
+              Expanded(
+                child: displayItems.isEmpty
+                    ? _buildEmptyState()
+                    : _buildPlanHierarchy(
+                        context,
+                        incomeItems,
+                        fixedCostItems,
+                        categoryTotals,
+                        totalIncome,
+                        totalFixedCosts,
+                      ),
+              ),
+            ],
+          );
+        },
+      ),
+      floatingActionButton: Opacity(
+        opacity: 0.6,
+        child: FloatingActionButton(
+          onPressed: () => _navigateToAdd(context),
+          tooltip: 'Add Plan Item',
+          child: const Icon(Icons.add),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModeToggle() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      child: SegmentedButton<bool>(
+        segments: const [
+          ButtonSegment(
+            value: true,
+            label: Text('Monthly'),
+            icon: Icon(Icons.calendar_view_month),
+          ),
+          ButtonSegment(
+            value: false,
+            label: Text('Yearly'),
+            icon: Icon(Icons.calendar_today),
+          ),
+        ],
+        selected: {_isMonthly},
+        onSelectionChanged: (s) => setState(() => _isMonthly = s.first),
+      ),
+    );
+  }
+
+  Widget _buildPeriodNavigator() {
+    final bounds = widget.periodBounds.value;
+    return PeriodNavigator(
+      selected: widget.selectedPeriod.value,
+      yearOnly: !_isMonthly,
+      min: bounds.min,
+      max: bounds.max,
+      onChanged: (ym) => setState(() {
+        widget.selectedPeriod.value = ym;
+      }),
+    );
+  }
+
+  Widget _buildSummaryCard(double spendable) {
+    final isPositive = spendable >= 0;
+    final spendableColor = isPositive ? AppColors.income : AppColors.expense;
+    final periodLabel = _isMonthly ? 'this month' : 'this year';
+
+    return Card(
+      margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Spendable $periodLabel',
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textMuted,
+              ),
+            ),
+            Text(
+              '${isPositive ? '+' : ''}${spendable.toStringAsFixed(2)} €',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: spendableColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            width: 3,
-            height: 14,
-            decoration: BoxDecoration(
-              color: primary,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            title.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: AppColors.textMuted,
-              letterSpacing: 1.1,
-            ),
-          ),
+          Icon(Icons.account_balance_outlined,
+              size: 64, color: AppColors.textMuted),
+          SizedBox(height: 16),
+          Text('No plan items yet.',
+              style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
+          SizedBox(height: 8),
+          Text('Tap + to add income or fixed costs.',
+              style: TextStyle(color: AppColors.textMuted)),
         ],
       ),
     );
   }
-}
 
-class _SummaryLine extends StatelessWidget {
-  final String label;
-  final double amount;
-  final Color color;
-  final CrossAxisAlignment align;
-
-  const _SummaryLine({
-    required this.label,
-    required this.amount,
-    required this.color,
-    required this.align,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: align,
+  Widget _buildPlanHierarchy(
+    BuildContext context,
+    List<PlanItem> incomeItems,
+    List<PlanItem> fixedCostItems,
+    Map<ExpenseCategory, ({double total, int count})> categoryTotals,
+    double totalIncome,
+    double totalFixedCosts,
+  ) {
+    return ListView(
       children: [
-        Text(
-          label.toUpperCase(),
-          style: const TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textMuted,
-            letterSpacing: 0.8,
-          ),
+        PlanIncomeSummaryTile(
+          total: totalIncome,
+          count: incomeItems.length,
+          isExpanded: _incomeExpanded,
+          onTap: incomeItems.isNotEmpty
+              ? () => setState(() => _incomeExpanded = !_incomeExpanded)
+              : null,
         ),
-        const SizedBox(height: 2),
-        Text(
-          '${amount.toStringAsFixed(2)} €',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w600,
-            color: color,
-          ),
+        if (_incomeExpanded)
+          ...incomeItems.map((item) => PlanItemTile(
+                item: item,
+                displayAmount: _displayAmount(item),
+                onTap: () => _openDetail(context, item),
+                onEdit: () => _navigateToEdit(context, item),
+                onDelete: () => _confirmAndDelete(context, item),
+              )),
+        const Divider(height: 1),
+        PlanFixedCostsSummaryTile(
+          total: totalFixedCosts,
+          count: fixedCostItems.length,
+          isExpanded: _fixedCostsExpanded,
+          onTap: fixedCostItems.isNotEmpty
+              ? () => setState(() => _fixedCostsExpanded = !_fixedCostsExpanded)
+              : null,
         ),
+        if (_fixedCostsExpanded)
+          ...categoryTotals.entries.map((entry) => PlanCategoryTile(
+                category: entry.key,
+                total: entry.value.total,
+                count: entry.value.count,
+                onTap: () => _navigateToCategoryDetail(context, entry.key),
+              )),
+        const SizedBox(height: 80),
       ],
     );
   }
