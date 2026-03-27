@@ -470,19 +470,13 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          ...listTotals.map((ct) {
-            final isAggOther = ct.category == ExpenseCategory.other &&
-                hasAggregatedOther;
-            return ReportCategoryRow(
-              key: _categoryRowKeys[ct.category],
-              ct: ct,
-              isSelected: _selectedCategory == ct.category,
-              isInteractive: !isAggOther,
-              onTap: isAggOther
-                  ? null
-                  : () => _navigateToCategoryDetail(ct.category),
-            );
-          }),
+          ...listTotals.map((ct) => ReportCategoryRow(
+            key: _categoryRowKeys[ct.category],
+            ct: ct,
+            isSelected: _selectedCategory == ct.category,
+            isInteractive: true,
+            onTap: () => _navigateToCategoryDetail(ct.category),
+          )),
           const Divider(height: 1),
           _buildTotalRow(grandTotal),
           _buildTypeBreakdown(breakdown),
