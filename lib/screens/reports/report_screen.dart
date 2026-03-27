@@ -93,6 +93,11 @@ class _ReportScreenState extends State<ReportScreen> {
         title: const Text('Reports'),
         automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.save_outlined),
+          tooltip: 'Saves',
+          onPressed: widget.onOpenSaves,
+        ),
         actions: [
           if (_mode != _ReportMode.overview)
             if (_isGeneratingPdf)
@@ -112,17 +117,6 @@ class _ReportScreenState extends State<ReportScreen> {
                 tooltip: 'Export PDF',
                 onPressed: _onExportPdf,
               ),
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'saves') widget.onOpenSaves();
-              if (value == 'clear_all') widget.onClearAll();
-            },
-            itemBuilder: (_) => [
-              const PopupMenuItem(value: 'saves', child: Text('Saves')),
-              const PopupMenuItem(
-                  value: 'clear_all', child: Text('Delete all data')),
-            ],
-          ),
         ],
       ),
       body: ListenableBuilder(

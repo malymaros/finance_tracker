@@ -1,20 +1,28 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../models/save_slot.dart';
+import '../services/data_portability_service.dart';
 import '../services/finance_repository.dart';
 import '../services/plan_repository.dart';
 import '../services/save_load_service.dart';
+import '../services/share_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/save_slot_tile.dart';
 
 class SavesScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
+  final VoidCallback onClearAll;
 
   const SavesScreen({
     super.key,
     required this.repository,
     required this.planRepository,
+    required this.onClearAll,
   });
 
   @override
@@ -57,23 +65,187 @@ class _SavesScreenState extends State<SavesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Saves'), scrolledUnderElevation: 0),
+      appBar: AppBar(
+        title: const Text('Saves'),
+        scrolledUnderElevation: 0,
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : _buildSlots(),
+          : _buildBody(),
     );
   }
 
-  Widget _buildSlots() {
-    return Padding(
+  Future<void> _exportData() async {
+    try {
+      final jsonString = DataPortabilityService.exportData(
+        widget.repository,
+        widget.planRepository,
+      );
+      final now = DateTime.now();
+      final date =
+          '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+      await ShareService.shareJson(jsonString, 'finance_data_$date.json');
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Export failed: $e')),
+      );
+    }
+  }
+
+  Future<void> _importData() async {
+    final result = await FilePicker.platform.pickFiles(type: FileType.any);
+    if (result == null || result.files.isEmpty) return;
+
+    final pickedFile = result.files.first;
+    final bytes = pickedFile.bytes ??
+        (pickedFile.path != null
+            ? await _readFileBytes(pickedFile.path!)
+            : null);
+    if (bytes == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not read the selected file.')),
+      );
+      return;
+    }
+
+    final jsonString = utf8.decode(bytes);
+
+    if (!mounted) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Import data?'),
+        content: const Text(
+          'This will replace ALL current expenses and plan items with the '
+          'contents of the file. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Import'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+    if (!mounted) return;
+
+    try {
+      await DataPortabilityService.importData(
+        jsonString,
+        widget.repository,
+        widget.planRepository,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Data imported successfully.')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid file: $e')),
+      );
+    }
+  }
+
+  Future<List<int>?> _readFileBytes(String path) async {
+    try {
+      return await File(path).readAsBytes();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Widget _buildBody() {
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildSectionHeader('SAVES'),
+          const SizedBox(height: 10),
           for (int i = 0; i < _maxSaves; i++) ...[
             if (i > 0) const SizedBox(height: 10),
             _buildSlot(i),
           ],
+          const SizedBox(height: 24),
+          _buildSectionHeader('DATA TRANSFER'),
+          const SizedBox(height: 10),
+          _buildActionButton(
+            icon: Icons.upload_outlined,
+            label: 'Export all data',
+            onTap: _exportData,
+          ),
+          const SizedBox(height: 10),
+          _buildActionButton(
+            icon: Icons.download_outlined,
+            label: 'Import all data',
+            onTap: _importData,
+          ),
+          const SizedBox(height: 24),
+          _buildSectionHeader('DATA DELETION'),
+          const SizedBox(height: 10),
+          _buildActionButton(
+            icon: Icons.delete_outline,
+            label: 'Delete all data',
+            onTap: widget.onClearAll,
+            isDestructive: true,
+          ),
+          const SizedBox(height: 16),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String label) {
+    return Text(
+      label,
+      style: const TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.bold,
+        color: AppColors.textMuted,
+        letterSpacing: 1.2,
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    bool isDestructive = false,
+  }) {
+    final color = isDestructive ? AppColors.expense : AppColors.textMuted;
+    final borderColor = isDestructive ? AppColors.expense : AppColors.border;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: isDestructive
+              ? AppColors.expense.withAlpha(10)
+              : AppColors.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: borderColor),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: color),
+            const SizedBox(width: 12),
+            Text(
+              label,
+              style: TextStyle(fontSize: 15, color: color),
+            ),
+          ],
+        ),
       ),
     );
   }

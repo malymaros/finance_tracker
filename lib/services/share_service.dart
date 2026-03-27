@@ -19,4 +19,16 @@ class ShareService {
       subject: filename.replaceAll('_', ' ').replaceAll('.pdf', ''),
     );
   }
+
+  /// Writes [jsonString] to a temporary file named [filename] and opens the
+  /// OS share sheet so the user can save or send the JSON file.
+  static Future<void> shareJson(String jsonString, String filename) async {
+    final dir = await getTemporaryDirectory();
+    final file = File('${dir.path}/$filename');
+    await file.writeAsString(jsonString);
+    await Share.shareXFiles(
+      [XFile(file.path, mimeType: 'application/json')],
+      subject: filename.replaceAll('_', ' ').replaceAll('.json', ''),
+    );
+  }
 }

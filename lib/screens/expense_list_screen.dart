@@ -87,14 +87,10 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       onSelected: (value) {
         if (value == 'import_expenses') _navigateToImport();
         if (value == 'export_expenses') _handleExport();
-        if (value == 'saves') widget.onOpenSaves();
-        if (value == 'clear_all') widget.onClearAll();
       },
       itemBuilder: (_) => [
         const PopupMenuItem(value: 'import_expenses', child: Text('Import Expenses')),
         const PopupMenuItem(value: 'export_expenses', child: Text('Export Expenses')),
-        const PopupMenuItem(value: 'saves', child: Text('Saves')),
-        const PopupMenuItem(value: 'clear_all', child: Text('Delete all data')),
       ],
     );
   }
@@ -167,6 +163,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             title: const Text('Expenses'),
             automaticallyImplyLeading: false,
             scrolledUnderElevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.save_outlined),
+              tooltip: 'Saves',
+              onPressed: widget.onOpenSaves,
+            ),
             actions: [
               _buildOverflowMenu(),
             ],

@@ -104,6 +104,7 @@ class _MainScreenState extends State<MainScreen> {
       builder: (_) => SavesScreen(
         repository: widget.repository,
         planRepository: widget.planRepository,
+        onClearAll: () => _clearAllData(context),
       ),
     ));
   }

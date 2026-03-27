@@ -84,19 +84,11 @@ class _PlanScreenState extends State<PlanScreen> {
         title: const Text('Plan'),
         automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'saves') widget.onOpenSaves();
-              if (value == 'clear_all') widget.onClearAll();
-            },
-            itemBuilder: (_) => [
-              const PopupMenuItem(value: 'saves', child: Text('Saves')),
-              const PopupMenuItem(
-                  value: 'clear_all', child: Text('Delete all data')),
-            ],
-          ),
-        ],
+        leading: IconButton(
+          icon: const Icon(Icons.save_outlined),
+          tooltip: 'Saves',
+          onPressed: () => widget.onOpenSaves(),
+        ),
       ),
       body: ListenableBuilder(
         listenable: widget.planRepository,
