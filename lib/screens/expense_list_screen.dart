@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../models/budget_status.dart';
 import '../models/expense.dart';
@@ -8,6 +12,7 @@ import '../models/year_month.dart';
 import '../services/budget_calculator.dart';
 import '../services/finance_repository.dart';
 import '../services/plan_repository.dart';
+import '../services/import_export_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/budget_progress_bar.dart';
 import '../widgets/expense_category_group.dart';
@@ -15,8 +20,10 @@ import '../widgets/expense_group_tile.dart';
 import '../widgets/expense_list_tile.dart';
 import '../widgets/month_budget_summary.dart';
 import '../widgets/period_navigator.dart';
+import '../widgets/export_date_range_dialog.dart';
 import '../widgets/swipeable_tile.dart';
 import 'add_expense_screen.dart';
+import 'import_screen.dart';
 import 'category_expense_list_screen.dart';
 import 'expense_detail_screen.dart';
 import 'group_expense_list_screen.dart';
@@ -80,11 +87,15 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Widget _buildOverflowMenu() {
     return PopupMenuButton<String>(
       onSelected: (value) {
+        if (value == 'import_expenses') _navigateToImport();
+        if (value == 'export_expenses') _handleExport();
         if (value == 'saves') widget.onOpenSaves();
         if (value == 'reset_seed') widget.onResetWithSeedData?.call();
         if (value == 'clear_all') widget.onClearAll();
       },
       itemBuilder: (_) => [
+        const PopupMenuItem(value: 'import_expenses', child: Text('Import Expenses')),
+        const PopupMenuItem(value: 'export_expenses', child: Text('Export Expenses')),
         const PopupMenuItem(value: 'saves', child: Text('Saves')),
         if (widget.onResetWithSeedData != null)
           const PopupMenuItem(
@@ -92,6 +103,47 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         const PopupMenuItem(value: 'clear_all', child: Text('Delete all data')),
       ],
     );
+  }
+
+  void _navigateToImport() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => ImportScreen(repository: widget.repository),
+      ),
+    );
+  }
+
+  Future<void> _handleExport() async {
+    final range = await ExportDateRangeDialog.show(context);
+    if (range == null || !mounted) return;
+
+    try {
+      final bytes = await ImportExportService.exportExpenses(
+        widget.repository.expenses,
+        range.start,
+        range.end,
+      );
+
+      final dir = await getTemporaryDirectory();
+      final s = range.start;
+      final e = range.end;
+      final tag =
+          '${s.year}${s.month.toString().padLeft(2, '0')}${s.day.toString().padLeft(2, '0')}'
+          '_${e.year}${e.month.toString().padLeft(2, '0')}${e.day.toString().padLeft(2, '0')}';
+      final file = File('${dir.path}/expenses_$tag.xlsx');
+      await file.writeAsBytes(bytes);
+
+      await Share.shareXFiles(
+        [XFile(file.path, mimeType: ImportExportService.xlsxMimeType)],
+        subject: 'Expenses Export',
+      );
+    } catch (err) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Export failed: $err')),
+        );
+      }
+    }
   }
 
   @override

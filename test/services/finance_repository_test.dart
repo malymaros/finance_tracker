@@ -391,4 +391,45 @@ void main() {
       expect(repo.reportLinesForYear(2024).length, 2);
     });
   });
+
+  group('FinanceRepository — addExpenses (bulk)', () {
+    test('adds all expenses in the list', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpenses([
+        makeExpense(id: 'a'),
+        makeExpense(id: 'b'),
+        makeExpense(id: 'c'),
+      ]);
+      expect(repo.expenses, hasLength(3));
+    });
+
+    test('preserves insertion order within the batch', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpenses([makeExpense(id: 'a'), makeExpense(id: 'b')]);
+      expect(repo.expenses[0].id, 'a');
+      expect(repo.expenses[1].id, 'b');
+    });
+
+    test('appends to existing expenses', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(makeExpense(id: 'existing'));
+      await repo.addExpenses([makeExpense(id: 'new1'), makeExpense(id: 'new2')]);
+      expect(repo.expenses, hasLength(3));
+      expect(repo.expenses[0].id, 'existing');
+    });
+
+    test('empty list leaves repository unchanged', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpenses([]);
+      expect(repo.expenses, isEmpty);
+    });
+
+    test('notifies listeners exactly once for the whole batch', () async {
+      final repo = FinanceRepository(persist: false);
+      var notifyCount = 0;
+      repo.addListener(() => notifyCount++);
+      await repo.addExpenses([makeExpense(id: 'a'), makeExpense(id: 'b')]);
+      expect(notifyCount, 1);
+    });
+  });
 }

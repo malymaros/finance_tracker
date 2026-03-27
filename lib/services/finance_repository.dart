@@ -65,6 +65,13 @@ class FinanceRepository extends ChangeNotifier {
     await _save();
   }
 
+  /// Bulk-appends [expenses] in a single write — used by the import flow.
+  Future<void> addExpenses(List<Expense> expenses) async {
+    _expenses.addAll(expenses);
+    notifyListeners();
+    await _save();
+  }
+
   Future<void> restoreFromSnapshot(List<Expense> expenses) async {
     _expenses
       ..clear()

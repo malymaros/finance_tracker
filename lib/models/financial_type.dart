@@ -26,4 +26,15 @@ extension FinancialTypeX on FinancialType {
       case FinancialType.insurance:   return const Color(0xFF1565C0);
     }
   }
+
+  /// Parses from a display name string (case-insensitive).
+  /// Unknown or blank values fall back to [FinancialType.consumption].
+  static FinancialType fromDisplayName(String value) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized.isEmpty) return FinancialType.consumption;
+    for (final type in FinancialType.values) {
+      if (type.displayName.toLowerCase() == normalized) return type;
+    }
+    return FinancialType.consumption;
+  }
 }
