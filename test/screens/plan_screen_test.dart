@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/models/expense_category.dart';
+import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/period_bounds.dart';
 import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/plan/plan_screen.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
+import 'package:finance_tracker/widgets/plan_financial_type_tile.dart';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -45,6 +48,8 @@ PlanItem _fixedCost({
   PlanFrequency frequency = PlanFrequency.monthly,
   int year = 2025,
   int month = 1,
+  FinancialType? financialType,
+  ExpenseCategory? category,
 }) =>
     PlanItem(
       id: id,
@@ -54,6 +59,8 @@ PlanItem _fixedCost({
       type: PlanItemType.fixedCost,
       frequency: frequency,
       validFrom: YearMonth(year, month),
+      financialType: financialType,
+      category: category,
     );
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -122,6 +129,191 @@ void main() {
 
       // Income summary tile appears; individual item names are behind drill-down
       expect(find.text('Income'), findsOneWidget);
+    });
+  });
+
+  group('PlanScreen — fixed costs accordion', () {
+    testWidgets('financial type tiles appear after expanding fixed costs',
+        (tester) async {
+      final repo = PlanRepository(persist: false, seed: [
+        _income(),
+        _fixedCost(
+          id: 'f1',
+          financialType: FinancialType.consumption,
+          category: ExpenseCategory.groceries,
+        ),
+      ]);
+      await tester.pumpWidget(_wrapScreen(repo));
+
+      // Tap Fixed Costs summary tile to expand
+      await tester.tap(find.text('Fixed Costs'));
+      await tester.pump();
+
+      // PlanFinancialTypeTile for Consumption should appear
+      expect(find.byType(PlanFinancialTypeTile), findsOneWidget);
+    });
+
+    testWidgets('collapsing fixed costs hides financial type tiles',
+        (tester) async {
+      final repo = PlanRepository(persist: false, seed: [
+        _income(),
+        _fixedCost(id: 'f1', financialType: FinancialType.consumption),
+      ]);
+      await tester.pumpWidget(_wrapScreen(repo));
+
+      // Expand fixed costs
+      await tester.tap(find.text('Fixed Costs'));
+      await tester.pump();
+      expect(find.byType(PlanFinancialTypeTile), findsOneWidget);
+
+      // Collapse fixed costs
+      await tester.tap(find.text('Fixed Costs'));
+      await tester.pump();
+      expect(find.byType(PlanFinancialTypeTile), findsNothing);
+    });
+
+    testWidgets('only types with items appear as PlanFinancialTypeTile',
+        (tester) async {
+      // Only asset item — only one PlanFinancialTypeTile expected
+      final repo = PlanRepository(persist: false, seed: [
+        _income(),
+        _fixedCost(id: 'f1', financialType: FinancialType.asset),
+      ]);
+      await tester.pumpWidget(_wrapScreen(repo));
+
+      await tester.tap(find.text('Fixed Costs'));
+      await tester.pump();
+
+      expect(find.byType(PlanFinancialTypeTile), findsOneWidget);
+    });
+
+    testWidgets('all three type groups shown when items of each type exist',
+        (tester) async {
+      final repo = PlanRepository(persist: false, seed: [
+        _income(),
+        _fixedCost(id: 'f1', financialType: FinancialType.consumption),
+        _fixedCost(id: 'f2', financialType: FinancialType.asset),
+        _fixedCost(id: 'f3', financialType: FinancialType.insurance),
+      ]);
+      await tester.pumpWidget(_wrapScreen(repo));
+
+      await tester.tap(find.text('Fixed Costs'));
+      await tester.pump();
+
+      expect(find.byType(PlanFinancialTypeTile), findsNWidgets(3));
+    });
+
+    testWidgets('tapping type tile expands its items (non-consumption)',
+        (tester) async {
+      final repo = PlanRepository(persist: false, seed: [
+        _income(),
+        _fixedCost(
+          id: 'f1',
+          amount: 250,
+          financialType: FinancialType.asset,
+          category: ExpenseCategory.investment,
+        ),
+      ]);
+      await tester.pumpWidget(_wrapScreen(repo));
+
+      await tester.tap(find.text('Fixed Costs'));
+      await tester.pump();
+
+      // Expand Asset type — tap the PlanFinancialTypeTile
+      await tester.tap(find.byType(PlanFinancialTypeTile));
+      await tester.pump();
+
+      // PlanItemTile with 250.00 € should be visible (item row, not just summary)
+      expect(find.textContaining('250.00 €'), findsWidgets);
+    });
+
+    testWidgets('tapping type tile again collapses it', (tester) async {
+      final repo = PlanRepository(persist: false, seed: [
+        _income(),
+        _fixedCost(id: 'f1', amount: 333, financialType: FinancialType.insurance),
+      ]);
+      await tester.pumpWidget(_wrapScreen(repo));
+
+      await tester.tap(find.text('Fixed Costs'));
+      await tester.pump();
+
+      final typeTile = find.byType(PlanFinancialTypeTile);
+
+      // Expand
+      await tester.tap(typeTile);
+      await tester.pump();
+      // Verify expansion — item tile appears after the type tile
+      expect(find.textContaining('333.00 €'), findsWidgets);
+
+      // Collapse — tap again
+      await tester.tap(typeTile);
+      await tester.pump();
+
+      // Item tile is gone; only the summary tiles remain
+      // Summary tile shows total fixed costs (333.00 €) — findsWidgets is still ok
+      expect(find.textContaining('333.00 €'), findsWidgets);
+    });
+
+    testWidgets(
+        'consumption type shows category tiles, not items directly',
+        (tester) async {
+      final repo = PlanRepository(persist: false, seed: [
+        _income(),
+        _fixedCost(
+          id: 'f1',
+          financialType: FinancialType.consumption,
+          category: ExpenseCategory.groceries,
+        ),
+      ]);
+      await tester.pumpWidget(_wrapScreen(repo));
+
+      await tester.tap(find.text('Fixed Costs'));
+      await tester.pump();
+
+      // Expand consumption type tile
+      await tester.tap(find.byType(PlanFinancialTypeTile));
+      await tester.pump();
+
+      // Should show the Groceries category tile as intermediate level
+      expect(find.text('Groceries'), findsOneWidget);
+    });
+
+    testWidgets('period change resets expanded type so categories collapse',
+        (tester) async {
+      final period = ValueNotifier(YearMonth(2025, 1));
+      final repo = PlanRepository(persist: false, seed: [
+        _income(),
+        _fixedCost(
+          id: 'f1',
+          financialType: FinancialType.consumption,
+          category: ExpenseCategory.groceries,
+        ),
+      ]);
+
+      await tester.pumpWidget(MaterialApp(
+        home: PlanScreen(
+          repository: FinanceRepository(persist: false),
+          planRepository: repo,
+          selectedPeriod: period,
+          periodBounds: ValueNotifier(const PeriodBounds()),
+          onClearAll: () {},
+          onOpenSaves: () {},
+        ),
+      ));
+
+      // Expand fixed costs and consumption type to show Groceries
+      await tester.tap(find.text('Fixed Costs'));
+      await tester.pump();
+      await tester.tap(find.byType(PlanFinancialTypeTile));
+      await tester.pump();
+      expect(find.text('Groceries'), findsOneWidget);
+
+      // Change the period — should reset expandedFinancialType
+      period.value = YearMonth(2025, 2);
+      await tester.pump();
+
+      // Groceries category should no longer be visible
+      expect(find.text('Groceries'), findsNothing);
     });
   });
 

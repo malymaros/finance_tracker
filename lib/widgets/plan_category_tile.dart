@@ -9,16 +9,28 @@ class PlanCategoryTile extends StatelessWidget {
   final int count;
   final VoidCallback onTap;
 
+  /// When non-null, the tile is in accordion mode and shows an expand/collapse
+  /// chevron. When null (default), shows a navigation chevron_right.
+  final bool? isExpanded;
+
   const PlanCategoryTile({
     super.key,
     required this.category,
     required this.total,
     required this.count,
     required this.onTap,
+    this.isExpanded,
   });
 
   @override
   Widget build(BuildContext context) {
+    final trailingIcon = isExpanded != null
+        ? Icon(
+            isExpanded! ? Icons.expand_less : Icons.expand_more,
+            color: AppColors.textMuted,
+          )
+        : const Icon(Icons.chevron_right, color: AppColors.textMuted);
+
     return ListTile(
       leading: CircleAvatar(
         backgroundColor: category.color.withAlpha(30),
@@ -38,7 +50,7 @@ class PlanCategoryTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 4),
-          const Icon(Icons.chevron_right, color: AppColors.textMuted),
+          trailingIcon,
         ],
       ),
       onTap: onTap,

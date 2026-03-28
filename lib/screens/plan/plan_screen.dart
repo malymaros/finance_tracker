@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../models/expense_category.dart';
+import '../../models/financial_type.dart';
 import '../../models/financial_type_income_ratio.dart';
 import '../../models/period_bounds.dart';
 import '../../models/plan_item.dart';
@@ -13,11 +14,11 @@ import '../../theme/app_theme.dart';
 import '../../widgets/financial_type_distribution_card.dart';
 import '../../widgets/period_navigator.dart';
 import '../../widgets/plan_category_tile.dart';
+import '../../widgets/plan_financial_type_tile.dart';
 import '../../widgets/plan_fixed_costs_summary_tile.dart';
 import '../../widgets/plan_income_summary_tile.dart';
 import '../../widgets/plan_item_tile.dart';
 import 'add_plan_item_screen.dart';
-import 'plan_category_detail_screen.dart';
 import 'plan_item_detail_screen.dart';
 
 class PlanScreen extends StatefulWidget {
@@ -47,6 +48,12 @@ class _PlanScreenState extends State<PlanScreen> {
   bool _incomeExpanded = false;
   bool _fixedCostsExpanded = false;
 
+  /// Which financial type group is currently expanded within Fixed Costs.
+  FinancialType? _expandedFinancialType;
+
+  /// Which category is currently expanded within the Consumption group.
+  ExpenseCategory? _expandedCategory;
+
   int get _year => widget.selectedPeriod.value.year;
   int get _month => widget.selectedPeriod.value.month;
 
@@ -62,7 +69,10 @@ class _PlanScreenState extends State<PlanScreen> {
     super.dispose();
   }
 
-  void _onPeriodChanged() => setState(() {});
+  void _onPeriodChanged() => setState(() {
+        _expandedFinancialType = null;
+        _expandedCategory = null;
+      });
 
   double _displayAmount(PlanItem item) {
     final all = widget.planRepository.items;
@@ -147,18 +157,7 @@ class _PlanScreenState extends State<PlanScreen> {
     }
   }
 
-  void _navigateToCategoryDetail(
-      BuildContext context, ExpenseCategory category) {
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => PlanCategoryDetailScreen(
-        title: category.displayName,
-        categoryFilter: category,
-        selectedPeriod: widget.selectedPeriod.value,
-        isMonthly: _isMonthly,
-        planRepository: widget.planRepository,
-      ),
-    ));
-  }
+  // ── Build ──────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -202,11 +201,7 @@ class _PlanScreenState extends State<PlanScreen> {
           final fixedCostItems = displayItems
               .where((i) => i.type == PlanItemType.fixedCost)
               .toList();
-          final categoryTotals = BudgetCalculator.planCategoryTotals(
-            fixedCostItems, all, _year, _month, _isMonthly,
-          );
 
-          // Compute merged lines for financial type ratios.
           final mergedLines = _isMonthly
               ? ReportAggregator.mergedLines(
                   widget.repository.reportLinesForMonth(_year, _month),
@@ -233,7 +228,7 @@ class _PlanScreenState extends State<PlanScreen> {
                         context,
                         incomeItems,
                         fixedCostItems,
-                        categoryTotals,
+                        all,
                         totalIncome,
                         totalFixedCosts,
                         ratio,
@@ -271,7 +266,11 @@ class _PlanScreenState extends State<PlanScreen> {
           ),
         ],
         selected: {_isMonthly},
-        onSelectionChanged: (s) => setState(() => _isMonthly = s.first),
+        onSelectionChanged: (s) => setState(() {
+          _isMonthly = s.first;
+          _expandedFinancialType = null;
+          _expandedCategory = null;
+        }),
       ),
     );
   }
@@ -344,7 +343,7 @@ class _PlanScreenState extends State<PlanScreen> {
     BuildContext context,
     List<PlanItem> incomeItems,
     List<PlanItem> fixedCostItems,
-    Map<ExpenseCategory, ({double total, int count})> categoryTotals,
+    List<PlanItem> allItems,
     double totalIncome,
     double totalFixedCosts,
     FinancialTypeIncomeRatio ratio,
@@ -373,19 +372,150 @@ class _PlanScreenState extends State<PlanScreen> {
           count: fixedCostItems.length,
           isExpanded: _fixedCostsExpanded,
           onTap: fixedCostItems.isNotEmpty
-              ? () => setState(() => _fixedCostsExpanded = !_fixedCostsExpanded)
+              ? () => setState(() {
+                    _fixedCostsExpanded = !_fixedCostsExpanded;
+                    if (!_fixedCostsExpanded) {
+                      _expandedFinancialType = null;
+                      _expandedCategory = null;
+                    }
+                  })
               : null,
         ),
         if (_fixedCostsExpanded)
-          ...categoryTotals.entries.map((entry) => PlanCategoryTile(
-                category: entry.key,
-                total: entry.value.total,
-                count: entry.value.count,
-                onTap: () => _navigateToCategoryDetail(context, entry.key),
-              )),
+          ..._buildFixedCostsSection(context, fixedCostItems, allItems),
         FinancialTypeDistributionCard(ratio: ratio, isMonthly: _isMonthly),
         const SizedBox(height: 80),
       ],
     );
+  }
+
+  // ── Fixed Costs inline accordion ──────────────────────────────────────────
+
+  /// Builds the financial type group tiles and their expanded contents.
+  /// Order: Consumption → Asset → Insurance. Empty types are omitted.
+  List<Widget> _buildFixedCostsSection(
+    BuildContext context,
+    List<PlanItem> fixedCostItems,
+    List<PlanItem> allItems,
+  ) {
+    final typeTotals = BudgetCalculator.planFinancialTypeTotals(
+      fixedCostItems,
+      allItems,
+      _year,
+      _month,
+      _isMonthly,
+    );
+
+    const typeOrder = [
+      FinancialType.consumption,
+      FinancialType.asset,
+      FinancialType.insurance,
+    ];
+
+    final widgets = <Widget>[];
+    for (final type in typeOrder) {
+      if (!typeTotals.containsKey(type)) continue;
+      final data = typeTotals[type]!;
+      final isTypeExpanded = _expandedFinancialType == type;
+
+      widgets.add(PlanFinancialTypeTile(
+        type: type,
+        total: data.total,
+        count: data.count,
+        isExpanded: isTypeExpanded,
+        onTap: () => setState(() {
+          if (_expandedFinancialType == type) {
+            _expandedFinancialType = null;
+            _expandedCategory = null;
+          } else {
+            _expandedFinancialType = type;
+            _expandedCategory = null;
+          }
+        }),
+      ));
+
+      if (isTypeExpanded) {
+        if (type == FinancialType.consumption) {
+          widgets.addAll(
+              _buildConsumptionCategories(context, fixedCostItems, allItems));
+        } else {
+          widgets.addAll(_buildTypeItems(context, fixedCostItems, type));
+        }
+      }
+    }
+    return widgets;
+  }
+
+  /// Builds category tiles for the Consumption group and their expanded items.
+  List<Widget> _buildConsumptionCategories(
+    BuildContext context,
+    List<PlanItem> fixedCostItems,
+    List<PlanItem> allItems,
+  ) {
+    final categoryTotals = BudgetCalculator.planCategoryTotals(
+      fixedCostItems,
+      allItems,
+      _year,
+      _month,
+      _isMonthly,
+      financialTypeFilter: FinancialType.consumption,
+    );
+
+    final widgets = <Widget>[];
+    for (final entry in categoryTotals.entries) {
+      final cat = entry.key;
+      final data = entry.value;
+      final isCatExpanded = _expandedCategory == cat;
+
+      widgets.add(PlanCategoryTile(
+        category: cat,
+        total: data.total,
+        count: data.count,
+        isExpanded: isCatExpanded,
+        onTap: () => setState(() {
+          _expandedCategory = _expandedCategory == cat ? null : cat;
+        }),
+      ));
+
+      if (isCatExpanded) {
+        final items = fixedCostItems
+            .where((i) =>
+                i.category == cat &&
+                (i.financialType ?? FinancialType.consumption) ==
+                    FinancialType.consumption)
+            .toList();
+        for (final item in items) {
+          widgets.add(PlanItemTile(
+            item: item,
+            displayAmount: _displayAmount(item),
+            onTap: () => _openDetail(context, item),
+            onEdit: () => _navigateToEdit(context, item),
+            onDelete: () => _confirmAndDelete(context, item),
+          ));
+        }
+      }
+    }
+    return widgets;
+  }
+
+  /// Builds item tiles directly for Asset or Insurance groups.
+  List<Widget> _buildTypeItems(
+    BuildContext context,
+    List<PlanItem> fixedCostItems,
+    FinancialType type,
+  ) {
+    final items = fixedCostItems
+        .where(
+            (i) => (i.financialType ?? FinancialType.consumption) == type)
+        .toList();
+    return items
+        .map((item) => PlanItemTile(
+              item: item,
+              displayAmount: _displayAmount(item),
+              onTap: () => _openDetail(context, item),
+              onEdit: () => _navigateToEdit(context, item),
+              onDelete: () => _confirmAndDelete(context, item),
+            ))
+        .toList();
   }
 }

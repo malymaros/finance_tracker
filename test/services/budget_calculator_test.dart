@@ -779,6 +779,222 @@ void main() {
     });
   });
 
+  // ── planFinancialTypeTotals ───────────────────────────────────────────────
+
+  group('planFinancialTypeTotals', () {
+    test('empty list returns empty map', () {
+      final result = BudgetCalculator.planFinancialTypeTotals(
+          [], [], 2024, 1, true);
+      expect(result, isEmpty);
+    });
+
+    test('single consumption item appears under consumption', () {
+      final item = makeFixedCost(
+        id: 'c1', amount: 300,
+        financialType: FinancialType.consumption,
+      );
+      final result = BudgetCalculator.planFinancialTypeTotals(
+          [item], [item], 2024, 1, true);
+      expect(result.containsKey(FinancialType.consumption), isTrue);
+      expect(result[FinancialType.consumption]!.total, 300);
+      expect(result[FinancialType.consumption]!.count, 1);
+    });
+
+    test('null financialType falls back to consumption', () {
+      final item = makeFixedCost(id: 'n1', amount: 200); // no financialType
+      final result = BudgetCalculator.planFinancialTypeTotals(
+          [item], [item], 2024, 1, true);
+      expect(result.containsKey(FinancialType.consumption), isTrue);
+      expect(result[FinancialType.consumption]!.total, 200);
+    });
+
+    test('items of different types are grouped correctly', () {
+      final consumption = makeFixedCost(
+        id: 'c1', amount: 400, financialType: FinancialType.consumption);
+      final asset = makeFixedCost(
+        id: 'a1', amount: 200, financialType: FinancialType.asset);
+      final insurance = makeFixedCost(
+        id: 'i1', amount: 100, financialType: FinancialType.insurance);
+      final all = [consumption, asset, insurance];
+
+      final result = BudgetCalculator.planFinancialTypeTotals(
+          all, all, 2024, 1, true);
+
+      expect(result[FinancialType.consumption]!.total, 400);
+      expect(result[FinancialType.asset]!.total, 200);
+      expect(result[FinancialType.insurance]!.total, 100);
+    });
+
+    test('count tracks number of items per type', () {
+      final items = [
+        makeFixedCost(id: 'c1', amount: 100, financialType: FinancialType.consumption),
+        makeFixedCost(id: 'c2', amount: 200, financialType: FinancialType.consumption),
+        makeFixedCost(id: 'a1', amount: 50, financialType: FinancialType.asset),
+      ];
+      final result = BudgetCalculator.planFinancialTypeTotals(
+          items, items, 2024, 1, true);
+
+      expect(result[FinancialType.consumption]!.count, 2);
+      expect(result[FinancialType.consumption]!.total, 300);
+      expect(result[FinancialType.asset]!.count, 1);
+    });
+
+    test('type with no items is absent from map', () {
+      final item = makeFixedCost(
+        id: 'a1', amount: 100, financialType: FinancialType.asset);
+      final result = BudgetCalculator.planFinancialTypeTotals(
+          [item], [item], 2024, 1, true);
+      expect(result.containsKey(FinancialType.consumption), isFalse);
+      expect(result.containsKey(FinancialType.insurance), isFalse);
+    });
+
+    test('monthly mode uses itemMonthlyContribution', () {
+      final item = makeFixedCost(
+        id: 'y1', amount: 1200,
+        frequency: PlanFrequency.yearly,
+        financialType: FinancialType.consumption,
+      );
+      final result = BudgetCalculator.planFinancialTypeTotals(
+          [item], [item], 2024, 1, true);
+      // yearly 1200 / 12 = 100 monthly
+      expect(result[FinancialType.consumption]!.total, closeTo(100, 0.001));
+    });
+
+    test('yearly mode uses itemYearlyContribution', () {
+      final item = makeFixedCost(
+        id: 'm1', amount: 100,
+        frequency: PlanFrequency.monthly,
+        financialType: FinancialType.asset,
+      );
+      final result = BudgetCalculator.planFinancialTypeTotals(
+          [item], [item], 2024, 1, false);
+      // monthly 100 × 12 = 1200 yearly
+      expect(result[FinancialType.asset]!.total, closeTo(1200, 0.001));
+    });
+  });
+
+  // ── planCategoryTotals ────────────────────────────────────────────────────
+
+  group('planCategoryTotals', () {
+    test('empty list returns empty map', () {
+      final result = BudgetCalculator.planCategoryTotals(
+          [], [], 2024, 1, true);
+      expect(result, isEmpty);
+    });
+
+    test('single item appears under its category', () {
+      final item = makeFixedCost(
+        id: 'h1', amount: 800, category: ExpenseCategory.housing);
+      final result = BudgetCalculator.planCategoryTotals(
+          [item], [item], 2024, 1, true);
+      expect(result.containsKey(ExpenseCategory.housing), isTrue);
+      expect(result[ExpenseCategory.housing]!.total, 800);
+      expect(result[ExpenseCategory.housing]!.count, 1);
+    });
+
+    test('null category defaults to other', () {
+      final item = makeFixedCost(id: 'n1', amount: 100); // no category
+      final result = BudgetCalculator.planCategoryTotals(
+          [item], [item], 2024, 1, true);
+      expect(result.containsKey(ExpenseCategory.other), isTrue);
+    });
+
+    test('items in same category are summed', () {
+      final items = [
+        makeFixedCost(id: 'g1', amount: 50, category: ExpenseCategory.groceries),
+        makeFixedCost(id: 'g2', amount: 75, category: ExpenseCategory.groceries),
+      ];
+      final result = BudgetCalculator.planCategoryTotals(
+          items, items, 2024, 1, true);
+      expect(result[ExpenseCategory.groceries]!.total, 125);
+      expect(result[ExpenseCategory.groceries]!.count, 2);
+    });
+
+    test('result is sorted by total descending', () {
+      final items = [
+        makeFixedCost(id: 'a', amount: 50, category: ExpenseCategory.groceries),
+        makeFixedCost(id: 'b', amount: 200, category: ExpenseCategory.housing),
+        makeFixedCost(id: 'c', amount: 100, category: ExpenseCategory.transport),
+      ];
+      final result = BudgetCalculator.planCategoryTotals(
+          items, items, 2024, 1, true);
+      final totals = result.values.map((v) => v.total).toList();
+      expect(totals, [200, 100, 50]);
+    });
+
+    test('financialTypeFilter excludes items of other types', () {
+      final consumption = makeFixedCost(
+        id: 'c1', amount: 300,
+        category: ExpenseCategory.groceries,
+        financialType: FinancialType.consumption,
+      );
+      final asset = makeFixedCost(
+        id: 'a1', amount: 500,
+        category: ExpenseCategory.investment,
+        financialType: FinancialType.asset,
+      );
+      final all = [consumption, asset];
+
+      final result = BudgetCalculator.planCategoryTotals(
+        all, all, 2024, 1, true,
+        financialTypeFilter: FinancialType.consumption,
+      );
+
+      expect(result.containsKey(ExpenseCategory.groceries), isTrue);
+      expect(result.containsKey(ExpenseCategory.investment), isFalse);
+    });
+
+    test('financialTypeFilter null includes all items', () {
+      final items = [
+        makeFixedCost(
+          id: 'c1', amount: 100,
+          category: ExpenseCategory.groceries,
+          financialType: FinancialType.consumption,
+        ),
+        makeFixedCost(
+          id: 'a1', amount: 200,
+          category: ExpenseCategory.investment,
+          financialType: FinancialType.asset,
+        ),
+      ];
+      final result = BudgetCalculator.planCategoryTotals(
+          items, items, 2024, 1, true);
+      expect(result.length, 2);
+    });
+
+    test('financialTypeFilter: null financialType falls back to consumption', () {
+      // Item with no financialType should be included when filtering for consumption
+      final item = makeFixedCost(
+        id: 'n1', amount: 150, category: ExpenseCategory.groceries);
+      final result = BudgetCalculator.planCategoryTotals(
+        [item], [item], 2024, 1, true,
+        financialTypeFilter: FinancialType.consumption,
+      );
+      expect(result.containsKey(ExpenseCategory.groceries), isTrue);
+    });
+
+    test('financialTypeFilter: null item excluded when filter is asset', () {
+      final item = makeFixedCost(
+        id: 'n1', amount: 150, category: ExpenseCategory.groceries);
+      final result = BudgetCalculator.planCategoryTotals(
+        [item], [item], 2024, 1, true,
+        financialTypeFilter: FinancialType.asset,
+      );
+      expect(result, isEmpty);
+    });
+
+    test('monthly mode normalizes yearly item amounts', () {
+      final item = makeFixedCost(
+        id: 'y1', amount: 1200,
+        frequency: PlanFrequency.yearly,
+        category: ExpenseCategory.housing,
+      );
+      final result = BudgetCalculator.planCategoryTotals(
+          [item], [item], 2024, 6, true);
+      expect(result[ExpenseCategory.housing]!.total, closeTo(100, 0.001));
+    });
+  });
+
   // ── financialTypeIncomeRatios ─────────────────────────────────────────────
 
   group('financialTypeIncomeRatios', () {

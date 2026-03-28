@@ -1,7 +1,38 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/financial_type.dart';
 
 void main() {
+  group('FinancialTypeX.tintColor', () {
+    test('asset returns a semi-transparent green', () {
+      final color = FinancialType.asset.tintColor;
+      expect(color.a, greaterThan(0));
+      expect(color, isNot(Colors.transparent));
+    });
+
+    test('insurance returns a semi-transparent blue', () {
+      final color = FinancialType.insurance.tintColor;
+      expect(color.a, greaterThan(0));
+      expect(color, isNot(Colors.transparent));
+    });
+
+    test('consumption returns transparent', () {
+      expect(FinancialType.consumption.tintColor, Colors.transparent);
+    });
+
+    test('asset and insurance tintColors are different', () {
+      expect(FinancialType.asset.tintColor,
+          isNot(FinancialType.insurance.tintColor));
+    });
+
+    test('tintColor is a const — same instance across calls', () {
+      expect(
+        identical(FinancialType.asset.tintColor, FinancialType.asset.tintColor),
+        isTrue,
+      );
+    });
+  });
+
   group('FinancialTypeX.fromDisplayName', () {
     test('returns asset for "Asset"', () {
       expect(FinancialTypeX.fromDisplayName('Asset'), FinancialType.asset);

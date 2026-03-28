@@ -242,22 +242,61 @@ class BudgetCalculator {
     });
   }
 
-  // ── Plan category breakdown ──────────────────────────────────────────────
+  // ── Plan fixed-cost breakdown ────────────────────────────────────────────
 
-  /// Groups [activeFixedCostItems] by category, summing each item's display
-  /// amount for the given period. Returns a map sorted by total descending.
+  /// Groups active fixed-cost items by [FinancialType], summing each item's
+  /// display amount for the given period. Items with a null financialType fall
+  /// back to [FinancialType.consumption].
   ///
-  /// In monthly mode uses [itemMonthlyContribution]; in yearly mode uses
-  /// [itemYearlyContribution] (which correctly handles validity windows).
-  static Map<ExpenseCategory, ({double total, int count})> planCategoryTotals(
+  /// Only types with at least one item are present in the returned map.
+  static Map<FinancialType, ({double total, int count})> planFinancialTypeTotals(
     List<PlanItem> activeFixedCostItems,
     List<PlanItem> allItems,
     int year,
     int month,
     bool isMonthly,
   ) {
-    final map = <ExpenseCategory, ({double total, int count})>{};
+    final map = <FinancialType, ({double total, int count})>{};
     for (final item in activeFixedCostItems) {
+      final type = item.financialType ?? FinancialType.consumption;
+      final amount = isMonthly
+          ? itemMonthlyContribution(item, year, month)
+          : itemYearlyContribution(item, allItems, year);
+      final existing = map[type];
+      if (existing == null) {
+        map[type] = (total: amount, count: 1);
+      } else {
+        map[type] = (total: existing.total + amount, count: existing.count + 1);
+      }
+    }
+    return map;
+  }
+
+  /// Groups [activeFixedCostItems] by category, summing each item's display
+  /// amount for the given period. Returns a map sorted by total descending.
+  ///
+  /// In monthly mode uses [itemMonthlyContribution]; in yearly mode uses
+  /// [itemYearlyContribution] (which correctly handles validity windows).
+  ///
+  /// When [financialTypeFilter] is provided, only items matching that type
+  /// (with null falling back to [FinancialType.consumption]) are included.
+  static Map<ExpenseCategory, ({double total, int count})> planCategoryTotals(
+    List<PlanItem> activeFixedCostItems,
+    List<PlanItem> allItems,
+    int year,
+    int month,
+    bool isMonthly, {
+    FinancialType? financialTypeFilter,
+  }) {
+    final items = financialTypeFilter == null
+        ? activeFixedCostItems
+        : activeFixedCostItems
+            .where((i) =>
+                (i.financialType ?? FinancialType.consumption) ==
+                financialTypeFilter)
+            .toList();
+    final map = <ExpenseCategory, ({double total, int count})>{};
+    for (final item in items) {
       final cat = item.category ?? ExpenseCategory.other;
       final amount = isMonthly
           ? itemMonthlyContribution(item, year, month)
