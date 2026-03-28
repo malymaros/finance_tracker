@@ -7,8 +7,6 @@ import '../models/budget_status.dart';
 import '../models/category_total.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
-import '../models/financial_type.dart';
-import '../models/financial_type_breakdown.dart';
 import '../models/monthly_pdf_data.dart';
 import '../models/monthly_summary.dart';
 import '../models/yearly_pdf_data.dart';
@@ -151,10 +149,6 @@ class PdfReportService {
       _sectionTitle('CATEGORY BREAKDOWN'),
       pw.SizedBox(height: 8),
       _buildCategoryTable(data.categoryTotals, data.grandTotal),
-      pw.SizedBox(height: 20),
-      _sectionTitle('FINANCIAL TYPE BREAKDOWN'),
-      pw.SizedBox(height: 8),
-      _buildTypeBreakdown(data.breakdown),
       if (data.groupSummaries.isNotEmpty) ...[
         pw.SizedBox(height: 20),
         _sectionTitle('EXPENSE GROUPS'),
@@ -182,10 +176,6 @@ class PdfReportService {
       _sectionTitle('CATEGORY BREAKDOWN'),
       pw.SizedBox(height: 8),
       _buildCategoryTable(data.categoryTotals, data.grandTotal),
-      pw.SizedBox(height: 20),
-      _sectionTitle('FINANCIAL TYPE BREAKDOWN'),
-      pw.SizedBox(height: 8),
-      _buildTypeBreakdown(data.breakdown),
       pw.SizedBox(height: 20),
       _sectionTitle('MONTH-BY-MONTH BUDGET'),
       pw.SizedBox(height: 8),
@@ -443,52 +433,6 @@ class PdfReportService {
           ),
         ),
       ],
-    );
-  }
-
-  // ── Financial type breakdown ──────────────────────────────────────────────
-
-  static pw.Widget _buildTypeBreakdown(FinancialTypeBreakdown breakdown) {
-    return pw.Column(
-      children: [
-        _buildTypeRow(FinancialType.asset, breakdown.assetPct),
-        _buildTypeRow(FinancialType.consumption, breakdown.consumptionPct),
-        _buildTypeRow(FinancialType.insurance, breakdown.insurancePct),
-      ],
-    );
-  }
-
-  static pw.Widget _buildTypeRow(FinancialType type, double pct) {
-    final color = _color(type.color.toARGB32());
-    return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(vertical: 5),
-      child: pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Row(
-            children: [
-              pw.SizedBox(
-                width: 120,
-                child: pw.Text(
-                  type.displayName,
-                  style: const pw.TextStyle(fontSize: 11),
-                ),
-              ),
-              pw.Expanded(child: pw.SizedBox()),
-              pw.Text(
-                '${pct.toStringAsFixed(1)}%',
-                style: pw.TextStyle(
-                  fontSize: 11,
-                  fontWeight: pw.FontWeight.bold,
-                  color: color,
-                ),
-              ),
-            ],
-          ),
-          pw.SizedBox(height: 4),
-          _buildBar((pct / 100).clamp(0.0, 1.0), color, height: 5),
-        ],
-      ),
     );
   }
 

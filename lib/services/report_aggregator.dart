@@ -1,7 +1,6 @@
 import '../models/category_total.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
-import '../models/financial_type_breakdown.dart';
 import '../models/report_data.dart';
 import '../models/report_line.dart';
 
@@ -84,51 +83,17 @@ class ReportAggregator {
   }
 
   /// Assembles a complete [ReportData] for a single period from pre-merged
-  /// [lines]. Calls [categoryTotals], [applyThreshold], and
-  /// [financialTypeBreakdown] internally so callers have a single entry point.
+  /// [lines]. Calls [categoryTotals] and [applyThreshold] internally so
+  /// callers have a single entry point.
   static ReportData buildReportData(
       List<ReportLine> lines, double thresholdPct) {
     final listTotals = categoryTotals(lines);
     final chartTotals = applyThreshold(listTotals, thresholdPct);
-    final breakdown = financialTypeBreakdown(lines);
     final grandTotal = listTotals.fold(0.0, (s, ct) => s + ct.amount);
     return ReportData(
       listTotals: listTotals,
       chartTotals: chartTotals,
-      breakdown: breakdown,
       grandTotal: grandTotal,
-    );
-  }
-
-  /// Computes percentage breakdown by financial type across all [lines].
-  static FinancialTypeBreakdown financialTypeBreakdown(List<ReportLine> lines) {
-    if (lines.isEmpty) {
-      return const FinancialTypeBreakdown(
-          assetPct: 0, consumptionPct: 0, insurancePct: 0);
-    }
-
-    double asset = 0, consumption = 0, insurance = 0;
-    for (final l in lines) {
-      switch (l.financialType) {
-        case FinancialType.asset:
-          asset += l.amount;
-        case FinancialType.consumption:
-          consumption += l.amount;
-        case FinancialType.insurance:
-          insurance += l.amount;
-      }
-    }
-
-    final total = asset + consumption + insurance;
-    if (total == 0) {
-      return const FinancialTypeBreakdown(
-          assetPct: 0, consumptionPct: 0, insurancePct: 0);
-    }
-
-    return FinancialTypeBreakdown(
-      assetPct: (asset / total) * 100,
-      consumptionPct: (consumption / total) * 100,
-      insurancePct: (insurance / total) * 100,
     );
   }
 }

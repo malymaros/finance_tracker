@@ -1,14 +1,12 @@
 import 'budget_status.dart';
 import 'category_total.dart';
 import 'expense.dart';
-import 'financial_type_breakdown.dart';
 
 /// Data container passed to [PdfReportService] for generating a monthly PDF.
 class MonthlyPdfData {
   final int year;
   final int month;
   final List<CategoryTotal> categoryTotals;
-  final FinancialTypeBreakdown breakdown;
   final double grandTotal;
   final BudgetStatus? budgetStatus;
 
@@ -22,7 +20,6 @@ class MonthlyPdfData {
     required this.year,
     required this.month,
     required this.categoryTotals,
-    required this.breakdown,
     required this.grandTotal,
     required this.budgetStatus,
     required this.groupSummaries,

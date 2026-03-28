@@ -1,5 +1,4 @@
 import 'category_total.dart';
-import 'financial_type_breakdown.dart';
 
 /// Bundles the results of a single report assembly pass.
 ///
@@ -13,15 +12,12 @@ class ReportData {
   /// configured threshold. Used for the pie chart.
   final List<CategoryTotal> chartTotals;
 
-  final FinancialTypeBreakdown breakdown;
-
   /// Sum of all [listTotals] amounts.
   final double grandTotal;
 
   const ReportData({
     required this.listTotals,
     required this.chartTotals,
-    required this.breakdown,
     required this.grandTotal,
   });
 }

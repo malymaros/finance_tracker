@@ -249,9 +249,6 @@ void main() {
       expect(data.listTotals, isEmpty);
       expect(data.chartTotals, isEmpty);
       expect(data.grandTotal, 0);
-      expect(data.breakdown.assetPct, 0);
-      expect(data.breakdown.consumptionPct, 0);
-      expect(data.breakdown.insurancePct, 0);
     });
 
     test('grandTotal equals sum of listTotals amounts', () {
@@ -300,23 +297,6 @@ void main() {
           isTrue);
     });
 
-    test('breakdown reflects financial type distribution', () {
-      final lines = [
-        makeLine(
-            financialType: FinancialType.asset,
-            category: ExpenseCategory.investment,
-            amount: 500),
-        makeLine(
-            financialType: FinancialType.consumption,
-            category: ExpenseCategory.groceries,
-            amount: 500),
-      ];
-      final data = ReportAggregator.buildReportData(lines, 5.0);
-      expect(data.breakdown.assetPct, closeTo(50.0, 0.001));
-      expect(data.breakdown.consumptionPct, closeTo(50.0, 0.001));
-      expect(data.breakdown.insurancePct, closeTo(0.0, 0.001));
-    });
-
     test('listTotals is sorted descending by amount', () {
       final lines = [
         makeLine(category: ExpenseCategory.transport, amount: 100),
@@ -353,46 +333,4 @@ void main() {
     });
   });
 
-  group('ReportAggregator.financialTypeBreakdown', () {
-    test('returns all zeros for empty list', () {
-      final b = ReportAggregator.financialTypeBreakdown([]);
-      expect(b.assetPct, 0);
-      expect(b.consumptionPct, 0);
-      expect(b.insurancePct, 0);
-    });
-
-    test('100% consumption when all lines are consumption', () {
-      final lines = [
-        makeLine(financialType: FinancialType.consumption, amount: 100),
-        makeLine(financialType: FinancialType.consumption, amount: 50),
-      ];
-      final b = ReportAggregator.financialTypeBreakdown(lines);
-      expect(b.consumptionPct, 100.0);
-      expect(b.assetPct, 0);
-      expect(b.insurancePct, 0);
-    });
-
-    test('splits correctly across three types', () {
-      final lines = [
-        makeLine(financialType: FinancialType.asset, amount: 200),
-        makeLine(financialType: FinancialType.consumption, amount: 600),
-        makeLine(financialType: FinancialType.insurance, amount: 200),
-      ];
-      final b = ReportAggregator.financialTypeBreakdown(lines);
-      expect(b.assetPct, closeTo(20.0, 0.001));
-      expect(b.consumptionPct, closeTo(60.0, 0.001));
-      expect(b.insurancePct, closeTo(20.0, 0.001));
-    });
-
-    test('percentages sum to 100', () {
-      final lines = [
-        makeLine(financialType: FinancialType.asset, amount: 333),
-        makeLine(financialType: FinancialType.consumption, amount: 333),
-        makeLine(financialType: FinancialType.insurance, amount: 334),
-      ];
-      final b = ReportAggregator.financialTypeBreakdown(lines);
-      final sum = b.assetPct + b.consumptionPct + b.insurancePct;
-      expect(sum, closeTo(100.0, 0.001));
-    });
-  });
 }

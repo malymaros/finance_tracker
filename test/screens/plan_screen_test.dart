@@ -4,6 +4,7 @@ import 'package:finance_tracker/models/period_bounds.dart';
 import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/plan/plan_screen.dart';
+import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -11,6 +12,7 @@ import 'package:finance_tracker/services/plan_repository.dart';
 Widget _wrapScreen(PlanRepository repo, {YearMonth? period}) {
   return MaterialApp(
     home: PlanScreen(
+      repository: FinanceRepository(persist: false),
       planRepository: repo,
       selectedPeriod: ValueNotifier(period ?? YearMonth(2025, 1)),
       periodBounds: ValueNotifier(const PeriodBounds()),

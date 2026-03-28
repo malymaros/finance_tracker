@@ -1,17 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/category_total.dart';
 import 'package:finance_tracker/models/expense_category.dart';
-import 'package:finance_tracker/models/financial_type_breakdown.dart';
 import 'package:finance_tracker/models/report_data.dart';
 
 void main() {
   group('ReportData', () {
-    const breakdown = FinancialTypeBreakdown(
-      assetPct: 10,
-      consumptionPct: 80,
-      insurancePct: 10,
-    );
-
     final listTotals = [
       CategoryTotal(
           category: ExpenseCategory.groceries, amount: 400, percentage: 80),
@@ -28,13 +21,11 @@ void main() {
       final data = ReportData(
         listTotals: listTotals,
         chartTotals: chartTotals,
-        breakdown: breakdown,
         grandTotal: 500,
       );
 
       expect(data.listTotals, listTotals);
       expect(data.chartTotals, chartTotals);
-      expect(data.breakdown, breakdown);
       expect(data.grandTotal, 500);
     });
 
@@ -42,7 +33,6 @@ void main() {
       final data = ReportData(
         listTotals: listTotals,
         chartTotals: chartTotals,
-        breakdown: breakdown,
         grandTotal: listTotals.fold(0.0, (s, ct) => s + ct.amount),
       );
 
@@ -54,8 +44,6 @@ void main() {
       const data = ReportData(
         listTotals: [],
         chartTotals: [],
-        breakdown: FinancialTypeBreakdown(
-            assetPct: 0, consumptionPct: 0, insurancePct: 0),
         grandTotal: 0,
       );
 
@@ -69,7 +57,6 @@ void main() {
       final data = ReportData(
         listTotals: listTotals,   // 2 categories
         chartTotals: chartTotals, // 1 category (collapsed)
-        breakdown: breakdown,
         grandTotal: 500,
       );
 

@@ -97,6 +97,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: PlanScreen(
+          repository: _financeRepo(),
           planRepository: planRepo,
           selectedPeriod: period,
           periodBounds: bounds,
@@ -123,6 +124,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: PlanScreen(
+          repository: _financeRepo(),
           planRepository: planRepo,
           selectedPeriod: period,
           periodBounds: bounds,
@@ -180,6 +182,7 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: PlanScreen(
+          repository: _financeRepo(),
           planRepository: planRepo,
           selectedPeriod: period,
           periodBounds: bounds,

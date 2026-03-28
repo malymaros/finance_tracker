@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
 import '../../models/expense_category.dart';
+import '../../models/financial_type_income_ratio.dart';
 import '../../models/period_bounds.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
+import '../../services/finance_repository.dart';
 import '../../services/plan_repository.dart';
+import '../../services/report_aggregator.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/financial_type_distribution_card.dart';
 import '../../widgets/period_navigator.dart';
 import '../../widgets/plan_category_tile.dart';
 import '../../widgets/plan_fixed_costs_summary_tile.dart';
@@ -17,6 +21,7 @@ import 'plan_category_detail_screen.dart';
 import 'plan_item_detail_screen.dart';
 
 class PlanScreen extends StatefulWidget {
+  final FinanceRepository repository;
   final PlanRepository planRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
@@ -25,6 +30,7 @@ class PlanScreen extends StatefulWidget {
 
   const PlanScreen({
     super.key,
+    required this.repository,
     required this.planRepository,
     required this.selectedPeriod,
     required this.periodBounds,
@@ -168,7 +174,7 @@ class _PlanScreenState extends State<PlanScreen> {
         ),
       ),
       body: ListenableBuilder(
-        listenable: widget.planRepository,
+        listenable: Listenable.merge([widget.repository, widget.planRepository]),
         builder: (context, _) {
           final all = widget.planRepository.items;
 
@@ -200,6 +206,20 @@ class _PlanScreenState extends State<PlanScreen> {
             fixedCostItems, all, _year, _month, _isMonthly,
           );
 
+          // Compute merged lines for financial type ratios.
+          final mergedLines = _isMonthly
+              ? ReportAggregator.mergedLines(
+                  widget.repository.reportLinesForMonth(_year, _month),
+                  BudgetCalculator.planFixedCostReportLinesForMonth(
+                      all, _year, _month),
+                )
+              : ReportAggregator.mergedLines(
+                  widget.repository.reportLinesForYear(_year),
+                  BudgetCalculator.planFixedCostReportLinesForYear(all, _year),
+                );
+          final ratio = BudgetCalculator.financialTypeIncomeRatios(
+              mergedLines, totalIncome);
+
           return Column(
             children: [
               _buildModeToggle(),
@@ -216,6 +236,7 @@ class _PlanScreenState extends State<PlanScreen> {
                         categoryTotals,
                         totalIncome,
                         totalFixedCosts,
+                        ratio,
                       ),
               ),
             ],
@@ -326,6 +347,7 @@ class _PlanScreenState extends State<PlanScreen> {
     Map<ExpenseCategory, ({double total, int count})> categoryTotals,
     double totalIncome,
     double totalFixedCosts,
+    FinancialTypeIncomeRatio ratio,
   ) {
     return ListView(
       children: [
@@ -361,6 +383,7 @@ class _PlanScreenState extends State<PlanScreen> {
                 count: entry.value.count,
                 onTap: () => _navigateToCategoryDetail(context, entry.key),
               )),
+        FinancialTypeDistributionCard(ratio: ratio),
         const SizedBox(height: 80),
       ],
     );

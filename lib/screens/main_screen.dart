@@ -50,6 +50,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       _KeepAliveTab(
         child: PlanScreen(
+            repository: widget.repository,
             planRepository: widget.planRepository,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,

@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../models/category_total.dart';
 import '../../models/expense_category.dart';
-import '../../models/financial_type.dart';
-import '../../models/financial_type_breakdown.dart';
 import '../../models/monthly_pdf_data.dart';
 import '../../models/period_bounds.dart';
 import '../../models/year_month.dart';
@@ -184,7 +182,6 @@ class _ReportScreenState extends State<ReportScreen> {
       year: _year,
       month: _month,
       categoryTotals: data.listTotals,
-      breakdown: data.breakdown,
       grandTotal: data.grandTotal,
       budgetStatus: budgetStatus,
       groupSummaries: groupSummaries,
@@ -216,7 +213,6 @@ class _ReportScreenState extends State<ReportScreen> {
     final pdfData = YearlyPdfData(
       year: _year,
       categoryTotals: data.listTotals,
-      breakdown: data.breakdown,
       grandTotal: data.grandTotal,
       monthlySummaries: summaries,
       isPartialYear: isPartialYear,
@@ -318,7 +314,6 @@ class _ReportScreenState extends State<ReportScreen> {
             : _buildChartAndList(
                 reportData.chartTotals,
                 reportData.listTotals,
-                reportData.breakdown,
               );
 
       case _ReportMode.yearly:
@@ -334,7 +329,6 @@ class _ReportScreenState extends State<ReportScreen> {
             : _buildChartAndList(
                 reportData.chartTotals,
                 reportData.listTotals,
-                reportData.breakdown,
               );
 
       case _ReportMode.overview:
@@ -398,8 +392,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Widget _buildChartAndList(
       List<CategoryTotal> chartTotals,
-      List<CategoryTotal> listTotals,
-      FinancialTypeBreakdown breakdown) {
+      List<CategoryTotal> listTotals) {
     final grandTotal = listTotals.fold(0.0, (sum, ct) => sum + ct.amount);
 
     // True when applyThreshold has collapsed small categories into one bucket.
@@ -467,7 +460,6 @@ class _ReportScreenState extends State<ReportScreen> {
           )),
           const Divider(height: 1),
           _buildTotalRow(grandTotal),
-          _buildTypeBreakdown(breakdown),
           const SizedBox(height: 16),
         ],
       ),
@@ -519,66 +511,4 @@ class _ReportScreenState extends State<ReportScreen> {
     );
   }
 
-  Widget _buildTypeBreakdown(FinancialTypeBreakdown breakdown) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'BY FINANCIAL TYPE',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textMuted,
-              letterSpacing: 1.2,
-            ),
-          ),
-          const SizedBox(height: 8),
-          _buildTypeRow(FinancialType.asset, breakdown.assetPct),
-          _buildTypeRow(FinancialType.consumption, breakdown.consumptionPct),
-          _buildTypeRow(FinancialType.insurance, breakdown.insurancePct),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTypeRow(FinancialType type, double pct) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Icon(type.icon, size: 16, color: type.color),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(type.displayName,
-                    style: const TextStyle(fontSize: 14)),
-              ),
-              Text(
-                '${pct.toStringAsFixed(1)}%',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: type.color,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 5),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(3),
-            child: LinearProgressIndicator(
-              value: (pct / 100).clamp(0.0, 1.0),
-              minHeight: 4,
-              backgroundColor: AppColors.border,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                  type.color.withAlpha(160)),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

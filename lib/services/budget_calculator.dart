@@ -2,6 +2,7 @@ import '../models/budget_status.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
+import '../models/financial_type_income_ratio.dart';
 import '../models/monthly_overview_summary.dart';
 import '../models/monthly_summary.dart';
 import '../models/plan_item.dart';
@@ -273,6 +274,50 @@ class BudgetCalculator {
         ..sort((a, b) => b.value.total.compareTo(a.value.total)),
     );
     return sorted;
+  }
+
+  // ── Financial type income ratios ─────────────────────────────────────────
+
+  /// Computes the percentage of [income] consumed by each financial type.
+  /// Returns null percentages when [income] is zero or negative.
+  static FinancialTypeIncomeRatio financialTypeIncomeRatios(
+    List<ReportLine> lines,
+    double income,
+  ) {
+    double consumption = 0;
+    double asset = 0;
+    double insurance = 0;
+    for (final line in lines) {
+      switch (line.financialType) {
+        case FinancialType.consumption:
+          consumption += line.amount;
+          break;
+        case FinancialType.asset:
+          asset += line.amount;
+          break;
+        case FinancialType.insurance:
+          insurance += line.amount;
+          break;
+      }
+    }
+    if (income <= 0) {
+      return FinancialTypeIncomeRatio(
+        consumptionPct: null,
+        assetPct: null,
+        insurancePct: null,
+        consumptionAmount: consumption,
+        assetAmount: asset,
+        insuranceAmount: insurance,
+      );
+    }
+    return FinancialTypeIncomeRatio(
+      consumptionPct: (consumption / income) * 100,
+      assetPct: (asset / income) * 100,
+      insurancePct: (insurance / income) * 100,
+      consumptionAmount: consumption,
+      assetAmount: asset,
+      insuranceAmount: insurance,
+    );
   }
 
   // ── Money-flow overview ───────────────────────────────────────────────────

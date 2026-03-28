@@ -1,13 +1,11 @@
 import 'category_total.dart';
 import 'expense_category.dart';
-import 'financial_type_breakdown.dart';
 import 'monthly_summary.dart';
 
 /// Data container passed to [PdfReportService] for generating a yearly PDF.
 class YearlyPdfData {
   final int year;
   final List<CategoryTotal> categoryTotals;
-  final FinancialTypeBreakdown breakdown;
   final double grandTotal;
 
   /// 12 monthly summaries (index 0 = January).
@@ -23,7 +21,6 @@ class YearlyPdfData {
   const YearlyPdfData({
     required this.year,
     required this.categoryTotals,
-    required this.breakdown,
     required this.grandTotal,
     required this.monthlySummaries,
     required this.isPartialYear,

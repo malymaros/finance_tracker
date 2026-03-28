@@ -3,6 +3,7 @@ import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/plan_item.dart';
+import 'package:finance_tracker/models/report_line.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/services/budget_calculator.dart';
 
@@ -775,6 +776,60 @@ void main() {
           BudgetCalculator.planFixedCostReportLinesForYear(items, 2024);
       final linesTotal = lines.fold(0.0, (s, l) => s + l.amount);
       expect(linesTotal, closeTo(expectedTotal, 0.001));
+    });
+  });
+
+  // ── financialTypeIncomeRatios ─────────────────────────────────────────────
+
+  group('financialTypeIncomeRatios', () {
+    ReportLine makeLine(FinancialType type, double amount) => ReportLine(
+          category: ExpenseCategory.other,
+          financialType: type,
+          amount: amount,
+        );
+
+    test('returns null percentages when income is zero', () {
+      final lines = [makeLine(FinancialType.consumption, 100)];
+      final ratio = BudgetCalculator.financialTypeIncomeRatios(lines, 0);
+      expect(ratio.hasIncome, isFalse);
+      expect(ratio.consumptionPct, isNull);
+      expect(ratio.assetPct, isNull);
+      expect(ratio.insurancePct, isNull);
+    });
+
+    test('returns null percentages when income is negative', () {
+      final ratio = BudgetCalculator.financialTypeIncomeRatios([], -100);
+      expect(ratio.hasIncome, isFalse);
+    });
+
+    test('computes correct percentages', () {
+      final lines = [
+        makeLine(FinancialType.consumption, 500),
+        makeLine(FinancialType.asset, 200),
+        makeLine(FinancialType.insurance, 100),
+      ];
+      final ratio = BudgetCalculator.financialTypeIncomeRatios(lines, 1000);
+      expect(ratio.hasIncome, isTrue);
+      expect(ratio.consumptionPct, closeTo(50.0, 0.001));
+      expect(ratio.assetPct, closeTo(20.0, 0.001));
+      expect(ratio.insurancePct, closeTo(10.0, 0.001));
+    });
+
+    test('handles empty lines with positive income', () {
+      final ratio = BudgetCalculator.financialTypeIncomeRatios([], 1000);
+      expect(ratio.hasIncome, isTrue);
+      expect(ratio.consumptionPct, closeTo(0.0, 0.001));
+      expect(ratio.assetPct, closeTo(0.0, 0.001));
+      expect(ratio.insurancePct, closeTo(0.0, 0.001));
+    });
+
+    test('sums multiple lines of same type', () {
+      final lines = [
+        makeLine(FinancialType.consumption, 300),
+        makeLine(FinancialType.consumption, 200),
+      ];
+      final ratio = BudgetCalculator.financialTypeIncomeRatios(lines, 1000);
+      expect(ratio.consumptionPct, closeTo(50.0, 0.001));
     });
   });
 }
