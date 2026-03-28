@@ -308,6 +308,7 @@ class BudgetCalculator {
         consumptionAmount: consumption,
         assetAmount: asset,
         insuranceAmount: insurance,
+        income: income,
       );
     }
     return FinancialTypeIncomeRatio(
@@ -317,6 +318,7 @@ class BudgetCalculator {
       consumptionAmount: consumption,
       assetAmount: asset,
       insuranceAmount: insurance,
+      income: income,
     );
   }
 

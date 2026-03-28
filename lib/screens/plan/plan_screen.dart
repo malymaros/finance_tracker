@@ -383,7 +383,7 @@ class _PlanScreenState extends State<PlanScreen> {
                 count: entry.value.count,
                 onTap: () => _navigateToCategoryDetail(context, entry.key),
               )),
-        FinancialTypeDistributionCard(ratio: ratio),
+        FinancialTypeDistributionCard(ratio: ratio, isMonthly: _isMonthly),
         const SizedBox(height: 80),
       ],
     );
