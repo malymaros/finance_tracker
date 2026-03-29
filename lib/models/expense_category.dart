@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'financial_type.dart';
+
 enum ExpenseCategory {
   housing,
   groceries,
@@ -84,6 +86,20 @@ extension ExpenseCategoryX on ExpenseCategory {
       case ExpenseCategory.taxes:         return const Color(0xFF546E7A);
       case ExpenseCategory.medications:   return const Color(0xFF00ACC1);
       case ExpenseCategory.other:         return const Color(0xFF9E9E9E);
+    }
+  }
+
+  /// The financial type this category defaults to when creating an expense.
+  /// [ExpenseCategory.investment] → asset, [ExpenseCategory.insurance] →
+  /// insurance, everything else → consumption.
+  FinancialType get defaultFinancialType {
+    switch (this) {
+      case ExpenseCategory.investment:
+        return FinancialType.asset;
+      case ExpenseCategory.insurance:
+        return FinancialType.insurance;
+      default:
+        return FinancialType.consumption;
     }
   }
 

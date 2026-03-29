@@ -56,17 +56,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     super.dispose();
   }
 
-  FinancialType _financialTypeForCategory(ExpenseCategory category) {
-    switch (category) {
-      case ExpenseCategory.investment:
-        return FinancialType.asset;
-      case ExpenseCategory.insurance:
-        return FinancialType.insurance;
-      default:
-        return FinancialType.consumption;
-    }
-  }
-
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -169,7 +158,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                 if (v != null) {
                   setState(() {
                     _selectedCategory = v;
-                    _selectedFinancialType = _financialTypeForCategory(v);
+                    _selectedFinancialType = v.defaultFinancialType;
                   });
                 }
               },
