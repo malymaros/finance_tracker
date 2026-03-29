@@ -78,14 +78,19 @@ PlanRepository      ChangeNotifier; owns planItems list; JSON file persistence
                     exposes restoreFromSnapshot(items)
 
 BudgetCalculator    Pure static class; all budget math:
-                    activeItemsForMonth, normalizedMonthlyIncome/FixedCosts,
-                    spendableBudget, budgetStatus, planFixedCostReportLines,
-                    monthlySummaries, cashFlowTotals
+                    activeItemsForMonth, activeItemsForYear,
+                    normalizedMonthlyIncome/FixedCosts, yearlyIncome, yearlyFixedCosts,
+                    itemMonthlyContribution, itemYearlyContribution,
+                    spendableBudget, budgetStatus,
+                    planFixedCostReportLinesForMonth, planFixedCostReportLinesForYear,
+                    planFinancialTypeTotals, planCategoryTotals,
+                    financialTypeIncomeRatios, monthlySummaries
 
 ReportAggregator    Pure static class; mergedLines (deduplicates plan + actual lines),
-                    categoryTotals, applyThreshold (collapses categories below a %
-                    into "Other"), financialTypeBreakdown, buildReportData (assembles
-                    full ReportData from lines + threshold in one call)
+                    categoryTotals, categoryTotalsForType, applyThreshold (collapses
+                    categories below a % into "Other"),
+                    buildReportData (assembles full ReportData from lines + threshold
+                    in one call)
 
 SaveLoadService     Pure static; local named snapshots saved to
                     getApplicationDocumentsDirectory()/saves/save_{id}.json;
@@ -150,6 +155,9 @@ KEY PATTERNS
 - Navy/gold brand identity: AppColors.navy (0xFF0D1B4B) + AppColors.gold (0xFFD4A853)
   used exclusively for app chrome (AppBar + NavigationBar); body stays light/white
 - onOpenSaves / onClearAll VoidCallbacks wired from MainScreen down to all tab screens
+- Type-selector bottom sheet before forms: when a form requires a type decision
+  (Income vs Fixed Cost), show AddPlanItemTypeSheet first so the choice is explicit
+  and the form opens pre-configured — type cannot be changed mid-form
 
 --------------------------------------------------
 SCREENS
@@ -164,8 +172,17 @@ AddExpenseScreen        Add/edit expense form; includes optional free-text group
 ExpenseDetailScreen     Read-only expense detail; opened by tapping item in list view
 CategoryExpenseListScreen  Drill-down from category view; shows individual expenses for one category + period
 GroupExpenseListScreen  Drill-down from groups view; shows individual expenses for one group + period
-PlanScreen              Monthly/yearly plan view (income + fixed costs)
-AddPlanItemScreen       Add/edit plan item with type, frequency, validFrom
+PlanScreen              Monthly/yearly plan view; income section + fixed costs section
+                        in collapsible accordions; fixed costs further grouped by
+                        financial type accordion, then by category for Consumption items;
+                        financial type distribution card at bottom
+AddPlanItemTypeSheet    Bottom sheet shown before AddPlanItemScreen; user selects
+                        Income or Fixed Cost before the form opens; type is then locked
+                        for the session
+AddPlanItemScreen       Add/edit plan item; accepts initialType (pre-selects and locks
+                        the type selector); screen title reflects type: "Add Income",
+                        "Add Fixed Cost", "Edit Income", "Edit Fixed Cost"; type is
+                        also locked when editing an existing item
 PlanItemDetailScreen    Read-only plan item detail; opened by tapping item in plan list
 ReportScreen            Monthly / yearly / overview modes; pie charts by category
                         (pie: <5% grouped into Other, list: all categories shown);
@@ -178,8 +195,13 @@ TESTING
 
 Place tests in test/ mirroring the lib/ structure.
 
-Covered: models (Expense, YearMonth), services (FinanceRepository,
-PlanRepository, BudgetCalculator, ReportAggregator), basic widget tests.
+Covered: models (Expense, YearMonth, ExpenseCategory, FinancialType, ReportData),
+services (FinanceRepository, PlanRepository, BudgetCalculator, ReportAggregator,
+PeriodBoundsService, ImportExportService, DataPortabilityService),
+screens (AddExpenseScreen, AddPlanItemScreen, PlanScreen, ExpenseDetailScreen,
+PlanItemDetailScreen, CrossTabConsistency),
+widgets (PlanCategoryTile, PlanFinancialTypeTile, PeriodNavigator, ExpenseListTile,
+ExpenseListScreen, AddPlanItemTypeSheet).
 
 When adding logic, add unit tests for services and pure functions.
 

@@ -159,7 +159,7 @@ Actual domain models in the codebase:
 - `BudgetStatus` — spendableBudget, actualSpent, remaining, percentUsed, isOverBudget
 - `CategoryTotal` — category, amount, percentage
 - `ReportLine` — category, financialType, amount
-- `SaveSlot` — id, name, createdAt, expenseCount, incomeCount, planItemCount, isDamaged
+- `SaveSlot` — id, name, createdAt, expenseCount, planItemCount, isDamaged
 - `PeriodBounds` — min, max (YearMonth)
 - `ExpenseCategory` enum (17 values: housing, groceries, vacation, transport, insurance, subscriptions, communication, health, restaurants, entertainment, clothing, education, investment, gifts, taxes, medications, other) with .displayName, .icon, .color extensions; alphabetically sorted in pickers, `other` pinned last
 - `FinancialType` enum (asset|consumption|insurance) with .displayName, .icon, .color extensions
@@ -183,10 +183,10 @@ ChangeNotifier. Owns `expenses`, `income`, `fixedCosts`. JSON persistence via `f
 ChangeNotifier. Owns `planItems`. JSON persistence via `plan_data.json`. Supports version history via `seriesId`. Exposes `restoreFromSnapshot`.
 
 ### BudgetCalculator
-Pure static. All budget math: `activeItemsForMonth`, `normalizedMonthlyIncome/FixedCosts`, `spendableBudget`, `budgetStatus`, `monthlySummaries`, `cashFlowTotals`.
+Pure static. All budget math: `activeItemsForMonth`, `activeItemsForYear`, `normalizedMonthlyIncome/FixedCosts`, `yearlyIncome`, `yearlyFixedCosts`, `itemMonthlyContribution`, `itemYearlyContribution`, `spendableBudget`, `budgetStatus`, `planFixedCostReportLinesForMonth`, `planFixedCostReportLinesForYear`, `planFinancialTypeTotals`, `planCategoryTotals`, `financialTypeIncomeRatios`, `monthlySummaries`.
 
 ### ReportAggregator
-Pure static. `mergedLines` (deduplicates plan + actual lines), `categoryTotals`, `applyThreshold` (collapses categories below % into "Other"), `financialTypeBreakdown`, `buildReportData` (assembles full `ReportData` in one call).
+Pure static. `mergedLines` (deduplicates plan + actual lines), `categoryTotals`, `categoryTotalsForType`, `applyThreshold` (collapses categories below % into "Other"), `buildReportData` (assembles full `ReportData` in one call).
 
 ### SaveLoadService
 Pure static. Local named snapshots in `saves/save_{id}.json`. Max 5 non-damaged saves. Methods: `listSaves`, `createSave`, `loadSave`, `deleteSave`.

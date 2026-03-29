@@ -216,10 +216,10 @@ Services contain:
 
 Actual services in the codebase:
 
-- `FinanceRepository` — ChangeNotifier; expenses, income; filtering helpers incl. `expensesForGroup(group, year, month)`; `restoreFromSnapshot(expenses, income)`
-- `PlanRepository` — ChangeNotifier; planItems; version history via seriesId; `restoreFromSnapshot`
+- `FinanceRepository` — ChangeNotifier; expenses, income; filtering helpers incl. `expensesForGroup(group, year, month)`; `restoreFromSnapshot(expenses)` (expenses only)
+- `PlanRepository` — ChangeNotifier; planItems; version history via seriesId; `restoreFromSnapshot(items)`
 - `BudgetCalculator` — pure static; all budget math
-- `ReportAggregator` — pure static; mergedLines, categoryTotals, applyThreshold, financialTypeBreakdown, buildReportData
+- `ReportAggregator` — pure static; mergedLines, categoryTotals, categoryTotalsForType, applyThreshold, buildReportData
 - `SaveLoadService` — pure static; local named snapshots; listSaves, createSave, loadSave, deleteSave
 - `PeriodBoundsService` — pure static; computes navigation min/max bounds
 - `SeedData` — debug only
@@ -283,6 +283,14 @@ All list items must be wrapped in SwipeableTile.
 - swipe-left = delete action
 - swipe-right = edit action
 - pass `onEdit: () {}` if edit is not applicable
+
+Type-selector bottom sheet pattern:
+
+When navigating to a form that requires a type pre-selection (e.g. Income vs Fixed
+Cost), show `AddPlanItemTypeSheet` first via `showModalBottomSheet`. The sheet fires
+a callback that navigates to the form with `initialType` set. The form hides the
+type selector when `initialType` is provided so the user cannot change it mid-form.
+Always pass `initialType` when opening `AddPlanItemScreen` for a new item.
 
 Callback wiring pattern:
 

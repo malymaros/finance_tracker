@@ -121,17 +121,26 @@ Examples matching actual source files:
 - test/models/expense_test.dart
 - test/models/year_month_test.dart
 - test/models/report_data_test.dart
+- test/models/expense_category_test.dart
+- test/models/financial_type_test.dart
 - test/services/finance_repository_test.dart
 - test/services/plan_repository_test.dart
 - test/services/budget_calculator_test.dart
 - test/services/report_aggregator_test.dart
-- test/services/save_load_service_test.dart
 - test/services/period_bounds_service_test.dart
+- test/services/import_export_service_test.dart
+- test/services/data_portability_service_test.dart
 - test/screens/add_expense_screen_test.dart
 - test/screens/plan_screen_test.dart
 - test/screens/add_plan_item_screen_test.dart
 - test/screens/cross_tab_consistency_test.dart
+- test/screens/expense_detail_screen_test.dart
+- test/screens/plan_item_detail_screen_test.dart
 - test/widgets/period_navigator_test.dart
+- test/widgets/expense_list_tile_test.dart
+- test/widgets/plan_category_tile_test.dart
+- test/widgets/plan_financial_type_tile_test.dart
+- test/widgets/add_plan_item_type_sheet_test.dart
 
 If a file in `lib/` contains important behavior, ensure there is a corresponding test file or justified coverage elsewhere.
 
@@ -224,10 +233,16 @@ Aim for one primary source file -> one corresponding primary test file where pra
 Examples matching actual source files:
 
 - lib/models/expense.dart → test/models/expense_test.dart
+- lib/models/expense_category.dart → test/models/expense_category_test.dart
+- lib/models/financial_type.dart → test/models/financial_type_test.dart
 - lib/services/budget_calculator.dart → test/services/budget_calculator_test.dart
 - lib/services/report_aggregator.dart → test/services/report_aggregator_test.dart
-- lib/services/save_load_service.dart → test/services/save_load_service_test.dart
-- lib/screens/expense_list_screen.dart → test/screens/expense_list_screen_test.dart
+- lib/services/period_bounds_service.dart → test/services/period_bounds_service_test.dart
+- lib/screens/expense_detail_screen.dart → test/screens/expense_detail_screen_test.dart
+- lib/screens/plan/plan_item_detail_screen.dart → test/screens/plan_item_detail_screen_test.dart
+- lib/widgets/add_plan_item_type_sheet.dart → test/widgets/add_plan_item_type_sheet_test.dart
+- lib/widgets/plan_category_tile.dart → test/widgets/plan_category_tile_test.dart
+- lib/widgets/plan_financial_type_tile.dart → test/widgets/plan_financial_type_tile_test.dart
 
 If multiple source files are tightly coupled in one feature, feature-level grouping is acceptable, but coverage must remain clear.
 

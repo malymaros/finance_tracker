@@ -10,7 +10,10 @@ Built with AI-assisted development using Claude Code.
 - **Expense tracking** — log expenses with 17 categories and financial type tags
   (asset / consumption / insurance)
 - **Budget planning** — define monthly income and fixed costs; app calculates
-  spendable budget automatically
+  spendable budget automatically; fixed costs grouped by financial type (consumption /
+  asset / insurance) in collapsible accordions with category drill-down
+- **Guided add flow** — type-selector bottom sheet before plan item forms ensures
+  Income vs Fixed Cost is chosen explicitly before filling any fields
 - **Plan versioning** — recurring plan items track history via series IDs; edits
   create new versions from a chosen month
 - **Reports** — monthly, yearly, and multi-year overview modes; pie charts by
