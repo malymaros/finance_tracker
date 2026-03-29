@@ -4,6 +4,7 @@ import 'screens/main_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'services/category_budget_repository.dart';
 import 'services/finance_repository.dart';
+import 'services/save_load_service.dart';
 import 'theme/app_theme.dart';
 import 'services/plan_repository.dart';
 
@@ -17,6 +18,7 @@ void main() async {
     planRepository.load(),
     budgetRepository.load(),
   ]);
+  await SaveLoadService.checkAndRotate(repository, planRepository, budgetRepository);
   runApp(FinanceTrackerApp(
     repository: repository,
     planRepository: planRepository,

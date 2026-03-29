@@ -12,6 +12,7 @@ import '../services/plan_repository.dart';
 import '../services/save_load_service.dart';
 import '../services/share_service.dart';
 import '../theme/app_theme.dart';
+import '../widgets/auto_backup_tile.dart';
 import '../widgets/save_slot_tile.dart';
 
 class SavesScreen extends StatefulWidget {
@@ -36,7 +37,7 @@ class _SavesScreenState extends State<SavesScreen> {
   List<SaveSlot> _saves = [];
   bool _loading = true;
 
-  static const _maxSaves = 5;
+  static const _maxSaves = 3;
 
   static const _monthAbbr = [
     '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
@@ -174,6 +175,15 @@ class _SavesScreenState extends State<SavesScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildSectionHeader('AUTO BACKUP'),
+          const SizedBox(height: 10),
+          AutoBackupTile(
+            financeRepository: widget.repository,
+            planRepository: widget.planRepository,
+            budgetRepository: widget.budgetRepository,
+            onRestored: _loadList,
+          ),
+          const SizedBox(height: 24),
           _buildSectionHeader('SAVES'),
           const SizedBox(height: 10),
           for (int i = 0; i < _maxSaves; i++) ...[

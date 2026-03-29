@@ -8,14 +8,14 @@ import 'swipeable_tile.dart';
 class SaveSlotTile extends StatelessWidget {
   final SaveSlot slot;
   final VoidCallback onLoad;
-  final VoidCallback onDelete;
+  final VoidCallback? onDelete;
   final VoidCallback? onTap;
 
   const SaveSlotTile({
     super.key,
     required this.slot,
     required this.onLoad,
-    required this.onDelete,
+    this.onDelete,
     this.onTap,
   });
 
@@ -27,12 +27,12 @@ class SaveSlotTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final child = slot.isDamaged ? _buildDamagedTile() : _buildNormalTile(context);
+    if (onDelete == null) return child;
     return SwipeableTile(
       itemId: slot.id,
-      onDelete: onDelete,
-      child: slot.isDamaged
-          ? _buildDamagedTile()
-          : _buildNormalTile(context),
+      onDelete: onDelete!,
+      child: child,
     );
   }
 
