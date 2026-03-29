@@ -17,6 +17,7 @@ import '../../widgets/plan_category_tile.dart';
 import '../../widgets/plan_financial_type_tile.dart';
 import '../../widgets/plan_fixed_costs_summary_tile.dart';
 import '../../widgets/plan_income_summary_tile.dart';
+import '../../widgets/add_plan_item_type_sheet.dart';
 import '../../widgets/plan_item_tile.dart';
 import 'add_plan_item_screen.dart';
 import 'plan_item_detail_screen.dart';
@@ -81,10 +82,25 @@ class _PlanScreenState extends State<PlanScreen> {
         : BudgetCalculator.itemYearlyContribution(item, all, _year);
   }
 
-  void _navigateToAdd(BuildContext context) {
+  void _showTypeSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => AddPlanItemTypeSheet(
+        onIncomeSelected: () {
+          if (context.mounted) _navigateToAdd(context, PlanItemType.income);
+        },
+        onFixedCostSelected: () {
+          if (context.mounted) _navigateToAdd(context, PlanItemType.fixedCost);
+        },
+      ),
+    );
+  }
+
+  void _navigateToAdd(BuildContext context, PlanItemType type) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => AddPlanItemScreen(
         planRepository: widget.planRepository,
+        initialType: type,
         initialValidFrom: widget.selectedPeriod.value,
       ),
     ));
@@ -241,7 +257,7 @@ class _PlanScreenState extends State<PlanScreen> {
       floatingActionButton: Opacity(
         opacity: 0.6,
         child: FloatingActionButton(
-          onPressed: () => _navigateToAdd(context),
+          onPressed: () => _showTypeSheet(context),
           tooltip: 'Add Plan Item',
           child: const Icon(Icons.add),
         ),

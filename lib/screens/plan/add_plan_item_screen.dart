@@ -46,6 +46,19 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   late ExpenseCategory _selectedCategory;
   late FinancialType _selectedFinancialType;
 
+  bool get _typeIsLocked =>
+      widget.existing != null || widget.initialType != null;
+
+  String get _screenTitle {
+    if (widget.existing != null) {
+      return _type == PlanItemType.income ? 'Edit Income' : 'Edit Fixed Cost';
+    }
+    if (widget.initialType != null) {
+      return _type == PlanItemType.income ? 'Add Income' : 'Add Fixed Cost';
+    }
+    return 'Add Plan Item';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -252,43 +265,45 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditing ? 'Edit Plan Item' : 'Add Plan Item'),
+        title: Text(_screenTitle),
       ),
       body: Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // ── Type ────────────────────────────────────────────────────────
-            const Text('Type',
-                style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
-            const SizedBox(height: 8),
-            SegmentedButton<PlanItemType>(
-              segments: const [
-                ButtonSegment(
-                  value: PlanItemType.income,
-                  label: Text('Income'),
-                  icon: Icon(Icons.savings),
-                ),
-                ButtonSegment(
-                  value: PlanItemType.fixedCost,
-                  label: Text('Fixed Cost'),
-                  icon: Icon(Icons.payments_outlined),
-                ),
-              ],
-              selected: {_type},
-              onSelectionChanged: (s) {
-                final newType = s.first;
-                setState(() {
-                  _type = newType;
-                  if (newType == PlanItemType.fixedCost &&
-                      _frequency == PlanFrequency.oneTime) {
-                    _frequency = PlanFrequency.monthly;
-                  }
-                });
-              },
-            ),
-            const SizedBox(height: 16),
+            // ── Type (only shown when not locked by navigation or edit) ─────
+            if (!_typeIsLocked) ...[
+              const Text('Type',
+                  style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+              const SizedBox(height: 8),
+              SegmentedButton<PlanItemType>(
+                segments: const [
+                  ButtonSegment(
+                    value: PlanItemType.income,
+                    label: Text('Income'),
+                    icon: Icon(Icons.savings),
+                  ),
+                  ButtonSegment(
+                    value: PlanItemType.fixedCost,
+                    label: Text('Fixed Cost'),
+                    icon: Icon(Icons.lock_outline),
+                  ),
+                ],
+                selected: {_type},
+                onSelectionChanged: (s) {
+                  final newType = s.first;
+                  setState(() {
+                    _type = newType;
+                    if (newType == PlanItemType.fixedCost &&
+                        _frequency == PlanFrequency.oneTime) {
+                      _frequency = PlanFrequency.monthly;
+                    }
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
 
             // ── Name ────────────────────────────────────────────────────────
             TextFormField(

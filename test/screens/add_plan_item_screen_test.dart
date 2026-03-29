@@ -189,4 +189,116 @@ void main() {
       expect(find.textContaining('March 2025'), findsOneWidget);
     });
   });
+
+  group('AddPlanItemScreen — screen title', () {
+    testWidgets('shows "Add Income" when initialType is income', (tester) async {
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: _repo(),
+        initialType: PlanItemType.income,
+      )));
+      expect(find.text('Add Income'), findsOneWidget);
+    });
+
+    testWidgets('shows "Add Fixed Cost" when initialType is fixedCost',
+        (tester) async {
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: _repo(),
+        initialType: PlanItemType.fixedCost,
+      )));
+      expect(find.text('Add Fixed Cost'), findsOneWidget);
+    });
+
+    testWidgets('shows generic "Add Plan Item" when no initialType',
+        (tester) async {
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: _repo(),
+      )));
+      expect(find.text('Add Plan Item'), findsOneWidget);
+    });
+
+    testWidgets('shows "Edit Income" when editing an income item',
+        (tester) async {
+      final repo = _repo();
+      final item = PlanItem(
+        id: '1',
+        seriesId: '1',
+        name: 'Salary',
+        amount: 3000,
+        type: PlanItemType.income,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 1),
+      );
+      await repo.addPlanItem(item);
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: repo,
+        existing: item,
+      )));
+      expect(find.text('Edit Income'), findsOneWidget);
+    });
+
+    testWidgets('shows "Edit Fixed Cost" when editing a fixed cost item',
+        (tester) async {
+      final repo = _repo();
+      final item = PlanItem(
+        id: '1',
+        seriesId: '1',
+        name: 'Rent',
+        amount: 800,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 1),
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+      await repo.addPlanItem(item);
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: repo,
+        existing: item,
+      )));
+      expect(find.text('Edit Fixed Cost'), findsOneWidget);
+    });
+  });
+
+  group('AddPlanItemScreen — type selector visibility', () {
+    testWidgets('type selector is hidden when initialType is set',
+        (tester) async {
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: _repo(),
+        initialType: PlanItemType.income,
+      )));
+      // The "Type" label above the selector should not be visible.
+      expect(
+        find.text('Type'),
+        findsNothing,
+      );
+    });
+
+    testWidgets('type selector is hidden when editing an existing item',
+        (tester) async {
+      final repo = _repo();
+      final item = PlanItem(
+        id: '1',
+        seriesId: '1',
+        name: 'Salary',
+        amount: 3000,
+        type: PlanItemType.income,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 1),
+      );
+      await repo.addPlanItem(item);
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: repo,
+        existing: item,
+      )));
+      expect(find.text('Type'), findsNothing);
+    });
+
+    testWidgets('type selector is visible when no initialType and no existing',
+        (tester) async {
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: _repo(),
+      )));
+      expect(find.text('Type'), findsOneWidget);
+    });
+  });
 }
