@@ -63,5 +63,34 @@ void main() {
       expect(data.listTotals.length, 2);
       expect(data.chartTotals.length, 1);
     });
+
+    test('otherSubcategories defaults to empty list', () {
+      const data = ReportData(
+        listTotals: [],
+        chartTotals: [],
+        grandTotal: 0,
+      );
+
+      expect(data.otherSubcategories, isEmpty);
+    });
+
+    test('otherSubcategories stores provided list correctly', () {
+      final subs = [
+        CategoryTotal(
+            category: ExpenseCategory.transport, amount: 30, percentage: 3),
+        CategoryTotal(
+            category: ExpenseCategory.clothing, amount: 20, percentage: 2),
+      ];
+      final data = ReportData(
+        listTotals: listTotals,
+        chartTotals: chartTotals,
+        grandTotal: 500,
+        otherSubcategories: subs,
+      );
+
+      expect(data.otherSubcategories.length, 2);
+      expect(data.otherSubcategories[0].category, ExpenseCategory.transport);
+      expect(data.otherSubcategories[1].category, ExpenseCategory.clothing);
+    });
   });
 }

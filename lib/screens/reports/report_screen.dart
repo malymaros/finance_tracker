@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/category_total.dart';
 import '../../models/expense_category.dart';
+import '../../models/report_data.dart';
 import '../../models/monthly_pdf_data.dart';
 import '../../models/period_bounds.dart';
 import '../../models/year_month.dart';
@@ -54,6 +55,7 @@ class _ReportScreenState extends State<ReportScreen> {
   bool _isGeneratingPdf = false;
 
   ExpenseCategory? _selectedCategory;
+  bool _otherExpanded = false;
   late final ScrollController _scrollController;
 
   // One stable GlobalKey per category — assigned to each ReportCategoryRow so
@@ -82,6 +84,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   void _onPeriodChanged() => setState(() {
         _selectedCategory = null;
+        _otherExpanded = false;
       });
 
   @override
@@ -280,6 +283,7 @@ class _ReportScreenState extends State<ReportScreen> {
         onSelectionChanged: (s) => setState(() {
           _mode = s.first;
           _selectedCategory = null;
+          _otherExpanded = false;
         }),
       ),
     );
@@ -309,12 +313,9 @@ class _ReportScreenState extends State<ReportScreen> {
         );
         final reportData =
             ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
-        return reportData.listTotals.isEmpty
+        return reportData.chartTotals.isEmpty
             ? _buildEmptyState()
-            : _buildChartAndList(
-                reportData.chartTotals,
-                reportData.listTotals,
-              );
+            : _buildChartAndList(reportData);
 
       case _ReportMode.yearly:
         final lines = ReportAggregator.mergedLines(
@@ -324,12 +325,9 @@ class _ReportScreenState extends State<ReportScreen> {
         );
         final reportData =
             ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
-        return reportData.listTotals.isEmpty
+        return reportData.chartTotals.isEmpty
             ? _buildEmptyState()
-            : _buildChartAndList(
-                reportData.chartTotals,
-                reportData.listTotals,
-              );
+            : _buildChartAndList(reportData);
 
       case _ReportMode.overview:
         return _buildOverview();
@@ -390,14 +388,13 @@ class _ReportScreenState extends State<ReportScreen> {
     );
   }
 
-  Widget _buildChartAndList(
-      List<CategoryTotal> chartTotals,
-      List<CategoryTotal> listTotals) {
-    final grandTotal = listTotals.fold(0.0, (sum, ct) => sum + ct.amount);
+  Widget _buildChartAndList(ReportData reportData) {
+    final chartTotals = reportData.chartTotals;
+    final otherSubcategories = reportData.otherSubcategories;
+    final grandTotal = reportData.grandTotal;
 
-    // True when applyThreshold has collapsed small categories into one bucket.
-    // In that case the "Other" pie slice is an aggregate and is not interactive.
-    final hasAggregatedOther = chartTotals.length < listTotals.length;
+    // "Other categories" bucket is present when sub-categories were collapsed.
+    final hasOtherGroup = otherSubcategories.isNotEmpty;
 
     return SingleChildScrollView(
       controller: _scrollController,
@@ -419,17 +416,14 @@ class _ReportScreenState extends State<ReportScreen> {
                       return;
                     }
                     final tapped = chartTotals[index].category;
-                    if (tapped == ExpenseCategory.other && hasAggregatedOther) {
-                      return;
-                    }
                     setState(() => _selectedCategory = tapped);
                     _scrollToCategory(tapped);
                   },
                 ),
                 sections: chartTotals.map((ct) {
-                  final isAggOther = ct.category == ExpenseCategory.other &&
-                      hasAggregatedOther;
                   final isSelected = ct.category == _selectedCategory;
+                  final isAggOther =
+                      ct.category == ExpenseCategory.other && hasOtherGroup;
                   return PieChartSectionData(
                     value: ct.amount,
                     color: isAggOther ? Colors.white : ct.category.color,
@@ -451,19 +445,49 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          ...listTotals.map((ct) => ReportCategoryRow(
-            key: _categoryRowKeys[ct.category],
-            ct: ct,
-            isSelected: _selectedCategory == ct.category,
-            isInteractive: true,
-            onTap: () => _navigateToCategoryDetail(ct.category),
-          )),
+          ..._buildCategoryRows(chartTotals, otherSubcategories, hasOtherGroup),
           const Divider(height: 1),
           _buildTotalRow(grandTotal),
           const SizedBox(height: 16),
         ],
       ),
     );
+  }
+
+  /// Builds the flat list of category rows, expanding the "Other categories"
+  /// bucket inline when [_otherExpanded] is true.
+  List<Widget> _buildCategoryRows(
+    List<CategoryTotal> chartTotals,
+    List<CategoryTotal> otherSubcategories,
+    bool hasOtherGroup,
+  ) {
+    final rows = <Widget>[];
+    for (final ct in chartTotals) {
+      final isOtherRow =
+          ct.category == ExpenseCategory.other && hasOtherGroup;
+      rows.add(ReportCategoryRow(
+        key: _categoryRowKeys[ct.category],
+        ct: ct,
+        isSelected: _selectedCategory == ct.category,
+        isInteractive: true,
+        isOther: isOtherRow,
+        isExpanded: isOtherRow && _otherExpanded,
+        onTap: isOtherRow
+            ? () => setState(() => _otherExpanded = !_otherExpanded)
+            : () => _navigateToCategoryDetail(ct.category),
+      ));
+      if (isOtherRow && _otherExpanded) {
+        for (final sub in otherSubcategories) {
+          rows.add(ReportCategoryRow(
+            ct: sub,
+            isSelected: false,
+            isInteractive: true,
+            onTap: () => _navigateToCategoryDetail(sub.category),
+          ));
+        }
+      }
+    }
+    return rows;
   }
 
   void _scrollToCategory(ExpenseCategory category) {

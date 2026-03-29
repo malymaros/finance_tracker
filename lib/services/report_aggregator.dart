@@ -90,9 +90,21 @@ class ReportAggregator {
     final listTotals = categoryTotals(lines);
     final chartTotals = applyThreshold(listTotals, thresholdPct);
     final grandTotal = listTotals.fold(0.0, (s, ct) => s + ct.amount);
+
+    // Categories absorbed into the "Other categories" bucket: any entry below
+    // the threshold plus any real ExpenseCategory.other entry (which
+    // applyThreshold always absorbs regardless of size). Already sorted
+    // descending by amount because listTotals is sorted.
+    final otherSubcategories = listTotals
+        .where((ct) =>
+            ct.category == ExpenseCategory.other ||
+            ct.percentage < thresholdPct)
+        .toList();
+
     return ReportData(
       listTotals: listTotals,
       chartTotals: chartTotals,
+      otherSubcategories: otherSubcategories,
       grandTotal: grandTotal,
     );
   }

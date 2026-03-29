@@ -9,13 +9,21 @@ import '../theme/app_theme.dart';
 /// [isSelected] highlights the row with a left accent bar when its
 /// corresponding pie segment has been tapped.
 ///
-/// [isInteractive] is false for the aggregated "Other" bucket (when small
-/// categories are collapsed by the pie chart threshold). Non-interactive rows
-/// are shown at reduced opacity without a chevron.
+/// [isInteractive] is false for rows that carry no tap action (reduced opacity,
+/// no chevron). All rows are interactive in current usage.
+///
+/// [isOther] marks the aggregated "Other categories" bucket row. When true:
+/// - the label is overridden to "Other categories"
+/// - the trailing icon is an expand/collapse chevron driven by [isExpanded]
+/// - [onTap] should toggle the expansion state, not navigate
+///
+/// [isExpanded] is only meaningful when [isOther] is true.
 class ReportCategoryRow extends StatelessWidget {
   final CategoryTotal ct;
   final bool isSelected;
   final bool isInteractive;
+  final bool isOther;
+  final bool isExpanded;
   final VoidCallback? onTap;
 
   const ReportCategoryRow({
@@ -23,6 +31,8 @@ class ReportCategoryRow extends StatelessWidget {
     required this.ct,
     required this.isSelected,
     required this.isInteractive,
+    this.isOther = false,
+    this.isExpanded = false,
     this.onTap,
   });
 
@@ -61,7 +71,7 @@ class ReportCategoryRow extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  ct.category.displayName,
+                  isOther ? 'Other categories' : ct.category.displayName,
                   style: const TextStyle(fontSize: 15),
                 ),
               ),
@@ -82,8 +92,10 @@ class ReportCategoryRow extends StatelessWidget {
               ),
               if (isInteractive) ...[
                 const SizedBox(width: 4),
-                const Icon(
-                  Icons.chevron_right,
+                Icon(
+                  isOther
+                      ? (isExpanded ? Icons.expand_less : Icons.expand_more)
+                      : Icons.chevron_right,
                   size: 20,
                   color: AppColors.textMuted,
                 ),

@@ -331,6 +331,67 @@ void main() {
       expect(data.chartTotals.length, 1);
       expect(data.listTotals.first.category, data.chartTotals.first.category);
     });
+
+    test('otherSubcategories is empty when lines are empty', () {
+      final data = ReportAggregator.buildReportData([], 5.0);
+      expect(data.otherSubcategories, isEmpty);
+    });
+
+    test('otherSubcategories is empty when all categories are above threshold', () {
+      // groceries = 60%, housing = 40% — both above 5%
+      final lines = [
+        makeLine(category: ExpenseCategory.groceries, amount: 600),
+        makeLine(category: ExpenseCategory.housing, amount: 400),
+      ];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      expect(data.otherSubcategories, isEmpty);
+    });
+
+    test('otherSubcategories contains categories below threshold', () {
+      // groceries = 95%, transport = 3%, clothing = 2%
+      final lines = [
+        makeLine(category: ExpenseCategory.groceries, amount: 950),
+        makeLine(category: ExpenseCategory.transport, amount: 30),
+        makeLine(category: ExpenseCategory.clothing, amount: 20),
+      ];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      expect(data.otherSubcategories.length, 2);
+      expect(
+        data.otherSubcategories.map((ct) => ct.category).toList(),
+        containsAll([ExpenseCategory.transport, ExpenseCategory.clothing]),
+      );
+      expect(
+        data.otherSubcategories.any((ct) => ct.category == ExpenseCategory.groceries),
+        isFalse,
+      );
+    });
+
+    test('otherSubcategories includes real ExpenseCategory.other even above threshold', () {
+      // real other = 10% — above the 5% threshold, but still included
+      final lines = [
+        makeLine(category: ExpenseCategory.groceries, amount: 900),
+        makeLine(category: ExpenseCategory.other, amount: 100),
+      ];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      expect(data.otherSubcategories.length, 1);
+      expect(data.otherSubcategories.first.category, ExpenseCategory.other);
+      expect(data.otherSubcategories.first.amount, closeTo(100, 0.001));
+    });
+
+    test('otherSubcategories is sorted descending by amount (inherits listTotals order)', () {
+      // housing=88%, transport=7%, clothing=3%, gifts=2%: transport above threshold, clothing+gifts below
+      final lines = [
+        makeLine(category: ExpenseCategory.housing, amount: 880),
+        makeLine(category: ExpenseCategory.transport, amount: 70),
+        makeLine(category: ExpenseCategory.clothing, amount: 30),
+        makeLine(category: ExpenseCategory.gifts, amount: 20),
+      ];
+      final data = ReportAggregator.buildReportData(lines, 5.0);
+      // only clothing (3%) and gifts (2%) are below threshold
+      expect(data.otherSubcategories.length, 2);
+      expect(data.otherSubcategories[0].category, ExpenseCategory.clothing);
+      expect(data.otherSubcategories[1].category, ExpenseCategory.gifts);
+    });
   });
 
 }
