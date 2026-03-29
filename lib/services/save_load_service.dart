@@ -3,9 +3,11 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
+import '../models/category_budget.dart';
 import '../models/expense.dart';
 import '../models/plan_item.dart';
 import '../models/save_slot.dart';
+import 'category_budget_repository.dart';
 import 'finance_repository.dart';
 import 'plan_repository.dart';
 
@@ -55,6 +57,7 @@ class SaveLoadService {
     String name,
     FinanceRepository financeRepo,
     PlanRepository planRepo,
+    CategoryBudgetRepository budgetRepo,
   ) async {
     final existing = await listSaves();
     final nonDamaged = existing.where((s) => !s.isDamaged).length;
@@ -75,6 +78,8 @@ class SaveLoadService {
         ...slot.toJson(),
         'expenses': financeRepo.expenses.map((e) => e.toJson()).toList(),
         'planItems': planRepo.items.map((e) => e.toJson()).toList(),
+        'categoryBudgets':
+            budgetRepo.budgets.map((b) => b.toJson()).toList(),
       };
 
       final dir = await _savesDir();
@@ -90,11 +95,13 @@ class SaveLoadService {
     String saveId,
     FinanceRepository financeRepo,
     PlanRepository planRepo,
+    CategoryBudgetRepository budgetRepo,
   ) async {
     try {
       final dir = await _savesDir();
       final file = File('${dir.path}/save_$saveId.json');
-      final json = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
+      final json =
+          jsonDecode(await file.readAsString()) as Map<String, dynamic>;
 
       final expenses = (json['expenses'] as List? ?? [])
           .map((e) => Expense.fromJson(e as Map<String, dynamic>))
@@ -102,9 +109,13 @@ class SaveLoadService {
       final planItems = (json['planItems'] as List? ?? [])
           .map((e) => PlanItem.fromJson(e as Map<String, dynamic>))
           .toList();
+      final categoryBudgets = (json['categoryBudgets'] as List? ?? [])
+          .map((e) => CategoryBudget.fromJson(e as Map<String, dynamic>))
+          .toList();
 
       await financeRepo.restoreFromSnapshot(expenses);
       await planRepo.restoreFromSnapshot(planItems);
+      await budgetRepo.restoreFromSnapshot(categoryBudgets);
       return true;
     } catch (_) {
       return false;

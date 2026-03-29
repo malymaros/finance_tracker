@@ -1048,4 +1048,87 @@ void main() {
       expect(ratio.consumptionPct, closeTo(50.0, 0.001));
     });
   });
+
+  // ── categoryOverages ─────────────────────────────────────────────────────
+
+  group('BudgetCalculator.categoryOverages', () {
+    Expense makeOverageExpense(ExpenseCategory category, double amount) =>
+        Expense(
+          id: '${category.name}_$amount',
+          amount: amount,
+          category: category,
+          financialType: FinancialType.consumption,
+          date: DateTime(2025, 3, 1),
+        );
+
+    test('returns empty map when budgets map is empty', () {
+      final expenses = [makeOverageExpense(ExpenseCategory.groceries, 400)];
+      expect(BudgetCalculator.categoryOverages(expenses, {}), isEmpty);
+    });
+
+    test('returns empty map when no spending exceeds any budget', () {
+      final expenses = [makeOverageExpense(ExpenseCategory.groceries, 200)];
+      final budgets = {ExpenseCategory.groceries: 300.0};
+      expect(BudgetCalculator.categoryOverages(expenses, budgets), isEmpty);
+    });
+
+    test('returns overage when spending exceeds budget', () {
+      final expenses = [makeOverageExpense(ExpenseCategory.groceries, 400)];
+      final budgets = {ExpenseCategory.groceries: 300.0};
+      final result = BudgetCalculator.categoryOverages(expenses, budgets);
+      expect(result[ExpenseCategory.groceries], closeTo(100.0, 0.001));
+    });
+
+    test('does not include categories at exactly budget limit', () {
+      final expenses = [makeOverageExpense(ExpenseCategory.groceries, 300)];
+      final budgets = {ExpenseCategory.groceries: 300.0};
+      expect(BudgetCalculator.categoryOverages(expenses, budgets), isEmpty);
+    });
+
+    test('only checks categories present in budgets map', () {
+      // Housing is over-spent but has no budget → should not appear in overages.
+      final expenses = [
+        makeOverageExpense(ExpenseCategory.groceries, 200),
+        makeOverageExpense(ExpenseCategory.housing, 2000),
+      ];
+      final budgets = {ExpenseCategory.groceries: 300.0};
+      final result = BudgetCalculator.categoryOverages(expenses, budgets);
+      expect(result.containsKey(ExpenseCategory.housing), isFalse);
+    });
+
+    test('returns zero spending categories as no overage', () {
+      // Transport has a budget but no expenses.
+      final budgets = {ExpenseCategory.transport: 100.0};
+      final result = BudgetCalculator.categoryOverages([], budgets);
+      expect(result, isEmpty);
+    });
+
+    test('sums multiple expenses in the same category', () {
+      final expenses = [
+        makeOverageExpense(ExpenseCategory.groceries, 150),
+        makeOverageExpense(ExpenseCategory.groceries, 200),
+      ];
+      final budgets = {ExpenseCategory.groceries: 300.0};
+      final result = BudgetCalculator.categoryOverages(expenses, budgets);
+      expect(result[ExpenseCategory.groceries], closeTo(50.0, 0.001));
+    });
+
+    test('handles multiple categories with mixed results', () {
+      final expenses = [
+        makeOverageExpense(ExpenseCategory.groceries, 400), // over by 100
+        makeOverageExpense(ExpenseCategory.housing, 800),   // under (budget 1000)
+        makeOverageExpense(ExpenseCategory.transport, 250), // over by 50
+      ];
+      final budgets = {
+        ExpenseCategory.groceries: 300.0,
+        ExpenseCategory.housing: 1000.0,
+        ExpenseCategory.transport: 200.0,
+      };
+      final result = BudgetCalculator.categoryOverages(expenses, budgets);
+      expect(result.length, 2);
+      expect(result[ExpenseCategory.groceries], closeTo(100.0, 0.001));
+      expect(result[ExpenseCategory.transport], closeTo(50.0, 0.001));
+      expect(result.containsKey(ExpenseCategory.housing), isFalse);
+    });
+  });
 }

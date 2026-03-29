@@ -10,11 +10,13 @@ import '../models/expense_category.dart';
 import '../models/period_bounds.dart';
 import '../models/year_month.dart';
 import '../services/budget_calculator.dart';
+import '../services/category_budget_repository.dart';
 import '../services/finance_repository.dart';
 import '../services/plan_repository.dart';
 import '../services/import_export_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/budget_progress_bar.dart';
+import '../widgets/category_budget_warning_card.dart';
 import '../widgets/expense_category_group.dart';
 import '../widgets/expense_group_tile.dart';
 import '../widgets/expense_list_tile.dart';
@@ -32,6 +34,7 @@ enum _ViewMode { items, byCategory, byGroup }
 class ExpenseListScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
+  final CategoryBudgetRepository budgetRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
@@ -41,6 +44,7 @@ class ExpenseListScreen extends StatefulWidget {
     super.key,
     required this.repository,
     required this.planRepository,
+    required this.budgetRepository,
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onClearAll,
@@ -143,7 +147,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     final isPastMonth = _isPastMonth(now);
 
     return ListenableBuilder(
-      listenable: Listenable.merge([widget.repository, widget.planRepository]),
+      listenable: Listenable.merge(
+          [widget.repository, widget.planRepository, widget.budgetRepository]),
       builder: (context, _) {
         final monthExpenses = widget.repository.expensesForMonth(_year, _month)
           ..sort((a, b) => b.date.compareTo(a.date));
@@ -178,6 +183,8 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
               _buildBudgetWidget(budgetStatus, isCurrentMonth, isPastMonth),
               _buildViewToggle(),
               const Divider(height: 1),
+              if (_mode == _ViewMode.items)
+                _buildCategoryBudgetWarning(monthExpenses),
               Expanded(
                 child: _mode == _ViewMode.byGroup
                     ? _buildGroupList(monthExpenses)
@@ -340,6 +347,15 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     ));
   }
 
+  // ── Category budget warnings (items mode) ─────────────────────────────────
+
+  Widget _buildCategoryBudgetWarning(List<Expense> monthExpenses) {
+    final period = YearMonth(_year, _month);
+    final budgets = widget.budgetRepository.allActiveBudgetsForMonth(period);
+    final overages = BudgetCalculator.categoryOverages(monthExpenses, budgets);
+    return CategoryBudgetWarningCard(overages: overages);
+  }
+
   // ── Mode B: grouped by category ───────────────────────────────────────────
 
   static List<MapEntry<ExpenseCategory, List<Expense>>> _groupedByCategory(
@@ -358,12 +374,17 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   Widget _buildCategoryList(List<Expense> expenses) {
     final sorted = _groupedByCategory(expenses);
+    final period = YearMonth(_year, _month);
+    final budgets =
+        widget.budgetRepository.allActiveBudgetsForMonth(period);
+
     return ListView.separated(
       itemCount: sorted.length,
       separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (_, i) => ExpenseCategoryGroup(
         category: sorted[i].key,
         expenses: sorted[i].value,
+        budget: budgets[sorted[i].key],
         onTap: () => _navigateToCategoryDetail(context, sorted[i].key),
       ),
     );

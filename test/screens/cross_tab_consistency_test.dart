@@ -8,6 +8,7 @@ import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/expense_list_screen.dart';
 import 'package:finance_tracker/screens/plan/plan_screen.dart';
+import 'package:finance_tracker/services/category_budget_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/period_bounds_service.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
@@ -70,6 +71,7 @@ void main() {
         home: ExpenseListScreen(
           repository: repo,
           planRepository: planRepo,
+          budgetRepository: CategoryBudgetRepository(persist: false),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -99,6 +101,7 @@ void main() {
         home: PlanScreen(
           repository: _financeRepo(),
           planRepository: planRepo,
+          budgetRepository: CategoryBudgetRepository(persist: false),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -126,6 +129,7 @@ void main() {
         home: PlanScreen(
           repository: _financeRepo(),
           planRepository: planRepo,
+          budgetRepository: CategoryBudgetRepository(persist: false),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -159,6 +163,7 @@ void main() {
         home: ExpenseListScreen(
           repository: repo,
           planRepository: planRepo,
+          budgetRepository: CategoryBudgetRepository(persist: false),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -184,6 +189,7 @@ void main() {
         home: PlanScreen(
           repository: _financeRepo(),
           planRepository: planRepo,
+          budgetRepository: CategoryBudgetRepository(persist: false),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -382,6 +388,7 @@ void main() {
         home: ExpenseListScreen(
           repository: repo,
           planRepository: planRepo,
+          budgetRepository: CategoryBudgetRepository(persist: false),
           selectedPeriod: period,
           periodBounds: boundsNotifier,
           onClearAll: () {},

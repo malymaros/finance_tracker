@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/period_bounds.dart';
 import '../theme/app_theme.dart';
 import '../models/year_month.dart';
+import '../services/category_budget_repository.dart';
 import '../services/finance_repository.dart';
 import '../services/period_bounds_service.dart';
 import '../services/plan_repository.dart';
@@ -14,11 +15,13 @@ import 'saves_screen.dart';
 class MainScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
+  final CategoryBudgetRepository budgetRepository;
 
   const MainScreen({
     super.key,
     required this.repository,
     required this.planRepository,
+    required this.budgetRepository,
   });
 
   @override
@@ -44,6 +47,7 @@ class _MainScreenState extends State<MainScreen> {
         child: ExpenseListScreen(
             repository: widget.repository,
             planRepository: widget.planRepository,
+            budgetRepository: widget.budgetRepository,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onClearAll: () => _clearAllData(context),
@@ -53,6 +57,7 @@ class _MainScreenState extends State<MainScreen> {
         child: PlanScreen(
             repository: widget.repository,
             planRepository: widget.planRepository,
+            budgetRepository: widget.budgetRepository,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onClearAll: () => _clearAllData(context),
@@ -111,6 +116,7 @@ class _MainScreenState extends State<MainScreen> {
       builder: (_) => SavesScreen(
         repository: widget.repository,
         planRepository: widget.planRepository,
+        budgetRepository: widget.budgetRepository,
         onClearAll: () => _clearAllData(context),
       ),
     ));
@@ -141,6 +147,7 @@ class _MainScreenState extends State<MainScreen> {
       await Future.wait([
         widget.repository.clearAll(),
         widget.planRepository.clearAll(),
+        widget.budgetRepository.clearAll(),
       ]);
     }
   }

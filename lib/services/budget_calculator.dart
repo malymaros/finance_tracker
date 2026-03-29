@@ -173,6 +173,36 @@ class BudgetCalculator {
     );
   }
 
+  // ── Category budget overages ────────────────────────────────────────────
+
+  /// Returns a map of categories whose actual spending exceeds their budget.
+  ///
+  /// [expenses] is the list of expenses for the period being evaluated.
+  /// [budgets] is the active budget map for that period (category → amount).
+  ///
+  /// Only categories present in [budgets] are checked. Categories with no
+  /// spending are not included in the result.
+  static Map<ExpenseCategory, double> categoryOverages(
+    List<Expense> expenses,
+    Map<ExpenseCategory, double> budgets,
+  ) {
+    if (budgets.isEmpty) return {};
+
+    final spending = <ExpenseCategory, double>{};
+    for (final e in expenses) {
+      spending[e.category] = (spending[e.category] ?? 0.0) + e.amount;
+    }
+
+    final overages = <ExpenseCategory, double>{};
+    for (final entry in budgets.entries) {
+      final spent = spending[entry.key] ?? 0.0;
+      if (spent > entry.value) {
+        overages[entry.key] = spent - entry.value;
+      }
+    }
+    return overages;
+  }
+
   // ── Plan fixed-cost report lines ─────────────────────────────────────────
 
   /// Converts active fixedCost PlanItems for a month into ReportLines,

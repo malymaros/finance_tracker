@@ -4,6 +4,7 @@ import 'package:finance_tracker/models/period_bounds.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/expense_list_screen.dart';
 import 'package:finance_tracker/screens/add_expense_screen.dart';
+import 'package:finance_tracker/services/category_budget_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
 
@@ -11,6 +12,7 @@ Widget wrapInMaterial(FinanceRepository repo) => MaterialApp(
       home: ExpenseListScreen(
         repository: repo,
         planRepository: PlanRepository(persist: false),
+        budgetRepository: CategoryBudgetRepository(persist: false),
         selectedPeriod: ValueNotifier(YearMonth.now()),
         periodBounds: ValueNotifier(const PeriodBounds()),
         onClearAll: () {},

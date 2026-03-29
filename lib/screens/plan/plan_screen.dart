@@ -7,6 +7,7 @@ import '../../models/period_bounds.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
+import '../../services/category_budget_repository.dart';
 import '../../services/finance_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../services/report_aggregator.dart';
@@ -20,11 +21,13 @@ import '../../widgets/plan_income_summary_tile.dart';
 import '../../widgets/add_plan_item_type_sheet.dart';
 import '../../widgets/plan_item_tile.dart';
 import 'add_plan_item_screen.dart';
+import 'manage_budgets_screen.dart';
 import 'plan_item_detail_screen.dart';
 
 class PlanScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
+  final CategoryBudgetRepository budgetRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
@@ -34,6 +37,7 @@ class PlanScreen extends StatefulWidget {
     super.key,
     required this.repository,
     required this.planRepository,
+    required this.budgetRepository,
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onClearAll,
@@ -187,6 +191,25 @@ class _PlanScreenState extends State<PlanScreen> {
           tooltip: 'Saves',
           onPressed: () => widget.onOpenSaves(),
         ),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'manage_budgets') {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => ManageBudgetsScreen(
+                    budgetRepository: widget.budgetRepository,
+                  ),
+                ));
+              }
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(
+                value: 'manage_budgets',
+                child: Text('Manage Budgets'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: ListenableBuilder(
         listenable: Listenable.merge([widget.repository, widget.planRepository]),
