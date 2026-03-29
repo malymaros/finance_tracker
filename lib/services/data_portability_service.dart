@@ -14,10 +14,14 @@ class DataPortabilityService {
   DataPortabilityService._();
 
   /// Serializes all expenses and plan items to a JSON string.
-  static String exportData(
+  ///
+  /// Loads all years before serializing to ensure no data is missing when
+  /// only a subset of years is currently in memory.
+  static Future<String> exportData(
     FinanceRepository repo,
     PlanRepository planRepo,
-  ) {
+  ) async {
+    await repo.loadAllYears();
     final data = {
       'version': 1,
       'exportedAt': DateTime.now().toIso8601String(),

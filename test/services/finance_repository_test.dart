@@ -431,5 +431,164 @@ void main() {
       await repo.addExpenses([makeExpense(id: 'a'), makeExpense(id: 'b')]);
       expect(notifyCount, 1);
     });
+
+    test('addExpenses spanning two years stores each in the correct year', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpenses([
+        Expense(
+          id: 'y24',
+          amount: 10.0,
+          category: ExpenseCategory.groceries,
+          date: DateTime(2024, 6, 1),
+        ),
+        Expense(
+          id: 'y25',
+          amount: 20.0,
+          category: ExpenseCategory.groceries,
+          date: DateTime(2025, 3, 1),
+        ),
+      ]);
+      expect(repo.expensesForYear(2024).map((e) => e.id), contains('y24'));
+      expect(repo.expensesForYear(2025).map((e) => e.id), contains('y25'));
+      expect(repo.expensesForYear(2024), hasLength(1));
+      expect(repo.expensesForYear(2025), hasLength(1));
+    });
+  });
+
+  group('FinanceRepository — updateExpense cross-year', () {
+    test('same-year update replaces the expense correctly', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(makeExpense(id: '1', amount: 10.0));
+      await repo.updateExpense(makeExpense(id: '1', amount: 99.0));
+      expect(repo.expenses.first.amount, 99.0);
+      expect(repo.expenses, hasLength(1));
+    });
+
+    test('cross-year update moves expense to new year bucket', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: 'x',
+        amount: 50.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 12, 1),
+      ));
+
+      // Edit: change date to 2023
+      await repo.updateExpense(Expense(
+        id: 'x',
+        amount: 50.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2023, 1, 15),
+      ));
+
+      expect(repo.expensesForYear(2024), isEmpty);
+      expect(repo.expensesForYear(2023), hasLength(1));
+      expect(repo.expensesForYear(2023).first.id, 'x');
+      expect(repo.expenses, hasLength(1));
+    });
+
+    test('cross-year update preserves other expenses in the original year', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: 'keep',
+        amount: 10.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 3, 1),
+      ));
+      await repo.addExpense(Expense(
+        id: 'move',
+        amount: 20.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 6, 1),
+      ));
+
+      await repo.updateExpense(Expense(
+        id: 'move',
+        amount: 20.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2023, 6, 1),
+      ));
+
+      expect(repo.expensesForYear(2024).map((e) => e.id), contains('keep'));
+      expect(repo.expensesForYear(2024).map((e) => e.id), isNot(contains('move')));
+      expect(repo.expensesForYear(2023).map((e) => e.id), contains('move'));
+    });
+
+    test('updateExpense for unknown id is a no-op', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(makeExpense(id: 'known'));
+      await repo.updateExpense(makeExpense(id: 'unknown'));
+      expect(repo.expenses, hasLength(1));
+      expect(repo.expenses.first.id, 'known');
+    });
+
+    test('notifies listeners after cross-year update', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: 'e',
+        amount: 5.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 1, 1),
+      ));
+      var notified = false;
+      repo.addListener(() => notified = true);
+      await repo.updateExpense(Expense(
+        id: 'e',
+        amount: 5.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2023, 1, 1),
+      ));
+      expect(notified, isTrue);
+    });
+  });
+
+  group('FinanceRepository — removeExpense year cleanup', () {
+    test('removing last expense in a year removes that year from available data', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: 'only',
+        amount: 10.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2022, 6, 1),
+      ));
+      expect(repo.hasDataForYear(2022), isTrue);
+
+      await repo.removeExpense('only');
+
+      expect(repo.hasDataForYear(2022), isFalse);
+      expect(repo.expensesForYear(2022), isEmpty);
+      expect(repo.expenses, isEmpty);
+    });
+
+    test('removing one expense leaves others in the same year intact', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(Expense(
+        id: 'a',
+        amount: 10.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 1, 1),
+      ));
+      await repo.addExpense(Expense(
+        id: 'b',
+        amount: 20.0,
+        category: ExpenseCategory.groceries,
+        date: DateTime(2024, 2, 1),
+      ));
+
+      await repo.removeExpense('a');
+
+      expect(repo.expensesForYear(2024), hasLength(1));
+      expect(repo.expensesForYear(2024).first.id, 'b');
+      expect(repo.hasDataForYear(2024), isTrue);
+    });
+
+    test('notifies listeners before file I/O (optimistic)', () async {
+      final repo = FinanceRepository(persist: false);
+      await repo.addExpense(makeExpense(id: 'del'));
+      var notified = false;
+      repo.addListener(() => notified = true);
+      await repo.removeExpense('del');
+      expect(notified, isTrue);
+    });
   });
 }

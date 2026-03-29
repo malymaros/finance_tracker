@@ -30,34 +30,37 @@ PlanItem makePlanItem({String id = 'p1'}) => PlanItem(
 
 void main() {
   group('DataPortabilityService — exportData', () {
-    test('returns valid JSON string', () {
+    test('returns valid JSON string', () async {
       final repo = FinanceRepository(persist: false);
       final planRepo = PlanRepository(persist: false);
-      final result = DataPortabilityService.exportData(repo, planRepo);
+      final result = await DataPortabilityService.exportData(repo, planRepo);
       expect(() => jsonDecode(result), returnsNormally);
     });
 
-    test('contains version: 1', () {
+    test('contains version: 1', () async {
       final repo = FinanceRepository(persist: false);
       final planRepo = PlanRepository(persist: false);
-      final map = jsonDecode(DataPortabilityService.exportData(repo, planRepo))
+      final map = jsonDecode(
+              await DataPortabilityService.exportData(repo, planRepo))
           as Map<String, dynamic>;
       expect(map['version'], 1);
     });
 
-    test('contains non-empty exportedAt field', () {
+    test('contains non-empty exportedAt field', () async {
       final repo = FinanceRepository(persist: false);
       final planRepo = PlanRepository(persist: false);
-      final map = jsonDecode(DataPortabilityService.exportData(repo, planRepo))
+      final map = jsonDecode(
+              await DataPortabilityService.exportData(repo, planRepo))
           as Map<String, dynamic>;
       expect(map['exportedAt'], isA<String>());
       expect((map['exportedAt'] as String).isNotEmpty, isTrue);
     });
 
-    test('empty repos produce empty expenses and planItems arrays', () {
+    test('empty repos produce empty expenses and planItems arrays', () async {
       final repo = FinanceRepository(persist: false);
       final planRepo = PlanRepository(persist: false);
-      final map = jsonDecode(DataPortabilityService.exportData(repo, planRepo))
+      final map = jsonDecode(
+              await DataPortabilityService.exportData(repo, planRepo))
           as Map<String, dynamic>;
       expect(map['expenses'], isEmpty);
       expect(map['planItems'], isEmpty);
@@ -69,7 +72,8 @@ void main() {
       await repo.addExpense(makeExpense(id: 'e1', amount: 25.0));
       await repo.addExpense(makeExpense(id: 'e2', amount: 75.0));
 
-      final map = jsonDecode(DataPortabilityService.exportData(repo, planRepo))
+      final map = jsonDecode(
+              await DataPortabilityService.exportData(repo, planRepo))
           as Map<String, dynamic>;
       final expenses = map['expenses'] as List;
 
@@ -83,7 +87,8 @@ void main() {
       final planRepo = PlanRepository(persist: false);
       await planRepo.addPlanItem(makePlanItem(id: 'p1'));
 
-      final map = jsonDecode(DataPortabilityService.exportData(repo, planRepo))
+      final map = jsonDecode(
+              await DataPortabilityService.exportData(repo, planRepo))
           as Map<String, dynamic>;
       final planItems = map['planItems'] as List;
 
@@ -100,7 +105,7 @@ void main() {
       await exportPlanRepo.addPlanItem(makePlanItem(id: 'p1'));
 
       final jsonString =
-          DataPortabilityService.exportData(exportRepo, exportPlanRepo);
+          await DataPortabilityService.exportData(exportRepo, exportPlanRepo);
 
       final importRepo = FinanceRepository(persist: false);
       final importPlanRepo = PlanRepository(persist: false);
@@ -202,7 +207,7 @@ void main() {
       await exportRepo.addExpense(original);
 
       final jsonString =
-          DataPortabilityService.exportData(exportRepo, exportPlanRepo);
+          await DataPortabilityService.exportData(exportRepo, exportPlanRepo);
 
       final importRepo = FinanceRepository(persist: false);
       final importPlanRepo = PlanRepository(persist: false);
@@ -235,7 +240,7 @@ void main() {
       await exportPlanRepo.addPlanItem(original);
 
       final jsonString =
-          DataPortabilityService.exportData(exportRepo, exportPlanRepo);
+          await DataPortabilityService.exportData(exportRepo, exportPlanRepo);
 
       final importRepo = FinanceRepository(persist: false);
       final importPlanRepo = PlanRepository(persist: false);

@@ -61,6 +61,7 @@ class SaveLoadService {
     if (nonDamaged >= _maxSaves) return 'cap';
 
     try {
+      await financeRepo.loadAllYears();
       final id = DateTime.now().millisecondsSinceEpoch.toString();
       final slot = SaveSlot(
         id: id,

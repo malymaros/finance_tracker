@@ -37,6 +37,7 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _pageController = PageController();
     widget.planRepository.addListener(_updateBounds);
+    _selectedPeriod.addListener(_onPeriodChanged);
     _updateBounds();
     _screens = [
       _KeepAliveTab(
@@ -70,6 +71,10 @@ class _MainScreenState extends State<MainScreen> {
     ];
   }
 
+  void _onPeriodChanged() {
+    widget.repository.loadYear(_selectedPeriod.value.year);
+  }
+
   void _updateBounds() {
     final bounds = PeriodBoundsService.compute(
       planEarliest: widget.planRepository.earliestDataMonth,
@@ -94,6 +99,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     widget.planRepository.removeListener(_updateBounds);
+    _selectedPeriod.removeListener(_onPeriodChanged);
     _selectedPeriod.dispose();
     _periodBounds.dispose();
     _pageController.dispose();

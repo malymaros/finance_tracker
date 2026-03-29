@@ -77,7 +77,7 @@ class _SavesScreenState extends State<SavesScreen> {
 
   Future<void> _exportData() async {
     try {
-      final jsonString = DataPortabilityService.exportData(
+      final jsonString = await DataPortabilityService.exportData(
         widget.repository,
         widget.planRepository,
       );
