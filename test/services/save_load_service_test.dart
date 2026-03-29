@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/expense.dart';
-import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';

@@ -64,15 +64,11 @@ class _GroupExpenseListScreenState extends State<GroupExpenseListScreen> {
   // ── Header summary ──────────────────────────────────────────────────────────
 
   Widget _buildHeader(double total, int count) {
-    final color = Theme.of(context).colorScheme.primary;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundColor: color.withAlpha(30),
-            child: Icon(Icons.folder_outlined, size: 20, color: color),
-          ),
+          const Icon(Icons.folder_outlined, color: AppColors.gold, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
