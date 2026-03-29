@@ -83,6 +83,17 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     super.dispose();
   }
 
+  FinancialType _financialTypeForCategory(ExpenseCategory category) {
+    switch (category) {
+      case ExpenseCategory.investment:
+        return FinancialType.asset;
+      case ExpenseCategory.insurance:
+        return FinancialType.insurance;
+      default:
+        return FinancialType.consumption;
+    }
+  }
+
   Future<void> _pickValidFrom() async {
     final initial = DateTime(_validFrom.year, _validFrom.month, 1);
     final picked = await showDatePicker(
@@ -380,7 +391,12 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                   );
                 }).toList(),
                 onChanged: (v) {
-                  if (v != null) setState(() => _selectedCategory = v);
+                  if (v != null) {
+                    setState(() {
+                      _selectedCategory = v;
+                      _selectedFinancialType = _financialTypeForCategory(v);
+                    });
+                  }
                 },
               ),
               const SizedBox(height: 16),
