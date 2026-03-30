@@ -3,17 +3,21 @@ import 'package:flutter/material.dart';
 import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/financial_type_income_ratio.dart';
+import '../../models/guard_state.dart';
 import '../../models/period_bounds.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/category_budget_repository.dart';
 import '../../services/finance_repository.dart';
+import '../../services/guard_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../services/report_aggregator.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/financial_type_distribution_card.dart';
+import '../../widgets/guard_banner.dart';
 import '../../widgets/period_navigator.dart';
+import 'guard_screen.dart';
 import '../../widgets/plan_category_tile.dart';
 import '../../widgets/plan_financial_type_tile.dart';
 import '../../widgets/plan_fixed_costs_summary_tile.dart';
@@ -28,6 +32,7 @@ class PlanScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
   final CategoryBudgetRepository budgetRepository;
+  final GuardRepository guardRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
@@ -38,6 +43,7 @@ class PlanScreen extends StatefulWidget {
     required this.repository,
     required this.planRepository,
     required this.budgetRepository,
+    required this.guardRepository,
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onClearAll,
@@ -59,6 +65,12 @@ class _PlanScreenState extends State<PlanScreen> {
   /// Which category is currently expanded within the Consumption group.
   ExpenseCategory? _expandedCategory;
 
+  /// SeriesId of the item currently highlighted (from GuardBanner tap).
+  String? _highlightedSeriesId;
+
+  /// Key assigned to the highlighted PlanItemTile so we can scroll to it.
+  final _highlightKey = GlobalKey();
+
   int get _year => widget.selectedPeriod.value.year;
   int get _month => widget.selectedPeriod.value.month;
 
@@ -78,6 +90,35 @@ class _PlanScreenState extends State<PlanScreen> {
         _expandedFinancialType = null;
         _expandedCategory = null;
       });
+
+  /// Expands the tree to reveal [item], scrolls to it, and briefly highlights it.
+  void _expandToItem(PlanItem item) {
+    final ft = item.financialType ?? FinancialType.consumption;
+    setState(() {
+      _isMonthly = true;
+      _fixedCostsExpanded = true;
+      _expandedFinancialType = ft;
+      _expandedCategory =
+          ft == FinancialType.consumption ? item.category : null;
+      _highlightedSeriesId = item.seriesId;
+    });
+    // Scroll after the tree has rebuilt.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = _highlightKey.currentContext;
+      if (ctx != null) {
+        Scrollable.ensureVisible(
+          ctx,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOut,
+          alignment: 0.3,
+        );
+      }
+    });
+    // Clear highlight after 2 s.
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) setState(() => _highlightedSeriesId = null);
+    });
+  }
 
   double _displayAmount(PlanItem item) {
     final all = widget.planRepository.items;
@@ -124,6 +165,8 @@ class _PlanScreenState extends State<PlanScreen> {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (routeContext) => PlanItemDetailScreen(
         item: item,
+        period: widget.selectedPeriod.value,
+        guardRepository: widget.guardRepository,
         onEdit: () {
           Navigator.of(routeContext).pop();
           _navigateToEdit(context, item);
@@ -177,6 +220,35 @@ class _PlanScreenState extends State<PlanScreen> {
     }
   }
 
+  Future<void> _onSilenceRequested(
+      String seriesId, YearMonth period) async {
+    final periodLabel =
+        '${YearMonth.monthNames[period.month]} ${period.year}';
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Silence this reminder?'),
+        content: Text(
+          'The $periodLabel payment will still be shown as unconfirmed. '
+          'You can mark it as paid at any time.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Yes, Silence'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      await widget.guardRepository.silencePayment(seriesId, period);
+    }
+  }
+
   // ── Build ──────────────────────────────────────────────────────────────────
 
   @override
@@ -200,21 +272,39 @@ class _PlanScreenState extends State<PlanScreen> {
                     budgetRepository: widget.budgetRepository,
                   ),
                 ));
+              } else if (value == 'guard') {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => GuardScreen(
+                    planRepository: widget.planRepository,
+                    guardRepository: widget.guardRepository,
+                  ),
+                ));
               }
             },
-            itemBuilder: (_) => const [
-              PopupMenuItem(
+            itemBuilder: (_) => [
+              const PopupMenuItem(
                 value: 'manage_budgets',
                 child: Text('Manage Budgets'),
+              ),
+              const PopupMenuItem(
+                value: 'guard',
+                child: Row(
+                  children: [
+                    Text('GUARD settings'),
+                  ],
+                ),
               ),
             ],
           ),
         ],
       ),
       body: ListenableBuilder(
-        listenable: Listenable.merge([widget.repository, widget.planRepository]),
+        listenable: Listenable.merge(
+            [widget.repository, widget.planRepository, widget.guardRepository]),
         builder: (context, _) {
           final all = widget.planRepository.items;
+          final now = YearMonth.now();
+          final viewPeriod = widget.selectedPeriod.value;
 
           final List<PlanItem> displayItems;
           final double totalIncome;
@@ -254,10 +344,41 @@ class _PlanScreenState extends State<PlanScreen> {
           final ratio = BudgetCalculator.financialTypeIncomeRatios(
               mergedLines, totalIncome);
 
+          // Build guard state map for the viewed period (one lookup per item).
+          final guardStateMap = <String, GuardState>{};
+          for (final item in fixedCostItems) {
+            guardStateMap[item.seriesId] =
+                widget.guardRepository.itemStateForPeriod(item, viewPeriod);
+          }
+
+          // Unresolved items for the banner (always based on "now", not viewed period).
+          final unresolved =
+              widget.guardRepository.allUnresolvedItems(all, now);
+          final unpaidActive = unresolved
+              .where((pair) =>
+                  widget.guardRepository.itemStateForPeriod(
+                      pair.$1, pair.$2) ==
+                  GuardState.unpaidActive)
+              .toList();
+          final silencedItems = unresolved
+              .where((pair) =>
+                  widget.guardRepository.itemStateForPeriod(
+                      pair.$1, pair.$2) ==
+                  GuardState.silenced)
+              .toList();
+
           return Column(
             children: [
               _buildModeToggle(),
               _buildPeriodNavigator(),
+              GuardBanner(
+                unpaidActive: unpaidActive,
+                silenced: silencedItems,
+                onMarkPaid: (seriesId, period) =>
+                    widget.guardRepository.confirmPayment(seriesId, period),
+                onSilence: _onSilenceRequested,
+                onTapItem: (item, _) => _expandToItem(item),
+              ),
               _buildSummaryCard(spendable),
               const Divider(height: 1),
               Expanded(
@@ -271,6 +392,7 @@ class _PlanScreenState extends State<PlanScreen> {
                         totalIncome,
                         totalFixedCosts,
                         ratio,
+                        guardStateMap,
                       ),
               ),
             ],
@@ -386,6 +508,7 @@ class _PlanScreenState extends State<PlanScreen> {
     double totalIncome,
     double totalFixedCosts,
     FinancialTypeIncomeRatio ratio,
+    Map<String, GuardState> guardStateMap,
   ) {
     return ListView(
       children: [
@@ -421,7 +544,8 @@ class _PlanScreenState extends State<PlanScreen> {
               : null,
         ),
         if (_fixedCostsExpanded)
-          ..._buildFixedCostsSection(context, fixedCostItems, allItems),
+          ..._buildFixedCostsSection(
+              context, fixedCostItems, allItems, guardStateMap),
         FinancialTypeDistributionCard(ratio: ratio, isMonthly: _isMonthly),
         const SizedBox(height: 80),
       ],
@@ -430,12 +554,11 @@ class _PlanScreenState extends State<PlanScreen> {
 
   // ── Fixed Costs inline accordion ──────────────────────────────────────────
 
-  /// Builds the financial type group tiles and their expanded contents.
-  /// Order: Consumption → Asset → Insurance. Empty types are omitted.
   List<Widget> _buildFixedCostsSection(
     BuildContext context,
     List<PlanItem> fixedCostItems,
     List<PlanItem> allItems,
+    Map<String, GuardState> guardStateMap,
   ) {
     final typeTotals = BudgetCalculator.planFinancialTypeTotals(
       fixedCostItems,
@@ -475,21 +598,22 @@ class _PlanScreenState extends State<PlanScreen> {
 
       if (isTypeExpanded) {
         if (type == FinancialType.consumption) {
-          widgets.addAll(
-              _buildConsumptionCategories(context, fixedCostItems, allItems));
+          widgets.addAll(_buildConsumptionCategories(
+              context, fixedCostItems, allItems, guardStateMap));
         } else {
-          widgets.addAll(_buildTypeItems(context, fixedCostItems, type));
+          widgets.addAll(
+              _buildTypeItems(context, fixedCostItems, type, guardStateMap));
         }
       }
     }
     return widgets;
   }
 
-  /// Builds category tiles for the Consumption group and their expanded items.
   List<Widget> _buildConsumptionCategories(
     BuildContext context,
     List<PlanItem> fixedCostItems,
     List<PlanItem> allItems,
+    Map<String, GuardState> guardStateMap,
   ) {
     final categoryTotals = BudgetCalculator.planCategoryTotals(
       fixedCostItems,
@@ -524,9 +648,13 @@ class _PlanScreenState extends State<PlanScreen> {
                     FinancialType.consumption)
             .toList();
         for (final item in items) {
+          final isHighlighted = item.seriesId == _highlightedSeriesId;
           widgets.add(PlanItemTile(
+            key: isHighlighted ? _highlightKey : null,
             item: item,
             displayAmount: _displayAmount(item),
+            guardState: guardStateMap[item.seriesId] ?? GuardState.none,
+            isHighlighted: isHighlighted,
             onTap: () => _openDetail(context, item),
             onEdit: () => _navigateToEdit(context, item),
             onDelete: () => _confirmAndDelete(context, item),
@@ -537,24 +665,28 @@ class _PlanScreenState extends State<PlanScreen> {
     return widgets;
   }
 
-  /// Builds item tiles directly for Asset or Insurance groups.
   List<Widget> _buildTypeItems(
     BuildContext context,
     List<PlanItem> fixedCostItems,
     FinancialType type,
+    Map<String, GuardState> guardStateMap,
   ) {
     final items = fixedCostItems
         .where(
             (i) => (i.financialType ?? FinancialType.consumption) == type)
         .toList();
-    return items
-        .map((item) => PlanItemTile(
-              item: item,
-              displayAmount: _displayAmount(item),
-              onTap: () => _openDetail(context, item),
-              onEdit: () => _navigateToEdit(context, item),
-              onDelete: () => _confirmAndDelete(context, item),
-            ))
-        .toList();
+    return items.map((item) {
+      final isHighlighted = item.seriesId == _highlightedSeriesId;
+      return PlanItemTile(
+        key: isHighlighted ? _highlightKey : null,
+        item: item,
+        displayAmount: _displayAmount(item),
+        guardState: guardStateMap[item.seriesId] ?? GuardState.none,
+        isHighlighted: isHighlighted,
+        onTap: () => _openDetail(context, item),
+        onEdit: () => _navigateToEdit(context, item),
+        onDelete: () => _confirmAndDelete(context, item),
+      );
+    }).toList();
   }
 }

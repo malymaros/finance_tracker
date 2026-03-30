@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
+import '../../models/guard_state.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
+import '../../services/guard_repository.dart';
 import '../../theme/app_theme.dart';
 
 class PlanItemDetailScreen extends StatelessWidget {
   final PlanItem item;
+
+  /// The period currently viewed — used to derive the GUARD state.
+  final YearMonth period;
 
   /// Called when the user taps Edit in the AppBar.
   final VoidCallback? onEdit;
@@ -15,20 +20,19 @@ class PlanItemDetailScreen extends StatelessWidget {
   /// Called when the user taps Delete in the AppBar.
   final VoidCallback? onDelete;
 
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
+  /// Optional — when set, the GUARD section is shown for guarded items.
+  final GuardRepository? guardRepository;
 
   const PlanItemDetailScreen({
     super.key,
     required this.item,
+    required this.period,
     this.onEdit,
     this.onDelete,
+    this.guardRepository,
   });
 
-  String _formatYearMonth(YearMonth ym) => '${_monthNames[ym.month]} ${ym.year}';
+  String _formatYearMonth(YearMonth ym) => '${YearMonth.monthNames[ym.month]} ${ym.year}';
 
   static String _frequencyLabel(PlanFrequency freq) => switch (freq) {
         PlanFrequency.monthly => 'Monthly',
@@ -39,6 +43,8 @@ class PlanItemDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIncome = item.type == PlanItemType.income;
+    final showGuard =
+        item.isGuarded && guardRepository != null && !isIncome;
 
     return Scaffold(
       appBar: AppBar(
@@ -66,6 +72,14 @@ class PlanItemDetailScreen extends StatelessWidget {
           _buildHeaderCard(context, isIncome),
           const SizedBox(height: 16),
           _buildDetailsCard(isIncome),
+          if (showGuard) ...[
+            const SizedBox(height: 16),
+            _GuardStatusSection(
+              item: item,
+              period: period,
+              guardRepository: guardRepository!,
+            ),
+          ],
         ],
       ),
     );
@@ -218,5 +232,245 @@ class PlanItemDetailScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+// ── GUARD status section ──────────────────────────────────────────────────────
+
+/// Stateful sub-widget so it can rebuild on guardRepository changes.
+class _GuardStatusSection extends StatefulWidget {
+  final PlanItem item;
+  final YearMonth period;
+  final GuardRepository guardRepository;
+
+  const _GuardStatusSection({
+    required this.item,
+    required this.period,
+    required this.guardRepository,
+  });
+
+  @override
+  State<_GuardStatusSection> createState() => _GuardStatusSectionState();
+}
+
+class _GuardStatusSectionState extends State<_GuardStatusSection> {
+  @override
+  void initState() {
+    super.initState();
+    widget.guardRepository.addListener(_onGuardChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.guardRepository.removeListener(_onGuardChanged);
+    super.dispose();
+  }
+
+  void _onGuardChanged() => setState(() {});
+
+  String get _periodLabel =>
+      '${YearMonth.monthNames[widget.period.month]} ${widget.period.year}';
+
+  Future<void> _confirmAndMarkPaid() async {
+    await widget.guardRepository
+        .confirmPayment(widget.item.seriesId, widget.period);
+  }
+
+  Future<void> _confirmAndRevoke() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Mark as unpaid?'),
+        content: Text(
+            'This will remove the payment confirmation for $_periodLabel.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Mark as Unpaid'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      await widget.guardRepository
+          .revokePayment(widget.item.seriesId, widget.period);
+    }
+  }
+
+  Future<void> _confirmAndSilence() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Silence this reminder?'),
+        content: Text(
+          'The $_periodLabel payment will still be shown as unconfirmed. '
+          'You can mark it as paid at any time.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Yes, Silence'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) {
+      await widget.guardRepository
+          .silencePayment(widget.item.seriesId, widget.period);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = widget.guardRepository
+        .itemStateForPeriod(widget.item, widget.period);
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.pets, color: AppColors.gold, size: 16),
+                const SizedBox(width: 8),
+                Text(
+                  'GUARD — $_periodLabel',
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.gold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            _buildStateContent(state),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStateContent(GuardState state) {
+    switch (state) {
+      case GuardState.unpaidActive:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text(
+              'Payment not confirmed',
+              style: TextStyle(fontSize: 14, color: AppColors.textMuted),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: _confirmAndMarkPaid,
+                    icon: const Icon(Icons.check, size: 16),
+                    label: const Text('Mark as Paid'),
+                    style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.gold),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                TextButton(
+                  onPressed: _confirmAndSilence,
+                  style: TextButton.styleFrom(
+                      foregroundColor: AppColors.textMuted),
+                  child: const Text('Silence'),
+                ),
+              ],
+            ),
+          ],
+        );
+
+      case GuardState.silenced:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: const [
+                Icon(Icons.notifications_off,
+                    size: 14, color: AppColors.textMuted),
+                SizedBox(width: 6),
+                Text(
+                  'Silenced — payment not confirmed',
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textMuted,
+                      fontStyle: FontStyle.italic),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            FilledButton.icon(
+              onPressed: _confirmAndMarkPaid,
+              icon: const Icon(Icons.check, size: 16),
+              label: const Text('Mark as Paid'),
+              style: FilledButton.styleFrom(backgroundColor: AppColors.gold),
+            ),
+          ],
+        );
+
+      case GuardState.paid:
+        final record = widget.guardRepository.payments.where((p) =>
+            p.planItemSeriesId == widget.item.seriesId &&
+            p.period == widget.period &&
+            p.paidAt != null).firstOrNull;
+        final paidLabel = record != null
+            ? _formatDate(record.paidAt!)
+            : 'confirmed';
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.check_circle,
+                    size: 16, color: AppColors.income),
+                const SizedBox(width: 6),
+                Text(
+                  'Paid $paidLabel',
+                  style: const TextStyle(
+                      fontSize: 14, color: AppColors.income),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                onPressed: _confirmAndRevoke,
+                style: TextButton.styleFrom(
+                    foregroundColor: AppColors.textMuted,
+                    visualDensity: VisualDensity.compact),
+                child: const Text('Mark as Unpaid',
+                    style: TextStyle(fontSize: 12)),
+              ),
+            ),
+          ],
+        );
+
+      case GuardState.none:
+        return const SizedBox.shrink();
+    }
+  }
+
+  static String _formatDate(DateTime dt) {
+    const months = [
+      '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    ];
+    return '${dt.day} ${months[dt.month]} ${dt.year}';
   }
 }

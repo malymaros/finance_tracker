@@ -46,6 +46,12 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   late ExpenseCategory _selectedCategory;
   late FinancialType _selectedFinancialType;
 
+  // ── GUARD state ────────────────────────────────────────────────────────────
+  bool _isGuarded = false;
+  int _guardDueDay = 1;
+  int _guardDueMonth = 1;
+  bool _guardOneTime = false;
+
   bool get _typeIsLocked =>
       widget.existing != null || widget.initialType != null;
 
@@ -58,6 +64,9 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     }
     return 'Add Plan Item';
   }
+
+  bool get _canShowGuard =>
+      _type == PlanItemType.fixedCost && _frequency != PlanFrequency.oneTime;
 
   @override
   void initState() {
@@ -79,12 +88,18 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       _validTo = e.validTo;
       _selectedCategory = e.category ?? ExpenseCategory.other;
       _selectedFinancialType = e.financialType ?? FinancialType.consumption;
+      // Restore GUARD settings from existing item.
+      _isGuarded = e.isGuarded;
+      _guardDueDay = e.guardDueDay ?? 1;
+      _guardDueMonth = e.guardDueMonth ?? e.validFrom.month;
+      _guardOneTime = e.guardOneTime;
     } else {
       _type = widget.initialType ?? PlanItemType.income;
       _frequency = PlanFrequency.monthly;
       _validFrom = widget.initialValidFrom ?? YearMonth.now();
       _selectedCategory = ExpenseCategory.other;
       _selectedFinancialType = FinancialType.consumption;
+      _guardDueMonth = _validFrom.month;
     }
   }
 
@@ -140,6 +155,14 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     // validTo applies to both income and fixedCost for monthly/yearly frequency.
     final savedValidTo = _frequency != PlanFrequency.oneTime ? _validTo : null;
 
+    // GUARD fields: only persist for guarded recurring fixed costs.
+    final guardEnabled = _canShowGuard && _isGuarded;
+    final guardDueDay = guardEnabled ? _guardDueDay : null;
+    final guardDueMonth = (guardEnabled && _frequency == PlanFrequency.yearly)
+        ? _guardDueMonth
+        : null;
+    final guardOneTime = guardEnabled && _guardOneTime;
+
     if (e == null) {
       // New item — new series
       final newId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -155,6 +178,10 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         note: note,
         category: isFixedCost ? _selectedCategory : null,
         financialType: isFixedCost ? _selectedFinancialType : null,
+        isGuarded: guardEnabled,
+        guardDueDay: guardDueDay,
+        guardDueMonth: guardDueMonth,
+        guardOneTime: guardOneTime,
       ));
     } else if (!isFixedCost) {
       // Income edit: always update in place. The change applies to the whole
@@ -186,6 +213,10 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         note: note,
         category: _selectedCategory,
         financialType: _selectedFinancialType,
+        isGuarded: guardEnabled,
+        guardDueDay: guardDueDay,
+        guardDueMonth: guardDueMonth,
+        guardOneTime: guardOneTime,
       ));
     } else {
       // Fixed cost, different validFrom → new version + truncate future versions.
@@ -202,6 +233,10 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         note: note,
         category: _selectedCategory,
         financialType: _selectedFinancialType,
+        isGuarded: guardEnabled,
+        guardDueDay: guardDueDay,
+        guardDueMonth: guardDueMonth,
+        guardOneTime: guardOneTime,
       ));
       await widget.planRepository.removeFutureVersions(e.seriesId, _validFrom);
     }
@@ -257,6 +292,147 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     );
   }
 
+  // ── GUARD section ──────────────────────────────────────────────────────────
+
+  Future<void> _pickGuardDueDay() async {
+    // The picker is anchored to the guard due month so the user sees real
+    // calendar days. For yearly items we use _guardDueMonth; for monthly we
+    // use _validFrom.month (the day is then applied to every month at runtime).
+    final anchorMonth =
+        _frequency == PlanFrequency.yearly ? _guardDueMonth : _validFrom.month;
+    final anchorYear = _validFrom.year;
+    final daysInMonth = DateTime(anchorYear, anchorMonth + 1, 0).day;
+    final safeDay = _guardDueDay.clamp(1, daysInMonth);
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime(anchorYear, anchorMonth, safeDay),
+      firstDate: DateTime(anchorYear, anchorMonth, 1),
+      lastDate: DateTime(anchorYear, anchorMonth, daysInMonth),
+      helpText: _frequency == PlanFrequency.monthly
+          ? 'Pick due day (repeats monthly)'
+          : 'Pick due day',
+    );
+    if (picked != null) setState(() => _guardDueDay = picked.day);
+  }
+
+  Widget _buildGuardSection() {
+    final dueDayLabel = _frequency == PlanFrequency.monthly
+        ? 'Day $_guardDueDay of each month'
+        : 'Day $_guardDueDay of ${YearMonth.monthNames[_guardDueMonth]}';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(Icons.pets, color: AppColors.gold, size: 18),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'GUARD',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.gold,
+                    ),
+                  ),
+                  Text(
+                    'Remind me to confirm this payment',
+                    style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                  ),
+                ],
+              ),
+            ),
+            Switch(
+              value: _isGuarded,
+              activeThumbColor: AppColors.gold,
+              onChanged: (on) => setState(() => _isGuarded = on),
+            ),
+          ],
+        ),
+        if (_isGuarded) ...[
+          const SizedBox(height: 12),
+          // ── Recurring vs one-time ──────────────────────────────────────
+          SegmentedButton<bool>(
+            segments: const [
+              ButtonSegment(
+                value: false,
+                label: Text('Recurring'),
+                icon: Icon(Icons.repeat, size: 16),
+              ),
+              ButtonSegment(
+                value: true,
+                label: Text('One-time'),
+                icon: Icon(Icons.looks_one_outlined, size: 16),
+              ),
+            ],
+            selected: {_guardOneTime},
+            onSelectionChanged: (s) =>
+                setState(() => _guardOneTime = s.first),
+          ),
+          const SizedBox(height: 12),
+          // ── Due month (yearly only) ────────────────────────────────────
+          if (_frequency == PlanFrequency.yearly) ...[
+            DropdownButtonFormField<int>(
+              initialValue: _guardDueMonth,
+              decoration: const InputDecoration(
+                labelText: 'Due month',
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+              items: List.generate(12, (i) {
+                final month = i + 1;
+                return DropdownMenuItem(
+                  value: month,
+                  child: Text(YearMonth.monthNames[month]),
+                );
+              }),
+              onChanged: (v) {
+                if (v != null) {
+                  setState(() {
+                    _guardDueMonth = v;
+                    // Re-clamp day to the new month.
+                    final daysInNewMonth =
+                        DateTime(_validFrom.year, v + 1, 0).day;
+                    _guardDueDay = _guardDueDay.clamp(1, daysInNewMonth);
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 12),
+          ],
+          // ── Due day picker ─────────────────────────────────────────────
+          OutlinedButton.icon(
+            onPressed: _pickGuardDueDay,
+            icon: const Icon(Icons.event, size: 18),
+            label: Text(dueDayLabel),
+            style: OutlinedButton.styleFrom(
+              alignment: Alignment.centerLeft,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+              side: const BorderSide(color: AppColors.gold),
+              foregroundColor: AppColors.gold,
+            ),
+          ),
+          if (_frequency == PlanFrequency.monthly && _guardDueDay > 28)
+            const Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: Text(
+                'Shorter months will use their last day.',
+                style:
+                    TextStyle(fontSize: 12, color: AppColors.textMuted),
+              ),
+            ),
+        ],
+        const Divider(height: 24),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.existing != null;
@@ -299,11 +475,18 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                         _frequency == PlanFrequency.oneTime) {
                       _frequency = PlanFrequency.monthly;
                     }
+                    // Reset guard when switching away from fixedCost.
+                    if (newType != PlanItemType.fixedCost) {
+                      _isGuarded = false;
+                    }
                   });
                 },
               ),
               const SizedBox(height: 16),
             ],
+
+            // ── GUARD (fixedCost recurring only, shown at top) ──────────────
+            if (_canShowGuard) _buildGuardSection(),
 
             // ── Name ────────────────────────────────────────────────────────
             TextFormField(
@@ -364,7 +547,11 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                   ),
               ],
               selected: {_frequency},
-              onSelectionChanged: (s) => setState(() => _frequency = s.first),
+              onSelectionChanged: (s) => setState(() {
+                _frequency = s.first;
+                // Reset guard when switching to one-time.
+                if (_frequency == PlanFrequency.oneTime) _isGuarded = false;
+              }),
             ),
             const SizedBox(height: 16),
 
@@ -453,9 +640,10 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             const SizedBox(height: 16),
 
             // ── End date (income or fixedCost, recurring only) ──────────────
-            if (_frequency != PlanFrequency.oneTime)
+            if (_frequency != PlanFrequency.oneTime) ...[
               _buildEndDateSection(),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
+            ],
 
             // ── Note ────────────────────────────────────────────────────────
             TextFormField(

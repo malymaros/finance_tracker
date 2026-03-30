@@ -34,6 +34,28 @@ class PlanItem {
   /// Only relevant for fixedCost items. Null for income items.
   final FinancialType? financialType;
 
+  // ── GUARD ─────────────────────────────────────────────────────────────────
+
+  /// Whether GUARD is enabled for this fixed cost item.
+  /// Only meaningful for recurring fixedCost items; false for income
+  /// and one-time items.
+  final bool isGuarded;
+
+  /// Day of month the payment is due (1–31). Null defaults to day 1.
+  /// When the month has fewer days the due day is capped to the last day of
+  /// that month at runtime (e.g. day 31 in February → 28 or 29).
+  /// Used for both monthly and yearly guarded items.
+  final int? guardDueDay;
+
+  /// Month the payment is due (1–12). Only relevant for yearly guarded items.
+  /// Null defaults to [validFrom.month].
+  final int? guardDueMonth;
+
+  /// When true, GUARD fires only for the first eligible period (the period
+  /// containing [validFrom]) and ignores all later periods.
+  /// When false (default) GUARD fires every period the item is active.
+  final bool guardOneTime;
+
   const PlanItem({
     required this.id,
     required this.seriesId,
@@ -46,6 +68,10 @@ class PlanItem {
     this.note,
     this.category,
     this.financialType,
+    this.isGuarded = false,
+    this.guardDueDay,
+    this.guardDueMonth,
+    this.guardOneTime = false,
   });
 
   Map<String, dynamic> toJson() => {
@@ -60,6 +86,10 @@ class PlanItem {
         'note': note,
         if (category != null) 'category': category!.name,
         if (financialType != null) 'financialType': financialType!.name,
+        if (isGuarded) 'isGuarded': isGuarded,
+        if (guardDueDay != null) 'guardDueDay': guardDueDay,
+        if (guardDueMonth != null) 'guardDueMonth': guardDueMonth,
+        if (guardOneTime) 'guardOneTime': guardOneTime,
       };
 
   factory PlanItem.fromJson(Map<String, dynamic> json) {
@@ -82,6 +112,10 @@ class PlanItem {
       financialType: financialTypeRaw != null
           ? FinancialType.values.byName(financialTypeRaw)
           : null,
+      isGuarded: json['isGuarded'] as bool? ?? false,
+      guardDueDay: json['guardDueDay'] as int?,
+      guardDueMonth: json['guardDueMonth'] as int?,
+      guardOneTime: json['guardOneTime'] as bool? ?? false,
     );
   }
 }

@@ -5,10 +5,12 @@ import 'package:path_provider/path_provider.dart';
 
 import '../models/category_budget.dart';
 import '../models/expense.dart';
+import '../models/guard_payment.dart';
 import '../models/plan_item.dart';
 import '../models/save_slot.dart';
 import 'category_budget_repository.dart';
 import 'finance_repository.dart';
+import 'guard_repository.dart';
 import 'plan_repository.dart';
 
 class SaveLoadService {
@@ -69,6 +71,7 @@ class SaveLoadService {
     FinanceRepository financeRepo,
     PlanRepository planRepo,
     CategoryBudgetRepository budgetRepo,
+    GuardRepository guardRepo,
   ) async {
     final existing = await listSaves();
     final nonDamaged = existing.where((s) => !s.isDamaged).length;
@@ -91,6 +94,8 @@ class SaveLoadService {
         'planItems': planRepo.items.map((e) => e.toJson()).toList(),
         'categoryBudgets':
             budgetRepo.budgets.map((b) => b.toJson()).toList(),
+        'guardPayments':
+            guardRepo.payments.map((p) => p.toJson()).toList(),
       };
 
       final dir = await _savesDir();
@@ -107,6 +112,7 @@ class SaveLoadService {
     FinanceRepository financeRepo,
     PlanRepository planRepo,
     CategoryBudgetRepository budgetRepo,
+    GuardRepository guardRepo,
   ) async {
     try {
       final dir = await _savesDir();
@@ -123,10 +129,14 @@ class SaveLoadService {
       final categoryBudgets = (json['categoryBudgets'] as List? ?? [])
           .map((e) => CategoryBudget.fromJson(e as Map<String, dynamic>))
           .toList();
+      final guardPayments = (json['guardPayments'] as List? ?? [])
+          .map((e) => GuardPayment.fromJson(e as Map<String, dynamic>))
+          .toList();
 
       await financeRepo.restoreFromSnapshot(expenses);
       await planRepo.restoreFromSnapshot(planItems);
       await budgetRepo.restoreFromSnapshot(categoryBudgets);
+      await guardRepo.restoreFromSnapshot(guardPayments);
       return true;
     } catch (_) {
       return false;
@@ -171,6 +181,7 @@ class SaveLoadService {
     FinanceRepository financeRepo,
     PlanRepository planRepo,
     CategoryBudgetRepository budgetRepo,
+    GuardRepository guardRepo,
   ) async {
     try {
       await _trimSavesToMax();
@@ -206,6 +217,7 @@ class SaveLoadService {
         'expenses': financeRepo.expenses.map((e) => e.toJson()).toList(),
         'planItems': planRepo.items.map((e) => e.toJson()).toList(),
         'categoryBudgets': budgetRepo.budgets.map((b) => b.toJson()).toList(),
+        'guardPayments': guardRepo.payments.map((p) => p.toJson()).toList(),
       };
       await slot0.writeAsString(jsonEncode(data));
 
@@ -256,6 +268,7 @@ class SaveLoadService {
     FinanceRepository financeRepo,
     PlanRepository planRepo,
     CategoryBudgetRepository budgetRepo,
+    GuardRepository guardRepo,
   ) async {
     try {
       final index = int.tryParse(slotId.replaceFirst('autosave_', ''));
@@ -272,10 +285,14 @@ class SaveLoadService {
       final categoryBudgets = (json['categoryBudgets'] as List? ?? [])
           .map((e) => CategoryBudget.fromJson(e as Map<String, dynamic>))
           .toList();
+      final guardPayments = (json['guardPayments'] as List? ?? [])
+          .map((e) => GuardPayment.fromJson(e as Map<String, dynamic>))
+          .toList();
 
       await financeRepo.restoreFromSnapshot(expenses);
       await planRepo.restoreFromSnapshot(planItems);
       await budgetRepo.restoreFromSnapshot(categoryBudgets);
+      await guardRepo.restoreFromSnapshot(guardPayments);
       return true;
     } catch (_) {
       return false;

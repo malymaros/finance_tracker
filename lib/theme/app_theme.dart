@@ -34,6 +34,14 @@ abstract final class AppColors {
   /// Warm gold accent — derived from the coin icon; used for titles + active
   /// nav states. Keep usage sparse so it reads as a true accent.
   static const gold = Color(0xFFD4A853);
+
+  // ── GUARD feature ──────────────────────────────────────────────────────────
+
+  /// Dark body text for GUARD item names in the banner and guard screen.
+  static const guardItemText = Color(0xFF374151);
+
+  /// Warm amber tint — background for the guard expense strip and banner rows.
+  static const guardBannerBackground = Color(0xFFFFF8E8);
 }
 
 ThemeData buildAppTheme() {

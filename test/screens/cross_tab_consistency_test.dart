@@ -10,6 +10,7 @@ import 'package:finance_tracker/screens/expense_list_screen.dart';
 import 'package:finance_tracker/screens/plan/plan_screen.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
+import 'package:finance_tracker/services/guard_repository.dart';
 import 'package:finance_tracker/services/period_bounds_service.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
 
@@ -102,6 +103,7 @@ void main() {
           repository: _financeRepo(),
           planRepository: planRepo,
           budgetRepository: CategoryBudgetRepository(persist: false),
+          guardRepository: GuardRepository(persist: false),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -130,6 +132,7 @@ void main() {
           repository: _financeRepo(),
           planRepository: planRepo,
           budgetRepository: CategoryBudgetRepository(persist: false),
+          guardRepository: GuardRepository(persist: false),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -190,6 +193,7 @@ void main() {
           repository: _financeRepo(),
           planRepository: planRepo,
           budgetRepository: CategoryBudgetRepository(persist: false),
+          guardRepository: GuardRepository(persist: false),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},

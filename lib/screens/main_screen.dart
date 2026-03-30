@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import '../models/period_bounds.dart';
 import '../theme/app_theme.dart';
 import '../models/year_month.dart';
+import '../services/guard_notification_service.dart';
 import '../services/category_budget_repository.dart';
 import '../services/finance_repository.dart';
+import '../services/guard_repository.dart';
 import '../services/period_bounds_service.dart';
 import '../services/plan_repository.dart';
 import 'expense_list_screen.dart';
@@ -16,12 +18,14 @@ class MainScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
   final CategoryBudgetRepository budgetRepository;
+  final GuardRepository guardRepository;
 
   const MainScreen({
     super.key,
     required this.repository,
     required this.planRepository,
     required this.budgetRepository,
+    required this.guardRepository,
   });
 
   @override
@@ -40,6 +44,7 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _pageController = PageController();
     widget.planRepository.addListener(_updateBounds);
+    widget.guardRepository.addListener(_onGuardChanged);
     _selectedPeriod.addListener(_onPeriodChanged);
     _updateBounds();
     _screens = [
@@ -48,16 +53,19 @@ class _MainScreenState extends State<MainScreen> {
             repository: widget.repository,
             planRepository: widget.planRepository,
             budgetRepository: widget.budgetRepository,
+            guardRepository: widget.guardRepository,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onClearAll: () => _clearAllData(context),
-            onOpenSaves: () => _openSaves(context)),
+            onOpenSaves: () => _openSaves(context),
+            onSwitchToPlanTab: () => _navigateToTab(1)),
       ),
       _KeepAliveTab(
         child: PlanScreen(
             repository: widget.repository,
             planRepository: widget.planRepository,
             budgetRepository: widget.budgetRepository,
+            guardRepository: widget.guardRepository,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onClearAll: () => _clearAllData(context),
@@ -78,6 +86,20 @@ class _MainScreenState extends State<MainScreen> {
 
   void _onPeriodChanged() {
     widget.repository.loadYear(_selectedPeriod.value.year);
+  }
+
+  void _onGuardChanged() {
+    setState(() {});
+    _rescheduleNotification();
+  }
+
+  Future<void> _rescheduleNotification() async {
+    try {
+      final unpaidCount = _unpaidActiveCount;
+      final hour = await GuardNotificationService.getSavedHour();
+      final minute = await GuardNotificationService.getSavedMinute();
+      await GuardNotificationService.scheduleDaily(hour, minute, unpaidCount);
+    } catch (_) {}
   }
 
   void _updateBounds() {
@@ -104,6 +126,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void dispose() {
     widget.planRepository.removeListener(_updateBounds);
+    widget.guardRepository.removeListener(_onGuardChanged);
     _selectedPeriod.removeListener(_onPeriodChanged);
     _selectedPeriod.dispose();
     _periodBounds.dispose();
@@ -117,6 +140,7 @@ class _MainScreenState extends State<MainScreen> {
         repository: widget.repository,
         planRepository: widget.planRepository,
         budgetRepository: widget.budgetRepository,
+        guardRepository: widget.guardRepository,
         onClearAll: () => _clearAllData(context),
       ),
     ));
@@ -148,12 +172,19 @@ class _MainScreenState extends State<MainScreen> {
         widget.repository.clearAll(),
         widget.planRepository.clearAll(),
         widget.budgetRepository.clearAll(),
+        widget.guardRepository.clearAll(),
       ]);
     }
   }
 
+  int get _unpaidActiveCount => widget.guardRepository
+      .unpaidActiveItems(widget.planRepository.items, YearMonth.now())
+      .length;
+
   @override
   Widget build(BuildContext context) {
+    final unpaidCount = _unpaidActiveCount;
+
     return Scaffold(
       body: PageView(
         controller: _pageController,
@@ -167,18 +198,26 @@ class _MainScreenState extends State<MainScreen> {
         child: NavigationBar(
           selectedIndex: _selectedIndex,
           onDestinationSelected: _navigateToTab,
-          destinations: const [
-            NavigationDestination(
+          destinations: [
+            const NavigationDestination(
               icon: Icon(Icons.receipt_long_outlined),
               selectedIcon: Icon(Icons.receipt_long),
               label: 'Expenses',
             ),
             NavigationDestination(
-              icon: Icon(Icons.account_balance_outlined),
-              selectedIcon: Icon(Icons.account_balance),
+              icon: Badge(
+                isLabelVisible: unpaidCount > 0,
+                label: Text('$unpaidCount'),
+                child: const Icon(Icons.account_balance_outlined),
+              ),
+              selectedIcon: Badge(
+                isLabelVisible: unpaidCount > 0,
+                label: Text('$unpaidCount'),
+                child: const Icon(Icons.account_balance),
+              ),
               label: 'Plan',
             ),
-            NavigationDestination(
+            const NavigationDestination(
               icon: Icon(Icons.pie_chart_outline),
               selectedIcon: Icon(Icons.pie_chart),
               label: 'Reports',

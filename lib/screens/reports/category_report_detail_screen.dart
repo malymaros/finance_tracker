@@ -270,6 +270,7 @@ class _CategoryReportDetailScreenState
     Navigator.of(context).push(MaterialPageRoute(
       builder: (routeContext) => PlanItemDetailScreen(
         item: item,
+        period: YearMonth(widget.year, widget.month ?? 1),
         onEdit: () {
           Navigator.of(routeContext).pop();
           _navigateToPlanItemEdit(context, item);

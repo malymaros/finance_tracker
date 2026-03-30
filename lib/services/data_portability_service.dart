@@ -2,19 +2,21 @@ import 'dart:convert';
 
 import '../models/category_budget.dart';
 import '../models/expense.dart';
+import '../models/guard_payment.dart';
 import '../models/plan_item.dart';
 import 'category_budget_repository.dart';
 import 'finance_repository.dart';
+import 'guard_repository.dart';
 import 'plan_repository.dart';
 
 /// Pure static service for exporting and importing all app data as a
 /// portable JSON file.
 ///
-/// Export produces a self-contained snapshot of expenses, plan items, and
-/// category budgets. Import restores all three repositories.
+/// Export produces a self-contained snapshot of expenses, plan items,
+/// category budgets, and guard payments. Import restores all repositories.
 ///
-/// The `categoryBudgets` key is optional on import for backward compatibility
-/// with files exported before the budget feature was added.
+/// The `categoryBudgets` and `guardPayments` keys are optional on import for
+/// backward compatibility with files exported before those features were added.
 class DataPortabilityService {
   DataPortabilityService._();
 
@@ -26,6 +28,7 @@ class DataPortabilityService {
     FinanceRepository repo,
     PlanRepository planRepo,
     CategoryBudgetRepository budgetRepo,
+    GuardRepository guardRepo,
   ) async {
     await repo.loadAllYears();
     final data = {
@@ -35,6 +38,8 @@ class DataPortabilityService {
       'planItems': planRepo.items.map((i) => i.toJson()).toList(),
       'categoryBudgets':
           budgetRepo.budgets.map((b) => b.toJson()).toList(),
+      'guardPayments':
+          guardRepo.payments.map((p) => p.toJson()).toList(),
     };
     return jsonEncode(data);
   }
@@ -42,13 +47,14 @@ class DataPortabilityService {
   /// Parses [jsonString] and restores all repositories.
   ///
   /// Throws [FormatException] if the file is missing the `version` field or
-  /// cannot be parsed. The `categoryBudgets` key defaults to empty for files
-  /// created before the budget feature existed.
+  /// cannot be parsed. The `categoryBudgets` and `guardPayments` keys default
+  /// to empty for files created before those features existed.
   static Future<void> importData(
     String jsonString,
     FinanceRepository repo,
     PlanRepository planRepo,
     CategoryBudgetRepository budgetRepo,
+    GuardRepository guardRepo,
   ) async {
     final map = jsonDecode(jsonString) as Map<String, dynamic>;
 
@@ -68,8 +74,13 @@ class DataPortabilityService {
         .map((b) => CategoryBudget.fromJson(b as Map<String, dynamic>))
         .toList();
 
+    final guardPayments = (map['guardPayments'] as List? ?? [])
+        .map((p) => GuardPayment.fromJson(p as Map<String, dynamic>))
+        .toList();
+
     await repo.restoreFromSnapshot(expenses);
     await planRepo.restoreFromSnapshot(planItems);
     await budgetRepo.restoreFromSnapshot(categoryBudgets);
+    await guardRepo.restoreFromSnapshot(guardPayments);
   }
 }

@@ -8,6 +8,7 @@ import '../models/save_slot.dart';
 import '../services/category_budget_repository.dart';
 import '../services/data_portability_service.dart';
 import '../services/finance_repository.dart';
+import '../services/guard_repository.dart';
 import '../services/plan_repository.dart';
 import '../services/save_load_service.dart';
 import '../services/share_service.dart';
@@ -19,6 +20,7 @@ class SavesScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
   final CategoryBudgetRepository budgetRepository;
+  final GuardRepository guardRepository;
   final VoidCallback onClearAll;
 
   const SavesScreen({
@@ -26,6 +28,7 @@ class SavesScreen extends StatefulWidget {
     required this.repository,
     required this.planRepository,
     required this.budgetRepository,
+    required this.guardRepository,
     required this.onClearAll,
   });
 
@@ -85,6 +88,7 @@ class _SavesScreenState extends State<SavesScreen> {
         widget.repository,
         widget.planRepository,
         widget.budgetRepository,
+        widget.guardRepository,
       );
       final now = DateTime.now();
       final date =
@@ -148,6 +152,7 @@ class _SavesScreenState extends State<SavesScreen> {
         widget.repository,
         widget.planRepository,
         widget.budgetRepository,
+        widget.guardRepository,
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -181,6 +186,7 @@ class _SavesScreenState extends State<SavesScreen> {
             financeRepository: widget.repository,
             planRepository: widget.planRepository,
             budgetRepository: widget.budgetRepository,
+            guardRepository: widget.guardRepository,
             onRestored: _loadList,
           ),
           const SizedBox(height: 24),
@@ -302,6 +308,7 @@ class _SavesScreenState extends State<SavesScreen> {
         widget.repository,
         widget.planRepository,
         widget.budgetRepository,
+        widget.guardRepository,
       );
       await _loadList();
     }
@@ -319,6 +326,7 @@ class _SavesScreenState extends State<SavesScreen> {
         widget.repository,
         widget.planRepository,
         widget.budgetRepository,
+        widget.guardRepository,
       );
       await _loadList();
     }
@@ -355,6 +363,7 @@ class _SavesScreenState extends State<SavesScreen> {
       widget.repository,
       widget.planRepository,
       widget.budgetRepository,
+      widget.guardRepository,
     );
 
     if (success) {

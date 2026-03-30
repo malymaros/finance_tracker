@@ -12,11 +12,13 @@ import '../models/year_month.dart';
 import '../services/budget_calculator.dart';
 import '../services/category_budget_repository.dart';
 import '../services/finance_repository.dart';
+import '../services/guard_repository.dart';
 import '../services/plan_repository.dart';
 import '../services/import_export_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/budget_progress_bar.dart';
 import '../widgets/category_budget_warning_card.dart';
+import '../widgets/guard_expense_strip.dart';
 import '../widgets/expense_category_group.dart';
 import '../widgets/expense_group_tile.dart';
 import '../widgets/expense_list_tile.dart';
@@ -35,20 +37,26 @@ class ExpenseListScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
   final CategoryBudgetRepository budgetRepository;
+  final GuardRepository? guardRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
   final VoidCallback onOpenSaves;
+
+  /// Called when the user taps the GUARD strip to switch to the Plan tab.
+  final VoidCallback? onSwitchToPlanTab;
 
   const ExpenseListScreen({
     super.key,
     required this.repository,
     required this.planRepository,
     required this.budgetRepository,
+    this.guardRepository,
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onClearAll,
     required this.onOpenSaves,
+    this.onSwitchToPlanTab,
   });
 
   @override
@@ -147,8 +155,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     final isPastMonth = _isPastMonth(now);
 
     return ListenableBuilder(
-      listenable: Listenable.merge(
-          [widget.repository, widget.planRepository, widget.budgetRepository]),
+      listenable: Listenable.merge([
+        widget.repository,
+        widget.planRepository,
+        widget.budgetRepository,
+        if (widget.guardRepository != null) widget.guardRepository!,
+      ]),
       builder: (context, _) {
         final monthExpenses = widget.repository.expensesForMonth(_year, _month)
           ..sort((a, b) => b.date.compareTo(a.date));
@@ -180,6 +192,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           body: Column(
             children: [
               _buildMonthNavigator(),
+              _buildGuardStrip(),
               _buildBudgetWidget(budgetStatus, isCurrentMonth, isPastMonth),
               _buildViewToggle(),
               const Divider(height: 1),
@@ -222,6 +235,21 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       onChanged: (ym) => setState(() {
         widget.selectedPeriod.value = ym;
       }),
+    );
+  }
+
+  // ── GUARD strip ───────────────────────────────────────────────────────────
+
+  Widget _buildGuardStrip() {
+    final guard = widget.guardRepository;
+    if (guard == null) return const SizedBox.shrink();
+    final unpaidCount = guard
+        .unpaidActiveItems(widget.planRepository.items, YearMonth.now())
+        .length;
+    if (unpaidCount == 0) return const SizedBox.shrink();
+    return GuardExpenseStrip(
+      unpaidCount: unpaidCount,
+      onTap: widget.onSwitchToPlanTab ?? () {},
     );
   }
 

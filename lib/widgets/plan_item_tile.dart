@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
+import '../models/guard_state.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
 import '../theme/app_theme.dart';
+import 'guard_status_icon.dart';
 import 'swipeable_tile.dart';
 
 class PlanItemTile extends StatelessWidget {
@@ -17,6 +19,12 @@ class PlanItemTile extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback? onTap;
 
+  /// GUARD state for the currently viewed period. Defaults to [GuardState.none].
+  final GuardState guardState;
+
+  /// When true, renders a gold background tint to draw attention to this item.
+  final bool isHighlighted;
+
   const PlanItemTile({
     super.key,
     required this.item,
@@ -24,6 +32,8 @@ class PlanItemTile extends StatelessWidget {
     required this.onDelete,
     required this.onEdit,
     this.onTap,
+    this.guardState = GuardState.none,
+    this.isHighlighted = false,
   });
 
   @override
@@ -56,13 +66,17 @@ class PlanItemTile extends StatelessWidget {
       onEdit: onEdit,
       child: Container(
         decoration: BoxDecoration(
-          color: financialType?.tintColor,
-          border: financialType != null &&
-                  financialType != FinancialType.consumption
-              ? Border(
-                  left: BorderSide(width: 3, color: financialType.color),
-                )
-              : null,
+          color: isHighlighted
+              ? AppColors.gold.withAlpha(30)
+              : financialType?.tintColor,
+          border: isHighlighted
+              ? Border.all(color: AppColors.gold.withAlpha(100))
+              : financialType != null &&
+                      financialType != FinancialType.consumption
+                  ? Border(
+                      left: BorderSide(width: 3, color: financialType.color),
+                    )
+                  : null,
         ),
         child: ListTile(
           onTap: onTap,
@@ -70,7 +84,15 @@ class PlanItemTile extends StatelessWidget {
             backgroundColor: leadingColor.withAlpha(30),
             child: Icon(leadingIcon, color: leadingColor, size: 20),
           ),
-          title: Text(item.name),
+          title: Row(
+            children: [
+              Expanded(child: Text(item.name)),
+              if (guardState != GuardState.none) ...[
+                const SizedBox(width: 6),
+                GuardStatusIcon(guardState: guardState),
+              ],
+            ],
+          ),
           subtitle: Text(
             subtitleParts.join(' · '),
             style: const TextStyle(fontSize: 12, color: AppColors.textMuted),

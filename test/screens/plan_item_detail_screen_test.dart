@@ -25,51 +25,51 @@ void main() {
 
     testWidgets('shows item name', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('Salary'), findsOneWidget);
     });
 
     testWidgets('shows Income type badge', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('Income'), findsOneWidget);
     });
 
     testWidgets('shows amount with frequency suffix', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.textContaining('3000.00 €'), findsOneWidget);
       expect(find.textContaining('/ month'), findsOneWidget);
     });
 
     testWidgets('shows frequency label', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('Monthly'), findsOneWidget);
     });
 
     testWidgets('shows valid from month', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('January 2025'), findsOneWidget);
     });
 
     testWidgets('shows Ongoing for income with no end date', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('Ongoing'), findsOneWidget);
     });
 
     testWidgets('shows note', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('main income'), findsOneWidget);
     });
 
     testWidgets('does not show category or financial type rows',
         (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('Category'), findsNothing);
       expect(find.text('Financial type'), findsNothing);
     });
@@ -95,25 +95,25 @@ void main() {
 
     testWidgets('shows Fixed Cost type badge', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
       expect(find.text('Fixed Cost'), findsOneWidget);
     });
 
     testWidgets('shows category', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
       expect(find.text('Housing'), findsOneWidget);
     });
 
     testWidgets('shows financial type', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
       expect(find.text('Consumption'), findsOneWidget);
     });
 
     testWidgets('shows validTo date', (tester) async {
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
       expect(find.text('December 2025'), findsOneWidget);
     });
 
@@ -131,7 +131,7 @@ void main() {
       );
 
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: noEnd)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: noEnd, period: const YearMonth(2025, 1))));
       expect(find.text('No end date'), findsOneWidget);
     });
 
@@ -149,7 +149,7 @@ void main() {
       );
 
       await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: oneTime)));
+          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: oneTime, period: const YearMonth(2025, 6))));
       expect(find.text('Active until'), findsNothing);
       expect(find.textContaining('(one-time)'), findsOneWidget);
     });

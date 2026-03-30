@@ -4,6 +4,7 @@ import '../models/save_slot.dart';
 import '../models/year_month.dart';
 import '../services/category_budget_repository.dart';
 import '../services/finance_repository.dart';
+import '../services/guard_repository.dart';
 import '../services/plan_repository.dart';
 import '../services/save_load_service.dart';
 import '../theme/app_theme.dart';
@@ -13,6 +14,7 @@ class AutoBackupTile extends StatefulWidget {
   final FinanceRepository financeRepository;
   final PlanRepository planRepository;
   final CategoryBudgetRepository budgetRepository;
+  final GuardRepository guardRepository;
   final VoidCallback onRestored;
 
   const AutoBackupTile({
@@ -20,6 +22,7 @@ class AutoBackupTile extends StatefulWidget {
     required this.financeRepository,
     required this.planRepository,
     required this.budgetRepository,
+    required this.guardRepository,
     required this.onRestored,
   });
 
@@ -173,6 +176,7 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
       widget.financeRepository,
       widget.planRepository,
       widget.budgetRepository,
+      widget.guardRepository,
     );
 
     if (success) {

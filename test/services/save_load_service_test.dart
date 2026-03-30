@@ -7,6 +7,7 @@ import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
+import 'package:finance_tracker/services/guard_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
 import 'package:finance_tracker/services/save_load_service.dart';
 
@@ -17,6 +18,7 @@ late Directory _tempDir;
 FinanceRepository _financeRepo() => FinanceRepository(persist: false);
 PlanRepository _planRepo() => PlanRepository(persist: false);
 CategoryBudgetRepository _budgetRepo() => CategoryBudgetRepository(persist: false);
+GuardRepository _guardRepo() => GuardRepository(persist: false);
 
 /// Writes a minimal valid save file directly into the saves/ subdirectory.
 Future<void> _writeSaveFile(String id, DateTime createdAt) async {
@@ -122,7 +124,7 @@ void main() {
       await _writeDamagedSaveFile('d2');
 
       final financeRepo = _financeRepo();
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final saves = await SaveLoadService.listSaves();
       final validIds = saves.where((s) => !s.isDamaged).map((s) => s.id).toSet();
@@ -138,7 +140,7 @@ void main() {
       await _writeSaveFile('s4', DateTime(2024, 3, 1)); // oldest → deleted
 
       final financeRepo = _financeRepo();
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final saves = await SaveLoadService.listSaves();
       final ids = saves.where((s) => !s.isDamaged).map((s) => s.id).toSet();
@@ -165,7 +167,7 @@ void main() {
         financialType: FinancialType.consumption,
         date: DateTime(2024, 1, 1),
       ));
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final slots = await SaveLoadService.listAutoSaves();
       expect(slots.length, 1);
@@ -179,11 +181,11 @@ void main() {
       final financeRepo = _financeRepo();
 
       // First rotation (simulated yesterday)
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       // Force a second rotation by clearing the meta file
       await File('${_tempDir.path}/autosave_meta.json').delete();
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final slots = await SaveLoadService.listAutoSaves();
       expect(slots.length, 2);
@@ -205,7 +207,7 @@ void main() {
   group('checkAndRotate', () {
     test('writes autosave_0 and meta on first run', () async {
       final financeRepo = _financeRepo();
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       expect(await File('${_tempDir.path}/autosave_0.json').exists(), true);
       expect(await File('${_tempDir.path}/autosave_meta.json').exists(), true);
@@ -213,14 +215,14 @@ void main() {
 
     test('is idempotent — does not re-write when called again same day', () async {
       final financeRepo = _financeRepo();
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final file = File('${_tempDir.path}/autosave_0.json');
       final statBefore = await file.lastModified();
 
       // Small delay then call again same day
       await Future<void>.delayed(const Duration(milliseconds: 10));
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final statAfter = await file.lastModified();
       expect(statAfter, equals(statBefore));
@@ -230,13 +232,13 @@ void main() {
       final financeRepo = _financeRepo();
 
       // First run (today)
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
       final slot0Content = await File('${_tempDir.path}/autosave_0.json').readAsString();
 
       // Simulate new day by removing/replacing meta with yesterday's date
       await _writeMetaFile('2000-01-01');
 
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final slot1Content = await File('${_tempDir.path}/autosave_1.json').readAsString();
       // slot 1 should have what slot 0 had before the rotation
@@ -246,7 +248,7 @@ void main() {
     test('updates meta date after rotation', () async {
       await _writeMetaFile('2000-01-01');
       final financeRepo = _financeRepo();
-      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final today = _todayString();
       expect(await _readMetaDate(), equals(today));
@@ -255,9 +257,17 @@ void main() {
     test('does not throw when data is empty', () async {
       final financeRepo = _financeRepo();
       expect(
-        () => SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo()),
+        () => SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo()),
         returnsNormally,
       );
+    });
+
+    test('autosave_0 contains guardPayments key', () async {
+      await SaveLoadService.checkAndRotate(
+          _financeRepo(), _planRepo(), _budgetRepo(), _guardRepo());
+      final content = await File('${_tempDir.path}/autosave_0.json').readAsString();
+      final map = jsonDecode(content) as Map<String, dynamic>;
+      expect(map.containsKey('guardPayments'), true);
     });
   });
 
@@ -270,6 +280,7 @@ void main() {
         _financeRepo(),
         _planRepo(),
         _budgetRepo(),
+        _guardRepo(),
       );
       expect(result, false);
     });
@@ -280,6 +291,7 @@ void main() {
         _financeRepo(),
         _planRepo(),
         _budgetRepo(),
+        _guardRepo(),
       );
       expect(result, false);
     });
@@ -290,6 +302,7 @@ void main() {
         _financeRepo(),
         _planRepo(),
         _budgetRepo(),
+        _guardRepo(),
       );
       expect(result, false);
     });
@@ -303,7 +316,7 @@ void main() {
         financialType: FinancialType.consumption,
         date: DateTime(2024, 3, 1),
       ));
-      await SaveLoadService.checkAndRotate(writeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.checkAndRotate(writeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final readRepo = _financeRepo();
       final result = await SaveLoadService.loadAutoSave(
@@ -311,11 +324,51 @@ void main() {
         readRepo,
         _planRepo(),
         _budgetRepo(),
+        _guardRepo(),
       );
 
       expect(result, true);
       expect(readRepo.expenses.length, 1);
       expect(readRepo.expenses.first.id, 'e99');
+    });
+
+    test('loadAutoSave restores guardPayments from autosave_0', () async {
+      // Write an autosave that contains a guard payment.
+      final guardPaymentJson = jsonEncode({
+        'id': 'autosave_0',
+        'name': 'Test',
+        'createdAt': DateTime(2024, 1, 1).toIso8601String(),
+        'expenseCount': 0,
+        'planItemCount': 0,
+        'isAuto': true,
+        'expenses': <dynamic>[],
+        'planItems': <dynamic>[],
+        'categoryBudgets': <dynamic>[],
+        'guardPayments': [
+          {
+            'id': 'gp1',
+            'planItemSeriesId': 'series1',
+            'period': {'year': 2024, 'month': 3},
+            'paidAt': '2024-03-15T10:00:00.000',
+          }
+        ],
+      });
+      await File('${_tempDir.path}/autosave_0.json')
+          .writeAsString(guardPaymentJson);
+
+      final guardRepo = _guardRepo();
+      final result = await SaveLoadService.loadAutoSave(
+        'autosave_0',
+        _financeRepo(),
+        _planRepo(),
+        _budgetRepo(),
+        guardRepo,
+      );
+
+      expect(result, true);
+      expect(guardRepo.payments.length, 1);
+      expect(guardRepo.payments.first.id, 'gp1');
+      expect(guardRepo.payments.first.paidAt, isNotNull);
     });
   });
 
@@ -328,19 +381,21 @@ void main() {
         _financeRepo(),
         _planRepo(),
         _budgetRepo(),
+        _guardRepo(),
       );
       expect(result, isNull);
     });
 
     test('returns cap when max saves reached', () async {
       for (int i = 0; i < 3; i++) {
-        await SaveLoadService.createSave('Save $i', _financeRepo(), _planRepo(), _budgetRepo());
+        await SaveLoadService.createSave('Save $i', _financeRepo(), _planRepo(), _budgetRepo(), _guardRepo());
       }
       final result = await SaveLoadService.createSave(
         'One more',
         _financeRepo(),
         _planRepo(),
         _budgetRepo(),
+        _guardRepo(),
       );
       expect(result, 'cap');
     });
@@ -348,7 +403,7 @@ void main() {
     test('damaged saves do not count toward cap', () async {
       // 3 valid saves
       for (int i = 0; i < 3; i++) {
-        await SaveLoadService.createSave('Save $i', _financeRepo(), _planRepo(), _budgetRepo());
+        await SaveLoadService.createSave('Save $i', _financeRepo(), _planRepo(), _budgetRepo(), _guardRepo());
       }
       // Add a damaged file manually
       await _writeDamagedSaveFile('damaged');
@@ -359,6 +414,7 @@ void main() {
         _financeRepo(),
         _planRepo(),
         _budgetRepo(),
+        _guardRepo(),
       );
       expect(result, 'cap');
     });
@@ -366,7 +422,7 @@ void main() {
 
   group('deleteSave', () {
     test('removes the save file', () async {
-      await SaveLoadService.createSave('To Delete', _financeRepo(), _planRepo(), _budgetRepo());
+      await SaveLoadService.createSave('To Delete', _financeRepo(), _planRepo(), _budgetRepo(), _guardRepo());
       final saves = await SaveLoadService.listSaves();
       expect(saves.length, 1);
 
@@ -394,7 +450,7 @@ void main() {
         financialType: FinancialType.consumption,
         date: DateTime(2024, 2, 1),
       ));
-      await SaveLoadService.createSave('snap', writeRepo, _planRepo(), _budgetRepo());
+      await SaveLoadService.createSave('snap', writeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final saves = await SaveLoadService.listSaves();
       final readRepo = _financeRepo();
@@ -403,6 +459,7 @@ void main() {
         readRepo,
         _planRepo(),
         _budgetRepo(),
+        _guardRepo(),
       );
 
       expect(ok, true);
@@ -416,6 +473,7 @@ void main() {
         _financeRepo(),
         _planRepo(),
         _budgetRepo(),
+        _guardRepo(),
       );
       expect(ok, false);
     });

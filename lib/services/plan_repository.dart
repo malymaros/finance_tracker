@@ -36,6 +36,44 @@ class PlanRepository extends ChangeNotifier {
     await _save();
   }
 
+  /// Updates [guardDueDay] and optionally [guardDueMonth] on every version of
+  /// [seriesId]. Used by GuardScreen to change the due-day without creating a
+  /// new plan item version — guard config is a notification preference, not a
+  /// financial change.
+  Future<void> updateGuardConfigForSeries(
+    String seriesId, {
+    required int? guardDueDay,
+    int? guardDueMonth,
+  }) async {
+    bool changed = false;
+    for (int i = 0; i < _items.length; i++) {
+      if (_items[i].seriesId != seriesId) continue;
+      final old = _items[i];
+      _items[i] = PlanItem(
+        id: old.id,
+        seriesId: old.seriesId,
+        name: old.name,
+        amount: old.amount,
+        type: old.type,
+        frequency: old.frequency,
+        validFrom: old.validFrom,
+        validTo: old.validTo,
+        note: old.note,
+        category: old.category,
+        financialType: old.financialType,
+        isGuarded: old.isGuarded,
+        guardDueDay: guardDueDay,
+        guardDueMonth: guardDueMonth ?? old.guardDueMonth,
+        guardOneTime: old.guardOneTime,
+      );
+      changed = true;
+    }
+    if (changed) {
+      notifyListeners();
+      await _save();
+    }
+  }
+
   /// Replaces a specific version in-place (used for error correction).
   Future<void> updatePlanItem(PlanItem item) async {
     final i = _items.indexWhere((e) => e.id == item.id);
