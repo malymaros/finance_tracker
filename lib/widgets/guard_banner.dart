@@ -127,8 +127,11 @@ class _GuardRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final periodLabel =
-        '${YearMonth.monthAbbreviations[period.month]} ${period.year}';
+    final rawDueDay = item.guardDueDay ?? 1;
+    final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
+    final effectiveDueDay = rawDueDay.clamp(1, daysInMonth);
+    final dueDateLabel =
+        '${YearMonth.monthNames[period.month]} $effectiveDueDay, ${period.year} due';
     final nameColor =
         isSilenced ? AppColors.textMuted : AppColors.guardItemText;
 
@@ -156,7 +159,7 @@ class _GuardRow extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      periodLabel,
+                      dueDateLabel,
                       style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textMuted,

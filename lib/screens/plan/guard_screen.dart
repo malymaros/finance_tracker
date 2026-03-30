@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../models/guard_state.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
@@ -8,6 +7,7 @@ import '../../services/guard_notification_service.dart';
 import '../../services/guard_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/guard_item_status_card.dart';
 
 class GuardScreen extends StatefulWidget {
   final PlanRepository planRepository;
@@ -93,35 +93,6 @@ class _GuardScreenState extends State<GuardScreen> {
     );
   }
 
-  Future<void> _onSilenceRequested(
-      PlanItem item, YearMonth period) async {
-    final periodLabel =
-        '${YearMonth.monthNames[period.month]} ${period.year}';
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Silence this reminder?'),
-        content: Text(
-          'The $periodLabel payment will still be shown as unconfirmed. '
-          'You can mark it as paid at any time.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Yes, Silence'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true && mounted) {
-      await widget.guardRepository.silencePayment(item.seriesId, period);
-    }
-  }
-
   // ── Build ──────────────────────────────────────────────────────────────────
 
   @override
@@ -136,19 +107,7 @@ class _GuardScreenState extends State<GuardScreen> {
   Widget _buildContent(BuildContext context) {
     final now = YearMonth.now();
     final all = widget.planRepository.items;
-    final unresolved = widget.guardRepository.allUnresolvedItems(all, now);
-    final unpaidActive = unresolved
-        .where((p) =>
-            widget.guardRepository.itemStateForPeriod(p.$1, p.$2) ==
-            GuardState.unpaidActive)
-        .toList();
-    final silenced = unresolved
-        .where((p) =>
-            widget.guardRepository.itemStateForPeriod(p.$1, p.$2) ==
-            GuardState.silenced)
-        .toList();
 
-    // All distinct guarded items (for due-day management).
     final guardedItems = <String, PlanItem>{};
     for (final item in BudgetCalculator.activeItemsForMonth(
         all, now.year, now.month)) {
@@ -195,64 +154,42 @@ class _GuardScreenState extends State<GuardScreen> {
           ),
           const SizedBox(height: 16),
 
-          // ── Unpaid active ──────────────────────────────────────────────
-          if (unpaidActive.isNotEmpty) ...[
-            _buildSectionHeader('Pending', unpaidActive.length),
-            const SizedBox(height: 6),
-            ...unpaidActive.map((pair) => _GuardItemCard(
-                  item: pair.$1,
-                  period: pair.$2,
-                  isSilenced: false,
-                  onMarkPaid: () => widget.guardRepository
-                      .confirmPayment(pair.$1.seriesId, pair.$2),
-                  onSilence: () => _onSilenceRequested(pair.$1, pair.$2),
-                  onChangeDueDay: () => _pickDueDay(pair.$1),
-                )),
-            const SizedBox(height: 16),
-          ],
-
-          // ── Silenced ───────────────────────────────────────────────────
-          if (silenced.isNotEmpty) ...[
-            _buildSectionHeader('Silenced', silenced.length),
-            const SizedBox(height: 6),
-            ...silenced.map((pair) => _GuardItemCard(
-                  item: pair.$1,
-                  period: pair.$2,
-                  isSilenced: true,
-                  onMarkPaid: () => widget.guardRepository
-                      .confirmPayment(pair.$1.seriesId, pair.$2),
-                  onSilence: null,
-                  onChangeDueDay: () => _pickDueDay(pair.$1),
-                )),
-            const SizedBox(height: 16),
-          ],
-
-          if (unresolved.isEmpty)
+          // ── Guarded items ──────────────────────────────────────────────
+          if (guardedItems.isEmpty)
             const Center(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 32),
                 child: Column(
                   children: [
-                    Icon(Icons.check_circle_outline,
-                        size: 48, color: AppColors.income),
+                    Icon(Icons.pets, size: 48, color: AppColors.border),
                     SizedBox(height: 12),
                     Text(
-                      'All payments confirmed',
+                      'No guarded items',
                       style: TextStyle(
                           fontSize: 16, color: AppColors.textMuted),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Enable GUARD on a fixed cost to track payments.',
+                      style: TextStyle(
+                          fontSize: 13, color: AppColors.textMuted),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
-            ),
-
-          // ── Due day management ─────────────────────────────────────────
-          if (guardedItems.isNotEmpty) ...[
+            )
+          else ...[
             _buildSectionHeader('Guarded items', guardedItems.length),
             const SizedBox(height: 6),
-            ...guardedItems.values.map((item) => _DueDayTile(
+            ...guardedItems.values.map((item) => GuardItemStatusCard(
                   item: item,
+                  period: now,
+                  guardRepository: widget.guardRepository,
                   onChangeDueDay: () => _pickDueDay(item),
+                  onDeleteGuard: () => widget.planRepository
+                      .disableGuardForSeries(item.seriesId),
+                  showIfScheduled: true,
                 )),
           ],
 
@@ -278,182 +215,4 @@ class _GuardScreenState extends State<GuardScreen> {
   }
 }
 
-// ── Guard item card ───────────────────────────────────────────────────────────
 
-class _GuardItemCard extends StatelessWidget {
-  final PlanItem item;
-  final YearMonth period;
-  final bool isSilenced;
-  final VoidCallback onMarkPaid;
-  final VoidCallback? onSilence;
-  final VoidCallback onChangeDueDay;
-
-  const _GuardItemCard({
-    required this.item,
-    required this.period,
-    required this.isSilenced,
-    required this.onMarkPaid,
-    this.onSilence,
-    required this.onChangeDueDay,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final periodLabel =
-        '${YearMonth.monthAbbreviations[period.month]} ${period.year}';
-    final rawDueDay = item.guardDueDay ?? 1;
-    final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
-    final effectiveDueDay = rawDueDay.clamp(1, daysInMonth);
-    final dueDayLabel = 'Due day $effectiveDueDay';
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.name,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: isSilenced
-                              ? AppColors.textMuted
-                              : AppColors.guardItemText,
-                          fontStyle: isSilenced
-                              ? FontStyle.italic
-                              : FontStyle.normal,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          Text(
-                            periodLabel,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: AppColors.textMuted,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          GestureDetector(
-                            onTap: onChangeDueDay,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: AppColors.gold),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                dueDayLabel,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: AppColors.gold,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                FilledButton(
-                  onPressed: onMarkPaid,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.gold,
-                    foregroundColor: Colors.white,
-                    visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 6),
-                    textStyle: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w600),
-                  ),
-                  child: const Text('Paid'),
-                ),
-                if (onSilence != null) ...[
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: onSilence,
-                    style: TextButton.styleFrom(
-                      visualDensity: VisualDensity.compact,
-                      foregroundColor: AppColors.textMuted,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
-                    ),
-                    child: const Text('Silence',
-                        style: TextStyle(fontSize: 13)),
-                  ),
-                ],
-                if (isSilenced) ...[
-                  const SizedBox(width: 8),
-                  const Icon(Icons.notifications_off,
-                      size: 14, color: AppColors.textMuted),
-                  const SizedBox(width: 4),
-                  const Text('silenced',
-                      style: TextStyle(
-                          fontSize: 12, color: AppColors.textMuted,
-                          fontStyle: FontStyle.italic)),
-                ],
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── Due day tile (guarded items list at bottom) ───────────────────────────────
-
-class _DueDayTile extends StatelessWidget {
-  final PlanItem item;
-  final VoidCallback onChangeDueDay;
-
-  const _DueDayTile({required this.item, required this.onChangeDueDay});
-
-  @override
-  Widget build(BuildContext context) {
-    final rawDueDay = item.guardDueDay ?? 1;
-    final freqLabel = item.frequency == PlanFrequency.monthly
-        ? 'Monthly · Day $rawDueDay'
-        : 'Yearly · Day $rawDueDay of ${YearMonth.monthNames[item.guardDueMonth ?? item.validFrom.month]}';
-    final typeLabel = item.guardOneTime ? 'One-time' : 'Recurring';
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading:
-            const Icon(Icons.pets, color: AppColors.gold, size: 20),
-        title: Text(item.name),
-        subtitle: Text(
-          '$freqLabel · $typeLabel',
-          style:
-              const TextStyle(fontSize: 12, color: AppColors.textMuted),
-        ),
-        trailing: TextButton(
-          onPressed: onChangeDueDay,
-          style: TextButton.styleFrom(
-            foregroundColor: AppColors.gold,
-            visualDensity: VisualDensity.compact,
-          ),
-          child: const Text('Change day'),
-        ),
-      ),
-    );
-  }
-}

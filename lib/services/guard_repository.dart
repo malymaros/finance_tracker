@@ -26,11 +26,27 @@ class GuardRepository extends ChangeNotifier {
   /// Returns the [GuardState] for a specific [item] in a specific [period].
   ///
   /// For non-guarded items or income items, returns [GuardState.none].
-  /// For guarded items with no record: [GuardState.unpaidActive].
+  /// For future periods, or the current period before its due day, returns
+  /// [GuardState.none] — the reminder is not shown before it is due.
+  /// For guarded items with no record that are due: [GuardState.unpaidActive].
   GuardState itemStateForPeriod(PlanItem item, YearMonth period) {
     if (!item.isGuarded || item.type != PlanItemType.fixedCost) {
       return GuardState.none;
     }
+
+    final now = YearMonth.now();
+
+    // Future period — reminder not yet due; show faint icon only.
+    if (period.isAfter(now)) return GuardState.scheduled;
+
+    // Current period — only alert from the due day onward.
+    if (period == now) {
+      final rawDueDay = item.guardDueDay ?? 1;
+      final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
+      final dueDay = rawDueDay.clamp(1, daysInMonth);
+      if (DateTime.now().day < dueDay) return GuardState.scheduled;
+    }
+
     return _stateForRecord(item.seriesId, period);
   }
 
@@ -284,7 +300,7 @@ class GuardRepository extends ChangeNotifier {
       if (item.seriesId != seriesId) continue;
       if (!item.isGuarded) continue;
       if (item.validFrom.year > year) continue;
-      if (item.validTo != null && item.validTo!.year < year) continue;
+      if (item.validTo != null && item.validTo!.isBefore(YearMonth(year, 1))) continue;
       if (result == null || item.validFrom.isAfter(result.validFrom)) {
         result = item;
       }

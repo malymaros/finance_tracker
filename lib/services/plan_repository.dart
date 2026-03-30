@@ -74,6 +74,39 @@ class PlanRepository extends ChangeNotifier {
     }
   }
 
+  /// Disables GUARD on every version of [seriesId], clearing all guard fields.
+  /// Used by GuardScreen to remove a guard without editing the item form.
+  Future<void> disableGuardForSeries(String seriesId) async {
+    bool changed = false;
+    for (int i = 0; i < _items.length; i++) {
+      if (_items[i].seriesId != seriesId) continue;
+      if (!_items[i].isGuarded) continue;
+      final old = _items[i];
+      _items[i] = PlanItem(
+        id: old.id,
+        seriesId: old.seriesId,
+        name: old.name,
+        amount: old.amount,
+        type: old.type,
+        frequency: old.frequency,
+        validFrom: old.validFrom,
+        validTo: old.validTo,
+        note: old.note,
+        category: old.category,
+        financialType: old.financialType,
+        isGuarded: false,
+        guardDueDay: null,
+        guardDueMonth: null,
+        guardOneTime: false,
+      );
+      changed = true;
+    }
+    if (changed) {
+      notifyListeners();
+      await _save();
+    }
+  }
+
   /// Replaces a specific version in-place (used for error correction).
   Future<void> updatePlanItem(PlanItem item) async {
     final i = _items.indexWhere((e) => e.id == item.id);
@@ -124,6 +157,10 @@ class PlanRepository extends ChangeNotifier {
         note: item.note,
         category: item.category,
         financialType: item.financialType,
+        isGuarded: item.isGuarded,
+        guardDueDay: item.guardDueDay,
+        guardDueMonth: item.guardDueMonth,
+        guardOneTime: item.guardOneTime,
       ));
     }
 

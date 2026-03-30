@@ -5,8 +5,10 @@ import '../theme/app_theme.dart';
 
 /// A small golden paw icon that shows the GUARD state of a plan item.
 ///
-/// Renders nothing when [guardState] is [GuardState.none].
-/// Opacity and overlay change based on the payment state.
+/// Renders nothing when [guardState] is [GuardState.none] (not configured).
+/// [GuardState.scheduled] and [GuardState.paid] render as a faint icon.
+/// [GuardState.silenced] renders at half opacity with a muted-bell badge.
+/// [GuardState.unpaidActive] renders at full brightness.
 class GuardStatusIcon extends StatelessWidget {
   final GuardState guardState;
   final double size;
@@ -25,7 +27,9 @@ class GuardStatusIcon extends StatelessWidget {
       GuardState.unpaidActive => 1.0,
       GuardState.silenced => 0.5,
       GuardState.paid => 0.35,
-      GuardState.none => 0.0,
+      GuardState.scheduled => 0.35,
+      GuardState.none => 0.0, // unreachable — early return above
+
     };
 
     final icon = Icon(Icons.pets, color: AppColors.gold, size: size);
