@@ -70,7 +70,7 @@ class _ImportScreenState extends State<ImportScreen> {
       // FileType.any is intentional: FileType.custom filters by MIME type on
       // Android, and Google Drive serves CSV files as text/plain or
       // application/octet-stream, which causes them to be hidden. We validate
-      // the extension ourselves after picking.
+      // the type ourselves after picking.
       picked = await FilePicker.platform.pickFiles(
         type: FileType.any,
         withData: true,
@@ -86,18 +86,7 @@ class _ImportScreenState extends State<ImportScreen> {
 
     if (picked == null || picked.files.isEmpty) return;
 
-    final fileName = picked.files.first.name.toLowerCase();
-    final isCsv = fileName.endsWith('.csv');
-    if (!isCsv && !fileName.endsWith('.xlsx')) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Unsupported file type. Please select an .xlsx or .csv file.')),
-        );
-      }
-      return;
-    }
-
+    // Read bytes first — withData: true already placed them in memory.
     final bytes = picked.files.first.bytes;
     if (bytes == null) {
       if (mounted) {
@@ -109,9 +98,46 @@ class _ImportScreenState extends State<ImportScreen> {
       return;
     }
 
+    // Determine file type: extension-first, with content-based fallback.
+    // On some Android content providers (e.g. Gmail attachment downloads,
+    // certain cloud-storage apps), DISPLAY_NAME omits the extension, so the
+    // exported file arrives as "expenses_20260101_20260301" rather than
+    // "expenses_20260101_20260301.xlsx". xlsx files are ZIP archives and always
+    // start with the ZIP magic bytes 50 4B 03 04, so we can detect them
+    // reliably by content even when the extension is absent.
+    final fileName = picked.files.first.name.toLowerCase();
+    final isCsvByExt = fileName.endsWith('.csv');
+    final isXlsxByExt = fileName.endsWith('.xlsx');
+
+    final bool isCsv;
+    if (isXlsxByExt) {
+      isCsv = false;
+    } else if (isCsvByExt) {
+      isCsv = true;
+    } else {
+      // Magic-byte detection: xlsx (ZIP) starts with PK\x03\x04.
+      final isZip = bytes.length >= 4 &&
+          bytes[0] == 0x50 &&
+          bytes[1] == 0x4B &&
+          bytes[2] == 0x03 &&
+          bytes[3] == 0x04;
+      if (isZip) {
+        isCsv = false;
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text(
+                    'Unsupported file type. Please select an .xlsx or .csv file.')),
+          );
+        }
+        return;
+      }
+    }
+
     setState(() => _phase = _ImportPhase.loading);
 
-    // Yield to let the loading indicator render before parsing
+    // Yield to let the loading indicator render before parsing.
     final result = await Future.microtask(() => isCsv
         ? ImportExportService.parseCsvFile(bytes)
         : ImportExportService.parseImportFile(bytes));

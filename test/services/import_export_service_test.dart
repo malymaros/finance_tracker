@@ -561,6 +561,77 @@ void main() {
     });
   });
 
+  // ── Export → import regression ───────────────────────────────────────────
+
+  group('exportExpenses — export/import regression', () {
+    // Regression: on some Android content providers the .xlsx extension is
+    // stripped from the display name. The importer falls back to ZIP magic-byte
+    // detection (50 4B 03 04). This test confirms exported bytes carry that
+    // signature so the fallback always fires.
+    test('exported bytes start with ZIP magic bytes (xlsx / PK signature)',
+        () async {
+      final bytes = await ImportExportService.exportExpenses(
+          [], DateTime(2026, 1, 1), DateTime(2026, 12, 31));
+      expect(bytes.length, greaterThan(4));
+      expect(bytes[0], 0x50); // P
+      expect(bytes[1], 0x4B); // K
+      expect(bytes[2], 0x03);
+      expect(bytes[3], 0x04);
+    });
+
+    test('export then import: all fields preserved (full field round-trip)',
+        () async {
+      // Simulates: export from Expenses tab → file saved (possibly losing
+      // .xlsx extension) → re-imported. The service layer works on bytes only,
+      // so once the UI gate passes (extension or magic bytes), this must succeed.
+      final expenses = [
+        Expense(
+          id: '1',
+          amount: 12.50,
+          category: ExpenseCategory.groceries,
+          financialType: FinancialType.consumption,
+          date: DateTime(2026, 3, 15),
+          note: 'weekly shop',
+          group: 'March',
+        ),
+        Expense(
+          id: '2',
+          amount: 200.00,
+          category: ExpenseCategory.transport,
+          financialType: FinancialType.asset,
+          date: DateTime(2026, 3, 20),
+          note: null,
+          group: null,
+        ),
+      ];
+      final exportedBytes = await ImportExportService.exportExpenses(
+          expenses, DateTime(2026, 3, 1), DateTime(2026, 3, 31));
+
+      // parseImportFile works on raw bytes — no extension check at this layer.
+      final result = ImportExportService.parseImportFile(exportedBytes);
+
+      expect(result.headerError, isNull);
+      expect(result.validRows, hasLength(2));
+      expect(result.invalidRows, isEmpty);
+
+      final r0 = result.validRows[0];
+      expect(r0.amount, closeTo(12.50, 0.001));
+      expect(r0.category, ExpenseCategory.groceries);
+      expect(r0.financialType, FinancialType.consumption);
+      expect(r0.date, DateTime(2026, 3, 15));
+      expect(r0.note, 'weekly shop');
+      expect(r0.group, 'March');
+
+      final r1 = result.validRows[1];
+      expect(r1.amount, closeTo(200.00, 0.001));
+      expect(r1.category, ExpenseCategory.transport);
+      expect(r1.financialType, FinancialType.asset);
+      expect(r1.date, DateTime(2026, 3, 20));
+      expect(r1.note, isNull);
+      expect(r1.group, isNull);
+    });
+  });
+
   // ── parseCsvFile ─────────────────────────────────────────────────────────
 
   group('parseCsvFile — hard errors', () {
