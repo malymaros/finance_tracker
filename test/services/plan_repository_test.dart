@@ -22,6 +22,36 @@ PlanItem makeItem({
       validFrom: YearMonth(2024, 1),
     );
 
+PlanItem makeGuardedItem({
+  String id = '1',
+  String? seriesId,
+  int fromYear = 2024,
+  int fromMonth = 1,
+  int? toYear,
+  int? toMonth,
+  int guardDueDay = 1,
+  int? guardDueMonth,
+  bool guardOneTime = false,
+}) =>
+    PlanItem(
+      id: id,
+      seriesId: seriesId ?? id,
+      name: 'Guarded $id',
+      amount: 500,
+      type: PlanItemType.fixedCost,
+      frequency: PlanFrequency.monthly,
+      validFrom: YearMonth(fromYear, fromMonth),
+      validTo: (toYear != null && toMonth != null)
+          ? YearMonth(toYear, toMonth)
+          : null,
+      category: ExpenseCategory.housing,
+      financialType: FinancialType.consumption,
+      isGuarded: true,
+      guardDueDay: guardDueDay,
+      guardDueMonth: guardDueMonth,
+      guardOneTime: guardOneTime,
+    );
+
 void main() {
   group('PlanRepository', () {
     test('starts empty', () {
@@ -405,6 +435,244 @@ void main() {
       await repo.removeFutureVersions('s', YearMonth(2024, 1));
       expect(repo.items.length, 1);
       expect(repo.items.first.id, 'v1');
+    });
+  });
+
+  // ── removePlanItemFrom — guard fields regression ──────────────────────────
+
+  group('removePlanItemFrom — guard fields preserved on truncated item', () {
+    // Regression: the re-added historical item was missing isGuarded, guardDueDay,
+    // guardDueMonth, and guardOneTime. Those fields defaulted to false/null,
+    // silently disabling GUARD on past periods.
+
+    test('truncated item keeps isGuarded=true', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeGuardedItem(id: 'a', seriesId: 'a'));
+      await repo.removePlanItemFrom('a', YearMonth(2024, 3));
+
+      expect(repo.items.length, 1);
+      expect(repo.items.first.isGuarded, isTrue);
+    });
+
+    test('truncated item keeps guardDueDay', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(
+          makeGuardedItem(id: 'a', seriesId: 'a', guardDueDay: 15));
+      await repo.removePlanItemFrom('a', YearMonth(2024, 3));
+
+      expect(repo.items.first.guardDueDay, 15);
+    });
+
+    test('truncated item keeps guardDueMonth', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(
+          makeGuardedItem(id: 'a', seriesId: 'a', guardDueMonth: 6));
+      await repo.removePlanItemFrom('a', YearMonth(2024, 3));
+
+      expect(repo.items.first.guardDueMonth, 6);
+    });
+
+    test('truncated item keeps guardOneTime=true', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(
+          makeGuardedItem(id: 'a', seriesId: 'a', guardOneTime: true));
+      await repo.removePlanItemFrom('a', YearMonth(2024, 3));
+
+      expect(repo.items.first.guardOneTime, isTrue);
+    });
+
+    test('non-guarded item truncated normally with isGuarded=false', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeItem(id: 'a', seriesId: 'a'));
+      await repo.removePlanItemFrom('a', YearMonth(2024, 3));
+
+      expect(repo.items.first.isGuarded, isFalse);
+    });
+  });
+
+  // ── updateGuardConfigForSeries ────────────────────────────────────────────
+
+  group('updateGuardConfigForSeries', () {
+    test('updates guardDueDay on all versions of a series', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeGuardedItem(id: 'v1', seriesId: 's', guardDueDay: 1));
+      await repo.addPlanItem(makeGuardedItem(id: 'v2', seriesId: 's', guardDueDay: 1));
+
+      await repo.updateGuardConfigForSeries('s', guardDueDay: 20);
+
+      for (final item in repo.items) {
+        expect(item.guardDueDay, 20);
+      }
+    });
+
+    test('updates guardDueMonth when provided', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeGuardedItem(id: 'v1', seriesId: 's', guardDueMonth: 3));
+
+      await repo.updateGuardConfigForSeries('s', guardDueDay: 5, guardDueMonth: 9);
+
+      expect(repo.items.first.guardDueMonth, 9);
+    });
+
+    test('preserves existing guardDueMonth when not provided', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeGuardedItem(id: 'v1', seriesId: 's', guardDueMonth: 6));
+
+      await repo.updateGuardConfigForSeries('s', guardDueDay: 10);
+
+      expect(repo.items.first.guardDueMonth, 6); // unchanged
+    });
+
+    test('does not touch items in a different series', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeGuardedItem(id: 'a', seriesId: 'a', guardDueDay: 1));
+      await repo.addPlanItem(makeGuardedItem(id: 'b', seriesId: 'b', guardDueDay: 1));
+
+      await repo.updateGuardConfigForSeries('a', guardDueDay: 25);
+
+      final b = repo.items.firstWhere((e) => e.id == 'b');
+      expect(b.guardDueDay, 1); // unchanged
+    });
+
+    test('notifies listeners', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeGuardedItem(id: 'v1', seriesId: 's'));
+      var notified = false;
+      repo.addListener(() => notified = true);
+
+      await repo.updateGuardConfigForSeries('s', guardDueDay: 5);
+      expect(notified, isTrue);
+    });
+
+    test('no-op for unknown seriesId', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeGuardedItem(id: 'v1', seriesId: 's', guardDueDay: 1));
+      var notified = false;
+      repo.addListener(() => notified = true);
+
+      await repo.updateGuardConfigForSeries('unknown', guardDueDay: 5);
+
+      expect(notified, isFalse);
+      expect(repo.items.first.guardDueDay, 1); // unchanged
+    });
+  });
+
+  // ── disableGuardForSeries ─────────────────────────────────────────────────
+
+  group('disableGuardForSeries', () {
+    test('sets isGuarded=false on all versions of a series', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeGuardedItem(id: 'v1', seriesId: 's'));
+      await repo.addPlanItem(makeGuardedItem(id: 'v2', seriesId: 's'));
+
+      await repo.disableGuardForSeries('s');
+
+      for (final item in repo.items) {
+        expect(item.isGuarded, isFalse);
+      }
+    });
+
+    test('clears guardDueDay and guardDueMonth', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(
+          makeGuardedItem(id: 'v1', seriesId: 's', guardDueDay: 15, guardDueMonth: 6));
+
+      await repo.disableGuardForSeries('s');
+
+      expect(repo.items.first.guardDueDay, isNull);
+      expect(repo.items.first.guardDueMonth, isNull);
+    });
+
+    test('clears guardOneTime', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(
+          makeGuardedItem(id: 'v1', seriesId: 's', guardOneTime: true));
+
+      await repo.disableGuardForSeries('s');
+
+      expect(repo.items.first.guardOneTime, isFalse);
+    });
+
+    test('does not touch items in a different series', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeGuardedItem(id: 'a', seriesId: 'a'));
+      await repo.addPlanItem(makeGuardedItem(id: 'b', seriesId: 'b'));
+
+      await repo.disableGuardForSeries('a');
+
+      final b = repo.items.firstWhere((e) => e.id == 'b');
+      expect(b.isGuarded, isTrue); // unchanged
+    });
+
+    test('notifies listeners', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeGuardedItem(id: 'v1', seriesId: 's'));
+      var notified = false;
+      repo.addListener(() => notified = true);
+
+      await repo.disableGuardForSeries('s');
+      expect(notified, isTrue);
+    });
+
+    test('no-op when series is already unguarded', () async {
+      final repo = PlanRepository(persist: false);
+      await repo.addPlanItem(makeItem(id: 'v1', seriesId: 's'));
+      var notified = false;
+      repo.addListener(() => notified = true);
+
+      await repo.disableGuardForSeries('s');
+      expect(notified, isFalse);
+    });
+  });
+
+  // ── PlanItem guard field serialization ───────────────────────────────────
+
+  group('PlanItem — guard field serialization', () {
+    test('guard fields round-trip through toJson/fromJson', () {
+      final original = makeGuardedItem(
+        id: 'g1',
+        guardDueDay: 15,
+        guardDueMonth: 6,
+        guardOneTime: true,
+      );
+      final restored = PlanItem.fromJson(original.toJson());
+      expect(restored.isGuarded, isTrue);
+      expect(restored.guardDueDay, 15);
+      expect(restored.guardDueMonth, 6);
+      expect(restored.guardOneTime, isTrue);
+    });
+
+    test('fromJson with missing guard keys defaults to false/null', () {
+      final item = PlanItem.fromJson({
+        'id': '1',
+        'seriesId': '1',
+        'name': 'Rent',
+        'amount': 800.0,
+        'type': 'fixedCost',
+        'frequency': 'monthly',
+        'validFrom': {'year': 2024, 'month': 1},
+      });
+      expect(item.isGuarded, isFalse);
+      expect(item.guardDueDay, isNull);
+      expect(item.guardDueMonth, isNull);
+      expect(item.guardOneTime, isFalse);
+    });
+
+    test('unguarded item toJson omits guard keys', () {
+      final item = makeItem(id: '1', type: PlanItemType.fixedCost);
+      final json = item.toJson();
+      expect(json.containsKey('isGuarded'), isFalse);
+      expect(json.containsKey('guardDueDay'), isFalse);
+      expect(json.containsKey('guardDueMonth'), isFalse);
+      expect(json.containsKey('guardOneTime'), isFalse);
+    });
+
+    test('guarded item toJson writes isGuarded=true and due fields', () {
+      final item = makeGuardedItem(id: 'g1', guardDueDay: 10, guardDueMonth: 3);
+      final json = item.toJson();
+      expect(json['isGuarded'], isTrue);
+      expect(json['guardDueDay'], 10);
+      expect(json['guardDueMonth'], 3);
     });
   });
 }

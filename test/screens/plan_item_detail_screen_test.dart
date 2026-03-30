@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
+import 'package:finance_tracker/models/guard_payment.dart';
 import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/plan/plan_item_detail_screen.dart';
+import 'package:finance_tracker/services/guard_repository.dart';
+import 'package:finance_tracker/widgets/guard_item_status_card.dart';
 
 void main() {
   group('PlanItemDetailScreen — income item', () {
@@ -152,6 +155,115 @@ void main() {
           .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: oneTime, period: const YearMonth(2025, 6))));
       expect(find.text('Active until'), findsNothing);
       expect(find.textContaining('(one-time)'), findsOneWidget);
+    });
+  });
+
+  // ── GUARD card visibility ─────────────────────────────────────────────────
+
+  group('PlanItemDetailScreen — GUARD card visibility', () {
+    // Use a past period (Jan 2024) so itemStateForPeriod returns unpaidActive.
+    const pastPeriod = YearMonth(2024, 1);
+
+    final guardedFixedCost = PlanItem(
+      id: '10',
+      seriesId: '10',
+      name: 'Guarded Rent',
+      amount: 800,
+      type: PlanItemType.fixedCost,
+      frequency: PlanFrequency.monthly,
+      validFrom: pastPeriod,
+      category: ExpenseCategory.housing,
+      financialType: FinancialType.consumption,
+      isGuarded: true,
+      guardDueDay: 1,
+    );
+
+    // GuardItemStatusCard is below the fold in PlanItemDetailScreen's ListView.
+    // Use skipOffstage: false so that off-screen widgets are included in finds.
+    testWidgets('shows GuardItemStatusCard for guarded fixed cost with guardRepository',
+        (tester) async {
+      final guardRepo = GuardRepository(persist: false);
+      await tester.pumpWidget(MaterialApp(
+        home: PlanItemDetailScreen(
+          item: guardedFixedCost,
+          period: pastPeriod,
+          guardRepository: guardRepo,
+        ),
+      ));
+      expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsOneWidget);
+    });
+
+    testWidgets('does not show GuardItemStatusCard when guardRepository is null',
+        (tester) async {
+      await tester.pumpWidget(MaterialApp(
+        home: PlanItemDetailScreen(
+          item: guardedFixedCost,
+          period: pastPeriod,
+          // no guardRepository
+        ),
+      ));
+      expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsNothing);
+    });
+
+    testWidgets('does not show GuardItemStatusCard for income item even with guardRepository',
+        (tester) async {
+      const income = PlanItem(
+        id: '11',
+        seriesId: '11',
+        name: 'Salary',
+        amount: 3000,
+        type: PlanItemType.income,
+        frequency: PlanFrequency.monthly,
+        validFrom: pastPeriod,
+        isGuarded: true, // income items are ignored by GUARD
+      );
+      final guardRepo = GuardRepository(persist: false);
+      await tester.pumpWidget(MaterialApp(
+        home: PlanItemDetailScreen(
+          item: income,
+          period: pastPeriod,
+          guardRepository: guardRepo,
+        ),
+      ));
+      expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsNothing);
+    });
+
+    testWidgets('shows Mark as Paid button after scrolling to GUARD card',
+        (tester) async {
+      final guardRepo = GuardRepository(persist: false);
+      await tester.pumpWidget(MaterialApp(
+        home: PlanItemDetailScreen(
+          item: guardedFixedCost,
+          period: pastPeriod,
+          guardRepository: guardRepo,
+        ),
+      ));
+      await tester.ensureVisible(
+          find.byType(GuardItemStatusCard, skipOffstage: false));
+      await tester.pump();
+      expect(find.text('Mark as Paid'), findsOneWidget);
+    });
+
+    testWidgets('shows Mark as Unpaid after scrolling when payment is confirmed',
+        (tester) async {
+      final paidPayment = GuardPayment(
+        id: 'p1',
+        planItemSeriesId: '10',
+        period: pastPeriod,
+        paidAt: DateTime(2024, 1, 10),
+      );
+      final guardRepo = GuardRepository(persist: false, seed: [paidPayment]);
+      await tester.pumpWidget(MaterialApp(
+        home: PlanItemDetailScreen(
+          item: guardedFixedCost,
+          period: pastPeriod,
+          guardRepository: guardRepo,
+        ),
+      ));
+      await tester.ensureVisible(
+          find.byType(GuardItemStatusCard, skipOffstage: false));
+      await tester.pump();
+      expect(find.text('Mark as Unpaid'), findsOneWidget);
     });
   });
 }
