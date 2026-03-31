@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -23,6 +24,8 @@ class GuardNotificationService {
   static Future<void> initialize() async {
     if (!_timeZonesInitialized) {
       tz.initializeTimeZones();
+      final localTz = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(localTz.identifier));
       _timeZonesInitialized = true;
     }
 
@@ -90,6 +93,7 @@ class GuardNotificationService {
         importance: Importance.high,
         priority: Priority.high,
         enableLights: true,
+        icon: 'ic_guard_notify',
       );
       const darwinDetails = DarwinNotificationDetails();
       const notificationDetails = NotificationDetails(
@@ -101,11 +105,11 @@ class GuardNotificationService {
 
       await _plugin.zonedSchedule(
         _notificationId,
-        '🐾 Payment reminder',
+        'GUARD: Payment reminder',
         body,
         scheduledDate,
         notificationDetails,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
         matchDateTimeComponents: DateTimeComponents.time,
         uiLocalNotificationDateInterpretation:
             UILocalNotificationDateInterpretation.absoluteTime,
