@@ -132,20 +132,22 @@ void main() {
       expect(validIds, containsAll(['v1', 'v2']));
     });
 
-    test('deletes oldest non-damaged saves when over cap', () async {
-      // 4 non-damaged saves; after trim only newest 3 should remain
-      await _writeSaveFile('s1', DateTime(2024, 6, 1)); // newest
+    test('does not delete existing saves when over UI cap', () async {
+      // checkAndRotate no longer trims manual saves — existing saves are
+      // preserved even if they exceed the 3-slot UI cap. Deletion only happens
+      // when the user explicitly creates new saves (createSave enforces the cap).
+      await _writeSaveFile('s1', DateTime(2024, 6, 1));
       await _writeSaveFile('s2', DateTime(2024, 5, 1));
       await _writeSaveFile('s3', DateTime(2024, 4, 1));
-      await _writeSaveFile('s4', DateTime(2024, 3, 1)); // oldest → deleted
+      await _writeSaveFile('s4', DateTime(2024, 3, 1));
 
       final financeRepo = _financeRepo();
       await SaveLoadService.checkAndRotate(financeRepo, _planRepo(), _budgetRepo(), _guardRepo());
 
       final saves = await SaveLoadService.listSaves();
       final ids = saves.where((s) => !s.isDamaged).map((s) => s.id).toSet();
-      expect(ids, containsAll(['s1', 's2', 's3']));
-      expect(ids, isNot(contains('s4')));
+      // All 4 saves must survive — checkAndRotate does not delete any.
+      expect(ids, containsAll(['s1', 's2', 's3', 's4']));
     });
   });
 

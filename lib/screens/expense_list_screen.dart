@@ -175,6 +175,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           _month,
         );
 
+        final unpaidGuardCount = widget.guardRepository
+                ?.unpaidActiveItems(widget.planRepository.items, YearMonth.now())
+                .length ??
+            0;
+
         return Scaffold(
           appBar: AppBar(
             title: const Text('Expenses'),
@@ -192,7 +197,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           body: Column(
             children: [
               _buildMonthNavigator(),
-              _buildGuardStrip(),
+              _buildGuardStrip(unpaidGuardCount),
               _buildBudgetWidget(budgetStatus, isCurrentMonth, isPastMonth),
               _buildViewToggle(),
               const Divider(height: 1),
@@ -240,12 +245,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   // ── GUARD strip ───────────────────────────────────────────────────────────
 
-  Widget _buildGuardStrip() {
-    final guard = widget.guardRepository;
-    if (guard == null) return const SizedBox.shrink();
-    final unpaidCount = guard
-        .unpaidActiveItems(widget.planRepository.items, YearMonth.now())
-        .length;
+  Widget _buildGuardStrip(int unpaidCount) {
     if (unpaidCount == 0) return const SizedBox.shrink();
     return GuardExpenseStrip(
       unpaidCount: unpaidCount,

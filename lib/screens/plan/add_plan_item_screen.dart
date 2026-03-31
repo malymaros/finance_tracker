@@ -295,25 +295,50 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   // ── GUARD section ──────────────────────────────────────────────────────────
 
   Future<void> _pickGuardDueDay() async {
-    // The picker is anchored to the guard due month so the user sees real
-    // calendar days. For yearly items we use _guardDueMonth; for monthly we
-    // use _validFrom.month (the day is then applied to every month at runtime).
     final anchorMonth =
         _frequency == PlanFrequency.yearly ? _guardDueMonth : _validFrom.month;
-    final anchorYear = _validFrom.year;
-    final daysInMonth = DateTime(anchorYear, anchorMonth + 1, 0).day;
+    final daysInMonth = DateTime(_validFrom.year, anchorMonth + 1, 0).day;
     final safeDay = _guardDueDay.clamp(1, daysInMonth);
 
-    final picked = await showDatePicker(
+    int selected = safeDay;
+    final title = _frequency == PlanFrequency.monthly
+        ? 'Due day (repeats monthly)'
+        : 'Due day';
+
+    final picked = await showDialog<int>(
       context: context,
-      initialDate: DateTime(anchorYear, anchorMonth, safeDay),
-      firstDate: DateTime(anchorYear, anchorMonth, 1),
-      lastDate: DateTime(anchorYear, anchorMonth, daysInMonth),
-      helpText: _frequency == PlanFrequency.monthly
-          ? 'Pick due day (repeats monthly)'
-          : 'Pick due day',
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setInner) => AlertDialog(
+          title: Text(title),
+          content: DropdownButtonFormField<int>(
+            initialValue: selected,
+            decoration: const InputDecoration(
+              labelText: 'Day of month',
+              border: OutlineInputBorder(),
+              isDense: true,
+            ),
+            items: List.generate(daysInMonth, (i) {
+              final d = i + 1;
+              return DropdownMenuItem(value: d, child: Text('$d'));
+            }),
+            onChanged: (v) {
+              if (v != null) setInner(() => selected = v);
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(null),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(selected),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ),
     );
-    if (picked != null) setState(() => _guardDueDay = picked.day);
+    if (picked != null) setState(() => _guardDueDay = picked);
   }
 
   Widget _buildGuardSection() {
@@ -350,6 +375,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             Switch(
               value: _isGuarded,
               activeThumbColor: AppColors.gold,
+              activeTrackColor: AppColors.gold.withAlpha(80),
               onChanged: (on) => setState(() => _isGuarded = on),
             ),
           ],

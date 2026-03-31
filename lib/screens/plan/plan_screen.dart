@@ -352,19 +352,17 @@ class _PlanScreenState extends State<PlanScreen> {
           }
 
           // Unresolved items for the banner (always based on "now", not viewed period).
-          final unresolved =
+          // Use unpaidActiveItems() + set subtraction to avoid double state lookups.
+          final unpaidActive =
+              widget.guardRepository.unpaidActiveItems(all, now);
+          final allUnresolved =
               widget.guardRepository.allUnresolvedItems(all, now);
-          final unpaidActive = unresolved
+          final unpaidActiveKeys = {
+            for (final p in unpaidActive) '${p.$1.seriesId}|${p.$2}'
+          };
+          final silencedItems = allUnresolved
               .where((pair) =>
-                  widget.guardRepository.itemStateForPeriod(
-                      pair.$1, pair.$2) ==
-                  GuardState.unpaidActive)
-              .toList();
-          final silencedItems = unresolved
-              .where((pair) =>
-                  widget.guardRepository.itemStateForPeriod(
-                      pair.$1, pair.$2) ==
-                  GuardState.silenced)
+                  !unpaidActiveKeys.contains('${pair.$1.seriesId}|${pair.$2}'))
               .toList();
 
           return Column(

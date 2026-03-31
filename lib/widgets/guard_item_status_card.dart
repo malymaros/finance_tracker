@@ -47,6 +47,10 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
   @override
   void initState() {
     super.initState();
+    // This card self-listens so it works standalone in PlanItemDetailScreen,
+    // which has no parent ListenableBuilder wrapping guardRepository. In
+    // contexts that DO have a parent ListenableBuilder (e.g. GuardScreen) this
+    // causes a double rebuild, but that is harmless.
     widget.guardRepository.addListener(_onGuardChanged);
   }
 

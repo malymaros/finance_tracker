@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../models/category_budget.dart';
@@ -8,6 +9,7 @@ import '../models/expense.dart';
 import '../models/guard_payment.dart';
 import '../models/plan_item.dart';
 import '../models/save_slot.dart';
+import '../models/year_month.dart';
 import 'category_budget_repository.dart';
 import 'finance_repository.dart';
 import 'guard_repository.dart';
@@ -19,6 +21,7 @@ class SaveLoadService {
   /// Override base directory for tests. When set, [getApplicationDocumentsDirectory]
   /// is not called. Must be reset to null after each test.
   // ignore: prefer_final_fields
+  @visibleForTesting
   static String? testBaseDirOverride;
 
   static Future<String> _baseDir() async {
@@ -161,20 +164,6 @@ class SaveLoadService {
     return File('$base/autosave_meta.json');
   }
 
-  /// Deletes the oldest non-damaged saves beyond [_maxSaves]. Called on cold launch.
-  /// Damaged saves are left for the user to remove manually, consistent with how
-  /// [createSave] counts only non-damaged saves toward the cap.
-  static Future<void> _trimSavesToMax() async {
-    final saves = await listSaves();
-    final nonDamaged = saves.where((s) => !s.isDamaged).toList();
-    if (nonDamaged.length <= _maxSaves) return;
-    // listSaves() is already sorted newest-first; delete oldest beyond the cap
-    final toDelete = nonDamaged.skip(_maxSaves);
-    for (final slot in toDelete) {
-      await deleteSave(slot.id);
-    }
-  }
-
   /// Called once on cold launch. Rotates and writes a new auto-backup if the
   /// last one was not taken today.
   static Future<void> checkAndRotate(
@@ -184,8 +173,6 @@ class SaveLoadService {
     GuardRepository guardRepo,
   ) async {
     try {
-      await _trimSavesToMax();
-
       final metaFile = await _autoSaveMetaFile();
       final today = _todayString();
 
@@ -307,11 +294,7 @@ class SaveLoadService {
   }
 
   static String _formatDateLabel(DateTime dt) {
-    const months = [
-      '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
     final day = dt.day.toString().padLeft(2, '0');
-    return '$day ${months[dt.month]} ${dt.year}';
+    return '$day ${YearMonth.monthAbbreviations[dt.month]} ${dt.year}';
   }
 }

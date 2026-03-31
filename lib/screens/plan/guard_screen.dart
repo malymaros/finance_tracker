@@ -67,28 +67,55 @@ class _GuardScreenState extends State<GuardScreen> {
   }
 
   Future<void> _pickDueDay(PlanItem item) async {
-    final now = YearMonth.now();
     final anchorMonth = item.frequency == PlanFrequency.yearly
         ? (item.guardDueMonth ?? item.validFrom.month)
-        : now.month;
-    final anchorYear = now.year;
-    final daysInMonth = DateTime(anchorYear, anchorMonth + 1, 0).day;
+        : YearMonth.now().month;
+    final daysInMonth = DateTime(YearMonth.now().year, anchorMonth + 1, 0).day;
     final currentDay = (item.guardDueDay ?? 1).clamp(1, daysInMonth);
 
-    final picked = await showDatePicker(
+    int selected = currentDay;
+    final title = item.frequency == PlanFrequency.monthly
+        ? 'Due day (repeats monthly)'
+        : 'Due day';
+
+    final picked = await showDialog<int>(
       context: context,
-      initialDate: DateTime(anchorYear, anchorMonth, currentDay),
-      firstDate: DateTime(anchorYear, anchorMonth, 1),
-      lastDate: DateTime(anchorYear, anchorMonth, daysInMonth),
-      helpText: item.frequency == PlanFrequency.monthly
-          ? 'Pick due day (repeats monthly)'
-          : 'Pick due day',
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setInner) => AlertDialog(
+          title: Text(title),
+          content: DropdownButtonFormField<int>(
+            initialValue: selected,
+            decoration: const InputDecoration(
+              labelText: 'Day of month',
+              border: OutlineInputBorder(),
+              isDense: true,
+            ),
+            items: List.generate(daysInMonth, (i) {
+              final d = i + 1;
+              return DropdownMenuItem(value: d, child: Text('$d'));
+            }),
+            onChanged: (v) {
+              if (v != null) setInner(() => selected = v);
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(null),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(selected),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ),
     );
     if (picked == null || !mounted) return;
 
     await widget.planRepository.updateGuardConfigForSeries(
       item.seriesId,
-      guardDueDay: picked.day,
+      guardDueDay: picked,
       guardDueMonth: item.guardDueMonth,
     );
   }
