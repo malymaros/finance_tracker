@@ -74,10 +74,14 @@ class PlanItemDetailScreen extends StatelessWidget {
           _buildDetailsCard(isIncome),
           if (showGuard) ...[
             const SizedBox(height: 16),
-            GuardItemStatusCard(
-              item: item,
-              period: period,
-              guardRepository: guardRepository!,
+            ListenableBuilder(
+              listenable: guardRepository!,
+              builder: (_, _) => GuardItemStatusCard(
+                item: item,
+                period: period,
+                state: guardRepository!.itemStateForPeriod(item, period),
+                guardRepository: guardRepository!,
+              ),
             ),
           ],
         ],

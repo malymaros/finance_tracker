@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/category_budget.dart';
 import '../models/expense_category.dart';
 import '../models/year_month.dart';
+import '../utils/id_generator.dart';
 
 class CategoryBudgetRepository extends ChangeNotifier {
   final bool _persist;
@@ -135,7 +136,7 @@ class CategoryBudgetRepository extends ChangeNotifier {
           validTo: from.addMonths(-1),
         );
       }
-      final newId = DateTime.now().millisecondsSinceEpoch.toString();
+      final newId = IdGenerator.generate();
       _budgets.add(CategoryBudget(
         id: newId,
         seriesId: seriesId,

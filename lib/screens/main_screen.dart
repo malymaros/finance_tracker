@@ -3,29 +3,20 @@ import 'package:flutter/material.dart';
 import '../models/period_bounds.dart';
 import '../theme/app_theme.dart';
 import '../models/year_month.dart';
+import '../services/app_repositories.dart';
 import '../services/guard_notification_service.dart';
-import '../services/category_budget_repository.dart';
-import '../services/finance_repository.dart';
-import '../services/guard_repository.dart';
 import '../services/period_bounds_service.dart';
-import '../services/plan_repository.dart';
 import 'expense_list_screen.dart';
 import 'plan/plan_screen.dart';
 import 'reports/report_screen.dart';
 import 'saves_screen.dart';
 
 class MainScreen extends StatefulWidget {
-  final FinanceRepository repository;
-  final PlanRepository planRepository;
-  final CategoryBudgetRepository budgetRepository;
-  final GuardRepository guardRepository;
+  final AppRepositories repositories;
 
   const MainScreen({
     super.key,
-    required this.repository,
-    required this.planRepository,
-    required this.budgetRepository,
-    required this.guardRepository,
+    required this.repositories,
   });
 
   @override
@@ -43,17 +34,14 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _pageController = PageController();
-    widget.planRepository.addListener(_updateBounds);
-    widget.guardRepository.addListener(_onGuardChanged);
+    widget.repositories.plan.addListener(_updateBounds);
+    widget.repositories.guard.addListener(_onGuardChanged);
     _selectedPeriod.addListener(_onPeriodChanged);
     _updateBounds();
     _screens = [
       _KeepAliveTab(
         child: ExpenseListScreen(
-            repository: widget.repository,
-            planRepository: widget.planRepository,
-            budgetRepository: widget.budgetRepository,
-            guardRepository: widget.guardRepository,
+            repositories: widget.repositories,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onClearAll: () => _clearAllData(context),
@@ -62,10 +50,7 @@ class _MainScreenState extends State<MainScreen> {
       ),
       _KeepAliveTab(
         child: PlanScreen(
-            repository: widget.repository,
-            planRepository: widget.planRepository,
-            budgetRepository: widget.budgetRepository,
-            guardRepository: widget.guardRepository,
+            repositories: widget.repositories,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onClearAll: () => _clearAllData(context),
@@ -73,8 +58,8 @@ class _MainScreenState extends State<MainScreen> {
       ),
       _KeepAliveTab(
         child: ReportScreen(
-            repository: widget.repository,
-            planRepository: widget.planRepository,
+            repository: widget.repositories.finance,
+            planRepository: widget.repositories.plan,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onNavigateToPlan: () => _navigateToTab(1),
@@ -85,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onPeriodChanged() {
-    widget.repository.loadYear(_selectedPeriod.value.year);
+    widget.repositories.finance.loadYear(_selectedPeriod.value.year);
   }
 
   void _onGuardChanged() {
@@ -104,8 +89,8 @@ class _MainScreenState extends State<MainScreen> {
 
   void _updateBounds() {
     final bounds = PeriodBoundsService.compute(
-      planEarliest: widget.planRepository.earliestDataMonth,
-      planLatest: widget.planRepository.latestDataMonth,
+      planEarliest: widget.repositories.plan.earliestDataMonth,
+      planLatest: widget.repositories.plan.latestDataMonth,
     );
     _periodBounds.value = bounds;
     if (!bounds.allows(_selectedPeriod.value)) {
@@ -125,8 +110,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   void dispose() {
-    widget.planRepository.removeListener(_updateBounds);
-    widget.guardRepository.removeListener(_onGuardChanged);
+    widget.repositories.plan.removeListener(_updateBounds);
+    widget.repositories.guard.removeListener(_onGuardChanged);
     _selectedPeriod.removeListener(_onPeriodChanged);
     _selectedPeriod.dispose();
     _periodBounds.dispose();
@@ -137,10 +122,7 @@ class _MainScreenState extends State<MainScreen> {
   void _openSaves(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => SavesScreen(
-        repository: widget.repository,
-        planRepository: widget.planRepository,
-        budgetRepository: widget.budgetRepository,
-        guardRepository: widget.guardRepository,
+        repositories: widget.repositories,
         onClearAll: () => _clearAllData(context),
       ),
     ));
@@ -169,16 +151,16 @@ class _MainScreenState extends State<MainScreen> {
     );
     if (confirmed == true && context.mounted) {
       await Future.wait([
-        widget.repository.clearAll(),
-        widget.planRepository.clearAll(),
-        widget.budgetRepository.clearAll(),
-        widget.guardRepository.clearAll(),
+        widget.repositories.finance.clearAll(),
+        widget.repositories.plan.clearAll(),
+        widget.repositories.budget.clearAll(),
+        widget.repositories.guard.clearAll(),
       ]);
     }
   }
 
-  int get _unpaidActiveCount => widget.guardRepository
-      .unpaidActiveItems(widget.planRepository.items, YearMonth.now())
+  int get _unpaidActiveCount => widget.repositories.guard
+      .unpaidActiveItems(widget.repositories.plan.items, YearMonth.now())
       .length;
 
   @override

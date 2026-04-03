@@ -8,6 +8,7 @@ import '../models/guard_payment.dart';
 import '../models/guard_state.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
+import '../utils/id_generator.dart';
 import 'budget_calculator.dart';
 
 class GuardRepository extends ChangeNotifier {
@@ -75,7 +76,7 @@ class GuardRepository extends ChangeNotifier {
     _payments.removeWhere(
         (p) => p.planItemSeriesId == seriesId && p.period == period);
     _payments.add(GuardPayment(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: IdGenerator.generate(),
       planItemSeriesId: seriesId,
       period: period,
       paidAt: DateTime.now(),
@@ -90,7 +91,7 @@ class GuardRepository extends ChangeNotifier {
     _payments.removeWhere(
         (p) => p.planItemSeriesId == seriesId && p.period == period);
     _payments.add(GuardPayment(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      id: IdGenerator.generate(),
       planItemSeriesId: seriesId,
       period: period,
       silencedAt: DateTime.now(),

@@ -212,6 +212,7 @@ class _GuardScreenState extends State<GuardScreen> {
             ...guardedItems.values.map((item) => GuardItemStatusCard(
                   item: item,
                   period: now,
+                  state: widget.guardRepository.itemStateForPeriod(item, now),
                   guardRepository: widget.guardRepository,
                   onChangeDueDay: () => _pickDueDay(item),
                   onDeleteGuard: () => widget.planRepository

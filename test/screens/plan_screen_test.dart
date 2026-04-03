@@ -6,6 +6,7 @@ import 'package:finance_tracker/models/period_bounds.dart';
 import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/plan/plan_screen.dart';
+import 'package:finance_tracker/services/app_repositories.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/guard_repository.dart';
@@ -17,10 +18,12 @@ import 'package:finance_tracker/widgets/plan_financial_type_tile.dart';
 Widget _wrapScreen(PlanRepository repo, {YearMonth? period}) {
   return MaterialApp(
     home: PlanScreen(
-      repository: FinanceRepository(persist: false),
-      planRepository: repo,
-      budgetRepository: CategoryBudgetRepository(persist: false),
-      guardRepository: GuardRepository(persist: false),
+      repositories: AppRepositories(
+        finance: FinanceRepository(persist: false),
+        plan: repo,
+        budget: CategoryBudgetRepository(persist: false),
+        guard: GuardRepository(persist: false),
+      ),
       selectedPeriod: ValueNotifier(period ?? YearMonth(2025, 1)),
       periodBounds: ValueNotifier(const PeriodBounds()),
       onClearAll: () {},
@@ -296,10 +299,12 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: PlanScreen(
-          repository: FinanceRepository(persist: false),
-          planRepository: repo,
-          budgetRepository: CategoryBudgetRepository(persist: false),
-          guardRepository: GuardRepository(persist: false),
+          repositories: AppRepositories(
+            finance: FinanceRepository(persist: false),
+            plan: repo,
+            budget: CategoryBudgetRepository(persist: false),
+            guard: GuardRepository(persist: false),
+          ),
           selectedPeriod: period,
           periodBounds: ValueNotifier(const PeriodBounds()),
           onClearAll: () {},

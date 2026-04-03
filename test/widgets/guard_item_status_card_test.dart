@@ -51,13 +51,17 @@ Widget _card({
 }) =>
     MaterialApp(
       home: Scaffold(
-        body: GuardItemStatusCard(
-          item: item,
-          period: period,
-          guardRepository: guardRepo,
-          showIfScheduled: showIfScheduled,
-          onChangeDueDay: onChangeDueDay,
-          onDeleteGuard: onDeleteGuard,
+        body: ListenableBuilder(
+          listenable: guardRepo,
+          builder: (_, _) => GuardItemStatusCard(
+            item: item,
+            period: period,
+            state: guardRepo.itemStateForPeriod(item, period),
+            guardRepository: guardRepo,
+            showIfScheduled: showIfScheduled,
+            onChangeDueDay: onChangeDueDay,
+            onDeleteGuard: onDeleteGuard,
+          ),
         ),
       ),
     );

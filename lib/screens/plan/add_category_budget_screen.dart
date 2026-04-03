@@ -5,6 +5,7 @@ import '../../models/expense_category.dart';
 import '../../models/year_month.dart';
 import '../../services/category_budget_repository.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/id_generator.dart';
 
 class AddCategoryBudgetScreen extends StatefulWidget {
   final CategoryBudgetRepository budgetRepository;
@@ -128,7 +129,7 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
         amount,
       );
     } else {
-      final newId = DateTime.now().millisecondsSinceEpoch.toString();
+      final newId = IdGenerator.generate();
       await widget.budgetRepository.addCategoryBudget(CategoryBudget(
         id: newId,
         seriesId: newId,

@@ -8,10 +8,7 @@ import '../../models/period_bounds.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
-import '../../services/category_budget_repository.dart';
-import '../../services/finance_repository.dart';
-import '../../services/guard_repository.dart';
-import '../../services/plan_repository.dart';
+import '../../services/app_repositories.dart';
 import '../../services/report_aggregator.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/financial_type_distribution_card.dart';
@@ -29,10 +26,7 @@ import 'manage_budgets_screen.dart';
 import 'plan_item_detail_screen.dart';
 
 class PlanScreen extends StatefulWidget {
-  final FinanceRepository repository;
-  final PlanRepository planRepository;
-  final CategoryBudgetRepository budgetRepository;
-  final GuardRepository guardRepository;
+  final AppRepositories repositories;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
@@ -40,10 +34,7 @@ class PlanScreen extends StatefulWidget {
 
   const PlanScreen({
     super.key,
-    required this.repository,
-    required this.planRepository,
-    required this.budgetRepository,
-    required this.guardRepository,
+    required this.repositories,
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onClearAll,
@@ -121,7 +112,7 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   double _displayAmount(PlanItem item) {
-    final all = widget.planRepository.items;
+    final all = widget.repositories.plan.items;
     return _isMonthly
         ? BudgetCalculator.itemMonthlyContribution(item, _year, _month)
         : BudgetCalculator.itemYearlyContribution(item, all, _year);
@@ -144,7 +135,7 @@ class _PlanScreenState extends State<PlanScreen> {
   void _navigateToAdd(BuildContext context, PlanItemType type) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => AddPlanItemScreen(
-        planRepository: widget.planRepository,
+        planRepository: widget.repositories.plan,
         initialType: type,
         initialValidFrom: widget.selectedPeriod.value,
       ),
@@ -154,7 +145,7 @@ class _PlanScreenState extends State<PlanScreen> {
   void _navigateToEdit(BuildContext context, PlanItem item) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => AddPlanItemScreen(
-        planRepository: widget.planRepository,
+        planRepository: widget.repositories.plan,
         existing: item,
         initialValidFrom: widget.selectedPeriod.value,
       ),
@@ -166,7 +157,7 @@ class _PlanScreenState extends State<PlanScreen> {
       builder: (routeContext) => PlanItemDetailScreen(
         item: item,
         period: widget.selectedPeriod.value,
-        guardRepository: widget.guardRepository,
+        guardRepository: widget.repositories.guard,
         onEdit: () {
           Navigator.of(routeContext).pop();
           _navigateToEdit(context, item);
@@ -216,7 +207,7 @@ class _PlanScreenState extends State<PlanScreen> {
     );
 
     if (confirmed == true && context.mounted) {
-      widget.planRepository.removePlanItemFrom(item.id, from);
+      widget.repositories.plan.removePlanItemFrom(item.id, from);
     }
   }
 
@@ -245,7 +236,7 @@ class _PlanScreenState extends State<PlanScreen> {
       ),
     );
     if (confirmed == true && mounted) {
-      await widget.guardRepository.silencePayment(seriesId, period);
+      await widget.repositories.guard.silencePayment(seriesId, period);
     }
   }
 
@@ -269,14 +260,14 @@ class _PlanScreenState extends State<PlanScreen> {
               if (value == 'manage_budgets') {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => ManageBudgetsScreen(
-                    budgetRepository: widget.budgetRepository,
+                    budgetRepository: widget.repositories.budget,
                   ),
                 ));
               } else if (value == 'guard') {
                 Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => GuardScreen(
-                    planRepository: widget.planRepository,
-                    guardRepository: widget.guardRepository,
+                    planRepository: widget.repositories.plan,
+                    guardRepository: widget.repositories.guard,
                   ),
                 ));
               }
@@ -300,9 +291,9 @@ class _PlanScreenState extends State<PlanScreen> {
       ),
       body: ListenableBuilder(
         listenable: Listenable.merge(
-            [widget.repository, widget.planRepository, widget.guardRepository]),
+            [widget.repositories.finance, widget.repositories.plan, widget.repositories.guard]),
         builder: (context, _) {
-          final all = widget.planRepository.items;
+          final all = widget.repositories.plan.items;
           final now = YearMonth.now();
           final viewPeriod = widget.selectedPeriod.value;
 
@@ -333,12 +324,12 @@ class _PlanScreenState extends State<PlanScreen> {
 
           final mergedLines = _isMonthly
               ? ReportAggregator.mergedLines(
-                  widget.repository.reportLinesForMonth(_year, _month),
+                  widget.repositories.finance.reportLinesForMonth(_year, _month),
                   BudgetCalculator.planFixedCostReportLinesForMonth(
                       all, _year, _month),
                 )
               : ReportAggregator.mergedLines(
-                  widget.repository.reportLinesForYear(_year),
+                  widget.repositories.finance.reportLinesForYear(_year),
                   BudgetCalculator.planFixedCostReportLinesForYear(all, _year),
                 );
           final ratio = BudgetCalculator.financialTypeIncomeRatios(
@@ -348,15 +339,15 @@ class _PlanScreenState extends State<PlanScreen> {
           final guardStateMap = <String, GuardState>{};
           for (final item in fixedCostItems) {
             guardStateMap[item.seriesId] =
-                widget.guardRepository.itemStateForPeriod(item, viewPeriod);
+                widget.repositories.guard.itemStateForPeriod(item, viewPeriod);
           }
 
           // Unresolved items for the banner (always based on "now", not viewed period).
           // Use unpaidActiveItems() + set subtraction to avoid double state lookups.
           final unpaidActive =
-              widget.guardRepository.unpaidActiveItems(all, now);
+              widget.repositories.guard.unpaidActiveItems(all, now);
           final allUnresolved =
-              widget.guardRepository.allUnresolvedItems(all, now);
+              widget.repositories.guard.allUnresolvedItems(all, now);
           final unpaidActiveKeys = {
             for (final p in unpaidActive) '${p.$1.seriesId}|${p.$2}'
           };
@@ -373,7 +364,7 @@ class _PlanScreenState extends State<PlanScreen> {
                 unpaidActive: unpaidActive,
                 silenced: silencedItems,
                 onMarkPaid: (seriesId, period) =>
-                    widget.guardRepository.confirmPayment(seriesId, period),
+                    widget.repositories.guard.confirmPayment(seriesId, period),
                 onSilence: _onSilenceRequested,
                 onTapItem: (item, _) => _expandToItem(item),
               ),

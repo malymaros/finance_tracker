@@ -6,13 +6,16 @@ import '../models/year_month.dart';
 import '../services/guard_repository.dart';
 import '../theme/app_theme.dart';
 
-/// A self-contained card that shows the GUARD status for a single [item] in a
+/// A stateless card that shows the GUARD status for a single [item] in a
 /// specific [period] and provides all available actions:
 ///   - Mark as Paid
 ///   - Silence
 ///   - Mark as Unpaid (revoke a previous confirmation)
 ///
 /// Used in both [PlanItemDetailScreen] and [GuardScreen].
+///
+/// The caller is responsible for providing the current [state] and for
+/// wrapping this widget in a [ListenableBuilder] when reactivity is needed.
 ///
 /// When [showIfScheduled] is false (default) the widget renders nothing for
 /// [GuardState.scheduled] (period not yet due). Set to true in management
@@ -21,9 +24,10 @@ import '../theme/app_theme.dart';
 ///
 /// When [onChangeDueDay] is provided a "Change day" button is appended inside
 /// the card, allowing due-day edits without navigating to the item form.
-class GuardItemStatusCard extends StatefulWidget {
+class GuardItemStatusCard extends StatelessWidget {
   final PlanItem item;
   final YearMonth period;
+  final GuardState state;
   final GuardRepository guardRepository;
   final VoidCallback? onChangeDueDay;
   final VoidCallback? onDeleteGuard;
@@ -33,66 +37,43 @@ class GuardItemStatusCard extends StatefulWidget {
     super.key,
     required this.item,
     required this.period,
+    required this.state,
     required this.guardRepository,
     this.onChangeDueDay,
     this.onDeleteGuard,
     this.showIfScheduled = false,
   });
 
-  @override
-  State<GuardItemStatusCard> createState() => _GuardItemStatusCardState();
-}
-
-class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
-  @override
-  void initState() {
-    super.initState();
-    // This card self-listens so it works standalone in PlanItemDetailScreen,
-    // which has no parent ListenableBuilder wrapping guardRepository. In
-    // contexts that DO have a parent ListenableBuilder (e.g. GuardScreen) this
-    // causes a double rebuild, but that is harmless.
-    widget.guardRepository.addListener(_onGuardChanged);
-  }
-
-  @override
-  void dispose() {
-    widget.guardRepository.removeListener(_onGuardChanged);
-    super.dispose();
-  }
-
-  void _onGuardChanged() => setState(() {});
-
   // ── Labels ────────────────────────────────────────────────────────────────
 
   String get _periodLabel =>
-      '${YearMonth.monthNames[widget.period.month]} ${widget.period.year}';
+      '${YearMonth.monthNames[period.month]} ${period.year}';
 
   String get _amountLabel {
-    final suffix = switch (widget.item.frequency) {
+    final suffix = switch (item.frequency) {
       PlanFrequency.monthly => '/ month',
       PlanFrequency.yearly => '/ year',
       PlanFrequency.oneTime => '',
     };
-    return '${widget.item.amount.toStringAsFixed(2)} € $suffix'.trim();
+    return '${item.amount.toStringAsFixed(2)} € $suffix'.trim();
   }
 
   String get _dueDateLabel {
-    final rawDueDay = widget.item.guardDueDay ?? 1;
+    final rawDueDay = item.guardDueDay ?? 1;
     final daysInMonth =
-        DateTime(widget.period.year, widget.period.month + 1, 0).day;
+        DateTime(period.year, period.month + 1, 0).day;
     final effectiveDueDay = rawDueDay.clamp(1, daysInMonth);
-    return 'Due ${YearMonth.monthNames[widget.period.month]} '
-        '$effectiveDueDay, ${widget.period.year}';
+    return 'Due ${YearMonth.monthNames[period.month]} '
+        '$effectiveDueDay, ${period.year}';
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────
 
-  Future<void> _confirmAndMarkPaid() async {
-    await widget.guardRepository
-        .confirmPayment(widget.item.seriesId, widget.period);
+  Future<void> _confirmAndMarkPaid(BuildContext context) async {
+    await guardRepository.confirmPayment(item.seriesId, period);
   }
 
-  Future<void> _confirmAndRevoke() async {
+  Future<void> _confirmAndRevoke(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -111,19 +92,18 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
         ],
       ),
     );
-    if (confirmed == true && mounted) {
-      await widget.guardRepository
-          .revokePayment(widget.item.seriesId, widget.period);
+    if (confirmed == true && context.mounted) {
+      await guardRepository.revokePayment(item.seriesId, period);
     }
   }
 
-  Future<void> _confirmAndDeleteGuard() async {
+  Future<void> _confirmAndDeleteGuard(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Remove GUARD?'),
         content: Text(
-          'GUARD will be disabled for "${widget.item.name}". '
+          'GUARD will be disabled for "${item.name}". '
           'Existing payment records are kept but no new reminders will fire.',
         ),
         actions: [
@@ -140,12 +120,12 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
         ],
       ),
     );
-    if (confirmed == true && mounted) {
-      widget.onDeleteGuard?.call();
+    if (confirmed == true && context.mounted) {
+      onDeleteGuard?.call();
     }
   }
 
-  Future<void> _confirmAndSilence() async {
+  Future<void> _confirmAndSilence(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -166,9 +146,8 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
         ],
       ),
     );
-    if (confirmed == true && mounted) {
-      await widget.guardRepository
-          .silencePayment(widget.item.seriesId, widget.period);
+    if (confirmed == true && context.mounted) {
+      await guardRepository.silencePayment(item.seriesId, period);
     }
   }
 
@@ -176,11 +155,8 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
 
   @override
   Widget build(BuildContext context) {
-    final state =
-        widget.guardRepository.itemStateForPeriod(widget.item, widget.period);
-
     if (state == GuardState.none) return const SizedBox.shrink();
-    if (state == GuardState.scheduled && !widget.showIfScheduled) {
+    if (state == GuardState.scheduled && !showIfScheduled) {
       return const SizedBox.shrink();
     }
 
@@ -206,7 +182,7 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
             ),
             const Divider(height: 20),
             Text(
-              widget.item.name,
+              item.name,
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
@@ -220,16 +196,15 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
                   fontSize: 12, color: AppColors.textMuted),
             ),
             const SizedBox(height: 12),
-            _buildStateContent(state),
-            if (widget.onChangeDueDay != null ||
-                widget.onDeleteGuard != null) ...[
+            _buildStateContent(context, state),
+            if (onChangeDueDay != null || onDeleteGuard != null) ...[
               const Divider(height: 24),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  if (widget.onChangeDueDay != null)
+                  if (onChangeDueDay != null)
                     TextButton.icon(
-                      onPressed: widget.onChangeDueDay,
+                      onPressed: onChangeDueDay,
                       icon: const Icon(Icons.event, size: 16),
                       label: const Text('Change day'),
                       style: TextButton.styleFrom(
@@ -238,9 +213,9 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
                         padding: EdgeInsets.zero,
                       ),
                     ),
-                  if (widget.onDeleteGuard != null)
+                  if (onDeleteGuard != null)
                     TextButton.icon(
-                      onPressed: _confirmAndDeleteGuard,
+                      onPressed: () => _confirmAndDeleteGuard(context),
                       icon: const Icon(Icons.remove_circle_outline, size: 16),
                       label: const Text('Remove GUARD'),
                       style: TextButton.styleFrom(
@@ -258,7 +233,7 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
     );
   }
 
-  Widget _buildStateContent(GuardState state) {
+  Widget _buildStateContent(BuildContext context, GuardState state) {
     switch (state) {
       case GuardState.unpaidActive:
         return Column(
@@ -278,7 +253,7 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
               children: [
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: _confirmAndMarkPaid,
+                    onPressed: () => _confirmAndMarkPaid(context),
                     icon: const Icon(Icons.check, size: 16),
                     label: const Text('Mark as Paid'),
                     style: FilledButton.styleFrom(
@@ -287,7 +262,7 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
                 ),
                 const SizedBox(width: 8),
                 TextButton(
-                  onPressed: _confirmAndSilence,
+                  onPressed: () => _confirmAndSilence(context),
                   style: TextButton.styleFrom(
                       foregroundColor: AppColors.textMuted),
                   child: const Text('Silence'),
@@ -322,7 +297,7 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
             ),
             const SizedBox(height: 10),
             FilledButton.icon(
-              onPressed: _confirmAndMarkPaid,
+              onPressed: () => _confirmAndMarkPaid(context),
               icon: const Icon(Icons.check, size: 16),
               label: const Text('Mark as Paid'),
               style: FilledButton.styleFrom(backgroundColor: AppColors.gold),
@@ -331,10 +306,10 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
         );
 
       case GuardState.paid:
-        final record = widget.guardRepository.payments
+        final record = guardRepository.payments
             .where((p) =>
-                p.planItemSeriesId == widget.item.seriesId &&
-                p.period == widget.period &&
+                p.planItemSeriesId == item.seriesId &&
+                p.period == period &&
                 p.paidAt != null)
             .firstOrNull;
         final paidLabel =
@@ -357,7 +332,7 @@ class _GuardItemStatusCardState extends State<GuardItemStatusCard> {
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
-                onPressed: _confirmAndRevoke,
+                onPressed: () => _confirmAndRevoke(context),
                 style: TextButton.styleFrom(
                     foregroundColor: AppColors.textMuted,
                     visualDensity: VisualDensity.compact),

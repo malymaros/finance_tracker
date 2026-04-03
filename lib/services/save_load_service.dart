@@ -10,10 +10,8 @@ import '../models/guard_payment.dart';
 import '../models/plan_item.dart';
 import '../models/save_slot.dart';
 import '../models/year_month.dart';
-import 'category_budget_repository.dart';
-import 'finance_repository.dart';
-import 'guard_repository.dart';
-import 'plan_repository.dart';
+import '../utils/id_generator.dart';
+import 'app_repositories.dart';
 
 class SaveLoadService {
   static const maxSaves = 3;
@@ -71,34 +69,31 @@ class SaveLoadService {
   /// Returns `null` on success, `'cap'` if limit reached, or an error string.
   static Future<String?> createSave(
     String name,
-    FinanceRepository financeRepo,
-    PlanRepository planRepo,
-    CategoryBudgetRepository budgetRepo,
-    GuardRepository guardRepo,
+    AppRepositories repos,
   ) async {
     final existing = await listSaves();
     final nonDamaged = existing.where((s) => !s.isDamaged).length;
     if (nonDamaged >= maxSaves) return 'cap';
 
     try {
-      await financeRepo.loadAllYears();
-      final id = DateTime.now().millisecondsSinceEpoch.toString();
+      await repos.finance.loadAllYears();
+      final id = IdGenerator.generate();
       final slot = SaveSlot(
         id: id,
         name: name,
         createdAt: DateTime.now(),
-        expenseCount: financeRepo.expenses.length,
-        planItemCount: planRepo.items.length,
+        expenseCount: repos.finance.expenses.length,
+        planItemCount: repos.plan.items.length,
       );
 
       final data = {
         ...slot.toJson(),
-        'expenses': financeRepo.expenses.map((e) => e.toJson()).toList(),
-        'planItems': planRepo.items.map((e) => e.toJson()).toList(),
+        'expenses': repos.finance.expenses.map((e) => e.toJson()).toList(),
+        'planItems': repos.plan.items.map((e) => e.toJson()).toList(),
         'categoryBudgets':
-            budgetRepo.budgets.map((b) => b.toJson()).toList(),
+            repos.budget.budgets.map((b) => b.toJson()).toList(),
         'guardPayments':
-            guardRepo.payments.map((p) => p.toJson()).toList(),
+            repos.guard.payments.map((p) => p.toJson()).toList(),
       };
 
       final dir = await _savesDir();
@@ -112,10 +107,7 @@ class SaveLoadService {
 
   static Future<bool> loadSave(
     String saveId,
-    FinanceRepository financeRepo,
-    PlanRepository planRepo,
-    CategoryBudgetRepository budgetRepo,
-    GuardRepository guardRepo,
+    AppRepositories repos,
   ) async {
     try {
       final dir = await _savesDir();
@@ -136,10 +128,10 @@ class SaveLoadService {
           .map((e) => GuardPayment.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      await financeRepo.restoreFromSnapshot(expenses);
-      await planRepo.restoreFromSnapshot(planItems);
-      await budgetRepo.restoreFromSnapshot(categoryBudgets);
-      await guardRepo.restoreFromSnapshot(guardPayments);
+      await repos.finance.restoreFromSnapshot(expenses);
+      await repos.plan.restoreFromSnapshot(planItems);
+      await repos.budget.restoreFromSnapshot(categoryBudgets);
+      await repos.guard.restoreFromSnapshot(guardPayments);
       return true;
     } catch (_) {
       return false;
@@ -166,12 +158,7 @@ class SaveLoadService {
 
   /// Called once on cold launch. Rotates and writes a new auto-backup if the
   /// last one was not taken today.
-  static Future<void> checkAndRotate(
-    FinanceRepository financeRepo,
-    PlanRepository planRepo,
-    CategoryBudgetRepository budgetRepo,
-    GuardRepository guardRepo,
-  ) async {
+  static Future<void> checkAndRotate(AppRepositories repos) async {
     try {
       final metaFile = await _autoSaveMetaFile();
       final today = _todayString();
@@ -189,22 +176,22 @@ class SaveLoadService {
       }
 
       // Write new snapshot to slot 0
-      await financeRepo.loadAllYears();
+      await repos.finance.loadAllYears();
       final now = DateTime.now();
       final slot = SaveSlot(
         id: 'autosave_0',
         name: formatDateLabel(now),
         createdAt: now,
-        expenseCount: financeRepo.expenses.length,
-        planItemCount: planRepo.items.length,
+        expenseCount: repos.finance.expenses.length,
+        planItemCount: repos.plan.items.length,
         isAuto: true,
       );
       final data = {
         ...slot.toJson(),
-        'expenses': financeRepo.expenses.map((e) => e.toJson()).toList(),
-        'planItems': planRepo.items.map((e) => e.toJson()).toList(),
-        'categoryBudgets': budgetRepo.budgets.map((b) => b.toJson()).toList(),
-        'guardPayments': guardRepo.payments.map((p) => p.toJson()).toList(),
+        'expenses': repos.finance.expenses.map((e) => e.toJson()).toList(),
+        'planItems': repos.plan.items.map((e) => e.toJson()).toList(),
+        'categoryBudgets': repos.budget.budgets.map((b) => b.toJson()).toList(),
+        'guardPayments': repos.guard.payments.map((p) => p.toJson()).toList(),
       };
       await slot0.writeAsString(jsonEncode(data));
 
@@ -252,10 +239,7 @@ class SaveLoadService {
   /// ("autosave_0" or "autosave_1").
   static Future<bool> loadAutoSave(
     String slotId,
-    FinanceRepository financeRepo,
-    PlanRepository planRepo,
-    CategoryBudgetRepository budgetRepo,
-    GuardRepository guardRepo,
+    AppRepositories repos,
   ) async {
     try {
       final index = int.tryParse(slotId.replaceFirst('autosave_', ''));
@@ -276,10 +260,10 @@ class SaveLoadService {
           .map((e) => GuardPayment.fromJson(e as Map<String, dynamic>))
           .toList();
 
-      await financeRepo.restoreFromSnapshot(expenses);
-      await planRepo.restoreFromSnapshot(planItems);
-      await budgetRepo.restoreFromSnapshot(categoryBudgets);
-      await guardRepo.restoreFromSnapshot(guardPayments);
+      await repos.finance.restoreFromSnapshot(expenses);
+      await repos.plan.restoreFromSnapshot(planItems);
+      await repos.budget.restoreFromSnapshot(categoryBudgets);
+      await repos.guard.restoreFromSnapshot(guardPayments);
       return true;
     } catch (_) {
       return false;

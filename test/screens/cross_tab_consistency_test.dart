@@ -8,6 +8,7 @@ import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/expense_list_screen.dart';
 import 'package:finance_tracker/screens/plan/plan_screen.dart';
+import 'package:finance_tracker/services/app_repositories.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/guard_repository.dart';
@@ -70,9 +71,12 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: ExpenseListScreen(
-          repository: repo,
-          planRepository: planRepo,
-          budgetRepository: CategoryBudgetRepository(persist: false),
+          repositories: AppRepositories(
+            finance: repo,
+            plan: planRepo,
+            budget: CategoryBudgetRepository(persist: false),
+            guard: GuardRepository(persist: false),
+          ),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -100,10 +104,12 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: PlanScreen(
-          repository: _financeRepo(),
-          planRepository: planRepo,
-          budgetRepository: CategoryBudgetRepository(persist: false),
-          guardRepository: GuardRepository(persist: false),
+          repositories: AppRepositories(
+            finance: _financeRepo(),
+            plan: planRepo,
+            budget: CategoryBudgetRepository(persist: false),
+            guard: GuardRepository(persist: false),
+          ),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -129,10 +135,12 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: PlanScreen(
-          repository: _financeRepo(),
-          planRepository: planRepo,
-          budgetRepository: CategoryBudgetRepository(persist: false),
-          guardRepository: GuardRepository(persist: false),
+          repositories: AppRepositories(
+            finance: _financeRepo(),
+            plan: planRepo,
+            budget: CategoryBudgetRepository(persist: false),
+            guard: GuardRepository(persist: false),
+          ),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -164,9 +172,12 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: ExpenseListScreen(
-          repository: repo,
-          planRepository: planRepo,
-          budgetRepository: CategoryBudgetRepository(persist: false),
+          repositories: AppRepositories(
+            finance: repo,
+            plan: planRepo,
+            budget: CategoryBudgetRepository(persist: false),
+            guard: GuardRepository(persist: false),
+          ),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -190,10 +201,12 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: PlanScreen(
-          repository: _financeRepo(),
-          planRepository: planRepo,
-          budgetRepository: CategoryBudgetRepository(persist: false),
-          guardRepository: GuardRepository(persist: false),
+          repositories: AppRepositories(
+            finance: _financeRepo(),
+            plan: planRepo,
+            budget: CategoryBudgetRepository(persist: false),
+            guard: GuardRepository(persist: false),
+          ),
           selectedPeriod: period,
           periodBounds: bounds,
           onClearAll: () {},
@@ -390,9 +403,12 @@ void main() {
 
       await tester.pumpWidget(MaterialApp(
         home: ExpenseListScreen(
-          repository: repo,
-          planRepository: planRepo,
-          budgetRepository: CategoryBudgetRepository(persist: false),
+          repositories: AppRepositories(
+            finance: repo,
+            plan: planRepo,
+            budget: CategoryBudgetRepository(persist: false),
+            guard: GuardRepository(persist: false),
+          ),
           selectedPeriod: period,
           periodBounds: boundsNotifier,
           onClearAll: () {},

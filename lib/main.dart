@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'models/year_month.dart';
 import 'screens/main_screen.dart';
 import 'screens/welcome_screen.dart';
+import 'services/app_repositories.dart';
 import 'services/category_budget_repository.dart';
 import 'services/finance_repository.dart';
 import 'services/guard_notification_service.dart';
 import 'services/guard_repository.dart';
+import 'services/plan_repository.dart';
 import 'services/save_load_service.dart';
 import 'theme/app_theme.dart';
-import 'services/plan_repository.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +24,13 @@ void main() async {
     budgetRepository.load(),
     guardRepository.load(),
   ]);
-  await SaveLoadService.checkAndRotate(repository, planRepository, budgetRepository, guardRepository);
+  final repositories = AppRepositories(
+    finance: repository,
+    plan: planRepository,
+    budget: budgetRepository,
+    guard: guardRepository,
+  );
+  await SaveLoadService.checkAndRotate(repositories);
 
   // Initialise notifications and schedule the daily GUARD reminder.
   // Wrapped in try-catch: exact-alarm permission may not be granted yet on
@@ -41,26 +48,15 @@ void main() async {
     // Notification setup failed silently — app still launches normally.
   }
 
-  runApp(FinanceTrackerApp(
-    repository: repository,
-    planRepository: planRepository,
-    budgetRepository: budgetRepository,
-    guardRepository: guardRepository,
-  ));
+  runApp(FinanceTrackerApp(repositories: repositories));
 }
 
 class FinanceTrackerApp extends StatelessWidget {
-  final FinanceRepository repository;
-  final PlanRepository planRepository;
-  final CategoryBudgetRepository budgetRepository;
-  final GuardRepository guardRepository;
+  final AppRepositories repositories;
 
   const FinanceTrackerApp({
     super.key,
-    required this.repository,
-    required this.planRepository,
-    required this.budgetRepository,
-    required this.guardRepository,
+    required this.repositories,
   });
 
   @override
@@ -70,12 +66,7 @@ class FinanceTrackerApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       home: WelcomeScreen(
-        mainScreenBuilder: () => MainScreen(
-          repository: repository,
-          planRepository: planRepository,
-          budgetRepository: budgetRepository,
-          guardRepository: guardRepository,
-        ),
+        mainScreenBuilder: () => MainScreen(repositories: repositories),
       ),
     );
   }

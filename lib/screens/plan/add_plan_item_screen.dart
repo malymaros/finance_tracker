@@ -6,6 +6,7 @@ import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/plan_repository.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/id_generator.dart';
 
 class AddPlanItemScreen extends StatefulWidget {
   final PlanRepository planRepository;
@@ -165,7 +166,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
 
     if (e == null) {
       // New item — new series
-      final newId = DateTime.now().millisecondsSinceEpoch.toString();
+      final newId = IdGenerator.generate();
       await widget.planRepository.addPlanItem(PlanItem(
         id: newId,
         seriesId: newId,
@@ -220,7 +221,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       ));
     } else {
       // Fixed cost, different validFrom → new version + truncate future versions.
-      final newId = DateTime.now().millisecondsSinceEpoch.toString();
+      final newId = IdGenerator.generate();
       await widget.planRepository.addPlanItem(PlanItem(
         id: newId,
         seriesId: e.seriesId,

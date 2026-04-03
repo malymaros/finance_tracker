@@ -2,27 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../models/save_slot.dart';
 import '../models/year_month.dart';
-import '../services/category_budget_repository.dart';
-import '../services/finance_repository.dart';
-import '../services/guard_repository.dart';
-import '../services/plan_repository.dart';
+import '../services/app_repositories.dart';
 import '../services/save_load_service.dart';
 import '../theme/app_theme.dart';
 import 'save_slot_tile.dart';
 
 class AutoBackupTile extends StatefulWidget {
-  final FinanceRepository financeRepository;
-  final PlanRepository planRepository;
-  final CategoryBudgetRepository budgetRepository;
-  final GuardRepository guardRepository;
+  final AppRepositories repositories;
   final VoidCallback onRestored;
 
   const AutoBackupTile({
     super.key,
-    required this.financeRepository,
-    required this.planRepository,
-    required this.budgetRepository,
-    required this.guardRepository,
+    required this.repositories,
     required this.onRestored,
   });
 
@@ -173,10 +164,7 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
 
     final success = await SaveLoadService.loadAutoSave(
       slot.id,
-      widget.financeRepository,
-      widget.planRepository,
-      widget.budgetRepository,
-      widget.guardRepository,
+      widget.repositories,
     );
 
     if (success) {

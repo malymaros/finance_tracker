@@ -5,11 +5,8 @@ import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/period_bounds.dart';
 import '../models/year_month.dart';
+import '../services/app_repositories.dart';
 import '../services/budget_calculator.dart';
-import '../services/category_budget_repository.dart';
-import '../services/finance_repository.dart';
-import '../services/guard_repository.dart';
-import '../services/plan_repository.dart';
 import '../services/import_export_service.dart';
 import '../services/share_service.dart';
 import '../theme/app_theme.dart';
@@ -31,10 +28,7 @@ import 'group_expense_list_screen.dart';
 enum _ViewMode { items, byCategory, byGroup }
 
 class ExpenseListScreen extends StatefulWidget {
-  final FinanceRepository repository;
-  final PlanRepository planRepository;
-  final CategoryBudgetRepository budgetRepository;
-  final GuardRepository? guardRepository;
+  final AppRepositories repositories;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
   final VoidCallback onClearAll;
@@ -45,10 +39,7 @@ class ExpenseListScreen extends StatefulWidget {
 
   const ExpenseListScreen({
     super.key,
-    required this.repository,
-    required this.planRepository,
-    required this.budgetRepository,
-    this.guardRepository,
+    required this.repositories,
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onClearAll,
@@ -107,7 +98,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   void _navigateToImport() {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => ImportScreen(repository: widget.repository),
+        builder: (_) => ImportScreen(repository: widget.repositories.finance),
       ),
     );
   }
@@ -118,7 +109,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
     try {
       final bytes = await ImportExportService.exportExpenses(
-        widget.repository.expenses,
+        widget.repositories.finance.expenses,
         range.start,
         range.end,
       );
@@ -146,29 +137,28 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
     return ListenableBuilder(
       listenable: Listenable.merge([
-        widget.repository,
-        widget.planRepository,
-        widget.budgetRepository,
-        if (widget.guardRepository != null) widget.guardRepository!,
+        widget.repositories.finance,
+        widget.repositories.plan,
+        widget.repositories.budget,
+        widget.repositories.guard,
       ]),
       builder: (context, _) {
-        final monthExpenses = widget.repository.expensesForMonth(_year, _month)
+        final monthExpenses = widget.repositories.finance.expensesForMonth(_year, _month)
           ..sort((a, b) => b.date.compareTo(a.date));
 
         final actualSpent =
             monthExpenses.fold(0.0, (sum, e) => sum + e.amount);
 
         final budgetStatus = BudgetCalculator.budgetStatus(
-          widget.planRepository.items,
+          widget.repositories.plan.items,
           actualSpent,
           _year,
           _month,
         );
 
-        final unpaidGuardCount = widget.guardRepository
-                ?.unpaidActiveItems(widget.planRepository.items, YearMonth.now())
-                .length ??
-            0;
+        final unpaidGuardCount = widget.repositories.guard
+            .unpaidActiveItems(widget.repositories.plan.items, YearMonth.now())
+            .length;
 
         return Scaffold(
           appBar: AppBar(
@@ -338,7 +328,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         final expense = expenses[i];
         return SwipeableTile(
           itemId: expense.id,
-          onDelete: () => widget.repository.removeExpense(expense.id),
+          onDelete: () => widget.repositories.finance.removeExpense(expense.id),
           onEdit: () => _navigateToEdit(context, expense),
           child: ExpenseListTile(
             expense: expense,
@@ -359,7 +349,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         },
         onDelete: () {
           Navigator.of(routeContext).pop();
-          widget.repository.removeExpense(expense.id);
+          widget.repositories.finance.removeExpense(expense.id);
         },
       ),
     ));
@@ -369,7 +359,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   Widget _buildCategoryBudgetWarning(List<Expense> monthExpenses) {
     final period = YearMonth(_year, _month);
-    final budgets = widget.budgetRepository.allActiveBudgetsForMonth(period);
+    final budgets = widget.repositories.budget.allActiveBudgetsForMonth(period);
     final overages = BudgetCalculator.categoryOverages(monthExpenses, budgets);
     return CategoryBudgetWarningCard(overages: overages);
   }
@@ -394,7 +384,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     final sorted = _groupedByCategory(expenses);
     final period = YearMonth(_year, _month);
     final budgets =
-        widget.budgetRepository.allActiveBudgetsForMonth(period);
+        widget.repositories.budget.allActiveBudgetsForMonth(period);
 
     return ListView.separated(
       itemCount: sorted.length,
@@ -417,7 +407,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         builder: (_) => CategoryExpenseListScreen(
           category: category,
           period: widget.selectedPeriod.value,
-          repository: widget.repository,
+          repository: widget.repositories.finance,
         ),
       ),
     );
@@ -428,12 +418,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   Widget _buildGroupList(List<Expense> monthExpenses) {
     if (!monthExpenses.any((e) => e.group != null)) {
       final hasAnyGroups =
-          widget.repository.expenses.any((e) => e.group != null);
+          widget.repositories.finance.expenses.any((e) => e.group != null);
       return hasAnyGroups ? _buildNoGroupExpensesState() : _buildNoGroupsState();
     }
 
     final summaries =
-        widget.repository.groupSummariesForMonth(_year, _month);
+        widget.repositories.finance.groupSummariesForMonth(_year, _month);
 
     return ListView.separated(
       itemCount: summaries.length,
@@ -490,7 +480,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       MaterialPageRoute(
         builder: (_) => GroupExpenseListScreen(
           groupName: groupName,
-          repository: widget.repository,
+          repository: widget.repositories.finance,
         ),
       ),
     );
@@ -500,7 +490,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => AddExpenseScreen(
-          repository: widget.repository,
+          repository: widget.repositories.finance,
           initialDate: initialDate,
         ),
       ),
@@ -511,7 +501,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => AddExpenseScreen(
-          repository: widget.repository,
+          repository: widget.repositories.finance,
           existing: expense,
         ),
       ),

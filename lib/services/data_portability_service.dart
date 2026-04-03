@@ -4,10 +4,7 @@ import '../models/category_budget.dart';
 import '../models/expense.dart';
 import '../models/guard_payment.dart';
 import '../models/plan_item.dart';
-import 'category_budget_repository.dart';
-import 'finance_repository.dart';
-import 'guard_repository.dart';
-import 'plan_repository.dart';
+import 'app_repositories.dart';
 
 /// Pure static service for exporting and importing all app data as a
 /// portable JSON file.
@@ -24,22 +21,17 @@ class DataPortabilityService {
   ///
   /// Loads all years before serializing to ensure no data is missing when
   /// only a subset of years is currently in memory.
-  static Future<String> exportData(
-    FinanceRepository repo,
-    PlanRepository planRepo,
-    CategoryBudgetRepository budgetRepo,
-    GuardRepository guardRepo,
-  ) async {
-    await repo.loadAllYears();
+  static Future<String> exportData(AppRepositories repos) async {
+    await repos.finance.loadAllYears();
     final data = {
       'version': 1,
       'exportedAt': DateTime.now().toIso8601String(),
-      'expenses': repo.expenses.map((e) => e.toJson()).toList(),
-      'planItems': planRepo.items.map((i) => i.toJson()).toList(),
+      'expenses': repos.finance.expenses.map((e) => e.toJson()).toList(),
+      'planItems': repos.plan.items.map((i) => i.toJson()).toList(),
       'categoryBudgets':
-          budgetRepo.budgets.map((b) => b.toJson()).toList(),
+          repos.budget.budgets.map((b) => b.toJson()).toList(),
       'guardPayments':
-          guardRepo.payments.map((p) => p.toJson()).toList(),
+          repos.guard.payments.map((p) => p.toJson()).toList(),
     };
     return jsonEncode(data);
   }
@@ -51,10 +43,7 @@ class DataPortabilityService {
   /// to empty for files created before those features existed.
   static Future<void> importData(
     String jsonString,
-    FinanceRepository repo,
-    PlanRepository planRepo,
-    CategoryBudgetRepository budgetRepo,
-    GuardRepository guardRepo,
+    AppRepositories repos,
   ) async {
     final map = jsonDecode(jsonString) as Map<String, dynamic>;
 
@@ -78,9 +67,9 @@ class DataPortabilityService {
         .map((p) => GuardPayment.fromJson(p as Map<String, dynamic>))
         .toList();
 
-    await repo.restoreFromSnapshot(expenses);
-    await planRepo.restoreFromSnapshot(planItems);
-    await budgetRepo.restoreFromSnapshot(categoryBudgets);
-    await guardRepo.restoreFromSnapshot(guardPayments);
+    await repos.finance.restoreFromSnapshot(expenses);
+    await repos.plan.restoreFromSnapshot(planItems);
+    await repos.budget.restoreFromSnapshot(categoryBudgets);
+    await repos.guard.restoreFromSnapshot(guardPayments);
   }
 }

@@ -6,6 +6,7 @@ import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
+import 'package:finance_tracker/services/app_repositories.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
 import 'package:finance_tracker/services/data_portability_service.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
@@ -30,44 +31,41 @@ PlanItem makePlanItem({String id = 'p1'}) => PlanItem(
       validFrom: YearMonth(2024, 1),
     );
 
-CategoryBudgetRepository _budgetRepo() =>
-    CategoryBudgetRepository(persist: false);
-GuardRepository _guardRepo() => GuardRepository(persist: false);
+AppRepositories _repos({
+  FinanceRepository? finance,
+  PlanRepository? plan,
+  CategoryBudgetRepository? budget,
+  GuardRepository? guard,
+}) =>
+    AppRepositories(
+      finance: finance ?? FinanceRepository(persist: false),
+      plan: plan ?? PlanRepository(persist: false),
+      budget: budget ?? CategoryBudgetRepository(persist: false),
+      guard: guard ?? GuardRepository(persist: false),
+    );
 
 void main() {
   group('DataPortabilityService — exportData', () {
     test('returns valid JSON string', () async {
-      final repo = FinanceRepository(persist: false);
-      final planRepo = PlanRepository(persist: false);
-      final result = await DataPortabilityService.exportData(
-          repo, planRepo, _budgetRepo(), _guardRepo());
+      final result = await DataPortabilityService.exportData(_repos());
       expect(() => jsonDecode(result), returnsNormally);
     });
 
     test('contains version: 1', () async {
-      final repo = FinanceRepository(persist: false);
-      final planRepo = PlanRepository(persist: false);
-      final map = jsonDecode(await DataPortabilityService.exportData(
-              repo, planRepo, _budgetRepo(), _guardRepo()))
+      final map = jsonDecode(await DataPortabilityService.exportData(_repos()))
           as Map<String, dynamic>;
       expect(map['version'], 1);
     });
 
     test('contains non-empty exportedAt field', () async {
-      final repo = FinanceRepository(persist: false);
-      final planRepo = PlanRepository(persist: false);
-      final map = jsonDecode(await DataPortabilityService.exportData(
-              repo, planRepo, _budgetRepo(), _guardRepo()))
+      final map = jsonDecode(await DataPortabilityService.exportData(_repos()))
           as Map<String, dynamic>;
       expect(map['exportedAt'], isA<String>());
       expect((map['exportedAt'] as String).isNotEmpty, isTrue);
     });
 
     test('empty repos produce empty expenses and planItems arrays', () async {
-      final repo = FinanceRepository(persist: false);
-      final planRepo = PlanRepository(persist: false);
-      final map = jsonDecode(await DataPortabilityService.exportData(
-              repo, planRepo, _budgetRepo(), _guardRepo()))
+      final map = jsonDecode(await DataPortabilityService.exportData(_repos()))
           as Map<String, dynamic>;
       expect(map['expenses'], isEmpty);
       expect(map['planItems'], isEmpty);
@@ -75,12 +73,11 @@ void main() {
 
     test('expenses array matches repo contents', () async {
       final repo = FinanceRepository(persist: false);
-      final planRepo = PlanRepository(persist: false);
       await repo.addExpense(makeExpense(id: 'e1', amount: 25.0));
       await repo.addExpense(makeExpense(id: 'e2', amount: 75.0));
 
-      final map = jsonDecode(await DataPortabilityService.exportData(
-              repo, planRepo, _budgetRepo(), _guardRepo()))
+      final map = jsonDecode(
+              await DataPortabilityService.exportData(_repos(finance: repo)))
           as Map<String, dynamic>;
       final expenses = map['expenses'] as List;
 
@@ -90,12 +87,11 @@ void main() {
     });
 
     test('planItems array matches planRepo contents', () async {
-      final repo = FinanceRepository(persist: false);
       final planRepo = PlanRepository(persist: false);
       await planRepo.addPlanItem(makePlanItem(id: 'p1'));
 
-      final map = jsonDecode(await DataPortabilityService.exportData(
-              repo, planRepo, _budgetRepo(), _guardRepo()))
+      final map = jsonDecode(
+              await DataPortabilityService.exportData(_repos(plan: planRepo)))
           as Map<String, dynamic>;
       final planItems = map['planItems'] as List;
 
@@ -112,12 +108,12 @@ void main() {
       await exportPlanRepo.addPlanItem(makePlanItem(id: 'p1'));
 
       final jsonString = await DataPortabilityService.exportData(
-          exportRepo, exportPlanRepo, _budgetRepo(), _guardRepo());
+          _repos(finance: exportRepo, plan: exportPlanRepo));
 
       final importRepo = FinanceRepository(persist: false);
       final importPlanRepo = PlanRepository(persist: false);
       await DataPortabilityService.importData(
-          jsonString, importRepo, importPlanRepo, _budgetRepo(), _guardRepo());
+          jsonString, _repos(finance: importRepo, plan: importPlanRepo));
 
       expect(importRepo.expenses.length, 1);
       expect(importRepo.expenses.first.id, 'e1');
@@ -138,15 +134,13 @@ void main() {
       });
 
       await DataPortabilityService.importData(
-          jsonString, importRepo, importPlanRepo, _budgetRepo(), _guardRepo());
+          jsonString, _repos(finance: importRepo, plan: importPlanRepo));
 
       expect(importRepo.expenses.length, 1);
       expect(importRepo.expenses.first.id, 'new');
     });
 
     test('throws FormatException when version field is missing', () async {
-      final repo = FinanceRepository(persist: false);
-      final planRepo = PlanRepository(persist: false);
       final jsonString = jsonEncode({
         'exportedAt': DateTime.now().toIso8601String(),
         'expenses': <dynamic>[],
@@ -154,15 +148,13 @@ void main() {
       });
 
       expect(
-        () => DataPortabilityService.importData(
-            jsonString, repo, planRepo, _budgetRepo(), _guardRepo()),
+        () => DataPortabilityService.importData(jsonString, _repos()),
         throwsA(isA<FormatException>()),
       );
     });
 
     test('handles missing expenses key — treats as empty list', () async {
       final repo = FinanceRepository(persist: false);
-      final planRepo = PlanRepository(persist: false);
       await repo.addExpense(makeExpense());
 
       final jsonString = jsonEncode({
@@ -172,12 +164,11 @@ void main() {
       });
 
       await DataPortabilityService.importData(
-          jsonString, repo, planRepo, _budgetRepo(), _guardRepo());
+          jsonString, _repos(finance: repo));
       expect(repo.expenses, isEmpty);
     });
 
     test('handles missing planItems key — treats as empty list', () async {
-      final repo = FinanceRepository(persist: false);
       final planRepo = PlanRepository(persist: false);
       await planRepo.addPlanItem(makePlanItem());
 
@@ -188,14 +179,12 @@ void main() {
       });
 
       await DataPortabilityService.importData(
-          jsonString, repo, planRepo, _budgetRepo(), _guardRepo());
+          jsonString, _repos(plan: planRepo));
       expect(planRepo.items, isEmpty);
     });
 
     test('handles missing categoryBudgets key — backward compatible', () async {
-      final repo = FinanceRepository(persist: false);
-      final planRepo = PlanRepository(persist: false);
-      final budgetRepo = _budgetRepo();
+      final budgetRepo = CategoryBudgetRepository(persist: false);
 
       // Simulate a file exported before the budget feature existed.
       final jsonString = jsonEncode({
@@ -207,14 +196,12 @@ void main() {
       });
 
       await DataPortabilityService.importData(
-          jsonString, repo, planRepo, budgetRepo, _guardRepo());
+          jsonString, _repos(budget: budgetRepo));
       expect(budgetRepo.budgets, isEmpty);
     });
 
     test('handles missing guardPayments key — backward compatible', () async {
-      final repo = FinanceRepository(persist: false);
-      final planRepo = PlanRepository(persist: false);
-      final guardRepo = _guardRepo();
+      final guardRepo = GuardRepository(persist: false);
 
       // Simulate a file exported before the GUARD feature existed.
       final jsonString = jsonEncode({
@@ -226,24 +213,19 @@ void main() {
       });
 
       await DataPortabilityService.importData(
-          jsonString, repo, planRepo, _budgetRepo(), guardRepo);
+          jsonString, _repos(guard: guardRepo));
       expect(guardRepo.payments, isEmpty);
     });
 
     test('throws on completely invalid JSON string', () async {
-      final repo = FinanceRepository(persist: false);
-      final planRepo = PlanRepository(persist: false);
-
       expect(
-        () => DataPortabilityService.importData(
-            'not valid json {{', repo, planRepo, _budgetRepo(), _guardRepo()),
+        () => DataPortabilityService.importData('not valid json {{', _repos()),
         throwsA(isA<FormatException>()),
       );
     });
 
     test('round-trip export→import preserves all expense fields', () async {
       final exportRepo = FinanceRepository(persist: false);
-      final exportPlanRepo = PlanRepository(persist: false);
       final original = Expense(
         id: 'rt1',
         amount: 123.45,
@@ -255,12 +237,11 @@ void main() {
       await exportRepo.addExpense(original);
 
       final jsonString = await DataPortabilityService.exportData(
-          exportRepo, exportPlanRepo, _budgetRepo(), _guardRepo());
+          _repos(finance: exportRepo));
 
       final importRepo = FinanceRepository(persist: false);
-      final importPlanRepo = PlanRepository(persist: false);
       await DataPortabilityService.importData(
-          jsonString, importRepo, importPlanRepo, _budgetRepo(), _guardRepo());
+          jsonString, _repos(finance: importRepo));
 
       final restored = importRepo.expenses.first;
       expect(restored.id, original.id);
@@ -272,7 +253,6 @@ void main() {
     });
 
     test('round-trip export→import preserves all plan item fields', () async {
-      final exportRepo = FinanceRepository(persist: false);
       final exportPlanRepo = PlanRepository(persist: false);
       final original = PlanItem(
         id: 'rt2',
@@ -289,12 +269,11 @@ void main() {
       await exportPlanRepo.addPlanItem(original);
 
       final jsonString = await DataPortabilityService.exportData(
-          exportRepo, exportPlanRepo, _budgetRepo(), _guardRepo());
+          _repos(plan: exportPlanRepo));
 
-      final importRepo = FinanceRepository(persist: false);
       final importPlanRepo = PlanRepository(persist: false);
       await DataPortabilityService.importData(
-          jsonString, importRepo, importPlanRepo, _budgetRepo(), _guardRepo());
+          jsonString, _repos(plan: importPlanRepo));
 
       final restored = importPlanRepo.items.first;
       expect(restored.id, original.id);

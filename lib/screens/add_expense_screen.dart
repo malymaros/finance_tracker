@@ -5,6 +5,7 @@ import '../models/expense_category.dart';
 import '../models/financial_type.dart';
 import '../services/finance_repository.dart';
 import '../theme/app_theme.dart';
+import '../utils/id_generator.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final FinanceRepository repository;
@@ -71,7 +72,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     final expense = Expense(
       id: widget.existing?.id ??
-          DateTime.now().millisecondsSinceEpoch.toString(),
+          IdGenerator.generate(),
       amount: double.parse(_amountController.text.trim()),
       category: _selectedCategory,
       financialType: _selectedFinancialType,

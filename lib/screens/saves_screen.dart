@@ -5,11 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../models/save_slot.dart';
-import '../services/category_budget_repository.dart';
+import '../services/app_repositories.dart';
 import '../services/data_portability_service.dart';
-import '../services/finance_repository.dart';
-import '../services/guard_repository.dart';
-import '../services/plan_repository.dart';
 import '../services/save_load_service.dart';
 import '../services/share_service.dart';
 import '../theme/app_theme.dart';
@@ -17,18 +14,12 @@ import '../widgets/auto_backup_tile.dart';
 import '../widgets/save_slot_tile.dart';
 
 class SavesScreen extends StatefulWidget {
-  final FinanceRepository repository;
-  final PlanRepository planRepository;
-  final CategoryBudgetRepository budgetRepository;
-  final GuardRepository guardRepository;
+  final AppRepositories repositories;
   final VoidCallback onClearAll;
 
   const SavesScreen({
     super.key,
-    required this.repository,
-    required this.planRepository,
-    required this.budgetRepository,
-    required this.guardRepository,
+    required this.repositories,
     required this.onClearAll,
   });
 
@@ -75,10 +66,7 @@ class _SavesScreenState extends State<SavesScreen> {
   Future<void> _exportData() async {
     try {
       final jsonString = await DataPortabilityService.exportData(
-        widget.repository,
-        widget.planRepository,
-        widget.budgetRepository,
-        widget.guardRepository,
+        widget.repositories,
       );
       final now = DateTime.now();
       final date =
@@ -139,10 +127,7 @@ class _SavesScreenState extends State<SavesScreen> {
     try {
       await DataPortabilityService.importData(
         jsonString,
-        widget.repository,
-        widget.planRepository,
-        widget.budgetRepository,
-        widget.guardRepository,
+        widget.repositories,
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -173,10 +158,7 @@ class _SavesScreenState extends State<SavesScreen> {
           _buildSectionHeader('AUTO BACKUP'),
           const SizedBox(height: 10),
           AutoBackupTile(
-            financeRepository: widget.repository,
-            planRepository: widget.planRepository,
-            budgetRepository: widget.budgetRepository,
-            guardRepository: widget.guardRepository,
+            repositories: widget.repositories,
             onRestored: _loadList,
           ),
           const SizedBox(height: 24),
@@ -299,13 +281,7 @@ class _SavesScreenState extends State<SavesScreen> {
 
     if (name != null && mounted) {
       await SaveLoadService.deleteSave(slot.id);
-      await SaveLoadService.createSave(
-        name,
-        widget.repository,
-        widget.planRepository,
-        widget.budgetRepository,
-        widget.guardRepository,
-      );
+      await SaveLoadService.createSave(name, widget.repositories);
       await _loadList();
     }
   }
@@ -317,13 +293,7 @@ class _SavesScreenState extends State<SavesScreen> {
     );
 
     if (name != null && mounted) {
-      await SaveLoadService.createSave(
-        name,
-        widget.repository,
-        widget.planRepository,
-        widget.budgetRepository,
-        widget.guardRepository,
-      );
+      await SaveLoadService.createSave(name, widget.repositories);
       await _loadList();
     }
   }
@@ -356,10 +326,7 @@ class _SavesScreenState extends State<SavesScreen> {
 
     final success = await SaveLoadService.loadSave(
       slot.id,
-      widget.repository,
-      widget.planRepository,
-      widget.budgetRepository,
-      widget.guardRepository,
+      widget.repositories,
     );
 
     if (success) {
