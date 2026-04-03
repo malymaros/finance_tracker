@@ -19,8 +19,6 @@ class GuardExpenseStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (unpaidCount == 0) return const SizedBox.shrink();
-
     final label = unpaidCount == 1
         ? '1 guarded payment pending'
         : '$unpaidCount guarded payments pending';

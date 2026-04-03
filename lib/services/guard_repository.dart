@@ -182,7 +182,6 @@ class GuardRepository extends ChangeNotifier {
     final result = <(PlanItem, YearMonth)>[];
     final today = DateTime.now();
 
-    // Collect all unique seriesIds that have at least one guarded version.
     final guardedSeriesIds = <String>{};
     for (final item in allItems) {
       if (item.isGuarded &&
@@ -203,32 +202,24 @@ class GuardRepository extends ChangeNotifier {
       }
       if (earliest == null) continue;
 
-      // Determine frequency from the latest version (most up-to-date config).
-      PlanItem? latestVersion;
-      for (final item in allItems) {
-        if (item.seriesId != seriesId) continue;
-        if (latestVersion == null ||
-            item.validFrom.isAfter(latestVersion.validFrom)) {
-          latestVersion = item;
-        }
-      }
-      if (latestVersion == null) continue;
+      // Track which years have already been processed for yearly items
+      // so we only fire once per calendar year for yearly-frequency periods.
+      final processedYears = <int>{};
 
-      final freq = latestVersion.frequency;
+      var period = earliest;
+      while (!period.isAfter(now)) {
+        final activeVersion =
+            _activeGuardedVersionForPeriod(allItems, seriesId, period);
 
-      if (freq == PlanFrequency.monthly) {
-        var period = earliest;
-        while (!period.isAfter(now)) {
-          // Get the active version for this specific period.
-          final activeVersion = _activeGuardedVersionForPeriod(
-              allItems, seriesId, period);
-          if (activeVersion != null) {
-            // Cap the due day to the actual number of days in this month.
+        if (activeVersion != null) {
+          final freq = activeVersion.frequency;
+
+          if (freq == PlanFrequency.monthly) {
+            // Monthly: check every period.
             final rawDueDay = activeVersion.guardDueDay ?? 1;
             final daysInMonth =
                 DateTime(period.year, period.month + 1, 0).day;
             final dueDay = rawDueDay.clamp(1, daysInMonth);
-            // Skip if due day hasn't arrived yet in the current month.
             final isDue = period != now || today.day >= dueDay;
             if (isDue) {
               final state = _stateForRecord(seriesId, period);
@@ -238,73 +229,36 @@ class GuardRepository extends ChangeNotifier {
                 }
               }
             }
-            // One-time guard: only fire for the validFrom period.
             if (activeVersion.guardOneTime) break;
-          }
-          period = period.addMonths(1);
-        }
-      } else if (freq == PlanFrequency.yearly) {
-        // For yearly items, check one period per year. We determine the due
-        // month from the active version for each specific year, not from
-        // latestVersion — different versions may have different guardDueMonth.
-        for (int year = earliest.year; year <= now.year; year++) {
-          // Find the version active during this year to get its guardDueMonth.
-          final versionForYear =
-              _activeGuardedVersionForYear(allItems, seriesId, year);
-          if (versionForYear == null) continue;
-
-          final dueMonth =
-              versionForYear.guardDueMonth ?? versionForYear.validFrom.month;
-          final duePeriod = YearMonth(year, dueMonth);
-          if (duePeriod.isAfter(now)) continue;
-
-          // Get the precise active version for the exact due period.
-          final activeVersion = _activeGuardedVersionForPeriod(
-              allItems, seriesId, duePeriod);
-          if (activeVersion != null) {
-            // Cap the due day to the actual number of days in the due month.
-            final rawDueDay = activeVersion.guardDueDay ?? 1;
-            final daysInMonth =
-                DateTime(duePeriod.year, duePeriod.month + 1, 0).day;
-            final dueDay = rawDueDay.clamp(1, daysInMonth);
-            // Skip if due day hasn't arrived yet in the current month/year.
-            final isDue = duePeriod != now || today.day >= dueDay;
-            if (isDue) {
-              final state = _stateForRecord(seriesId, duePeriod);
-              if (state != GuardState.paid) {
-                if (includeSilenced || state != GuardState.silenced) {
-                  result.add((activeVersion, duePeriod));
+          } else if (freq == PlanFrequency.yearly) {
+            // Yearly: only fire for the specific due month, and only once per year.
+            final dueMonth =
+                activeVersion.guardDueMonth ?? activeVersion.validFrom.month;
+            if (period.month == dueMonth &&
+                !processedYears.contains(period.year)) {
+              processedYears.add(period.year);
+              final rawDueDay = activeVersion.guardDueDay ?? 1;
+              final daysInMonth =
+                  DateTime(period.year, period.month + 1, 0).day;
+              final dueDay = rawDueDay.clamp(1, daysInMonth);
+              final isDue = period != now || today.day >= dueDay;
+              if (isDue) {
+                final state = _stateForRecord(seriesId, period);
+                if (state != GuardState.paid) {
+                  if (includeSilenced || state != GuardState.silenced) {
+                    result.add((activeVersion, period));
+                  }
                 }
               }
+              if (activeVersion.guardOneTime) break;
             }
-            // One-time guard: only fire for the first eligible year.
-            if (activeVersion.guardOneTime) break;
           }
         }
+
+        period = period.addMonths(1);
       }
     }
 
-    return result;
-  }
-
-  /// Returns the active guarded version of [seriesId] active at some point
-  /// during [year] (i.e. validFrom.year <= year and not expired before [year]).
-  /// Used to determine [guardDueMonth] for yearly items on a per-year basis.
-  PlanItem? _activeGuardedVersionForYear(
-    List<PlanItem> allItems,
-    String seriesId,
-    int year,
-  ) {
-    PlanItem? result;
-    for (final item in allItems) {
-      if (item.seriesId != seriesId) continue;
-      if (!item.isGuarded) continue;
-      if (item.validFrom.year > year) continue;
-      if (item.validTo != null && item.validTo!.isBefore(YearMonth(year, 1))) continue;
-      if (result == null || item.validFrom.isAfter(result.validFrom)) {
-        result = item;
-      }
-    }
     return result;
   }
 

@@ -49,22 +49,9 @@ class PlanRepository extends ChangeNotifier {
     for (int i = 0; i < _items.length; i++) {
       if (_items[i].seriesId != seriesId) continue;
       final old = _items[i];
-      _items[i] = PlanItem(
-        id: old.id,
-        seriesId: old.seriesId,
-        name: old.name,
-        amount: old.amount,
-        type: old.type,
-        frequency: old.frequency,
-        validFrom: old.validFrom,
-        validTo: old.validTo,
-        note: old.note,
-        category: old.category,
-        financialType: old.financialType,
-        isGuarded: old.isGuarded,
+      _items[i] = old.copyWith(
         guardDueDay: guardDueDay,
         guardDueMonth: guardDueMonth ?? old.guardDueMonth,
-        guardOneTime: old.guardOneTime,
       );
       changed = true;
     }
@@ -81,19 +68,7 @@ class PlanRepository extends ChangeNotifier {
     for (int i = 0; i < _items.length; i++) {
       if (_items[i].seriesId != seriesId) continue;
       if (!_items[i].isGuarded) continue;
-      final old = _items[i];
-      _items[i] = PlanItem(
-        id: old.id,
-        seriesId: old.seriesId,
-        name: old.name,
-        amount: old.amount,
-        type: old.type,
-        frequency: old.frequency,
-        validFrom: old.validFrom,
-        validTo: old.validTo,
-        note: old.note,
-        category: old.category,
-        financialType: old.financialType,
+      _items[i] = _items[i].copyWith(
         isGuarded: false,
         guardDueDay: null,
         guardDueMonth: null,
@@ -145,23 +120,7 @@ class PlanRepository extends ChangeNotifier {
     // If the active version started before [from], add it back with validTo
     // set to the month before [from] so prior months remain intact.
     if (item.validFrom.isBefore(from)) {
-      _items.add(PlanItem(
-        id: item.id,
-        seriesId: item.seriesId,
-        name: item.name,
-        amount: item.amount,
-        type: item.type,
-        frequency: item.frequency,
-        validFrom: item.validFrom,
-        validTo: from.addMonths(-1),
-        note: item.note,
-        category: item.category,
-        financialType: item.financialType,
-        isGuarded: item.isGuarded,
-        guardDueDay: item.guardDueDay,
-        guardDueMonth: item.guardDueMonth,
-        guardOneTime: item.guardOneTime,
-      ));
+      _items.add(item.copyWith(validTo: from.addMonths(-1)));
     }
 
     notifyListeners();

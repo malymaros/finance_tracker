@@ -74,6 +74,45 @@ class PlanItem {
     this.guardOneTime = false,
   });
 
+  // Sentinel used by copyWith to distinguish "not provided" from explicit null.
+  static const _absent = Object();
+
+  PlanItem copyWith({
+    String? id,
+    String? seriesId,
+    String? name,
+    double? amount,
+    PlanItemType? type,
+    PlanFrequency? frequency,
+    YearMonth? validFrom,
+    Object? validTo = _absent,
+    String? note,
+    Object? category = _absent,
+    Object? financialType = _absent,
+    bool? isGuarded,
+    Object? guardDueDay = _absent,
+    Object? guardDueMonth = _absent,
+    bool? guardOneTime,
+  }) {
+    return PlanItem(
+      id: id ?? this.id,
+      seriesId: seriesId ?? this.seriesId,
+      name: name ?? this.name,
+      amount: amount ?? this.amount,
+      type: type ?? this.type,
+      frequency: frequency ?? this.frequency,
+      validFrom: validFrom ?? this.validFrom,
+      validTo: validTo == _absent ? this.validTo : validTo as YearMonth?,
+      note: note ?? this.note,
+      category: category == _absent ? this.category : category as ExpenseCategory?,
+      financialType: financialType == _absent ? this.financialType : financialType as FinancialType?,
+      isGuarded: isGuarded ?? this.isGuarded,
+      guardDueDay: guardDueDay == _absent ? this.guardDueDay : guardDueDay as int?,
+      guardDueMonth: guardDueMonth == _absent ? this.guardDueMonth : guardDueMonth as int?,
+      guardOneTime: guardOneTime ?? this.guardOneTime,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'seriesId': seriesId,

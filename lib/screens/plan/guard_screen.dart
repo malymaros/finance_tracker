@@ -219,8 +219,6 @@ class _GuardScreenState extends State<GuardScreen> {
                   showIfScheduled: true,
                 )),
           ],
-
-          const SizedBox(height: 80),
         ],
       ),
     );

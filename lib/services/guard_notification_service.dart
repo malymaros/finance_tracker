@@ -86,17 +86,18 @@ class GuardNotificationService {
           ? '1 guarded payment not confirmed'
           : '$unpaidCount guarded payments not confirmed';
 
-      const androidDetails = AndroidNotificationDetails(
+      final androidDetails = AndroidNotificationDetails(
         _channelId,
         'Guard Reminders',
         channelDescription: 'Daily reminders for unconfirmed guarded payments',
         importance: Importance.high,
         priority: Priority.high,
         enableLights: true,
-        icon: 'ic_guard_notify',
+        icon: 'notification_icon',
+        largeIcon: const DrawableResourceAndroidBitmap('notification_icon'),
       );
       const darwinDetails = DarwinNotificationDetails();
-      const notificationDetails = NotificationDetails(
+      final notificationDetails = NotificationDetails(
         android: androidDetails,
         iOS: darwinDetails,
       );
