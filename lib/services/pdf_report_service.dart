@@ -9,6 +9,7 @@ import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/monthly_pdf_data.dart';
 import '../models/monthly_summary.dart';
+import '../models/year_month.dart';
 import '../models/yearly_pdf_data.dart';
 
 /// Pure static service that builds PDF documents from pre-assembled data.
@@ -22,11 +23,6 @@ class PdfReportService {
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
 
-  static const _monthAbbr = [
-    '',
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
 
   // ── Brand colors ──────────────────────────────────────────────────────────
 
@@ -667,7 +663,7 @@ class PdfReportService {
               color: i.isEven ? PdfColors.white : _lightGrey,
             ),
             children: [
-              _tableCell(_monthAbbr[s.period.month]),
+              _tableCell(YearMonth.monthAbbreviations[s.period.month]),
               _tableCell(
                 hasData
                     ? '${s.spendableBudget.toStringAsFixed(0)} EUR'
@@ -730,7 +726,7 @@ class PdfReportService {
           children: [
             _tableHeader('Category'),
             ...activeMonths.map(
-              (m) => _tableHeader(_monthAbbr[m], align: pw.TextAlign.right),
+              (m) => _tableHeader(YearMonth.monthAbbreviations[m], align: pw.TextAlign.right),
             ),
             _tableHeader('Total', align: pw.TextAlign.right),
           ],

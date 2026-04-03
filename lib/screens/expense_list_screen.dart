@@ -1,8 +1,4 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../models/budget_status.dart';
 import '../models/expense.dart';
@@ -15,6 +11,7 @@ import '../services/finance_repository.dart';
 import '../services/guard_repository.dart';
 import '../services/plan_repository.dart';
 import '../services/import_export_service.dart';
+import '../services/share_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/budget_progress_bar.dart';
 import '../widgets/category_budget_warning_card.dart';
@@ -126,19 +123,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         range.end,
       );
 
-      final dir = await getTemporaryDirectory();
       final s = range.start;
       final e = range.end;
       final tag =
           '${s.year}${s.month.toString().padLeft(2, '0')}${s.day.toString().padLeft(2, '0')}'
           '_${e.year}${e.month.toString().padLeft(2, '0')}${e.day.toString().padLeft(2, '0')}';
-      final file = File('${dir.path}/expenses_$tag.xlsx');
-      await file.writeAsBytes(bytes);
-
-      await Share.shareXFiles(
-        [XFile(file.path, mimeType: ImportExportService.xlsxMimeType)],
-        subject: 'Expenses Export',
-      );
+      await ShareService.shareXlsx(bytes, 'expenses_$tag.xlsx');
     } catch (err) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

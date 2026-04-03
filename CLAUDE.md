@@ -133,7 +133,6 @@ DEPENDENCIES
 
 path_provider     ^2.1.0   — app documents directory for JSON persistence
 fl_chart          ^0.69.0  — pie charts in Reports screen
-haptic_feedback   ^0.6.4   — tactile feedback on welcome screen coin toss
 
 Before adding a dependency: explain why, check if Flutter SDK covers it,
 keep count minimal.

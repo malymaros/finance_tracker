@@ -315,7 +315,7 @@ class FinanceRepository extends ChangeNotifier {
   Future<void> _rebuildIndexFromDisk() async {
     final dir = await getApplicationDocumentsDirectory();
     for (final entity in dir.listSync().whereType<File>()) {
-      final name = entity.path.split(Platform.pathSeparator).last;
+      final name = entity.uri.pathSegments.last;
       final match = RegExp(r'^finance_(\d{4})\.json$').firstMatch(name);
       if (match != null) {
         _availableYears.add(int.parse(match.group(1)!));
@@ -353,7 +353,7 @@ class FinanceRepository extends ChangeNotifier {
     if (!_persist) return;
     final dir = await getApplicationDocumentsDirectory();
     for (final entity in dir.listSync().whereType<File>()) {
-      final name = entity.path.split(Platform.pathSeparator).last;
+      final name = entity.uri.pathSegments.last;
       if (RegExp(r'^finance_\d{4}\.json$').hasMatch(name)) {
         await entity.delete();
       }
@@ -377,7 +377,7 @@ class FinanceRepository extends ChangeNotifier {
     // If any per-year file already exists, migration already completed;
     // clean up the old file and return.
     final alreadyMigrated = dir.listSync().whereType<File>().any((f) {
-      final name = f.path.split(Platform.pathSeparator).last;
+      final name = f.uri.pathSegments.last;
       return RegExp(r'^finance_\d{4}\.json$').hasMatch(name);
     });
     if (alreadyMigrated) {

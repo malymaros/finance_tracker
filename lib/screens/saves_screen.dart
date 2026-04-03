@@ -40,12 +40,6 @@ class _SavesScreenState extends State<SavesScreen> {
   List<SaveSlot> _saves = [];
   bool _loading = true;
 
-  static const _maxSaves = 3;
-
-  static const _monthAbbr = [
-    '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
 
   @override
   void initState() {
@@ -62,12 +56,8 @@ class _SavesScreenState extends State<SavesScreen> {
     });
   }
 
-  String _defaultSaveName() {
-    final now = DateTime.now();
-    final day = now.day.toString().padLeft(2, '0');
-    final month = _monthAbbr[now.month];
-    return 'Backup – $day $month ${now.year}';
-  }
+  String _defaultSaveName() =>
+      'Backup – ${SaveLoadService.formatDateLabel(DateTime.now())}';
 
   @override
   Widget build(BuildContext context) {
@@ -192,15 +182,15 @@ class _SavesScreenState extends State<SavesScreen> {
           const SizedBox(height: 24),
           _buildSectionHeader('SAVES'),
           const SizedBox(height: 10),
-          // Existing saves (could be more than _maxSaves if user had more before cap reduction)
+          // Existing saves (could be more than SaveLoadService.maxSaves if user had more before cap reduction)
           for (final slot in _saves) ...[
             _buildSaveSlot(slot),
             const SizedBox(height: 10),
           ],
           // Empty slots up to the cap
-          for (int i = _saves.length; i < _maxSaves; i++) ...[
+          for (int i = _saves.length; i < SaveLoadService.maxSaves; i++) ...[
             _buildEmptySlot(),
-            if (i < _maxSaves - 1) const SizedBox(height: 10),
+            if (i < SaveLoadService.maxSaves - 1) const SizedBox(height: 10),
           ],
           const SizedBox(height: 24),
           _buildSectionHeader('DATA TRANSFER'),

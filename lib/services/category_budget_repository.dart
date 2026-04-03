@@ -23,15 +23,8 @@ class CategoryBudgetRepository extends ChangeNotifier {
 
   /// Returns the budget amount active for [category] in [month], or null if
   /// no budget exists for that month.
-  double? activeBudgetForMonth(ExpenseCategory category, YearMonth month) {
-    for (final b in _budgets) {
-      if (b.category != category) continue;
-      if (b.validFrom.isAfter(month)) continue;
-      if (b.validTo != null && b.validTo!.isBefore(month)) continue;
-      return b.amount;
-    }
-    return null;
-  }
+  double? activeBudgetForMonth(ExpenseCategory category, YearMonth month) =>
+      activeBudgetRecordForMonth(category, month)?.amount;
 
   /// Returns the full [CategoryBudget] record active for [category] in [month],
   /// or null if no budget exists for that month.

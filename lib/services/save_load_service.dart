@@ -16,7 +16,7 @@ import 'guard_repository.dart';
 import 'plan_repository.dart';
 
 class SaveLoadService {
-  static const _maxSaves = 3;
+  static const maxSaves = 3;
 
   /// Override base directory for tests. When set, [getApplicationDocumentsDirectory]
   /// is not called. Must be reset to null after each test.
@@ -42,7 +42,7 @@ class SaveLoadService {
     final files = dir
         .listSync()
         .whereType<File>()
-        .where((f) => f.path.split(Platform.pathSeparator).last.startsWith('save_') &&
+        .where((f) => f.uri.pathSegments.last.startsWith('save_') &&
             f.path.endsWith('.json'))
         .toList();
 
@@ -52,7 +52,7 @@ class SaveLoadService {
         final json = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
         slots.add(SaveSlot.fromJson(json));
       } catch (_) {
-        final filename = file.path.split(Platform.pathSeparator).last;
+        final filename = file.uri.pathSegments.last;
         slots.add(SaveSlot(
           id: filename.replaceAll('save_', '').replaceAll('.json', ''),
           name: filename,
@@ -78,7 +78,7 @@ class SaveLoadService {
   ) async {
     final existing = await listSaves();
     final nonDamaged = existing.where((s) => !s.isDamaged).length;
-    if (nonDamaged >= _maxSaves) return 'cap';
+    if (nonDamaged >= maxSaves) return 'cap';
 
     try {
       await financeRepo.loadAllYears();
@@ -193,7 +193,7 @@ class SaveLoadService {
       final now = DateTime.now();
       final slot = SaveSlot(
         id: 'autosave_0',
-        name: _formatDateLabel(now),
+        name: formatDateLabel(now),
         createdAt: now,
         expenseCount: financeRepo.expenses.length,
         planItemCount: planRepo.items.length,
@@ -293,7 +293,7 @@ class SaveLoadService {
     return '${now.year}-$m-$d';
   }
 
-  static String _formatDateLabel(DateTime dt) {
+  static String formatDateLabel(DateTime dt) {
     final day = dt.day.toString().padLeft(2, '0');
     return '$day ${YearMonth.monthAbbreviations[dt.month]} ${dt.year}';
   }
