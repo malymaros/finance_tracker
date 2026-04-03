@@ -192,9 +192,15 @@ class _SavesScreenState extends State<SavesScreen> {
           const SizedBox(height: 24),
           _buildSectionHeader('SAVES'),
           const SizedBox(height: 10),
-          for (int i = 0; i < _maxSaves; i++) ...[
-            if (i > 0) const SizedBox(height: 10),
-            _buildSlot(i),
+          // Existing saves (could be more than _maxSaves if user had more before cap reduction)
+          for (final slot in _saves) ...[
+            _buildSaveSlot(slot),
+            const SizedBox(height: 10),
+          ],
+          // Empty slots up to the cap
+          for (int i = _saves.length; i < _maxSaves; i++) ...[
+            _buildEmptySlot(),
+            if (i < _maxSaves - 1) const SizedBox(height: 10),
           ],
           const SizedBox(height: 24),
           _buildSectionHeader('DATA TRANSFER'),
@@ -271,24 +277,24 @@ class _SavesScreenState extends State<SavesScreen> {
     );
   }
 
-  Widget _buildSlot(int index) {
-    if (index < _saves.length) {
-      final slot = _saves[index];
-      return Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: SaveSlotTile(
-          slot: slot,
-          onTap: () => _confirmOverwrite(slot),
-          onLoad: () => _confirmLoad(slot),
-          onDelete: () => _confirmDelete(slot),
-        ),
-      );
-    }
+  Widget _buildSaveSlot(SaveSlot slot) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: SaveSlotTile(
+        slot: slot,
+        onTap: () => _confirmOverwrite(slot),
+        onLoad: () => _confirmLoad(slot),
+        onDelete: () => _confirmDelete(slot),
+      ),
+    );
+  }
+
+  Widget _buildEmptySlot() {
     return _EmptySlotCard(onTap: _showSaveDialog);
   }
 
