@@ -36,8 +36,8 @@ Widget _banner({
         body: GuardBanner(
           unpaidActive: unpaidActive,
           silenced: silenced,
-          onMarkPaid: onMarkPaid ?? (_, __) {},
-          onSilence: onSilence ?? (_, __) {},
+          onMarkPaid: onMarkPaid ?? (_, p1) {},
+          onSilence: onSilence ?? (_, p1) {},
           onTapItem: onTapItem,
         ),
       ),

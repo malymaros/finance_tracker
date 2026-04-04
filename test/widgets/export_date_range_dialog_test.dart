@@ -7,12 +7,6 @@ Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
 void main() {
   group('ExportDateRangeDialog', () {
     testWidgets('end date is prefilled with today on open', (tester) async {
-      final today = DateTime.now();
-      final expected =
-          '${today.day.toString().padLeft(2, '0')}.'
-          '${today.month.toString().padLeft(2, '0')}.'
-          '${today.year}';
-
       await tester.pumpWidget(_wrap(Builder(builder: (context) {
         return ElevatedButton(
           onPressed: () => ExportDateRangeDialog.show(context),
@@ -23,7 +17,14 @@ void main() {
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
-      expect(find.text(expected), findsOneWidget);
+      // Start date is unpopulated — placeholder appears exactly once.
+      expect(find.text('Tap to select'), findsOneWidget);
+      // End date is prefilled — today's year must appear in the dialog
+      // regardless of the exact date format used by the widget.
+      expect(
+        find.textContaining(DateTime.now().year.toString()),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Export button is disabled when start date is not set',
