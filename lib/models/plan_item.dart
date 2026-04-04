@@ -139,8 +139,10 @@ class PlanItem {
       seriesId: json['seriesId'] as String,
       name: json['name'] as String,
       amount: (json['amount'] as num).toDouble(),
-      type: PlanItemType.values.byName(json['type'] as String),
-      frequency: PlanFrequency.values.byName(json['frequency'] as String),
+      type: PlanItemType.values.asNameMap()[json['type'] as String] ??
+          PlanItemType.fixedCost,
+      frequency: PlanFrequency.values.asNameMap()[json['frequency'] as String] ??
+          PlanFrequency.monthly,
       validFrom: YearMonth.fromJson(json['validFrom'] as Map<String, dynamic>),
       validTo: json['validTo'] != null
           ? YearMonth.fromJson(json['validTo'] as Map<String, dynamic>)

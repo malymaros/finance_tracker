@@ -108,6 +108,13 @@ class CategoryBudgetRepository extends ChangeNotifier {
     if (activeIndex == -1) return;
     final active = _budgets[activeIndex];
 
+    // If any version in the series is open-ended, the series itself is
+    // open-ended. We need to know this before pruning future versions so that
+    // the newly created version can inherit the open-ended nature.
+    final seriesIsOpenEnded = _budgets.any(
+      (b) => b.seriesId == seriesId && b.validTo == null,
+    );
+
     // Remove future versions (validFrom > from) for this series.
     _budgets.removeWhere(
       (b) => b.seriesId == seriesId && b.validFrom.isAfter(from),
@@ -146,8 +153,9 @@ class CategoryBudgetRepository extends ChangeNotifier {
         category: active.category,
         amount: newAmount,
         validFrom: from,
-        // Preserve validTo: reopening a closed series is not allowed.
-        validTo: active.validTo,
+        // If the series was open-ended, the new version is also open-ended.
+        // Otherwise inherit the active version's validTo (closed series).
+        validTo: seriesIsOpenEnded ? null : active.validTo,
       ));
     }
 
