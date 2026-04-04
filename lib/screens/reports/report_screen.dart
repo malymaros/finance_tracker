@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../models/category_total.dart';
 import '../../models/expense_category.dart';
 import '../../models/report_data.dart';
+import '../../models/report_line.dart';
 import '../../models/monthly_pdf_data.dart';
 import '../../models/period_bounds.dart';
 import '../../models/year_month.dart';
@@ -21,6 +22,23 @@ import '../../widgets/report_category_row.dart';
 import 'category_report_detail_screen.dart';
 
 enum _ReportMode { monthly, yearly, overview }
+
+class _ReportCache {
+  final int year;
+  final int month;
+  final _ReportMode mode;
+  final ReportData data;
+
+  const _ReportCache({
+    required this.year,
+    required this.month,
+    required this.mode,
+    required this.data,
+  });
+
+  bool matches(int year, int month, _ReportMode mode) =>
+      this.year == year && this.month == month && this.mode == mode;
+}
 
 class ReportScreen extends StatefulWidget {
   final FinanceRepository repository;
@@ -53,6 +71,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
   _ReportMode _mode = _ReportMode.monthly;
   bool _isGeneratingPdf = false;
+  _ReportCache? _reportCache;
 
   ExpenseCategory? _selectedCategory;
   bool _otherExpanded = false;
@@ -136,6 +155,36 @@ class _ReportScreenState extends State<ReportScreen> {
     );
   }
 
+  // ── ReportData cache ──────────────────────────────────────────────────────
+
+  /// Returns cached [ReportData] for the current (year, month, mode), or
+  /// computes and caches it if the cache is stale.
+  ///
+  /// Overview mode uses yearly lines (same as yearly mode) since overview
+  /// does not render a chart but the PDF export still needs the yearly data.
+  ReportData _getOrBuildReportData() {
+    if (_reportCache != null && _reportCache!.matches(_year, _month, _mode)) {
+      return _reportCache!.data;
+    }
+    final List<ReportLine> lines;
+    if (_mode == _ReportMode.monthly) {
+      lines = ReportAggregator.mergedLines(
+        widget.repository.reportLinesForMonth(_year, _month),
+        BudgetCalculator.planFixedCostReportLinesForMonth(
+            widget.planRepository.items, _year, _month),
+      );
+    } else {
+      lines = ReportAggregator.mergedLines(
+        widget.repository.reportLinesForYear(_year),
+        BudgetCalculator.planFixedCostReportLinesForYear(
+            widget.planRepository.items, _year),
+      );
+    }
+    final data = ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
+    _reportCache = _ReportCache(year: _year, month: _month, mode: _mode, data: data);
+    return data;
+  }
+
   // ── PDF export ────────────────────────────────────────────────────────────
 
   Future<void> _onExportPdf() async {
@@ -162,12 +211,7 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Future<void> _exportMonthlyPdf() async {
-    final lines = ReportAggregator.mergedLines(
-      widget.repository.reportLinesForMonth(_year, _month),
-      BudgetCalculator.planFixedCostReportLinesForMonth(
-          widget.planRepository.items, _year, _month),
-    );
-    final data = ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
+    final data = _getOrBuildReportData();
     final budgetStatus = BudgetCalculator.budgetStatus(
       widget.planRepository.items,
       widget.repository
@@ -198,15 +242,10 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Future<void> _exportYearlyPdf() async {
-    final lines = ReportAggregator.mergedLines(
-      widget.repository.reportLinesForYear(_year),
-      BudgetCalculator.planFixedCostReportLinesForYear(
-          widget.planRepository.items, _year),
-    );
-    final data = ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
+    final data = _getOrBuildReportData();
     final summaries = BudgetCalculator.monthlySummaries(
       widget.planRepository.items,
-      widget.repository.expenses,
+      widget.repository.expensesForYear(_year),
       _year,
     );
     final now = DateTime.now();
@@ -306,25 +345,8 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget _buildContent() {
     switch (_mode) {
       case _ReportMode.monthly:
-        final lines = ReportAggregator.mergedLines(
-          widget.repository.reportLinesForMonth(_year, _month),
-          BudgetCalculator.planFixedCostReportLinesForMonth(
-              widget.planRepository.items, _year, _month),
-        );
-        final reportData =
-            ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
-        return reportData.chartTotals.isEmpty
-            ? _buildEmptyState()
-            : _buildChartAndList(reportData);
-
       case _ReportMode.yearly:
-        final lines = ReportAggregator.mergedLines(
-          widget.repository.reportLinesForYear(_year),
-          BudgetCalculator.planFixedCostReportLinesForYear(
-              widget.planRepository.items, _year),
-        );
-        final reportData =
-            ReportAggregator.buildReportData(lines, _pieChartThresholdPct);
+        final reportData = _getOrBuildReportData();
         return reportData.chartTotals.isEmpty
             ? _buildEmptyState()
             : _buildChartAndList(reportData);
@@ -337,7 +359,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget _buildOverview() {
     final summaries = BudgetCalculator.monthlyOverviewSummaries(
       widget.planRepository.items,
-      widget.repository.expenses,
+      widget.repository.expensesForYear(_year),
       _year,
     );
     final hasAnyData = summaries.any((s) => s.hasData);

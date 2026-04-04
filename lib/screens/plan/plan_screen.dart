@@ -111,11 +111,9 @@ class _PlanScreenState extends State<PlanScreen> {
     });
   }
 
-  double _displayAmount(PlanItem item) {
-    final all = widget.repositories.plan.items;
-    return _isMonthly
-        ? BudgetCalculator.itemMonthlyContribution(item, _year, _month)
-        : BudgetCalculator.itemYearlyContribution(item, all, _year);
+  double _displayAmount(PlanItem item, Map<String, double> yearlyAmounts) {
+    if (!_isMonthly) return yearlyAmounts[item.id] ?? 0.0;
+    return BudgetCalculator.itemMonthlyContribution(item, _year, _month);
   }
 
   void _showTypeSheet(BuildContext context) {
@@ -499,6 +497,15 @@ class _PlanScreenState extends State<PlanScreen> {
     FinancialTypeIncomeRatio ratio,
     Map<String, GuardState> guardStateMap,
   ) {
+    // Precompute yearly amounts once per build so itemYearlyContribution is not
+    // called per tile during rendering.
+    final yearlyAmounts = !_isMonthly
+        ? {
+            for (final item in [...incomeItems, ...fixedCostItems])
+              item.id: BudgetCalculator.itemYearlyContribution(item, allItems, _year)
+          }
+        : const <String, double>{};
+
     return ListView(
       children: [
         PlanIncomeSummaryTile(
@@ -512,7 +519,7 @@ class _PlanScreenState extends State<PlanScreen> {
         if (_incomeExpanded)
           ...incomeItems.map((item) => PlanItemTile(
                 item: item,
-                displayAmount: _displayAmount(item),
+                displayAmount: _displayAmount(item, yearlyAmounts),
                 onTap: () => _openDetail(context, item),
                 onEdit: () => _navigateToEdit(context, item),
                 onDelete: () => _confirmAndDelete(context, item),
@@ -534,7 +541,7 @@ class _PlanScreenState extends State<PlanScreen> {
         ),
         if (_fixedCostsExpanded)
           ..._buildFixedCostsSection(
-              context, fixedCostItems, allItems, guardStateMap),
+              context, fixedCostItems, allItems, guardStateMap, yearlyAmounts),
         FinancialTypeDistributionCard(ratio: ratio, isMonthly: _isMonthly),
         const SizedBox(height: 80),
       ],
@@ -548,6 +555,7 @@ class _PlanScreenState extends State<PlanScreen> {
     List<PlanItem> fixedCostItems,
     List<PlanItem> allItems,
     Map<String, GuardState> guardStateMap,
+    Map<String, double> yearlyAmounts,
   ) {
     final typeTotals = BudgetCalculator.planFinancialTypeTotals(
       fixedCostItems,
@@ -588,10 +596,10 @@ class _PlanScreenState extends State<PlanScreen> {
       if (isTypeExpanded) {
         if (type == FinancialType.consumption) {
           widgets.addAll(_buildConsumptionCategories(
-              context, fixedCostItems, allItems, guardStateMap));
+              context, fixedCostItems, allItems, guardStateMap, yearlyAmounts));
         } else {
-          widgets.addAll(
-              _buildTypeItems(context, fixedCostItems, type, guardStateMap));
+          widgets.addAll(_buildTypeItems(
+              context, fixedCostItems, type, guardStateMap, yearlyAmounts));
         }
       }
     }
@@ -603,6 +611,7 @@ class _PlanScreenState extends State<PlanScreen> {
     List<PlanItem> fixedCostItems,
     List<PlanItem> allItems,
     Map<String, GuardState> guardStateMap,
+    Map<String, double> yearlyAmounts,
   ) {
     final categoryTotals = BudgetCalculator.planCategoryTotals(
       fixedCostItems,
@@ -641,7 +650,7 @@ class _PlanScreenState extends State<PlanScreen> {
           widgets.add(PlanItemTile(
             key: isHighlighted ? _highlightKey : null,
             item: item,
-            displayAmount: _displayAmount(item),
+            displayAmount: _displayAmount(item, yearlyAmounts),
             guardState: guardStateMap[item.seriesId] ?? GuardState.none,
             isHighlighted: isHighlighted,
             onTap: () => _openDetail(context, item),
@@ -659,6 +668,7 @@ class _PlanScreenState extends State<PlanScreen> {
     List<PlanItem> fixedCostItems,
     FinancialType type,
     Map<String, GuardState> guardStateMap,
+    Map<String, double> yearlyAmounts,
   ) {
     final items = fixedCostItems
         .where(
@@ -669,7 +679,7 @@ class _PlanScreenState extends State<PlanScreen> {
       return PlanItemTile(
         key: isHighlighted ? _highlightKey : null,
         item: item,
-        displayAmount: _displayAmount(item),
+        displayAmount: _displayAmount(item, yearlyAmounts),
         guardState: guardStateMap[item.seriesId] ?? GuardState.none,
         isHighlighted: isHighlighted,
         onTap: () => _openDetail(context, item),
