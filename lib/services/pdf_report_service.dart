@@ -1360,7 +1360,7 @@ class PdfReportService {
               width: 8,
               height: 8,
               decoration:
-                  pw.BoxDecoration(color: _green, shape: pw.BoxShape.circle),
+                  pw.BoxDecoration(color: _assetGreen, shape: pw.BoxShape.circle),
             ),
             pw.SizedBox(width: 4),
             pw.Text('Asset',
@@ -1468,7 +1468,7 @@ class PdfReportService {
               child: pw.Container(
                 height: 7,
                 decoration: pw.BoxDecoration(
-                  color: _green,
+                  color: _assetGreen,
                   borderRadius: const pw.BorderRadius.only(
                     topLeft: pw.Radius.circular(3),
                     bottomLeft: pw.Radius.circular(3),
@@ -1514,12 +1514,12 @@ class PdfReportService {
               width: 6,
               height: 6,
               decoration:
-                  pw.BoxDecoration(color: _green, shape: pw.BoxShape.circle),
+                  pw.BoxDecoration(color: _assetGreen, shape: pw.BoxShape.circle),
             ),
             pw.SizedBox(width: 3),
             pw.Text(
               '${s.assets.toStringAsFixed(0)} EUR',
-              style: pw.TextStyle(fontSize: 9, color: _green),
+              style: pw.TextStyle(fontSize: 9, color: _assetGreen),
             ),
           ],
         ),
