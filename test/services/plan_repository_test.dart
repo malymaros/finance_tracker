@@ -675,4 +675,197 @@ void main() {
       expect(json['guardDueMonth'], 3);
     });
   });
+
+  // ── applyPlanItemEdit ─────────────────────────────────────────────────────
+
+  group('applyPlanItemEdit', () {
+    PlanItem incomeItem({String id = 'i1', String seriesId = 's1'}) => PlanItem(
+          id: id,
+          seriesId: seriesId,
+          name: 'Salary',
+          amount: 3000,
+          type: PlanItemType.income,
+          frequency: PlanFrequency.monthly,
+          validFrom: YearMonth(2024, 1),
+        );
+
+    PlanItem fixedCostItem({String id = 'f1', String seriesId = 's1'}) => PlanItem(
+          id: id,
+          seriesId: seriesId,
+          name: 'Rent',
+          amount: 500,
+          type: PlanItemType.fixedCost,
+          frequency: PlanFrequency.monthly,
+          validFrom: YearMonth(2024, 1),
+          category: ExpenseCategory.housing,
+          financialType: FinancialType.consumption,
+        );
+
+    test('income edit: updates in place, same id', () async {
+      final repo = PlanRepository(persist: false);
+      final existing = incomeItem();
+      await repo.addPlanItem(existing);
+
+      await repo.applyPlanItemEdit(
+        existing,
+        name: 'Salary Updated',
+        amount: 3500,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2024, 1),
+        validTo: null,
+      );
+
+      expect(repo.items.length, 1);
+      expect(repo.items.first.id, existing.id);
+      expect(repo.items.first.name, 'Salary Updated');
+      expect(repo.items.first.amount, 3500);
+    });
+
+    test('income edit: always in-place even when startFrom differs from existing.validFrom',
+        () async {
+      final repo = PlanRepository(persist: false);
+      final existing = incomeItem();
+      await repo.addPlanItem(existing);
+
+      await repo.applyPlanItemEdit(
+        existing,
+        name: 'Salary',
+        amount: 3000,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2024, 6), // different month — income is always in-place
+        validTo: null,
+      );
+
+      expect(repo.items.length, 1);
+      expect(repo.items.first.id, existing.id); // same ID, no new version
+      expect(repo.items.first.validFrom, YearMonth(2024, 1)); // original validFrom kept
+    });
+
+    test('fixed cost edit from same validFrom: updates in place', () async {
+      final repo = PlanRepository(persist: false);
+      final existing = fixedCostItem();
+      await repo.addPlanItem(existing);
+
+      await repo.applyPlanItemEdit(
+        existing,
+        name: 'Rent Updated',
+        amount: 600,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2024, 1), // same as existing.validFrom → in-place
+        validTo: null,
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      expect(repo.items.length, 1);
+      expect(repo.items.first.id, existing.id);
+      expect(repo.items.first.amount, 600);
+    });
+
+    test('fixed cost edit from different validFrom: creates new version in same series',
+        () async {
+      final repo = PlanRepository(persist: false);
+      final existing = fixedCostItem();
+      await repo.addPlanItem(existing);
+
+      await repo.applyPlanItemEdit(
+        existing,
+        name: 'Rent',
+        amount: 700,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2024, 4), // different → new version
+        validTo: null,
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      expect(repo.items.length, 2);
+      final newVersion = repo.items.firstWhere((i) => i.id != existing.id);
+      expect(newVersion.seriesId, existing.seriesId);
+      expect(newVersion.validFrom, YearMonth(2024, 4));
+      expect(newVersion.amount, 700);
+    });
+
+    test('fixed cost new version: removes future versions beyond startFrom', () async {
+      final repo = PlanRepository(persist: false);
+      final v1 = fixedCostItem(id: 'v1', seriesId: 'sx');
+      final v2 = PlanItem(
+        id: 'v2',
+        seriesId: 'sx',
+        name: 'Rent',
+        amount: 600,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2024, 6),
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+      await repo.addPlanItem(v1);
+      await repo.addPlanItem(v2);
+
+      // Edit v1 starting April — v2 (June) is beyond startFrom and must be removed.
+      await repo.applyPlanItemEdit(
+        v1,
+        name: 'Rent',
+        amount: 550,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2024, 4),
+        validTo: null,
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      expect(repo.items.any((i) => i.id == 'v2'), isFalse);
+      final newVersion = repo.items.firstWhere((i) => i.id != 'v1');
+      expect(newVersion.validFrom, YearMonth(2024, 4));
+    });
+
+    test('one-time income edit: always in-place regardless of startFrom', () async {
+      final repo = PlanRepository(persist: false);
+      final existing = PlanItem(
+        id: 'ot1',
+        seriesId: 'ot1',
+        name: 'Bonus',
+        amount: 1000,
+        type: PlanItemType.income,
+        frequency: PlanFrequency.oneTime,
+        validFrom: YearMonth(2024, 3),
+      );
+      await repo.addPlanItem(existing);
+
+      await repo.applyPlanItemEdit(
+        existing,
+        name: 'Bonus Updated',
+        amount: 1200,
+        frequency: PlanFrequency.oneTime,
+        startFrom: YearMonth(2024, 8), // different month — one-time stays in-place
+        validTo: null,
+      );
+
+      expect(repo.items.length, 1);
+      expect(repo.items.first.id, existing.id);
+      expect(repo.items.first.validFrom, YearMonth(2024, 3)); // original validFrom kept
+      expect(repo.items.first.name, 'Bonus Updated');
+    });
+
+    test('notifies listeners', () async {
+      final repo = PlanRepository(persist: false);
+      final existing = incomeItem();
+      await repo.addPlanItem(existing);
+
+      var notified = false;
+      repo.addListener(() => notified = true);
+
+      await repo.applyPlanItemEdit(
+        existing,
+        name: 'Salary',
+        amount: 3000,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2024, 1),
+        validTo: null,
+      );
+
+      expect(notified, isTrue);
+    });
+  });
 }

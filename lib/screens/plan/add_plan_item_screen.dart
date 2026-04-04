@@ -165,7 +165,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     final guardOneTime = guardEnabled && _guardOneTime;
 
     if (e == null) {
-      // New item — new series
+      // New item — new series.
       final newId = IdGenerator.generate();
       await widget.planRepository.addPlanItem(PlanItem(
         id: newId,
@@ -184,62 +184,23 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         guardDueMonth: guardDueMonth,
         guardOneTime: guardOneTime,
       ));
-    } else if (!isFixedCost) {
-      // Income edit: always update in place. The change applies to the whole
-      // item (all months). No new version, no cascade.
-      await widget.planRepository.updatePlanItem(PlanItem(
-        id: e.id,
-        seriesId: e.seriesId,
-        name: name,
-        amount: amount,
-        type: _type,
-        frequency: _frequency,
-        validFrom: _validFrom,
-        validTo: savedValidTo,
-        note: note,
-        category: null,
-        financialType: null,
-      ));
-    } else if (_validFrom == e.validFrom) {
-      // Fixed cost, same validFrom → fix in place (error correction only).
-      await widget.planRepository.updatePlanItem(PlanItem(
-        id: e.id,
-        seriesId: e.seriesId,
-        name: name,
-        amount: amount,
-        type: _type,
-        frequency: _frequency,
-        validFrom: _validFrom,
-        validTo: savedValidTo,
-        note: note,
-        category: _selectedCategory,
-        financialType: _selectedFinancialType,
-        isGuarded: guardEnabled,
-        guardDueDay: guardDueDay,
-        guardDueMonth: guardDueMonth,
-        guardOneTime: guardOneTime,
-      ));
     } else {
-      // Fixed cost, different validFrom → new version + truncate future versions.
-      final newId = IdGenerator.generate();
-      await widget.planRepository.addPlanItem(PlanItem(
-        id: newId,
-        seriesId: e.seriesId,
+      // Edit — versioning rules are owned by the repository.
+      await widget.planRepository.applyPlanItemEdit(
+        e,
         name: name,
         amount: amount,
-        type: _type,
         frequency: _frequency,
-        validFrom: _validFrom,
+        startFrom: _validFrom,
         validTo: savedValidTo,
         note: note,
-        category: _selectedCategory,
-        financialType: _selectedFinancialType,
+        category: isFixedCost ? _selectedCategory : null,
+        financialType: isFixedCost ? _selectedFinancialType : null,
         isGuarded: guardEnabled,
         guardDueDay: guardDueDay,
         guardDueMonth: guardDueMonth,
         guardOneTime: guardOneTime,
-      ));
-      await widget.planRepository.removeFutureVersions(e.seriesId, _validFrom);
+      );
     }
 
     if (mounted) Navigator.of(context).pop();

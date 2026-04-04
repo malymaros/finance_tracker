@@ -4,8 +4,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../models/expense_category.dart';
+import '../models/financial_type.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
+import '../utils/id_generator.dart';
 
 class PlanRepository extends ChangeNotifier {
   final bool _persist;
@@ -137,6 +140,77 @@ class PlanRepository extends ChangeNotifier {
         (e) => e.seriesId == seriesId && e.validFrom.isAfter(after));
     notifyListeners();
     await _save();
+  }
+
+  /// Applies an edit to [existing] using the given form values.
+  ///
+  /// Versioning rules:
+  /// - **Income items**: always updated in place; [startFrom] is ignored and
+  ///   the original [PlanItem.validFrom] is preserved.
+  /// - **One-time items**: always updated in place (no versioning applies).
+  /// - **Fixed cost, [startFrom] == [existing.validFrom]**: updated in place
+  ///   (error correction; no new version created).
+  /// - **Fixed cost, [startFrom] != [existing.validFrom]**: a new version
+  ///   starting at [startFrom] is added and future versions of the same series
+  ///   are removed via [removeFutureVersions].
+  Future<void> applyPlanItemEdit(
+    PlanItem existing, {
+    required String name,
+    required double amount,
+    required PlanFrequency frequency,
+    required YearMonth startFrom,
+    required YearMonth? validTo,
+    String? note,
+    ExpenseCategory? category,
+    FinancialType? financialType,
+    bool isGuarded = false,
+    int? guardDueDay,
+    int? guardDueMonth,
+    bool guardOneTime = false,
+  }) async {
+    final inPlace = existing.type == PlanItemType.income ||
+        existing.frequency == PlanFrequency.oneTime ||
+        startFrom == existing.validFrom;
+
+    if (inPlace) {
+      await updatePlanItem(PlanItem(
+        id: existing.id,
+        seriesId: existing.seriesId,
+        name: name,
+        amount: amount,
+        type: existing.type,
+        frequency: frequency,
+        validFrom: existing.validFrom,
+        validTo: validTo,
+        note: note,
+        category: category,
+        financialType: financialType,
+        isGuarded: isGuarded,
+        guardDueDay: guardDueDay,
+        guardDueMonth: guardDueMonth,
+        guardOneTime: guardOneTime,
+      ));
+    } else {
+      final newId = IdGenerator.generate();
+      await addPlanItem(PlanItem(
+        id: newId,
+        seriesId: existing.seriesId,
+        name: name,
+        amount: amount,
+        type: existing.type,
+        frequency: frequency,
+        validFrom: startFrom,
+        validTo: validTo,
+        note: note,
+        category: category,
+        financialType: financialType,
+        isGuarded: isGuarded,
+        guardDueDay: guardDueDay,
+        guardDueMonth: guardDueMonth,
+        guardOneTime: guardOneTime,
+      ));
+      await removeFutureVersions(existing.seriesId, startFrom);
+    }
   }
 
   Future<void> clearAll() async {
