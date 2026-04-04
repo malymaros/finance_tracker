@@ -517,8 +517,13 @@ class PdfReportService {
   static pw.Widget _buildCashFlowSummarySection(MonthlyPdfData data) {
     double amountFn(PlanItem item) =>
         BudgetCalculator.itemMonthlyContribution(item, data.year, data.month);
-    String suffixFn(PlanItem item) =>
-        item.frequency == PlanFrequency.yearly ? ' (normalized)' : '';
+    String suffixFn(PlanItem item) {
+      if (item.frequency == PlanFrequency.yearly) return ' (normalized)';
+      if (item.frequency == PlanFrequency.oneTime) {
+        return ' (${_monthNames[item.validFrom.month]})';
+      }
+      return '';
+    }
 
     final incomeItems = data.activePlanItems
         .where((i) => i.type == PlanItemType.income)
@@ -543,8 +548,13 @@ class PdfReportService {
   static pw.Widget _buildYearlyCashFlowSection(YearlyPdfData data) {
     double amountFn(PlanItem item) =>
         BudgetCalculator.itemYearlyContribution(item, data.allPlanItems, data.year);
-    String suffixFn(PlanItem item) =>
-        item.frequency == PlanFrequency.monthly ? ' (annualized)' : '';
+    String suffixFn(PlanItem item) {
+      if (item.frequency == PlanFrequency.monthly) return ' (annualized)';
+      if (item.frequency == PlanFrequency.oneTime) {
+        return ' (${_monthNames[item.validFrom.month]})';
+      }
+      return '';
+    }
 
     final incomeItems = data.activePlanItems
         .where((i) => i.type == PlanItemType.income)
@@ -766,7 +776,7 @@ class PdfReportService {
         return pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Category sub-header (8px indent)
+            // Category sub-header (8px indent) — bold + dark to stand out from items
             pw.Padding(
               padding: const pw.EdgeInsets.only(left: 8, top: 3, bottom: 1),
               child: pw.Row(
@@ -775,13 +785,12 @@ class PdfReportService {
                   pw.Text(
                     cat.displayName,
                     style: pw.TextStyle(
-                        fontSize: 9,
-                        color: _textMuted,
-                        fontWeight: pw.FontWeight.bold),
+                        fontSize: 9, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.Text(
                     '${catTotal.toStringAsFixed(2)} EUR',
-                    style: pw.TextStyle(fontSize: 9, color: _textMuted),
+                    style: pw.TextStyle(
+                        fontSize: 9, fontWeight: pw.FontWeight.bold),
                   ),
                 ],
               ),
@@ -1332,7 +1341,35 @@ class PdfReportService {
   /// Each row: month name | bar + numbers | result
   static pw.Widget _buildYearlyOverviewSection(
       List<MonthlyOverviewSummary> summaries) {
-    final rows = <pw.Widget>[];
+    final rows = <pw.Widget>[
+      // Legend
+      pw.Padding(
+        padding: const pw.EdgeInsets.only(left: 8, bottom: 6),
+        child: pw.Row(
+          children: [
+            pw.Container(
+              width: 8,
+              height: 8,
+              decoration:
+                  pw.BoxDecoration(color: _green, shape: pw.BoxShape.circle),
+            ),
+            pw.SizedBox(width: 4),
+            pw.Text('Asset',
+                style: pw.TextStyle(fontSize: 8, color: _textMuted)),
+            pw.SizedBox(width: 14),
+            pw.Container(
+              width: 8,
+              height: 8,
+              decoration:
+                  pw.BoxDecoration(color: _red, shape: pw.BoxShape.circle),
+            ),
+            pw.SizedBox(width: 4),
+            pw.Text('Consumption',
+                style: pw.TextStyle(fontSize: 8, color: _textMuted)),
+          ],
+        ),
+      ),
+    ];
 
     for (var i = 0; i < summaries.length; i++) {
       final s = summaries[i];
@@ -1542,7 +1579,8 @@ class PdfReportService {
           children: [
             _tableHeader('Category'),
             ...activeMonths.map(
-              (m) => _tableHeader(_monthNames[m], align: pw.TextAlign.right),
+              (m) => _tableHeader(YearMonth.monthAbbreviations[m],
+                  align: pw.TextAlign.right),
             ),
             _tableHeader('Total', align: pw.TextAlign.right),
           ],
