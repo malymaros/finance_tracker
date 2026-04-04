@@ -601,7 +601,7 @@ class PdfReportService {
                 style: pw.TextStyle(
                   fontSize: 9,
                   fontWeight: pw.FontWeight.bold,
-                  color: _textMuted,
+                  color: _green,
                   letterSpacing: 0.8,
                 ),
               ),
@@ -610,6 +610,7 @@ class PdfReportService {
                 style: pw.TextStyle(
                   fontSize: 11,
                   fontWeight: pw.FontWeight.bold,
+                  color: _green,
                 ),
               ),
             ],
@@ -680,7 +681,7 @@ class PdfReportService {
                 style: pw.TextStyle(
                   fontSize: 9,
                   fontWeight: pw.FontWeight.bold,
-                  color: _textMuted,
+                  color: _red,
                   letterSpacing: 0.8,
                 ),
               ),
@@ -689,6 +690,7 @@ class PdfReportService {
                 style: pw.TextStyle(
                   fontSize: 11,
                   fontWeight: pw.FontWeight.bold,
+                  color: _red,
                 ),
               ),
             ],
@@ -710,6 +712,11 @@ class PdfReportService {
       double Function(PlanItem) amountFn,
       String Function(PlanItem) suffixFn) {
     final typeTotal = items.fold(0.0, (s, i) => s + amountFn(i));
+    final typeColor = type == FinancialType.consumption
+        ? _red
+        : type == FinancialType.asset
+            ? _assetGreen
+            : _insuranceBlue;
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -725,6 +732,7 @@ class PdfReportService {
                 style: pw.TextStyle(
                   fontSize: 10,
                   fontWeight: pw.FontWeight.bold,
+                  color: typeColor,
                 ),
               ),
               pw.Text(
@@ -732,6 +740,7 @@ class PdfReportService {
                 style: pw.TextStyle(
                   fontSize: 10,
                   fontWeight: pw.FontWeight.bold,
+                  color: typeColor,
                 ),
               ),
             ],
