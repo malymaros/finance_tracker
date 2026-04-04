@@ -265,14 +265,34 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Future<void> _exportYearlyPdf() async {
     final data = _getOrBuildReportData();
+    final allExpenses = widget.repository.expensesForYear(_year);
     final summaries = BudgetCalculator.monthlySummaries(
       widget.planRepository.items,
-      widget.repository.expensesForYear(_year),
+      allExpenses,
       _year,
     );
     final now = DateTime.now();
     final isPartialYear = _year == now.year;
     final categoryMonthlyAmounts = _buildCategoryMonthlyAmounts();
+    final activePlanItems =
+        BudgetCalculator.activeItemsForYear(widget.planRepository.items, _year);
+    final overviewSummaries = BudgetCalculator.monthlyOverviewSummaries(
+      widget.planRepository.items,
+      allExpenses,
+      _year,
+    );
+
+    FinancialTypeIncomeRatio? typeRatio;
+    if (activePlanItems.isNotEmpty) {
+      final mergedLines = ReportAggregator.mergedLines(
+        widget.repository.reportLinesForYear(_year),
+        BudgetCalculator.planFixedCostReportLinesForYear(
+            widget.planRepository.items, _year),
+      );
+      final income =
+          BudgetCalculator.yearlyIncome(widget.planRepository.items, _year);
+      typeRatio = BudgetCalculator.financialTypeIncomeRatios(mergedLines, income);
+    }
 
     final pdfData = YearlyPdfData(
       year: _year,
@@ -281,6 +301,10 @@ class _ReportScreenState extends State<ReportScreen> {
       monthlySummaries: summaries,
       isPartialYear: isPartialYear,
       categoryMonthlyAmounts: categoryMonthlyAmounts,
+      typeRatio: typeRatio,
+      activePlanItems: activePlanItems,
+      allPlanItems: widget.planRepository.items,
+      overviewSummaries: overviewSummaries,
     );
 
     final bytes = await PdfReportService.generateYearlyReport(pdfData);

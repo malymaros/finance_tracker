@@ -7,8 +7,9 @@ import '../models/category_total.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
+import '../models/financial_type_income_ratio.dart';
+import '../models/monthly_overview_summary.dart';
 import '../models/monthly_pdf_data.dart';
-import '../models/monthly_summary.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
 import '../models/yearly_pdf_data.dart';
@@ -108,7 +109,8 @@ class PdfReportService {
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(40),
         header: (ctx) => ctx.pageNumber == 1
-            ? _buildFirstPageHeader(monthLabel, yearLabel)
+            ? _buildFirstPageHeader(
+                'MONTHLY REPORT FOR ${monthLabel.toUpperCase()} $yearLabel')
             : _buildHeader('Monthly Report', '$monthLabel $yearLabel'),
         footer: _buildFooter,
         build: (ctx) => _buildMonthlyContent(data),
@@ -119,22 +121,43 @@ class PdfReportService {
   }
 
   static Future<Uint8List> generateYearlyReport(YearlyPdfData data) async {
-    final doc = pw.Document(
-      title: 'Yearly Report ${data.year}',
-    );
+    final yearStr = data.year.toString();
+    final subtitleStr =
+        data.isPartialYear ? '$yearStr (partial year)' : yearStr;
 
+    final doc = pw.Document(title: 'Yearly Report $yearStr');
+
+    // Main portrait pages (Spending vs Income, Category Summary,
+    // Cash Flow Summary, Yearly Overview).
     doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(40),
-        header: (ctx) => _buildHeader(
-          'Yearly Report',
-          '${data.year}${data.isPartialYear ? ' (partial year)' : ''}',
-        ),
+        header: (ctx) => ctx.pageNumber == 1
+            ? _buildFirstPageHeader('YEARLY REPORT FOR $yearStr')
+            : _buildHeader('Yearly Report', subtitleStr),
         footer: _buildFooter,
         build: (ctx) => _buildYearlyContent(data),
       ),
     );
+
+    // Landscape page for Spending by Category and Month.
+    if (data.categoryMonthlyAmounts.isNotEmpty) {
+      doc.addPage(
+        pw.MultiPage(
+          pageFormat: PdfPageFormat.a4.landscape,
+          margin: const pw.EdgeInsets.all(40),
+          header: (ctx) => _buildHeader('Yearly Report', subtitleStr),
+          footer: _buildFooter,
+          build: (ctx) => [
+            pw.SizedBox(height: 12),
+            _sectionTitle('SPENDING BY CATEGORY AND MONTH'),
+            pw.SizedBox(height: 8),
+            _buildCategoryMonthTable(data),
+          ],
+        ),
+      );
+    }
 
     return doc.save();
   }
@@ -150,7 +173,7 @@ class PdfReportService {
       if (hasPlanData) ...[
         _sectionTitle('SPENDING VS INCOME'),
         pw.SizedBox(height: 8),
-        _buildSpendingVsIncomeWidget(data),
+        _buildSpendingVsIncomeWidget(data.typeRatio!, 'month'),
         pw.SizedBox(height: 20),
       ],
       _sectionTitle('CATEGORY SUMMARY'),
@@ -185,25 +208,44 @@ class PdfReportService {
   // ── Yearly content ────────────────────────────────────────────────────────
 
   static List<pw.Widget> _buildYearlyContent(YearlyPdfData data) {
+    final hasPlanData = data.activePlanItems.isNotEmpty;
+    final hasOverview = data.overviewSummaries.any((s) => s.hasData);
+
     return [
       pw.SizedBox(height: 16),
       if (data.isPartialYear) ...[
         _buildPartialYearNote(),
         pw.SizedBox(height: 12),
       ],
-      _sectionTitle('CATEGORY BREAKDOWN'),
+      // Page 1: Spending vs Income (if any) + Category Summary — flow naturally.
+      if (hasPlanData) ...[
+        _sectionTitle('SPENDING VS INCOME'),
+        pw.SizedBox(height: 8),
+        _buildSpendingVsIncomeWidget(data.typeRatio!, 'year'),
+        pw.SizedBox(height: 20),
+      ],
+      _sectionTitle('CATEGORY SUMMARY'),
       pw.SizedBox(height: 8),
       _buildCategoryTable(data.categoryTotals, data.grandTotal),
-      pw.SizedBox(height: 20),
-      _sectionTitle('MONTH-BY-MONTH BUDGET'),
-      pw.SizedBox(height: 8),
-      _buildMonthlyBudgetTable(data.monthlySummaries),
-      if (data.categoryMonthlyAmounts.isNotEmpty) ...[
-        pw.SizedBox(height: 20),
-        _sectionTitle('SPENDING BY CATEGORY AND MONTH'),
+      // Page 2: Cash Flow Summary — always forced new page.
+      if (hasPlanData) ...[
+        pw.NewPage(),
+        pw.SizedBox(height: 12),
+        _sectionTitle('CASH FLOW SUMMARY'),
         pw.SizedBox(height: 8),
-        _buildCategoryMonthTable(data),
+        _buildYearlyCashFlowSection(data),
+        pw.SizedBox(height: 20),
       ],
+      // Page 3: Yearly Overview.
+      if (hasOverview) ...[
+        pw.NewPage(),
+        pw.SizedBox(height: 12),
+        _sectionTitle('YEARLY OVERVIEW'),
+        pw.SizedBox(height: 8),
+        _buildYearlyOverviewSection(data.overviewSummaries),
+      ],
+      // Spending by Category and Month is rendered on a separate landscape
+      // page added by generateYearlyReport.
     ];
   }
 
@@ -250,7 +292,7 @@ class PdfReportService {
     );
   }
 
-  static pw.Widget _buildFirstPageHeader(String month, int year) {
+  static pw.Widget _buildFirstPageHeader(String title) {
     return pw.Container(
       decoration: pw.BoxDecoration(color: _navy),
       padding: const pw.EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -270,7 +312,7 @@ class PdfReportService {
           ),
           pw.SizedBox(height: 5),
           pw.Text(
-            'MONTHLY REPORT FOR ${month.toUpperCase()} $year',
+            title,
             style: pw.TextStyle(
               color: PdfColors.white,
               fontSize: 16,
@@ -323,11 +365,10 @@ class PdfReportService {
 
   // ── Spending vs Income widget (FinancialTypeDistributionCard style) ─────────
 
-  static pw.Widget _buildSpendingVsIncomeWidget(MonthlyPdfData data) {
-    // typeRatio is pre-computed by the caller (report_screen.dart) using
-    // BudgetCalculator.financialTypeIncomeRatios(mergedLines, income),
-    // matching the Plan tab exactly (actual expenses + plan fixed costs).
-    final ratio = data.typeRatio!;
+  /// [periodLabel] is either 'month' or 'year' — used in the earned label and
+  /// overspend warning text.
+  static pw.Widget _buildSpendingVsIncomeWidget(
+      FinancialTypeIncomeRatio ratio, String periodLabel) {
     final overspend = ratio.overspendAmount;
 
     return pw.Container(
@@ -345,7 +386,7 @@ class PdfReportService {
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
-                'Earned this month',
+                'Earned this $periodLabel',
                 style: pw.TextStyle(fontSize: 9, color: _textMuted),
               ),
               pw.Text(
@@ -393,7 +434,7 @@ class PdfReportService {
                   ),
                   pw.Expanded(
                     child: pw.Text(
-                      'This month you spent ${overspend.toStringAsFixed(2)} EUR more than you earned!',
+                      'This $periodLabel you spent ${overspend.toStringAsFixed(2)} EUR more than you earned!',
                       style: pw.TextStyle(fontSize: 9, color: _amber),
                     ),
                   ),
@@ -474,6 +515,11 @@ class PdfReportService {
   // ── Cash Flow Summary section ─────────────────────────────────────────────
 
   static pw.Widget _buildCashFlowSummarySection(MonthlyPdfData data) {
+    double amountFn(PlanItem item) =>
+        BudgetCalculator.itemMonthlyContribution(item, data.year, data.month);
+    String suffixFn(PlanItem item) =>
+        item.frequency == PlanFrequency.yearly ? ' (normalized)' : '';
+
     final incomeItems = data.activePlanItems
         .where((i) => i.type == PlanItemType.income)
         .toList();
@@ -485,19 +531,46 @@ class PdfReportService {
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         if (incomeItems.isNotEmpty) ...[
-          _buildIncomeCard(incomeItems, data.year, data.month),
+          _buildIncomeCard(incomeItems, amountFn, suffixFn),
           pw.SizedBox(height: 12),
         ],
         if (fixedCostItems.isNotEmpty)
-          _buildFixedCostsCard(fixedCostItems, data.year, data.month),
+          _buildFixedCostsCard(fixedCostItems, amountFn, suffixFn),
+      ],
+    );
+  }
+
+  static pw.Widget _buildYearlyCashFlowSection(YearlyPdfData data) {
+    double amountFn(PlanItem item) =>
+        BudgetCalculator.itemYearlyContribution(item, data.allPlanItems, data.year);
+    String suffixFn(PlanItem item) =>
+        item.frequency == PlanFrequency.monthly ? ' (annualized)' : '';
+
+    final incomeItems = data.activePlanItems
+        .where((i) => i.type == PlanItemType.income)
+        .toList();
+    final fixedCostItems = data.activePlanItems
+        .where((i) => i.type == PlanItemType.fixedCost)
+        .toList();
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        if (incomeItems.isNotEmpty) ...[
+          _buildIncomeCard(incomeItems, amountFn, suffixFn),
+          pw.SizedBox(height: 12),
+        ],
+        if (fixedCostItems.isNotEmpty)
+          _buildFixedCostsCard(fixedCostItems, amountFn, suffixFn),
       ],
     );
   }
 
   static pw.Widget _buildIncomeCard(
-      List<PlanItem> items, int year, int month) {
-    final total = items.fold(
-        0.0, (s, i) => s + BudgetCalculator.itemMonthlyContribution(i, year, month));
+      List<PlanItem> items,
+      double Function(PlanItem) amountFn,
+      String Function(PlanItem) suffixFn) {
+    final total = items.fold(0.0, (s, i) => s + amountFn(i));
 
     return pw.Container(
       decoration: pw.BoxDecoration(
@@ -534,10 +607,8 @@ class PdfReportService {
           pw.SizedBox(height: 8),
           // Item rows
           ...items.map((item) {
-            final amount =
-                BudgetCalculator.itemMonthlyContribution(item, year, month);
-            final suffix =
-                item.frequency == PlanFrequency.yearly ? ' (normalized)' : '';
+            final amount = amountFn(item);
+            final suffix = suffixFn(item);
             return pw.Padding(
               padding: const pw.EdgeInsets.only(top: 4),
               child: pw.Row(
@@ -562,9 +633,10 @@ class PdfReportService {
   }
 
   static pw.Widget _buildFixedCostsCard(
-      List<PlanItem> items, int year, int month) {
-    final grandTotal = items.fold(
-        0.0, (s, i) => s + BudgetCalculator.itemMonthlyContribution(i, year, month));
+      List<PlanItem> items,
+      double Function(PlanItem) amountFn,
+      String Function(PlanItem) suffixFn) {
+    final grandTotal = items.fold(0.0, (s, i) => s + amountFn(i));
 
     // Group by financial type in display order
     const typeOrder = [
@@ -616,20 +688,18 @@ class PdfReportService {
           ...typeOrder
               .where((t) => byType.containsKey(t))
               .map((type) => _buildFinancialTypeGroup(
-                    type,
-                    byType[type]!,
-                    year,
-                    month,
-                  )),
+                    type, byType[type]!, amountFn, suffixFn)),
         ],
       ),
     );
   }
 
   static pw.Widget _buildFinancialTypeGroup(
-      FinancialType type, List<PlanItem> items, int year, int month) {
-    final typeTotal = items.fold(
-        0.0, (s, i) => s + BudgetCalculator.itemMonthlyContribution(i, year, month));
+      FinancialType type,
+      List<PlanItem> items,
+      double Function(PlanItem) amountFn,
+      String Function(PlanItem) suffixFn) {
+    final typeTotal = items.fold(0.0, (s, i) => s + amountFn(i));
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
@@ -658,16 +728,18 @@ class PdfReportService {
           ),
         ),
         if (type == FinancialType.consumption)
-          _buildConsumptionItems(items, year, month)
+          _buildConsumptionItems(items, amountFn, suffixFn)
         else
-          _buildFlatItems(items, year, month),
+          _buildFlatItems(items, amountFn, suffixFn),
       ],
     );
   }
 
   /// Consumption items grouped by category, then individual items under each.
   static pw.Widget _buildConsumptionItems(
-      List<PlanItem> items, int year, int month) {
+      List<PlanItem> items,
+      double Function(PlanItem) amountFn,
+      String Function(PlanItem) suffixFn) {
     // Group items by category
     final byCategory = <ExpenseCategory, List<PlanItem>>{};
     for (final item in items) {
@@ -675,10 +747,7 @@ class PdfReportService {
       byCategory.putIfAbsent(cat, () => []).add(item);
     }
     // Pre-compute contributions once to avoid redundant calls in sort + catTotal.
-    final contributions = {
-      for (final item in items)
-        item: BudgetCalculator.itemMonthlyContribution(item, year, month),
-    };
+    final contributions = {for (final item in items) item: amountFn(item)};
 
     // Sort categories by total descending
     final sortedCategories = byCategory.entries.toList()
@@ -720,9 +789,7 @@ class PdfReportService {
             // Items (16px indent)
             ...catItems.map((item) {
               final amount = contributions[item]!;
-              final suffix = item.frequency == PlanFrequency.yearly
-                  ? ' (normalized)'
-                  : '';
+              final suffix = suffixFn(item);
               return pw.Padding(
                 padding: const pw.EdgeInsets.only(left: 16, top: 2),
                 child: pw.Row(
@@ -749,14 +816,14 @@ class PdfReportService {
 
   /// Asset and Insurance: flat item list with 8px indent.
   static pw.Widget _buildFlatItems(
-      List<PlanItem> items, int year, int month) {
+      List<PlanItem> items,
+      double Function(PlanItem) amountFn,
+      String Function(PlanItem) suffixFn) {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: items.map((item) {
-        final amount =
-            BudgetCalculator.itemMonthlyContribution(item, year, month);
-        final suffix =
-            item.frequency == PlanFrequency.yearly ? ' (normalized)' : '';
+        final amount = amountFn(item);
+        final suffix = suffixFn(item);
         return pw.Padding(
           padding: const pw.EdgeInsets.only(left: 8, top: 3),
           child: pw.Row(
@@ -1259,63 +1326,178 @@ class PdfReportService {
     );
   }
 
-  // ── Monthly budget table (yearly report) ─────────────────────────────────
+  // ── Yearly Overview section ───────────────────────────────────────────────
 
-  static pw.Widget _buildMonthlyBudgetTable(List<MonthlySummary> summaries) {
-    return pw.Table(
-      border: pw.TableBorder.all(color: _borderGrey, width: 0.5),
-      columnWidths: const {
-        0: pw.FixedColumnWidth(36),
-        1: pw.FlexColumnWidth(2),
-        2: pw.FlexColumnWidth(2),
-        3: pw.FlexColumnWidth(2),
-      },
-      children: [
-        pw.TableRow(
-          decoration: pw.BoxDecoration(color: _navy),
-          children: [
-            _tableHeader(''),
-            _tableHeader('Budget', align: pw.TextAlign.right),
-            _tableHeader('Spent', align: pw.TextAlign.right),
-            _tableHeader('Difference', align: pw.TextAlign.right),
-          ],
-        ),
-        ...summaries.asMap().entries.map((entry) {
-          final i = entry.key;
-          final s = entry.value;
-          final diff = s.difference;
-          final hasData = s.spendableBudget != 0 || s.actualExpenses != 0;
-          final diffColor = diff >= 0 ? _green : _red;
-          final diffText = hasData
-              ? '${diff >= 0 ? '+' : ''}${diff.toStringAsFixed(0)} EUR'
-              : '-';
+  /// Mirrors the app's OverviewMonthRow for all 12 months.
+  /// Each row: month name | bar + numbers | result
+  static pw.Widget _buildYearlyOverviewSection(
+      List<MonthlyOverviewSummary> summaries) {
+    final rows = <pw.Widget>[];
 
-          return pw.TableRow(
-            decoration: pw.BoxDecoration(
-              color: i.isEven ? PdfColors.white : _lightGrey,
-            ),
+    for (var i = 0; i < summaries.length; i++) {
+      final s = summaries[i];
+      final monthName =
+          YearMonth.monthAbbreviations[s.period.month]; // e.g. "Jan"
+      final diff = s.result;
+      final diffText = diff >= 0
+          ? '+${diff.toStringAsFixed(0)} EUR'
+          : '${diff.toStringAsFixed(0)} EUR';
+      final diffColor = diff >= 0 ? _green : _red;
+
+      rows.add(
+        pw.Container(
+          color: i.isEven ? PdfColors.white : _lightGrey,
+          padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
-              _tableCell(YearMonth.monthAbbreviations[s.period.month]),
-              _tableCell(
-                hasData
-                    ? '${s.spendableBudget.toStringAsFixed(0)} EUR'
-                    : '-',
-                align: pw.TextAlign.right,
+              // Month label
+              pw.SizedBox(
+                width: 32,
+                child: pw.Text(
+                  monthName,
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                    color: _textMuted,
+                  ),
+                ),
               ),
-              _tableCell(
-                s.actualExpenses > 0
-                    ? '${s.actualExpenses.toStringAsFixed(0)} EUR'
-                    : '-',
-                align: pw.TextAlign.right,
+              pw.SizedBox(width: 8),
+              // Bar + numbers stacked
+              pw.Expanded(
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    if (s.earned > 0) _buildOverviewBar(s),
+                    pw.SizedBox(height: 4),
+                    _buildOverviewNumbers(s),
+                  ],
+                ),
               ),
-              _tableCellColored(
-                diffText,
-                align: pw.TextAlign.right,
-                color: hasData ? diffColor : _textMuted,
+              pw.SizedBox(width: 12),
+              // Result
+              pw.SizedBox(
+                width: 72,
+                child: s.hasData
+                    ? pw.Text(
+                        diffText,
+                        style: pw.TextStyle(
+                          fontSize: 10,
+                          fontWeight: pw.FontWeight.bold,
+                          color: diffColor,
+                        ),
+                        textAlign: pw.TextAlign.right,
+                      )
+                    : pw.Text(
+                        '—',
+                        style: pw.TextStyle(fontSize: 10, color: _textMuted),
+                        textAlign: pw.TextAlign.right,
+                      ),
               ),
             ],
-          );
-        }),
+          ),
+        ),
+      );
+    }
+
+    return pw.Column(children: rows);
+  }
+
+  /// Background track = full width (grey). Foreground = allocated fraction,
+  /// split into asset (green, left) and consumption (red, right) segments.
+  static pw.Widget _buildOverviewBar(MonthlyOverviewSummary s) {
+    final fraction = (s.allocated / s.earned).clamp(0.0, 1.0);
+    final assetFlex = (s.assetPct * fraction).clamp(0.0, 100.0);
+    final consumptionFlex = (s.consumptionPct * fraction).clamp(0.0, 100.0);
+    final emptyFlex = (100.0 - assetFlex - consumptionFlex).clamp(0.0, 100.0);
+
+    return pw.Container(
+      height: 7,
+      child: pw.Row(
+        children: [
+          if (assetFlex > 0)
+            pw.Expanded(
+              flex: assetFlex.round().clamp(1, 100),
+              child: pw.Container(
+                height: 7,
+                decoration: pw.BoxDecoration(
+                  color: _green,
+                  borderRadius: const pw.BorderRadius.only(
+                    topLeft: pw.Radius.circular(3),
+                    bottomLeft: pw.Radius.circular(3),
+                  ),
+                ),
+              ),
+            ),
+          if (consumptionFlex > 0)
+            pw.Expanded(
+              flex: consumptionFlex.round().clamp(1, 100),
+              child: pw.Container(
+                height: 7,
+                color: _red,
+              ),
+            ),
+          if (emptyFlex > 0)
+            pw.Expanded(
+              flex: emptyFlex.round().clamp(1, 100),
+              child: pw.Container(
+                height: 7,
+                decoration: pw.BoxDecoration(
+                  color: _borderGrey,
+                  borderRadius: const pw.BorderRadius.only(
+                    topRight: pw.Radius.circular(3),
+                    bottomRight: pw.Radius.circular(3),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  static pw.Widget _buildOverviewNumbers(MonthlyOverviewSummary s) {
+    return pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+      children: [
+        // Assets (green dot + amount)
+        pw.Row(
+          children: [
+            pw.Container(
+              width: 6,
+              height: 6,
+              decoration:
+                  pw.BoxDecoration(color: _green, shape: pw.BoxShape.circle),
+            ),
+            pw.SizedBox(width: 3),
+            pw.Text(
+              '${s.assets.toStringAsFixed(0)} EUR',
+              style: pw.TextStyle(fontSize: 9, color: _green),
+            ),
+          ],
+        ),
+        // Consumption (red dot + amount)
+        pw.Row(
+          children: [
+            pw.Container(
+              width: 6,
+              height: 6,
+              decoration:
+                  pw.BoxDecoration(color: _red, shape: pw.BoxShape.circle),
+            ),
+            pw.SizedBox(width: 3),
+            pw.Text(
+              '${s.consumption.toStringAsFixed(0)} EUR',
+              style: pw.TextStyle(fontSize: 9, color: _red),
+            ),
+          ],
+        ),
+        // Earned
+        pw.Text(
+          'Earned: ${s.earned.toStringAsFixed(0)} EUR',
+          style: pw.TextStyle(fontSize: 9, color: _textMuted),
+        ),
       ],
     );
   }
@@ -1341,13 +1523,15 @@ class PdfReportService {
 
     final categories = amounts.keys.toList();
 
+    // Landscape A4 content width ≈ 762pt. Use FlexColumnWidth(1) for months —
+    // with landscape there is ample room for full month names and 4-digit amounts.
     final colWidths = <int, pw.TableColumnWidth>{
-      0: const pw.FixedColumnWidth(88),
+      0: const pw.FixedColumnWidth(100),
     };
     for (var i = 0; i < activeMonths.length; i++) {
       colWidths[i + 1] = const pw.FlexColumnWidth(1);
     }
-    colWidths[activeMonths.length + 1] = const pw.FixedColumnWidth(58);
+    colWidths[activeMonths.length + 1] = const pw.FixedColumnWidth(70);
 
     return pw.Table(
       border: pw.TableBorder.all(color: _borderGrey, width: 0.5),
@@ -1358,7 +1542,7 @@ class PdfReportService {
           children: [
             _tableHeader('Category'),
             ...activeMonths.map(
-              (m) => _tableHeader(YearMonth.monthAbbreviations[m], align: pw.TextAlign.right),
+              (m) => _tableHeader(_monthNames[m], align: pw.TextAlign.right),
             ),
             _tableHeader('Total', align: pw.TextAlign.right),
           ],
@@ -1483,25 +1667,6 @@ class PdfReportService {
       child: pw.Text(
         text,
         style: const pw.TextStyle(fontSize: 9),
-        textAlign: align,
-      ),
-    );
-  }
-
-  static pw.Widget _tableCellColored(
-    String text, {
-    pw.TextAlign align = pw.TextAlign.left,
-    PdfColor? color,
-  }) {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-      child: pw.Text(
-        text,
-        style: pw.TextStyle(
-          fontSize: 9,
-          color: color,
-          fontWeight: pw.FontWeight.bold,
-        ),
         textAlign: align,
       ),
     );
