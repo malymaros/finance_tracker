@@ -11,6 +11,9 @@ class PlanRepository extends ChangeNotifier {
   final bool _persist;
   final List<PlanItem> _items = [];
 
+  // Cached documents directory path — set once in load(), used by all file helpers.
+  late String _baseDirPath;
+
   PlanRepository({bool persist = true, List<PlanItem>? seed})
       : _persist = persist {
     if (seed != null) _items.addAll(seed);
@@ -154,7 +157,8 @@ class PlanRepository extends ChangeNotifier {
 
   Future<void> load() async {
     if (!_persist) return;
-    final file = await _dataFile();
+    _baseDirPath = (await getApplicationDocumentsDirectory()).path;
+    final file = _dataFile();
     if (!await file.exists()) return;
     try {
       final json = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
@@ -172,15 +176,12 @@ class PlanRepository extends ChangeNotifier {
 
   Future<void> _save() async {
     if (!_persist) return;
-    final file = await _dataFile();
+    final file = _dataFile();
     final data = jsonEncode({
       'planItems': _items.map((e) => e.toJson()).toList(),
     });
     await file.writeAsString(data);
   }
 
-  Future<File> _dataFile() async {
-    final dir = await getApplicationDocumentsDirectory();
-    return File('${dir.path}/plan_data.json');
-  }
+  File _dataFile() => File('$_baseDirPath/plan_data.json');
 }

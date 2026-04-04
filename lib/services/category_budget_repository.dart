@@ -13,6 +13,9 @@ class CategoryBudgetRepository extends ChangeNotifier {
   final bool _persist;
   final List<CategoryBudget> _budgets = [];
 
+  // Cached documents directory path — set once in load(), used by all file helpers.
+  late String _baseDirPath;
+
   CategoryBudgetRepository({bool persist = true, List<CategoryBudget>? seed})
       : _persist = persist {
     if (seed != null) _budgets.addAll(seed);
@@ -212,7 +215,8 @@ class CategoryBudgetRepository extends ChangeNotifier {
 
   Future<void> load() async {
     if (!_persist) return;
-    final file = await _dataFile();
+    _baseDirPath = (await getApplicationDocumentsDirectory()).path;
+    final file = _dataFile();
     if (!await file.exists()) return;
     try {
       final json =
@@ -231,15 +235,12 @@ class CategoryBudgetRepository extends ChangeNotifier {
 
   Future<void> _save() async {
     if (!_persist) return;
-    final file = await _dataFile();
+    final file = _dataFile();
     final data = jsonEncode({
       'categoryBudgets': _budgets.map((e) => e.toJson()).toList(),
     });
     await file.writeAsString(data);
   }
 
-  Future<File> _dataFile() async {
-    final dir = await getApplicationDocumentsDirectory();
-    return File('${dir.path}/category_budgets.json');
-  }
+  File _dataFile() => File('$_baseDirPath/category_budgets.json');
 }

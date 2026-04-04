@@ -28,6 +28,9 @@ class FinanceRepository extends ChangeNotifier {
   // Years that have a data file on disk (or in-memory when persist==false).
   final Set<int> _availableYears = {};
 
+  // Cached documents directory path — set once in load(), used by all file helpers.
+  late String _baseDirPath;
+
   FinanceRepository({
     bool persist = true,
     List<Expense>? seed,
@@ -81,7 +84,7 @@ class FinanceRepository extends ChangeNotifier {
       return;
     }
 
-    final file = await _yearFile(year);
+    final file = _yearFile(year);
     if (!await file.exists()) {
       _expensesByYear[year] = [];
       return;
@@ -286,13 +289,14 @@ class FinanceRepository extends ChangeNotifier {
   /// Transparently migrates [finance_data.json] to per-year files if needed.
   Future<void> load() async {
     if (!_persist) return;
+    _baseDirPath = (await getApplicationDocumentsDirectory()).path;
     await _migrateIfNeeded();
     await _loadIndex();
     await loadYear(DateTime.now().year);
   }
 
   Future<void> _loadIndex() async {
-    final file = await _indexFile();
+    final file = _indexFile();
     if (!await file.exists()) {
       // Index missing — reconstruct from any year files already on disk.
       // This recovers from a crash that wrote year files but not the index.
@@ -313,8 +317,7 @@ class FinanceRepository extends ChangeNotifier {
   /// Scans the documents directory for [finance_YYYY.json] files and
   /// reconstructs [_availableYears] from them, then persists the index.
   Future<void> _rebuildIndexFromDisk() async {
-    final dir = await getApplicationDocumentsDirectory();
-    for (final entity in dir.listSync().whereType<File>()) {
+    for (final entity in Directory(_baseDirPath).listSync().whereType<File>()) {
       final name = entity.uri.pathSegments.last;
       final match = RegExp(r'^finance_(\d{4})\.json$').firstMatch(name);
       if (match != null) {
@@ -328,7 +331,7 @@ class FinanceRepository extends ChangeNotifier {
 
   Future<void> _saveYear(int year) async {
     if (!_persist) return;
-    final file = await _yearFile(year);
+    final file = _yearFile(year);
     await file.writeAsString(jsonEncode({
       'expenses':
           (_expensesByYear[year] ?? []).map((e) => e.toJson()).toList(),
@@ -337,7 +340,7 @@ class FinanceRepository extends ChangeNotifier {
 
   Future<void> _saveIndex() async {
     if (!_persist) return;
-    final file = await _indexFile();
+    final file = _indexFile();
     await file.writeAsString(jsonEncode({
       'years': _availableYears.toList()..sort(),
     }));
@@ -345,20 +348,19 @@ class FinanceRepository extends ChangeNotifier {
 
   Future<void> _deleteYearFile(int year) async {
     if (!_persist) return;
-    final file = await _yearFile(year);
+    final file = _yearFile(year);
     if (await file.exists()) await file.delete();
   }
 
   Future<void> _clearAllYearFiles() async {
     if (!_persist) return;
-    final dir = await getApplicationDocumentsDirectory();
-    for (final entity in dir.listSync().whereType<File>()) {
+    for (final entity in Directory(_baseDirPath).listSync().whereType<File>()) {
       final name = entity.uri.pathSegments.last;
       if (RegExp(r'^finance_\d{4}\.json$').hasMatch(name)) {
         await entity.delete();
       }
     }
-    final indexFile = await _indexFile();
+    final indexFile = _indexFile();
     if (await indexFile.exists()) await indexFile.delete();
   }
 
@@ -370,13 +372,12 @@ class FinanceRepository extends ChangeNotifier {
   /// written, so a crash mid-migration leaves the old file intact for the
   /// next launch to retry.
   Future<void> _migrateIfNeeded() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final oldFile = File('${dir.path}/finance_data.json');
+    final oldFile = File('$_baseDirPath/finance_data.json');
     if (!await oldFile.exists()) return;
 
     // If any per-year file already exists, migration already completed;
     // clean up the old file and return.
-    final alreadyMigrated = dir.listSync().whereType<File>().any((f) {
+    final alreadyMigrated = Directory(_baseDirPath).listSync().whereType<File>().any((f) {
       final name = f.uri.pathSegments.last;
       return RegExp(r'^finance_\d{4}\.json$').hasMatch(name);
     });
@@ -399,13 +400,13 @@ class FinanceRepository extends ChangeNotifier {
 
       // Write all year files before touching the old file.
       for (final entry in byYear.entries) {
-        final file = await _yearFile(entry.key);
+        final file = _yearFile(entry.key);
         await file.writeAsString(jsonEncode({
           'expenses': entry.value.map((e) => e.toJson()).toList(),
         }));
       }
 
-      final indexFile = await _indexFile();
+      final indexFile = _indexFile();
       await indexFile.writeAsString(jsonEncode({
         'years': byYear.keys.toList()..sort(),
       }));
@@ -417,13 +418,7 @@ class FinanceRepository extends ChangeNotifier {
     }
   }
 
-  Future<File> _yearFile(int year) async {
-    final dir = await getApplicationDocumentsDirectory();
-    return File('${dir.path}/finance_$year.json');
-  }
+  File _yearFile(int year) => File('$_baseDirPath/finance_$year.json');
 
-  Future<File> _indexFile() async {
-    final dir = await getApplicationDocumentsDirectory();
-    return File('${dir.path}/finance_index.json');
-  }
+  File _indexFile() => File('$_baseDirPath/finance_index.json');
 }
