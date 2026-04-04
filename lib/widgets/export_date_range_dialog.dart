@@ -26,10 +26,16 @@ class ExportDateRangeDialog extends StatefulWidget {
 
 class _ExportDateRangeDialogState extends State<ExportDateRangeDialog> {
   DateTime? _start;
-  DateTime? _end;
+  late DateTime _end;
+
+  @override
+  void initState() {
+    super.initState();
+    _end = DateTime.now();
+  }
 
   bool get _canConfirm =>
-      _start != null && _end != null && !_end!.isBefore(_start!);
+      _start != null && !_end.isBefore(_start!);
 
   String _formatDate(DateTime date) =>
       '${date.day.toString().padLeft(2, '0')}.'
@@ -49,7 +55,7 @@ class _ExportDateRangeDialogState extends State<ExportDateRangeDialog> {
   Future<void> _pickEnd() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _end ?? _start ?? DateTime.now(),
+      initialDate: _end,
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
@@ -58,8 +64,7 @@ class _ExportDateRangeDialogState extends State<ExportDateRangeDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final endBeforeStart =
-        _start != null && _end != null && _end!.isBefore(_start!);
+    final endBeforeStart = _start != null && _end.isBefore(_start!);
 
     return AlertDialog(
       title: const Text('Export Expenses'),
@@ -82,7 +87,7 @@ class _ExportDateRangeDialogState extends State<ExportDateRangeDialog> {
           _DateField(
             label: 'End Date',
             value: _end,
-            formatted: _end != null ? _formatDate(_end!) : null,
+            formatted: _formatDate(_end),
             onTap: _pickEnd,
           ),
           if (endBeforeStart) ...[
@@ -101,7 +106,7 @@ class _ExportDateRangeDialogState extends State<ExportDateRangeDialog> {
         ),
         FilledButton(
           onPressed: _canConfirm
-              ? () => Navigator.of(context).pop((start: _start!, end: _end!))
+              ? () => Navigator.of(context).pop((start: _start!, end: _end))
               : null,
           child: const Text('Export'),
         ),
