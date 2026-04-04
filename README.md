@@ -10,17 +10,26 @@ Built with AI-assisted development using Claude Code.
 - **Expense tracking** — log expenses with 17 categories and financial type tags
   (asset / consumption / insurance)
 - **Budget planning** — define monthly income and fixed costs; app calculates
-  spendable budget automatically; fixed costs grouped by financial type (consumption /
-  asset / insurance) in collapsible accordions with category drill-down
+  spendable budget automatically; fixed costs grouped by financial type in
+  collapsible accordions with category drill-down
+- **Category budgets** — set monthly spending limits per category; progress bars
+  in category view; warning card in items view when limits are exceeded;
+  full version history (budgets can change from a given month)
+- **GUARD** — mark fixed-cost plan items as guarded; app tracks payment status
+  per month and sends local push notification reminders on a configurable schedule
 - **Guided add flow** — type-selector bottom sheet before plan item forms ensures
   Income vs Fixed Cost is chosen explicitly before filling any fields
-- **Plan versioning** — recurring plan items track history via series IDs; edits
-  create new versions from a chosen month
+- **Plan versioning** — recurring plan items and category budgets track history
+  via series IDs; edits create new versions from a chosen month
 - **Reports** — monthly, yearly, and multi-year overview modes; pie charts by
-  category with a financial type breakdown
+  category; drill-down into category detail showing fixed costs and expenses
+- **PDF export** — generate and share monthly or yearly PDF reports
+- **Import** — import expenses from xlsx or csv files with a preview-and-edit step
+  before committing
 - **Budget progress bar** — live remaining budget with over/under status per month
-- **Save / load snapshots** — create up to 5 named local backups; restore any
-  snapshot to replace live data
+- **Save / load snapshots** — create up to 3 named local backups and restore
+  from them; automatic daily rotation keeps a Primary and Secondary backup
+  updated in the background without user action
 - **Period navigation** — consistent month/year navigation across all tabs with
   shared bounds derived from plan data
 - **Welcome screen** — animated entry screen with coin toss interaction and
@@ -33,7 +42,10 @@ Built with AI-assisted development using Claude Code.
 | UI framework | Flutter / Dart |
 | Charts | fl_chart |
 | Local storage | path_provider (JSON files) |
-| Haptics | haptic_feedback |
+| PDF generation | pdf + share_plus |
+| Import (xlsx/csv) | excel + file_picker |
+| Notifications | flutter_local_notifications |
+| Preferences | shared_preferences |
 | AI tooling | Claude Code |
 
 ## Project Structure
