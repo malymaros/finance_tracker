@@ -147,6 +147,8 @@ class _ReportScreenState extends State<ReportScreen> {
         listenable:
             Listenable.merge([widget.repository, widget.planRepository]),
         builder: (context, _) {
+          // Invalidate cache on any repository change (e.g. clearAll).
+          _reportCache = null;
           return Column(
             children: [
               _buildModeToggle(),
