@@ -533,4 +533,136 @@ void main() {
       expect(restored.silencedAt, isNull);
     });
   });
+
+  // ── _collectGuardedPeriods cache invalidation ─────────────────────────────
+  //
+  // These tests verify that the result of unpaidActiveItems / allUnresolvedItems
+  // updates correctly after each mutation, proving the cache is invalidated and
+  // not returning stale data.
+
+  group('_collectGuardedPeriods cache invalidation', () {
+    test('repeated calls with same inputs return identical result', () {
+      final repo = _repo();
+      final item = _monthlyGuarded(fromYear: 2024, fromMonth: 1, dueDay: 1);
+      final now = YearMonth(2024, 3);
+
+      final first = repo.unpaidActiveItems([item], now);
+      final second = repo.unpaidActiveItems([item], now);
+      expect(second.length, first.length);
+      for (var i = 0; i < first.length; i++) {
+        expect(second[i].$2, first[i].$2);
+      }
+    });
+
+    test('cache is invalidated after confirmPayment', () async {
+      final repo = _repo();
+      final item = _monthlyGuarded(fromYear: 2024, fromMonth: 1, dueDay: 1);
+      final now = YearMonth(2024, 3);
+
+      // Populate cache.
+      final before = repo.unpaidActiveItems([item], now);
+      expect(before.length, 3); // Jan, Feb, Mar
+
+      await repo.confirmPayment('s1', YearMonth(2024, 1));
+
+      // Must reflect the new state, not the cached result.
+      final after = repo.unpaidActiveItems([item], now);
+      expect(after.length, 2); // Feb, Mar (Jan is paid)
+    });
+
+    test('cache is invalidated after silencePayment', () async {
+      final repo = _repo();
+      final item = _monthlyGuarded(fromYear: 2024, fromMonth: 1, dueDay: 1);
+      final now = YearMonth(2024, 3);
+
+      // Populate cache for unpaidActive.
+      final before = repo.unpaidActiveItems([item], now);
+      expect(before.length, 3);
+
+      await repo.silencePayment('s1', YearMonth(2024, 1));
+
+      // unpaidActiveItems excludes silenced — result must shrink.
+      final after = repo.unpaidActiveItems([item], now);
+      expect(after.length, 2); // Feb, Mar (Jan is silenced)
+    });
+
+    test('cache is invalidated after revokePayment', () async {
+      final repo = _repo();
+      final item = _monthlyGuarded(fromYear: 2024, fromMonth: 1, dueDay: 1);
+      final now = YearMonth(2024, 3);
+
+      await repo.confirmPayment('s1', YearMonth(2024, 1));
+
+      // Populate cache with Jan already paid.
+      final withPaid = repo.unpaidActiveItems([item], now);
+      expect(withPaid.length, 2); // Feb, Mar
+
+      await repo.revokePayment('s1', YearMonth(2024, 1));
+
+      // Jan returns to unpaidActive — result must grow.
+      final afterRevoke = repo.unpaidActiveItems([item], now);
+      expect(afterRevoke.length, 3); // Jan, Feb, Mar
+    });
+
+    test('allUnresolvedItems cache is invalidated after silencePayment', () async {
+      final repo = _repo();
+      final item = _monthlyGuarded(fromYear: 2024, fromMonth: 1, dueDay: 1);
+      final now = YearMonth(2024, 2);
+
+      // Populate cache — both months unresolved.
+      final before = repo.allUnresolvedItems([item], now);
+      expect(before.length, 2); // Jan, Feb
+
+      await repo.silencePayment('s1', YearMonth(2024, 1));
+
+      // allUnresolvedItems includes silenced — count unchanged but Jan is silenced.
+      final after = repo.allUnresolvedItems([item], now);
+      expect(after.length, 2); // Jan (silenced) + Feb (unpaid)
+      // The item in the result must still be there; state changes happen via
+      // itemStateForPeriod, not through the list itself.
+    });
+
+    test('cache is invalidated after restoreFromSnapshot', () async {
+      final repo = _repo();
+      final item = _monthlyGuarded(fromYear: 2024, fromMonth: 1, dueDay: 1);
+      final now = YearMonth(2024, 3);
+
+      // Populate cache with no payments.
+      final before = repo.unpaidActiveItems([item], now);
+      expect(before.length, 3);
+
+      // Restore a snapshot that marks Jan as paid.
+      final snapshot = [
+        GuardPayment(
+          id: 'g1',
+          planItemSeriesId: 's1',
+          period: YearMonth(2024, 1),
+          paidAt: DateTime(2024, 1, 15),
+        ),
+      ];
+      await repo.restoreFromSnapshot(snapshot);
+
+      final after = repo.unpaidActiveItems([item], now);
+      expect(after.length, 2); // Feb, Mar (Jan paid via snapshot)
+    });
+
+    test('cache is invalidated after clearAll', () async {
+      final repo = _repo();
+      final item = _monthlyGuarded(fromYear: 2024, fromMonth: 1, dueDay: 1);
+      final now = YearMonth(2024, 3);
+
+      await repo.confirmPayment('s1', YearMonth(2024, 1));
+      await repo.confirmPayment('s1', YearMonth(2024, 2));
+
+      // Populate cache with 2 payments recorded.
+      final withPaid = repo.unpaidActiveItems([item], now);
+      expect(withPaid.length, 1); // Only Mar
+
+      await repo.clearAll();
+
+      // All payments gone — all 3 months are unpaid again.
+      final afterClear = repo.unpaidActiveItems([item], now);
+      expect(afterClear.length, 3);
+    });
+  });
 }

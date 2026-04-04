@@ -15,6 +15,14 @@ class GuardRepository extends ChangeNotifier {
   final bool _persist;
   final List<GuardPayment> _payments = [];
 
+  // Cached documents directory path — set once in load(), used by all file helpers.
+  late String _baseDirPath;
+
+  // Memoization cache for _collectGuardedPeriods.
+  // Keyed by a string encoding (_payments.length, allItems.length, now, includeSilenced).
+  // Cleared on every mutation so results never go stale.
+  final Map<String, List<(PlanItem, YearMonth)>> _guardedPeriodsCache = {};
+
   GuardRepository({bool persist = true, List<GuardPayment>? seed})
       : _persist = persist {
     if (seed != null) _payments.addAll(seed);
@@ -81,6 +89,7 @@ class GuardRepository extends ChangeNotifier {
       period: period,
       paidAt: DateTime.now(),
     ));
+    _guardedPeriodsCache.clear();
     notifyListeners();
     await _save();
   }
@@ -96,6 +105,7 @@ class GuardRepository extends ChangeNotifier {
       period: period,
       silencedAt: DateTime.now(),
     ));
+    _guardedPeriodsCache.clear();
     notifyListeners();
     await _save();
   }
@@ -105,12 +115,14 @@ class GuardRepository extends ChangeNotifier {
   Future<void> revokePayment(String seriesId, YearMonth period) async {
     _payments.removeWhere(
         (p) => p.planItemSeriesId == seriesId && p.period == period);
+    _guardedPeriodsCache.clear();
     notifyListeners();
     await _save();
   }
 
   Future<void> clearAll() async {
     _payments.clear();
+    _guardedPeriodsCache.clear();
     notifyListeners();
     await _save();
   }
@@ -119,6 +131,7 @@ class GuardRepository extends ChangeNotifier {
     _payments
       ..clear()
       ..addAll(payments);
+    _guardedPeriodsCache.clear();
     notifyListeners();
     await _save();
   }
@@ -127,7 +140,8 @@ class GuardRepository extends ChangeNotifier {
 
   Future<void> load() async {
     if (!_persist) return;
-    final file = await _dataFile();
+    _baseDirPath = (await getApplicationDocumentsDirectory()).path;
+    final file = _dataFile();
     if (!await file.exists()) return;
     try {
       final json =
@@ -146,17 +160,14 @@ class GuardRepository extends ChangeNotifier {
 
   Future<void> _save() async {
     if (!_persist) return;
-    final file = await _dataFile();
+    final file = _dataFile();
     final data = jsonEncode({
       'guardPayments': _payments.map((e) => e.toJson()).toList(),
     });
     await file.writeAsString(data);
   }
 
-  Future<File> _dataFile() async {
-    final dir = await getApplicationDocumentsDirectory();
-    return File('${dir.path}/guard_payments.json');
-  }
+  File _dataFile() => File('$_baseDirPath/guard_payments.json');
 
   // ── Internal helpers ──────────────────────────────────────────────────────
 
@@ -180,6 +191,11 @@ class GuardRepository extends ChangeNotifier {
     YearMonth now, {
     required bool includeSilenced,
   }) {
+    final key =
+        '${_payments.length}|${allItems.length}|${now.year}|${now.month}|${includeSilenced ? 1 : 0}';
+    final cached = _guardedPeriodsCache[key];
+    if (cached != null) return cached;
+
     final result = <(PlanItem, YearMonth)>[];
     final today = DateTime.now();
 
@@ -260,6 +276,7 @@ class GuardRepository extends ChangeNotifier {
       }
     }
 
+    _guardedPeriodsCache[key] = result;
     return result;
   }
 
