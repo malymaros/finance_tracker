@@ -191,8 +191,20 @@ class GuardRepository extends ChangeNotifier {
     YearMonth now, {
     required bool includeSilenced,
   }) {
+    // Key includes a fingerprint of all guard-relevant item fields so that
+    // changes in PlanRepository (e.g. guardDueDay edits) correctly bust the
+    // cache even without a GuardRepository mutation.
+    final itemsFingerprint = StringBuffer();
+    for (final item in allItems) {
+      if (!item.isGuarded || item.type != PlanItemType.fixedCost) continue;
+      itemsFingerprint.write(
+        '${item.seriesId}:${item.validFrom.year}/${item.validFrom.month}:'
+        '${item.validTo?.year ?? 0}/${item.validTo?.month ?? 0}:'
+        '${item.guardDueDay}:${item.guardDueMonth}:${item.guardOneTime};',
+      );
+    }
     final key =
-        '${_payments.length}|${allItems.length}|${now.year}|${now.month}|${includeSilenced ? 1 : 0}';
+        '${_payments.length}|${now.year}|${now.month}|${includeSilenced ? 1 : 0}|$itemsFingerprint';
     final cached = _guardedPeriodsCache[key];
     if (cached != null) return cached;
 

@@ -8,6 +8,8 @@ import '../../widgets/category_budget_tile.dart';
 import '../../widgets/period_navigator.dart';
 import 'add_category_budget_screen.dart';
 
+enum _DeleteChoice { cancel, endFromNow, deleteAll }
+
 class ManageBudgetsScreen extends StatefulWidget {
   final CategoryBudgetRepository budgetRepository;
 
@@ -21,7 +23,6 @@ class ManageBudgetsScreen extends StatefulWidget {
 }
 
 class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
-  bool _isMonthly = true;
   late YearMonth _selectedPeriod;
 
   // Navigation bounds: ±2 years from today.
@@ -52,15 +53,24 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
     required ExpenseCategory category,
     required String seriesId,
     required double currentAmount,
+    required YearMonth activeVersionValidFrom,
   }) {
+    final versions = widget.budgetRepository.seriesVersions(seriesId);
+    final minValidFrom =
+        versions.isNotEmpty ? versions.first.validFrom : YearMonth.now();
+    final isClosed =
+        versions.isNotEmpty && versions.last.validTo != null;
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => AddCategoryBudgetScreen(
           budgetRepository: widget.budgetRepository,
           initialCategory: category,
           initialAmount: currentAmount,
-          initialValidFrom: YearMonth.now(),
+          initialValidFrom:
+              isClosed ? activeVersionValidFrom : YearMonth.now(),
           seriesId: seriesId,
+          minValidFrom: minValidFrom,
+          validFromLocked: isClosed,
         ),
       ),
     );
@@ -68,32 +78,92 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
 
   Future<void> _confirmDelete(
       String seriesId, String categoryName) async {
-    final now = YearMonth.now();
-    final confirmed = await showDialog<bool>(
+    final from = _selectedPeriod;
+    final versions = widget.budgetRepository.seriesVersions(seriesId);
+    final earliest = versions.isNotEmpty ? versions.first.validFrom : from;
+    final latest = versions.isNotEmpty ? versions.last.validTo : null;
+
+    String fmt(YearMonth ym) => '${YearMonth.monthNames[ym.month]} ${ym.year}';
+    final rangeText = latest == null
+        ? '${fmt(earliest)} – present'
+        : '${fmt(earliest)} – ${fmt(latest)}';
+    final fromLabel = fmt(from);
+
+    final isClosed = latest != null;
+
+    final choice = await showDialog<_DeleteChoice>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Remove budget'),
-        content: Text(
-          'The $categoryName budget will stop from '
-          '${YearMonth.monthNames[now.month]} ${now.year} onwards. '
-          'Earlier months will keep their historical budget.',
+        title: Text('Remove $categoryName budget'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!isClosed) ...[
+              Text(
+                'End from $fromLabel',
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Stops the budget from $fromLabel onwards. '
+                'Earlier months keep their historical budget.',
+                style: const TextStyle(fontSize: 13),
+              ),
+              const SizedBox(height: 16),
+            ],
+            Text(
+              'Delete entire series',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: isClosed ? null : AppColors.expense,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Permanently removes all records ($rangeText). '
+              'No budget will appear for any month in this series. '
+              'This cannot be undone.',
+              style: const TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 24),
+            if (!isClosed)
+              SizedBox(
+                width: double.infinity,
+                child: TextButton(
+                  onPressed: () =>
+                      Navigator.of(ctx).pop(_DeleteChoice.endFromNow),
+                  child: Text('End from $fromLabel'),
+                ),
+              ),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () =>
+                    Navigator.of(ctx).pop(_DeleteChoice.deleteAll),
+                style: TextButton.styleFrom(
+                    foregroundColor:
+                        isClosed ? null : AppColors.expense),
+                child: const Text('Delete all'),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: TextButton(
+                onPressed: () => Navigator.of(ctx).pop(_DeleteChoice.cancel),
+                child: const Text('Cancel'),
+              ),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.expense),
-            child: const Text('Remove'),
-          ),
-        ],
       ),
     );
 
-    if (confirmed == true && mounted) {
-      await widget.budgetRepository.endCategoryBudget(seriesId, now);
+    if (!mounted) return;
+    if (choice == _DeleteChoice.endFromNow) {
+      await widget.budgetRepository.endCategoryBudget(seriesId, from);
+    } else if (choice == _DeleteChoice.deleteAll) {
+      await widget.budgetRepository.deleteEntireSeries(seriesId);
     }
   }
 
@@ -109,57 +179,24 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
         builder: (context, _) {
           return Column(
             children: [
-              _buildModeToggle(),
-              _buildPeriodNavigator(),
-              const Divider(height: 1),
-              Expanded(
-                child: _isMonthly
-                    ? _buildMonthlyContent()
-                    : _buildYearlyContent(),
+              PeriodNavigator(
+                selected: _selectedPeriod,
+                yearOnly: false,
+                min: _min,
+                max: _max,
+                onChanged: (ym) => setState(() => _selectedPeriod = ym),
               ),
+              const Divider(height: 1),
+              Expanded(child: _buildMonthlyContent()),
             ],
           );
         },
       ),
-      floatingActionButton: _isMonthly
-          ? FloatingActionButton(
-              onPressed: _navigateToAdd,
-              tooltip: 'Add budget',
-              child: const Icon(Icons.add),
-            )
-          : null,
-    );
-  }
-
-  Widget _buildModeToggle() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-      child: SegmentedButton<bool>(
-        segments: const [
-          ButtonSegment(
-            value: true,
-            label: Text('Monthly'),
-            icon: Icon(Icons.calendar_view_month),
-          ),
-          ButtonSegment(
-            value: false,
-            label: Text('Yearly'),
-            icon: Icon(Icons.calendar_today),
-          ),
-        ],
-        selected: {_isMonthly},
-        onSelectionChanged: (s) => setState(() => _isMonthly = s.first),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _navigateToAdd,
+        tooltip: 'Add budget',
+        child: const Icon(Icons.add),
       ),
-    );
-  }
-
-  Widget _buildPeriodNavigator() {
-    return PeriodNavigator(
-      selected: _selectedPeriod,
-      yearOnly: !_isMonthly,
-      min: _min,
-      max: _max,
-      onChanged: (ym) => setState(() => _selectedPeriod = ym),
     );
   }
 
@@ -191,47 +228,10 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
             category: category,
             seriesId: record.seriesId,
             currentAmount: amount,
+            activeVersionValidFrom: record.validFrom,
           ),
           onDelete: () =>
               _confirmDelete(record.seriesId, category.displayName),
-        );
-      },
-    );
-  }
-
-  Widget _buildYearlyContent() {
-    final yearlyTotals =
-        widget.budgetRepository.allYearlyTotals(_selectedPeriod.year);
-
-    if (yearlyTotals.isEmpty) return _buildEmptyState();
-
-    final entries = yearlyTotals.entries.toList()
-      ..sort((a, b) {
-        if (a.key == ExpenseCategory.other) return 1;
-        if (b.key == ExpenseCategory.other) return -1;
-        return a.key.displayName.compareTo(b.key.displayName);
-      });
-
-    return ListView.separated(
-      itemCount: entries.length,
-      separatorBuilder: (_, _) => const Divider(height: 1),
-      itemBuilder: (_, i) {
-        final cat = entries[i].key;
-        final total = entries[i].value;
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: cat.color.withAlpha(30),
-            child: Icon(cat.icon, size: 20, color: cat.color),
-          ),
-          title: Text(cat.displayName),
-          subtitle: const Text(
-            'Switch to monthly view to edit',
-            style: TextStyle(fontSize: 11, color: AppColors.textMuted),
-          ),
-          trailing: Text(
-            '${total.toStringAsFixed(2)} € / year',
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-          ),
         );
       },
     );
@@ -241,21 +241,18 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.tune_outlined,
-              size: 64, color: AppColors.textMuted),
-          const SizedBox(height: 16),
-          const Text(
+        children: const [
+          Icon(Icons.tune_outlined, size: 64, color: AppColors.textMuted),
+          SizedBox(height: 16),
+          Text(
             'No category budgets set.',
             style: TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
-          if (_isMonthly) ...[
-            const SizedBox(height: 8),
-            const Text(
-              'Tap + to add one.',
-              style: TextStyle(color: AppColors.textMuted),
-            ),
-          ],
+          SizedBox(height: 8),
+          Text(
+            'Tap + to add one.',
+            style: TextStyle(color: AppColors.textMuted),
+          ),
         ],
       ),
     );

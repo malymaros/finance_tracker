@@ -146,7 +146,8 @@ class CategoryBudgetRepository extends ChangeNotifier {
         category: active.category,
         amount: newAmount,
         validFrom: from,
-        validTo: null,
+        // Preserve validTo: reopening a closed series is not allowed.
+        validTo: active.validTo,
       ));
     }
 
@@ -193,6 +194,20 @@ class CategoryBudgetRepository extends ChangeNotifier {
       }
     }
 
+    notifyListeners();
+    await _save();
+  }
+
+  /// Returns all versioned records for [seriesId], sorted by validFrom ascending.
+  List<CategoryBudget> seriesVersions(String seriesId) {
+    final versions = _budgets.where((b) => b.seriesId == seriesId).toList()
+      ..sort((a, b) => a.validFrom.compareTo(b.validFrom));
+    return versions;
+  }
+
+  /// Permanently deletes every record in the series — including all history.
+  Future<void> deleteEntireSeries(String seriesId) async {
+    _budgets.removeWhere((b) => b.seriesId == seriesId);
     notifyListeners();
     await _save();
   }

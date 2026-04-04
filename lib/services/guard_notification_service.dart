@@ -23,10 +23,15 @@ class GuardNotificationService {
 
   static Future<void> initialize() async {
     if (!_timeZonesInitialized) {
-      tz.initializeTimeZones();
-      final localTz = await FlutterTimezone.getLocalTimezone();
-      tz.setLocalLocation(tz.getLocation(localTz.identifier));
-      _timeZonesInitialized = true;
+      try {
+        tz.initializeTimeZones();
+        final localTz = await FlutterTimezone.getLocalTimezone();
+        tz.setLocalLocation(tz.getLocation(localTz.identifier));
+        _timeZonesInitialized = true;
+      } catch (_) {
+        // Timezone lookup failed (unsupported device or bad identifier).
+        // Notifications will use UTC as a fallback; no crash.
+      }
     }
 
     const androidSettings =

@@ -22,6 +22,12 @@ class AddCategoryBudgetScreen extends StatefulWidget {
   /// Non-null when editing an existing series; null when creating a new budget.
   final String? seriesId;
 
+  /// When editing, the earliest allowed effective-from month (the series start).
+  final YearMonth? minValidFrom;
+
+  /// When true, the effective-from field is shown as read-only (closed series).
+  final bool validFromLocked;
+
   const AddCategoryBudgetScreen({
     super.key,
     required this.budgetRepository,
@@ -29,6 +35,8 @@ class AddCategoryBudgetScreen extends StatefulWidget {
     this.initialAmount,
     this.initialValidFrom,
     this.seriesId,
+    this.minValidFrom,
+    this.validFromLocked = false,
   });
 
   @override
@@ -62,7 +70,11 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
     super.dispose();
   }
 
-  bool get _isPastMonth => _validFrom.isBefore(YearMonth.now());
+  // Suppress past-month warning when the effective-from is locked (closed
+  // series edit) — the date is fixed to the version's own validFrom and the
+  // warning text would reference wrong date bounds.
+  bool get _isPastMonth =>
+      !widget.validFromLocked && _validFrom.isBefore(YearMonth.now());
 
   List<ExpenseCategory> _availableCategories() {
     final existing =
@@ -78,18 +90,17 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
   }
 
   Future<void> _pickValidFrom() async {
-    final initial = DateTime(_validFrom.year, _validFrom.month, 1);
-    final picked = await showDatePicker(
+    final picked = await showDialog<YearMonth>(
       context: context,
-      initialDate: initial,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      helpText: 'Select start month (day is ignored)',
+      builder: (ctx) => _MonthPickerDialog(
+        initial: _validFrom,
+        min: widget.minValidFrom,
+        max: YearMonth(YearMonth.now().year + 10, 12),
+      ),
     );
     if (picked != null) {
       setState(() {
-        _validFrom = YearMonth(picked.year, picked.month);
-        // Reset selected category if it now conflicts with the new month.
+        _validFrom = picked;
         if (!_categoryLocked && _selectedCategory != null) {
           final existing =
               widget.budgetRepository.allActiveBudgetsForMonth(_validFrom);
@@ -263,7 +274,7 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
 
             // ── Effective from ───────────────────────────────────────────────
             OutlinedButton.icon(
-              onPressed: _pickValidFrom,
+              onPressed: widget.validFromLocked ? null : _pickValidFrom,
               icon: const Icon(Icons.calendar_month, size: 18),
               label: Text('Effective from: $validFromLabel'),
               style: OutlinedButton.styleFrom(
@@ -315,6 +326,118 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MonthPickerDialog extends StatefulWidget {
+  final YearMonth initial;
+  final YearMonth? min;
+  final YearMonth? max;
+  const _MonthPickerDialog({required this.initial, this.min, this.max});
+
+  @override
+  State<_MonthPickerDialog> createState() => _MonthPickerDialogState();
+}
+
+class _MonthPickerDialogState extends State<_MonthPickerDialog> {
+  static const _months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  ];
+
+  late int _year;
+  late int _selectedMonth;
+
+  @override
+  void initState() {
+    super.initState();
+    _year = widget.initial.year;
+    _selectedMonth = widget.initial.month;
+  }
+
+  bool _isDisabled(int month) {
+    final ym = YearMonth(_year, month);
+    if (widget.min != null && ym.isBefore(widget.min!)) return true;
+    if (widget.max != null && ym.isAfter(widget.max!)) return true;
+    return false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final canGoBack = widget.min == null || _year > widget.min!.year;
+    final canGoForward = widget.max == null || _year < widget.max!.year;
+    bool isSelected(int month) =>
+        month == _selectedMonth && _year == widget.initial.year;
+    return AlertDialog(
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.chevron_left),
+            onPressed: canGoBack ? () => setState(() => _year--) : null,
+          ),
+          Text('$_year'),
+          IconButton(
+            icon: const Icon(Icons.chevron_right),
+            onPressed: canGoForward ? () => setState(() => _year++) : null,
+          ),
+        ],
+      ),
+      content: SizedBox(
+        width: 280,
+        child: GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 2,
+          children: List.generate(12, (i) {
+            final month = i + 1;
+            final disabled = _isDisabled(month);
+            return InkWell(
+              borderRadius: BorderRadius.circular(6),
+              onTap: disabled
+                  ? null
+                  : () => Navigator.of(context).pop(YearMonth(_year, month)),
+              child: Container(
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isSelected(month)
+                      ? colorScheme.primary
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(
+                    color: disabled
+                        ? AppColors.border.withAlpha(80)
+                        : isSelected(month)
+                            ? colorScheme.primary
+                            : AppColors.border,
+                  ),
+                ),
+                child: Text(
+                  _months[i],
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: disabled
+                        ? AppColors.textMuted.withAlpha(80)
+                        : isSelected(month)
+                            ? colorScheme.onPrimary
+                            : null,
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+      ],
     );
   }
 }
