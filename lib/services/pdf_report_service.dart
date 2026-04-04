@@ -3,14 +3,16 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import '../models/budget_status.dart';
 import '../models/category_total.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
+import '../models/financial_type.dart';
 import '../models/monthly_pdf_data.dart';
 import '../models/monthly_summary.dart';
+import '../models/plan_item.dart';
 import '../models/year_month.dart';
 import '../models/yearly_pdf_data.dart';
+import '../services/budget_calculator.dart';
 
 /// Pure static service that builds PDF documents from pre-assembled data.
 /// Produces a [Uint8List] suitable for writing to disk and sharing via OS.
@@ -23,17 +25,21 @@ class PdfReportService {
     'July', 'August', 'September', 'October', 'November', 'December',
   ];
 
-
   // ── Brand colors ──────────────────────────────────────────────────────────
 
-  static PdfColor get _navy => _color(0xFF0D1B4B);
-  static PdfColor get _gold => _color(0xFFD4A853);
-  static PdfColor get _lightGrey => _color(0xFFF8F9FA);
-  static PdfColor get _borderGrey => _color(0xFFE8EAF0);
-  static PdfColor get _textMuted => _color(0xFF8E97A8);
-  static PdfColor get _green => _color(0xFF1DB954);
-  static PdfColor get _red => _color(0xFFE53935);
-  static PdfColor get _groupHeader => _color(0xFF37474F);
+  static final _navy         = _color(0xFF0D1B4B);
+  static final _gold         = _color(0xFFD4A853);
+  static final _lightGrey    = _color(0xFFF8F9FA);
+  static final _borderGrey   = _color(0xFFE8EAF0);
+  static final _textMuted    = _color(0xFF8E97A8);
+  static final _green        = _color(0xFF1DB954); // income green
+  static final _red          = _color(0xFFE53935); // consumption / error red
+  static final _assetGreen   = _color(0xFF43A047); // asset green
+  static final _insuranceBlue = _color(0xFF1565C0); // insurance blue
+  static final _amber        = _color(0xFFF59E0B); // warning amber
+  static final _amberLight   = _color(0xFFFFF8E1); // amber card background
+  static final _groupHeader  = _color(0xFF37474F); // dark slate for group bars
+  static final _slateLight   = _color(0xFFB0BEC5); // light slate for secondary text
 
   static PdfColor _color(int argb) {
     final r = ((argb >> 16) & 0xFF) / 255.0;
@@ -94,14 +100,16 @@ class PdfReportService {
       title: 'Monthly Report ${_monthNames[data.month]} ${data.year}',
     );
 
+    final monthLabel = _monthNames[data.month];
+    final yearLabel = data.year;
+
     doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(40),
-        header: (ctx) => _buildHeader(
-          'Monthly Report',
-          '${_monthNames[data.month]} ${data.year}',
-        ),
+        header: (ctx) => ctx.pageNumber == 1
+            ? _buildFirstPageHeader(monthLabel, yearLabel)
+            : _buildHeader('Monthly Report', '$monthLabel $yearLabel'),
         footer: _buildFooter,
         build: (ctx) => _buildMonthlyContent(data),
       ),
@@ -134,28 +142,42 @@ class PdfReportService {
   // ── Monthly content ───────────────────────────────────────────────────────
 
   static List<pw.Widget> _buildMonthlyContent(MonthlyPdfData data) {
+    final hasPlanData = data.activePlanItems.isNotEmpty;
+
     return [
       pw.SizedBox(height: 16),
-      if (data.budgetStatus != null) ...[
-        _sectionTitle('BUDGET SUMMARY'),
+      // Page 1: Spending vs Income (if any) + Category Summary — flow naturally.
+      if (hasPlanData) ...[
+        _sectionTitle('SPENDING VS INCOME'),
         pw.SizedBox(height: 8),
-        _buildBudgetSummary(data.budgetStatus!),
+        _buildSpendingVsIncomeWidget(data),
         pw.SizedBox(height: 20),
       ],
-      _sectionTitle('CATEGORY BREAKDOWN'),
+      _sectionTitle('CATEGORY SUMMARY'),
       pw.SizedBox(height: 8),
-      _buildCategoryTable(data.categoryTotals, data.grandTotal),
-      if (data.groupSummaries.isNotEmpty) ...[
+      _buildCategorySummarySection(data),
+      // Page 2: Cash Flow Summary — always forced new page.
+      if (hasPlanData) ...[
+        pw.NewPage(),
+        pw.SizedBox(height: 12),
+        _sectionTitle('CASH FLOW SUMMARY'),
+        pw.SizedBox(height: 8),
+        _buildCashFlowSummarySection(data),
         pw.SizedBox(height: 20),
+      ],
+      if (data.groupSummaries.isNotEmpty) ...[
+        pw.NewPage(),
+        pw.SizedBox(height: 12),
         _sectionTitle('EXPENSE GROUPS'),
         pw.SizedBox(height: 8),
         _buildGroupsSection(data),
       ],
       if (data.expenses.isNotEmpty) ...[
-        pw.SizedBox(height: 20),
+        pw.NewPage(),
+        pw.SizedBox(height: 12),
         _sectionTitle('EXPENSE DETAILS'),
         pw.SizedBox(height: 8),
-        _buildExpenseTable(data.expenses),
+        _buildExpenseTable(data.expenses, data.grandTotal),
       ],
     ];
   }
@@ -228,6 +250,39 @@ class PdfReportService {
     );
   }
 
+  static pw.Widget _buildFirstPageHeader(String month, int year) {
+    return pw.Container(
+      decoration: pw.BoxDecoration(color: _navy),
+      padding: const pw.EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      margin: const pw.EdgeInsets.only(bottom: 4),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+        children: [
+          pw.Text(
+            'Finance Tracker',
+            style: pw.TextStyle(
+              color: _gold,
+              fontSize: 9,
+              fontWeight: pw.FontWeight.bold,
+              letterSpacing: 1.5,
+            ),
+            textAlign: pw.TextAlign.center,
+          ),
+          pw.SizedBox(height: 5),
+          pw.Text(
+            'MONTHLY REPORT FOR ${month.toUpperCase()} $year',
+            style: pw.TextStyle(
+              color: PdfColors.white,
+              fontSize: 16,
+              fontWeight: pw.FontWeight.bold,
+            ),
+            textAlign: pw.TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
   static pw.Widget _buildFooter(pw.Context ctx) {
     return pw.Container(
       decoration: pw.BoxDecoration(
@@ -266,12 +321,14 @@ class PdfReportService {
     );
   }
 
-  // ── Budget summary ────────────────────────────────────────────────────────
+  // ── Spending vs Income widget (FinancialTypeDistributionCard style) ─────────
 
-  static pw.Widget _buildBudgetSummary(BudgetStatus status) {
-    final remaining = status.remaining;
-    final pct = (status.percentUsed / 100).clamp(0.0, 1.0);
-    final barColor = status.isOverBudget ? _red : _green;
+  static pw.Widget _buildSpendingVsIncomeWidget(MonthlyPdfData data) {
+    // typeRatio is pre-computed by the caller (report_screen.dart) using
+    // BudgetCalculator.financialTypeIncomeRatios(mergedLines, income),
+    // matching the Plan tab exactly (actual expenses + plan fixed costs).
+    final ratio = data.typeRatio!;
+    final overspend = ratio.overspendAmount;
 
     return pw.Container(
       decoration: pw.BoxDecoration(
@@ -283,65 +340,521 @@ class PdfReportService {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
+          // Earned this month row
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
-              _labelValue(
-                'Budget',
-                '${status.spendableBudget.toStringAsFixed(2)} EUR',
+              pw.Text(
+                'Earned this month',
+                style: pw.TextStyle(fontSize: 9, color: _textMuted),
               ),
-              _labelValue(
-                'Spent',
-                '${status.actualSpent.toStringAsFixed(2)} EUR',
-              ),
-              _labelValue(
-                remaining >= 0 ? 'Remaining' : 'Over by',
-                '${remaining.abs().toStringAsFixed(2)} EUR',
-                valueColor: remaining >= 0 ? _green : _red,
+              pw.Text(
+                '${ratio.income.toStringAsFixed(2)} EUR',
+                style: pw.TextStyle(
+                  fontSize: 12,
+                  fontWeight: pw.FontWeight.bold,
+                  color: _green,
+                ),
               ),
             ],
           ),
-          pw.SizedBox(height: 10),
-          _buildBar(pct, barColor, height: 8),
+          pw.SizedBox(height: 8),
+          pw.Container(height: 0.5, color: _borderGrey),
+          pw.SizedBox(height: 4),
+          if (ratio.consumptionAmount > 0)
+            _buildTypeRatioRow(FinancialType.consumption,
+                ratio.consumptionAmount, ratio.consumptionPct, _red),
+          if (ratio.assetAmount > 0)
+            _buildTypeRatioRow(
+                FinancialType.asset, ratio.assetAmount, ratio.assetPct, _assetGreen),
+          if (ratio.insuranceAmount > 0)
+            _buildTypeRatioRow(FinancialType.insurance,
+                ratio.insuranceAmount, ratio.insurancePct, _insuranceBlue),
+          if (overspend != null) ...[
+            pw.SizedBox(height: 10),
+            pw.Container(
+              padding:
+                  const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: pw.BoxDecoration(
+                color: _amberLight,
+                borderRadius:
+                    const pw.BorderRadius.all(pw.Radius.circular(6)),
+                border: pw.Border.all(color: _amber, width: 0.8),
+              ),
+              child: pw.Row(
+                children: [
+                  pw.Text(
+                    '! ',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                      color: _amber,
+                    ),
+                  ),
+                  pw.Expanded(
+                    child: pw.Text(
+                      'This month you spent ${overspend.toStringAsFixed(2)} EUR more than you earned!',
+                      style: pw.TextStyle(fontSize: 9, color: _amber),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  static pw.Widget _labelValue(
-    String label,
-    String value, {
-    PdfColor? valueColor,
-  }) {
+  // Horizontal fill bar row: [dot] [name 70px] [bar expanded] [pct 34px] [EUR 85px]
+  static pw.Widget _buildTypeRatioRow(
+    FinancialType type,
+    double amount,
+    double? pct,
+    PdfColor typeColor,
+  ) {
+    final barFraction = pct != null ? (pct / 100).clamp(0.0, 1.0) : 0.0;
+    final pctLabel = pct == null ? '-' : '${pct.toStringAsFixed(0)}%';
+
+    return pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(vertical: 5),
+      child: pw.Row(
+        children: [
+          pw.Container(
+            width: 8,
+            height: 8,
+            decoration: pw.BoxDecoration(
+              shape: pw.BoxShape.circle,
+              color: typeColor,
+            ),
+          ),
+          pw.SizedBox(width: 8),
+          pw.SizedBox(
+            width: 80,
+            child: pw.Text(
+              type.displayName,
+              style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
+            ),
+          ),
+          pw.SizedBox(width: 8),
+          pw.Expanded(
+            child: _buildBar(barFraction, typeColor, height: 8),
+          ),
+          pw.SizedBox(width: 8),
+          pw.SizedBox(
+            width: 34,
+            child: pw.Text(
+              pctLabel,
+              style: pw.TextStyle(
+                fontSize: 9,
+                fontWeight: pw.FontWeight.bold,
+                color: typeColor,
+              ),
+              textAlign: pw.TextAlign.right,
+            ),
+          ),
+          pw.SizedBox(width: 8),
+          pw.SizedBox(
+            width: 85,
+            child: pw.Text(
+              '${amount.toStringAsFixed(2)} EUR',
+              style: pw.TextStyle(
+                fontSize: 10,
+                fontWeight: pw.FontWeight.bold,
+                color: typeColor,
+              ),
+              textAlign: pw.TextAlign.right,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── Cash Flow Summary section ─────────────────────────────────────────────
+
+  static pw.Widget _buildCashFlowSummarySection(MonthlyPdfData data) {
+    final incomeItems = data.activePlanItems
+        .where((i) => i.type == PlanItemType.income)
+        .toList();
+    final fixedCostItems = data.activePlanItems
+        .where((i) => i.type == PlanItemType.fixedCost)
+        .toList();
+
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text(
-          label,
-          style: pw.TextStyle(fontSize: 9, color: _textMuted),
-        ),
-        pw.Text(
-          value,
-          style: pw.TextStyle(
-            fontSize: 13,
-            fontWeight: pw.FontWeight.bold,
-            color: valueColor,
+        if (incomeItems.isNotEmpty) ...[
+          _buildIncomeCard(incomeItems, data.year, data.month),
+          pw.SizedBox(height: 12),
+        ],
+        if (fixedCostItems.isNotEmpty)
+          _buildFixedCostsCard(fixedCostItems, data.year, data.month),
+      ],
+    );
+  }
+
+  static pw.Widget _buildIncomeCard(
+      List<PlanItem> items, int year, int month) {
+    final total = items.fold(
+        0.0, (s, i) => s + BudgetCalculator.itemMonthlyContribution(i, year, month));
+
+    return pw.Container(
+      decoration: pw.BoxDecoration(
+        color: _lightGrey,
+        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+        border: pw.Border.all(color: _borderGrey, width: 0.5),
+      ),
+      padding: const pw.EdgeInsets.all(12),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          // Header row
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text(
+                'INCOME',
+                style: pw.TextStyle(
+                  fontSize: 9,
+                  fontWeight: pw.FontWeight.bold,
+                  color: _textMuted,
+                  letterSpacing: 0.8,
+                ),
+              ),
+              pw.Text(
+                '${total.toStringAsFixed(2)} EUR',
+                style: pw.TextStyle(
+                  fontSize: 11,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 8),
+          // Item rows
+          ...items.map((item) {
+            final amount =
+                BudgetCalculator.itemMonthlyContribution(item, year, month);
+            final suffix =
+                item.frequency == PlanFrequency.yearly ? ' (normalized)' : '';
+            return pw.Padding(
+              padding: const pw.EdgeInsets.only(top: 4),
+              child: pw.Row(
+                children: [
+                  pw.Expanded(
+                    child: pw.Text(
+                      _n('${item.name}$suffix'),
+                      style: pw.TextStyle(fontSize: 9, color: _textMuted),
+                    ),
+                  ),
+                  pw.Text(
+                    '${amount.toStringAsFixed(2)} EUR',
+                    style: const pw.TextStyle(fontSize: 9),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  static pw.Widget _buildFixedCostsCard(
+      List<PlanItem> items, int year, int month) {
+    final grandTotal = items.fold(
+        0.0, (s, i) => s + BudgetCalculator.itemMonthlyContribution(i, year, month));
+
+    // Group by financial type in display order
+    const typeOrder = [
+      FinancialType.consumption,
+      FinancialType.asset,
+      FinancialType.insurance,
+    ];
+
+    final byType = <FinancialType, List<PlanItem>>{};
+    for (final item in items) {
+      final type = item.financialType ?? FinancialType.consumption;
+      byType.putIfAbsent(type, () => []).add(item);
+    }
+
+    return pw.Container(
+      decoration: pw.BoxDecoration(
+        color: _lightGrey,
+        borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+        border: pw.Border.all(color: _borderGrey, width: 0.5),
+      ),
+      padding: const pw.EdgeInsets.all(12),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          // Top header row
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text(
+                'FIXED COSTS',
+                style: pw.TextStyle(
+                  fontSize: 9,
+                  fontWeight: pw.FontWeight.bold,
+                  color: _textMuted,
+                  letterSpacing: 0.8,
+                ),
+              ),
+              pw.Text(
+                '${grandTotal.toStringAsFixed(2)} EUR',
+                style: pw.TextStyle(
+                  fontSize: 11,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 10),
+          // Financial type groups
+          ...typeOrder
+              .where((t) => byType.containsKey(t))
+              .map((type) => _buildFinancialTypeGroup(
+                    type,
+                    byType[type]!,
+                    year,
+                    month,
+                  )),
+        ],
+      ),
+    );
+  }
+
+  static pw.Widget _buildFinancialTypeGroup(
+      FinancialType type, List<PlanItem> items, int year, int month) {
+    final typeTotal = items.fold(
+        0.0, (s, i) => s + BudgetCalculator.itemMonthlyContribution(i, year, month));
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        // Financial type header row
+        pw.Padding(
+          padding: const pw.EdgeInsets.only(top: 6, bottom: 4),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text(
+                type.displayName,
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+              pw.Text(
+                '${typeTotal.toStringAsFixed(2)} EUR',
+                style: pw.TextStyle(
+                  fontSize: 10,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
+        if (type == FinancialType.consumption)
+          _buildConsumptionItems(items, year, month)
+        else
+          _buildFlatItems(items, year, month),
+      ],
+    );
+  }
+
+  /// Consumption items grouped by category, then individual items under each.
+  static pw.Widget _buildConsumptionItems(
+      List<PlanItem> items, int year, int month) {
+    // Group items by category
+    final byCategory = <ExpenseCategory, List<PlanItem>>{};
+    for (final item in items) {
+      final cat = item.category ?? ExpenseCategory.other;
+      byCategory.putIfAbsent(cat, () => []).add(item);
+    }
+    // Pre-compute contributions once to avoid redundant calls in sort + catTotal.
+    final contributions = {
+      for (final item in items)
+        item: BudgetCalculator.itemMonthlyContribution(item, year, month),
+    };
+
+    // Sort categories by total descending
+    final sortedCategories = byCategory.entries.toList()
+      ..sort((a, b) {
+        final ta = a.value.fold(0.0, (s, i) => s + contributions[i]!);
+        final tb = b.value.fold(0.0, (s, i) => s + contributions[i]!);
+        return tb.compareTo(ta);
+      });
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: sortedCategories.map((entry) {
+        final cat = entry.key;
+        final catItems = entry.value;
+        final catTotal = catItems.fold(0.0, (s, i) => s + contributions[i]!);
+        return pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            // Category sub-header (8px indent)
+            pw.Padding(
+              padding: const pw.EdgeInsets.only(left: 8, top: 3, bottom: 1),
+              child: pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text(
+                    cat.displayName,
+                    style: pw.TextStyle(
+                        fontSize: 9,
+                        color: _textMuted,
+                        fontWeight: pw.FontWeight.bold),
+                  ),
+                  pw.Text(
+                    '${catTotal.toStringAsFixed(2)} EUR',
+                    style: pw.TextStyle(fontSize: 9, color: _textMuted),
+                  ),
+                ],
+              ),
+            ),
+            // Items (16px indent)
+            ...catItems.map((item) {
+              final amount = contributions[item]!;
+              final suffix = item.frequency == PlanFrequency.yearly
+                  ? ' (normalized)'
+                  : '';
+              return pw.Padding(
+                padding: const pw.EdgeInsets.only(left: 16, top: 2),
+                child: pw.Row(
+                  children: [
+                    pw.Expanded(
+                      child: pw.Text(
+                        _n('${item.name}$suffix'),
+                        style: pw.TextStyle(fontSize: 9, color: _textMuted),
+                      ),
+                    ),
+                    pw.Text(
+                      '${amount.toStringAsFixed(2)} EUR',
+                      style: pw.TextStyle(fontSize: 9, color: _textMuted),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ],
+        );
+      }).toList(),
+    );
+  }
+
+  /// Asset and Insurance: flat item list with 8px indent.
+  static pw.Widget _buildFlatItems(
+      List<PlanItem> items, int year, int month) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: items.map((item) {
+        final amount =
+            BudgetCalculator.itemMonthlyContribution(item, year, month);
+        final suffix =
+            item.frequency == PlanFrequency.yearly ? ' (normalized)' : '';
+        return pw.Padding(
+          padding: const pw.EdgeInsets.only(left: 8, top: 3),
+          child: pw.Row(
+            children: [
+              pw.Expanded(
+                child: pw.Text(
+                  _n('${item.name}$suffix'),
+                  style: pw.TextStyle(fontSize: 9, color: _textMuted),
+                ),
+              ),
+              pw.Text(
+                '${amount.toStringAsFixed(2)} EUR',
+                style: pw.TextStyle(fontSize: 9, color: _textMuted),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // ── Category summary section ──────────────────────────────────────────────
+
+  static pw.Widget _buildCategorySummarySection(MonthlyPdfData data) {
+    // Collect over-budget categories sorted by overage descending.
+    final overages = <({ExpenseCategory category, double overage})>[];
+    for (final ct in data.categoryTotals) {
+      final budget = data.categoryBudgets[ct.category];
+      if (budget != null && ct.amount > budget) {
+        overages.add((category: ct.category, overage: ct.amount - budget));
+      }
+    }
+    overages.sort((a, b) => b.overage.compareTo(a.overage));
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        _buildCategoryTable(data.categoryTotals, data.grandTotal,
+            budgets: data.categoryBudgets),
+        if (overages.isNotEmpty) ...[
+          pw.SizedBox(height: 10),
+          pw.Container(
+            padding:
+                const pw.EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: pw.BoxDecoration(
+              color: _amberLight,
+              borderRadius:
+                  const pw.BorderRadius.all(pw.Radius.circular(6)),
+              border: pw.Border.all(color: _amber, width: 0.8),
+            ),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: overages.map((o) => pw.Padding(
+                    padding: const pw.EdgeInsets.only(bottom: 2),
+                    child: pw.Row(
+                      children: [
+                        pw.Text(
+                          '! ',
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            fontWeight: pw.FontWeight.bold,
+                            color: _amber,
+                          ),
+                        ),
+                        pw.Expanded(
+                          child: pw.Text(
+                            '${o.category.displayName} budget: over by ${o.overage.toStringAsFixed(2)} EUR',
+                            style: pw.TextStyle(fontSize: 9, color: _amber),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )).toList(),
+            ),
+          ),
+        ],
       ],
     );
   }
 
   // ── Category table ────────────────────────────────────────────────────────
+  //
+  // Unified for both the no-budget and with-budget cases.
+  // When [budgets] is non-empty, extra columns are shown:
+  //   % (42) | gap (8) | budget (70) | gap (8) | spent (80) | gap (4) | status (16)
+  // The TOTAL row grand total aligns under the "spent" column.
+  // When [budgets] is empty, only % (42) + amount (80) are shown on the right.
 
   static pw.Widget _buildCategoryTable(
     List<CategoryTotal> totals,
-    double grandTotal,
-  ) {
+    double grandTotal, {
+    Map<ExpenseCategory, double> budgets = const {},
+  }) {
     if (totals.isEmpty) {
       return pw.Text('No data.', style: pw.TextStyle(color: _textMuted));
     }
 
+    final hasBudgets = budgets.isNotEmpty;
     final maxAmount =
         totals.map((t) => t.amount).reduce((a, b) => a > b ? a : b);
 
@@ -352,6 +865,8 @@ class PdfReportService {
           final ct = entry.value;
           final barFraction = maxAmount > 0 ? ct.amount / maxAmount : 0.0;
           final catColor = _color(ct.category.color.toARGB32());
+          final budget = budgets[ct.category];
+          final isOverBudget = budget != null && ct.amount > budget;
 
           return pw.Container(
             color: i.isEven ? PdfColors.white : _lightGrey,
@@ -374,10 +889,9 @@ class PdfReportService {
                     style: const pw.TextStyle(fontSize: 10),
                   ),
                 ),
-                pw.Expanded(
-                  child: _buildBar(barFraction, catColor),
-                ),
+                pw.Expanded(child: _buildBar(barFraction, catColor)),
                 pw.SizedBox(width: 8),
+                // % column
                 pw.SizedBox(
                   width: 42,
                   child: pw.Text(
@@ -387,21 +901,52 @@ class PdfReportService {
                   ),
                 ),
                 pw.SizedBox(width: 8),
+                if (hasBudgets) ...[
+                  // Budget column (left of spent)
+                  pw.SizedBox(
+                    width: 70,
+                    child: pw.Text(
+                      budget != null ? '${budget.toStringAsFixed(2)} EUR' : '',
+                      style: pw.TextStyle(fontSize: 9, color: _textMuted),
+                      textAlign: pw.TextAlign.right,
+                    ),
+                  ),
+                  pw.SizedBox(width: 8),
+                ],
+                // Amount / spent column
                 pw.SizedBox(
                   width: 80,
                   child: pw.Text(
                     '${ct.amount.toStringAsFixed(2)} EUR',
                     style: pw.TextStyle(
-                      fontSize: 10,
+                      fontSize: hasBudgets ? 9 : 10,
                       fontWeight: pw.FontWeight.bold,
+                      color: isOverBudget ? _red : null,
                     ),
                     textAlign: pw.TextAlign.right,
                   ),
                 ),
+                if (hasBudgets) ...[
+                  pw.SizedBox(width: 4),
+                  // Status marker — only shown when over budget
+                  pw.SizedBox(
+                    width: 16,
+                    child: pw.Text(
+                      isOverBudget ? '!' : '',
+                      style: pw.TextStyle(
+                        fontSize: 10,
+                        fontWeight: pw.FontWeight.bold,
+                        color: _red,
+                      ),
+                      textAlign: pw.TextAlign.center,
+                    ),
+                  ),
+                ],
               ],
             ),
           );
         }),
+        // TOTAL row
         pw.Container(
           decoration: pw.BoxDecoration(
             border: pw.Border(top: pw.BorderSide(color: _borderGrey)),
@@ -418,13 +963,23 @@ class PdfReportService {
                   ),
                 ),
               ),
-              pw.Text(
-                '${grandTotal.toStringAsFixed(2)} EUR',
-                style: pw.TextStyle(
-                  fontSize: 11,
-                  fontWeight: pw.FontWeight.bold,
+              if (hasBudgets)
+                // Skip gap(8) + %(42) + gap(8) + budget(70) + gap(8) to align
+                // grand total under the "spent" column
+                pw.SizedBox(width: 8 + 42 + 8 + 70 + 8),
+              pw.SizedBox(
+                width: 80,
+                child: pw.Text(
+                  '${grandTotal.toStringAsFixed(2)} EUR',
+                  style: pw.TextStyle(
+                    fontSize: 11,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                  textAlign: pw.TextAlign.right,
                 ),
               ),
+              if (hasBudgets)
+                pw.SizedBox(width: 4 + 16), // skip status column
             ],
           ),
         ),
@@ -435,21 +990,30 @@ class PdfReportService {
   // ── Groups section with per-expense breakdown ─────────────────────────────
 
   /// Renders one block per group: a header row followed by a table of every
-  /// expense that belongs to this group in the current month, then a subtotal.
+  /// expense that belongs to this group in the current month, then a subtotal
+  /// and an all-time total.
   static pw.Widget _buildGroupsSection(MonthlyPdfData data) {
     final sections = <pw.Widget>[];
 
     for (var gi = 0; gi < data.groupSummaries.length; gi++) {
       final groupName = data.groupSummaries[gi].key;
+      final allGroupExpenses = data.groupSummaries[gi].value;
 
-      // Only the current month's expenses for this group, newest first.
-      final monthExpenses = data.expenses
-          .where((e) => e.group == groupName)
+      // Split into this-month and other-period expenses.
+      final monthExpenses = allGroupExpenses
+          .where((e) =>
+              e.date.year == data.year && e.date.month == data.month)
           .toList()
         ..sort((a, b) => b.date.compareTo(a.date));
 
-      final monthTotal =
-          monthExpenses.fold(0.0, (s, e) => s + e.amount);
+      final otherExpenses = allGroupExpenses
+          .where((e) =>
+              !(e.date.year == data.year && e.date.month == data.month))
+          .toList()
+        ..sort((a, b) => b.date.compareTo(a.date));
+
+      final monthTotal = monthExpenses.fold(0.0, (s, e) => s + e.amount);
+      final allTimeTotal = allGroupExpenses.fold(0.0, (s, e) => s + e.amount);
 
       if (gi > 0) sections.add(pw.SizedBox(height: 8));
 
@@ -471,33 +1035,19 @@ class PdfReportService {
                 ),
               ),
               pw.Text(
-                '${monthExpenses.length} item${monthExpenses.length == 1 ? '' : 's'}',
-                style: pw.TextStyle(color: _color(0xFFB0BEC5), fontSize: 9),
+                '${monthExpenses.length} item${monthExpenses.length == 1 ? '' : 's'} this month',
+                style: pw.TextStyle(color: _slateLight, fontSize: 9),
               ),
             ],
           ),
         ),
       );
 
-      if (monthExpenses.isEmpty) {
-        sections.add(
-          pw.Container(
-            color: _lightGrey,
-            padding: const pw.EdgeInsets.all(8),
-            child: pw.Text(
-              'No expenses this month.',
-              style: pw.TextStyle(fontSize: 9, color: _textMuted),
-            ),
-          ),
-        );
-        continue;
-      }
-
-      // Expense rows.
+      // This-month expense rows (normal).
       for (var i = 0; i < monthExpenses.length; i++) {
         final e = monthExpenses[i];
-        final day = e.date.day.toString().padLeft(2, '0');
-        final month = e.date.month.toString().padLeft(2, '0');
+        final dayStr = e.date.day.toString().padLeft(2, '0');
+        final monthStr = e.date.month.toString().padLeft(2, '0');
         final note = e.note?.isNotEmpty == true ? _n(e.note!) : '-';
 
         sections.add(
@@ -510,7 +1060,7 @@ class PdfReportService {
                 pw.SizedBox(
                   width: 36,
                   child: pw.Text(
-                    '$day.$month',
+                    '$dayStr.$monthStr',
                     style: const pw.TextStyle(fontSize: 9),
                   ),
                 ),
@@ -532,9 +1082,7 @@ class PdfReportService {
                   child: pw.Text(
                     '${e.amount.toStringAsFixed(2)} EUR',
                     style: pw.TextStyle(
-                      fontSize: 9,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
+                        fontSize: 9, fontWeight: pw.FontWeight.bold),
                     textAlign: pw.TextAlign.right,
                   ),
                 ),
@@ -544,7 +1092,58 @@ class PdfReportService {
         );
       }
 
-      // Subtotal row.
+      // Other-period expense rows (muted, full date dd.mm.yyyy, no label).
+      if (otherExpenses.isNotEmpty) {
+        for (var i = 0; i < otherExpenses.length; i++) {
+          final e = otherExpenses[i];
+          final dayStr = e.date.day.toString().padLeft(2, '0');
+          final monthStr = e.date.month.toString().padLeft(2, '0');
+          final yearStr = e.date.year.toString();
+          final note = e.note?.isNotEmpty == true ? _n(e.note!) : '-';
+
+          sections.add(
+            pw.Container(
+              color: i.isEven ? PdfColors.white : _lightGrey,
+              padding: const pw.EdgeInsets.symmetric(
+                  horizontal: 8, vertical: 4),
+              child: pw.Row(
+                children: [
+                  pw.SizedBox(
+                    width: 52,
+                    child: pw.Text(
+                      '$dayStr.$monthStr.$yearStr',
+                      style: pw.TextStyle(fontSize: 8, color: _textMuted),
+                    ),
+                  ),
+                  pw.Expanded(
+                    child: pw.Text(
+                      note,
+                      style: pw.TextStyle(fontSize: 8, color: _textMuted),
+                    ),
+                  ),
+                  pw.SizedBox(
+                    width: 90,
+                    child: pw.Text(
+                      e.category.displayName,
+                      style: pw.TextStyle(fontSize: 8, color: _textMuted),
+                    ),
+                  ),
+                  pw.SizedBox(
+                    width: 76,
+                    child: pw.Text(
+                      '${e.amount.toStringAsFixed(2)} EUR',
+                      style: pw.TextStyle(fontSize: 8, color: _textMuted),
+                      textAlign: pw.TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+      }
+
+      // Period subtotal row.
       sections.add(
         pw.Container(
           decoration: pw.BoxDecoration(
@@ -567,9 +1166,29 @@ class PdfReportService {
               pw.Text(
                 '${monthTotal.toStringAsFixed(2)} EUR',
                 style: pw.TextStyle(
-                  fontSize: 10,
-                  fontWeight: pw.FontWeight.bold,
+                    fontSize: 10, fontWeight: pw.FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      // All-time total row (muted, smaller).
+      sections.add(
+        pw.Container(
+          color: _lightGrey,
+          padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: pw.Row(
+            children: [
+              pw.Expanded(
+                child: pw.Text(
+                  'All periods total',
+                  style: pw.TextStyle(fontSize: 8, color: _textMuted),
                 ),
+              ),
+              pw.Text(
+                '${allTimeTotal.toStringAsFixed(2)} EUR',
+                style: pw.TextStyle(fontSize: 8, color: _textMuted),
               ),
             ],
           ),
@@ -582,7 +1201,8 @@ class PdfReportService {
 
   // ── Expense detail table ──────────────────────────────────────────────────
 
-  static pw.Widget _buildExpenseTable(List<Expense> expenses) {
+  static pw.Widget _buildExpenseTable(
+      List<Expense> expenses, double grandTotal) {
     return pw.Table(
       border: pw.TableBorder.all(color: _borderGrey, width: 0.5),
       columnWidths: const {
@@ -623,6 +1243,18 @@ class PdfReportService {
             ],
           );
         }),
+        pw.TableRow(
+          decoration: pw.BoxDecoration(color: _navy),
+          children: [
+            _tableHeader(''),
+            _tableHeader(''),
+            _tableHeader('TOTAL', align: pw.TextAlign.right),
+            _tableHeader(
+              '${grandTotal.toStringAsFixed(2)} EUR',
+              align: pw.TextAlign.right,
+            ),
+          ],
+        ),
       ],
     );
   }

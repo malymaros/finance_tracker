@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../models/category_total.dart';
 import '../../models/expense_category.dart';
+import '../../models/financial_type_income_ratio.dart';
 import '../../models/report_data.dart';
 import '../../models/report_line.dart';
 import '../../models/monthly_pdf_data.dart';
@@ -10,6 +11,7 @@ import '../../models/period_bounds.dart';
 import '../../models/year_month.dart';
 import '../../models/yearly_pdf_data.dart';
 import '../../services/budget_calculator.dart';
+import '../../services/category_budget_repository.dart';
 import '../../services/finance_repository.dart';
 import '../../services/pdf_report_service.dart';
 import '../../services/plan_repository.dart';
@@ -43,6 +45,7 @@ class _ReportCache {
 class ReportScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
+  final CategoryBudgetRepository budgetRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
 
@@ -55,6 +58,7 @@ class ReportScreen extends StatefulWidget {
     super.key,
     required this.repository,
     required this.planRepository,
+    required this.budgetRepository,
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onNavigateToPlan,
@@ -212,18 +216,33 @@ class _ReportScreenState extends State<ReportScreen> {
 
   Future<void> _exportMonthlyPdf() async {
     final data = _getOrBuildReportData();
+    final monthExpenses = widget.repository.expensesForMonth(_year, _month);
     final budgetStatus = BudgetCalculator.budgetStatus(
       widget.planRepository.items,
-      widget.repository
-          .expensesForMonth(_year, _month)
-          .fold(0.0, (s, e) => s + e.amount),
+      monthExpenses.fold(0.0, (s, e) => s + e.amount),
       _year,
       _month,
     );
     final groupSummaries =
         widget.repository.groupSummariesForMonth(_year, _month);
-    final expenses = widget.repository.expensesForMonth(_year, _month)
+    final expenses = List.of(monthExpenses)
       ..sort((a, b) => b.date.compareTo(a.date));
+    final activePlanItems = BudgetCalculator.activeItemsForMonth(
+      widget.planRepository.items, _year, _month);
+    final categoryBudgets =
+        widget.budgetRepository.allActiveBudgetsForMonth(YearMonth(_year, _month));
+
+    FinancialTypeIncomeRatio? typeRatio;
+    if (activePlanItems.isNotEmpty) {
+      final mergedLines = ReportAggregator.mergedLines(
+        widget.repository.reportLinesForMonth(_year, _month),
+        BudgetCalculator.planFixedCostReportLinesForMonth(
+            widget.planRepository.items, _year, _month),
+      );
+      final income = BudgetCalculator.normalizedMonthlyIncome(
+          widget.planRepository.items, _year, _month);
+      typeRatio = BudgetCalculator.financialTypeIncomeRatios(mergedLines, income);
+    }
 
     final pdfData = MonthlyPdfData(
       year: _year,
@@ -233,6 +252,9 @@ class _ReportScreenState extends State<ReportScreen> {
       budgetStatus: budgetStatus,
       groupSummaries: groupSummaries,
       expenses: expenses,
+      activePlanItems: activePlanItems,
+      categoryBudgets: categoryBudgets,
+      typeRatio: typeRatio,
     );
 
     final bytes = await PdfReportService.generateMonthlyReport(pdfData);
