@@ -24,9 +24,7 @@ PlanItem _income({
 
 PlanItem _guardedFixedCost({
   String id = 'f1',
-  bool guardOneTime = false,
   int? guardDueDay = 5,
-  int? guardDueMonth,
 }) =>
     PlanItem(
       id: id,
@@ -42,8 +40,6 @@ PlanItem _guardedFixedCost({
       financialType: FinancialType.consumption,
       isGuarded: true,
       guardDueDay: guardDueDay,
-      guardDueMonth: guardDueMonth,
-      guardOneTime: guardOneTime,
     );
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -69,8 +65,6 @@ void main() {
       expect(restored.financialType, isNull);
       expect(restored.isGuarded, isFalse);
       expect(restored.guardDueDay, isNull);
-      expect(restored.guardDueMonth, isNull);
-      expect(restored.guardOneTime, isFalse);
     });
 
     test('fixed cost item with all optional fields preserved', () {
@@ -84,7 +78,6 @@ void main() {
       expect(restored.financialType, FinancialType.consumption);
       expect(restored.isGuarded, isTrue);
       expect(restored.guardDueDay, 5);
-      expect(restored.guardOneTime, isFalse);
     });
 
     test('all three frequency values round-trip', () {
@@ -133,38 +126,23 @@ void main() {
       expect(json['guardDueDay'], 15);
     });
 
-    test('guardDueMonth=null: key absent from JSON', () {
-      final item = _guardedFixedCost(guardDueMonth: null);
-      expect(item.toJson().containsKey('guardDueMonth'), isFalse);
-    });
-
-    test('guardDueMonth set: key present in JSON with correct value', () {
-      final json = _guardedFixedCost(guardDueMonth: 3).toJson();
-      expect(json['guardDueMonth'], 3);
-    });
-
-    test('guardOneTime=false: key absent from JSON', () {
-      final json = _guardedFixedCost(guardOneTime: false).toJson();
-      expect(json.containsKey('guardOneTime'), isFalse);
-    });
-
-    test('guardOneTime=true: key present in JSON', () {
-      final json = _guardedFixedCost(guardOneTime: true).toJson();
-      expect(json['guardOneTime'], isTrue);
-    });
-
-    test('GUARD round-trip with all four fields set', () {
-      final item = _guardedFixedCost(
-        guardDueDay: 10,
-        guardDueMonth: 4,
-        guardOneTime: true,
-      );
+    test('GUARD round-trip preserves isGuarded and guardDueDay', () {
+      final item = _guardedFixedCost(guardDueDay: 10);
       final restored = PlanItem.fromJson(item.toJson());
 
       expect(restored.isGuarded, isTrue);
       expect(restored.guardDueDay, 10);
-      expect(restored.guardDueMonth, 4);
-      expect(restored.guardOneTime, isTrue);
+    });
+
+    test('legacy guardDueMonth and guardOneTime keys in JSON are silently ignored', () {
+      // Old data may contain these keys; fromJson must not crash.
+      final json = _guardedFixedCost(guardDueDay: 5).toJson()
+        ..['guardDueMonth'] = 3
+        ..['guardOneTime'] = true;
+      expect(() => PlanItem.fromJson(json), returnsNormally);
+      final restored = PlanItem.fromJson(json);
+      expect(restored.guardDueDay, 5);
+      expect(restored.isGuarded, isTrue);
     });
   });
 
@@ -188,14 +166,6 @@ void main() {
 
     test('guardDueDay defaults to null when key absent', () {
       expect(PlanItem.fromJson(minimalJson()).guardDueDay, isNull);
-    });
-
-    test('guardDueMonth defaults to null when key absent', () {
-      expect(PlanItem.fromJson(minimalJson()).guardDueMonth, isNull);
-    });
-
-    test('guardOneTime defaults to false when key absent', () {
-      expect(PlanItem.fromJson(minimalJson()).guardOneTime, isFalse);
     });
 
     test('validTo defaults to null when key absent', () {
@@ -249,7 +219,7 @@ void main() {
   // ── copyWith sentinel pattern ─────────────────────────────────────────────
 
   group('PlanItem — copyWith sentinel for nullable fields', () {
-    final base = _guardedFixedCost(guardDueDay: 5, guardDueMonth: 3);
+    final base = _guardedFixedCost(guardDueDay: 5);
 
     test('copyWith with no args returns identical field values', () {
       final copy = base.copyWith();
@@ -260,8 +230,6 @@ void main() {
       expect(copy.financialType, base.financialType);
       expect(copy.isGuarded, base.isGuarded);
       expect(copy.guardDueDay, base.guardDueDay);
-      expect(copy.guardDueMonth, base.guardDueMonth);
-      expect(copy.guardOneTime, base.guardOneTime);
     });
 
     test('copyWith amount changes only amount', () {
@@ -308,14 +276,5 @@ void main() {
       expect(copy.guardDueDay, base.guardDueDay);
     });
 
-    test('copyWith guardDueMonth: null explicitly clears the field', () {
-      final copy = base.copyWith(guardDueMonth: null);
-      expect(copy.guardDueMonth, isNull);
-    });
-
-    test('omitting guardDueMonth in copyWith preserves existing value', () {
-      final copy = base.copyWith(amount: 999);
-      expect(copy.guardDueMonth, base.guardDueMonth);
-    });
   });
 }

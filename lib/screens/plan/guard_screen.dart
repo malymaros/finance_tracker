@@ -67,16 +67,15 @@ class _GuardScreenState extends State<GuardScreen> {
   }
 
   Future<void> _pickDueDay(PlanItem item) async {
-    final anchorMonth = item.frequency == PlanFrequency.yearly
-        ? (item.guardDueMonth ?? item.validFrom.month)
-        : YearMonth.now().month;
+    // For yearly items the anchor month is always validFrom.month.
+    final anchorMonth = item.validFrom.month;
     final daysInMonth = DateTime(YearMonth.now().year, anchorMonth + 1, 0).day;
     final currentDay = (item.guardDueDay ?? 1).clamp(1, daysInMonth);
 
     int selected = currentDay;
     final title = item.frequency == PlanFrequency.monthly
         ? 'Due day (repeats monthly)'
-        : 'Due day';
+        : 'Due day (repeats every ${YearMonth.monthNames[anchorMonth]})';
 
     final picked = await showDialog<int>(
       context: context,
@@ -116,7 +115,6 @@ class _GuardScreenState extends State<GuardScreen> {
     await widget.planRepository.updateGuardConfigForSeries(
       item.seriesId,
       guardDueDay: picked,
-      guardDueMonth: item.guardDueMonth,
     );
   }
 
@@ -209,20 +207,39 @@ class _GuardScreenState extends State<GuardScreen> {
           else ...[
             _buildSectionHeader('Guarded items', guardedItems.length),
             const SizedBox(height: 6),
-            ...guardedItems.values.map((item) => GuardItemStatusCard(
-                  item: item,
-                  period: now,
-                  state: widget.guardRepository.itemStateForPeriod(item, now),
-                  guardRepository: widget.guardRepository,
-                  onChangeDueDay: () => _pickDueDay(item),
-                  onDeleteGuard: () => widget.planRepository
-                      .disableGuardForSeries(item.seriesId),
-                  showIfScheduled: true,
-                )),
+            ...guardedItems.values.map((item) {
+              final nextPeriod = widget.guardRepository
+                  .nextReminderPeriod(item, now, all);
+              final lastPeriod = widget.guardRepository
+                  .lastReminderPeriod(item, all);
+              return GuardItemStatusCard(
+                item: item,
+                period: now,
+                state: widget.guardRepository.itemStateForPeriod(item, now),
+                guardRepository: widget.guardRepository,
+                onChangeDueDay: () => _pickDueDay(item),
+                onDeleteGuard: () => widget.planRepository
+                    .disableGuardForSeries(item.seriesId),
+                showIfScheduled: true,
+                nextReminderLabel: nextPeriod != null
+                    ? _formatReminderPeriod(item, nextPeriod)
+                    : null,
+                lastReminderLabel: lastPeriod != null
+                    ? _formatReminderPeriod(item, lastPeriod)
+                    : null,
+              );
+            }),
           ],
         ],
       ),
     );
+  }
+
+  String _formatReminderPeriod(PlanItem item, YearMonth period) {
+    final rawDueDay = item.guardDueDay ?? 1;
+    final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
+    final dueDay = rawDueDay.clamp(1, daysInMonth);
+    return '${YearMonth.monthNames[period.month]} $dueDay, ${period.year}';
   }
 
   Widget _buildSectionHeader(String title, int count) {

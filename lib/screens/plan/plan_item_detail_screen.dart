@@ -32,8 +32,6 @@ class PlanItemDetailScreen extends StatelessWidget {
     this.guardRepository,
   });
 
-  String _formatYearMonth(YearMonth ym) => '${YearMonth.monthNames[ym.month]} ${ym.year}';
-
   static String _frequencyLabel(PlanFrequency freq) => switch (freq) {
         PlanFrequency.monthly => 'Monthly',
         PlanFrequency.yearly => 'Yearly',
@@ -176,7 +174,7 @@ class PlanItemDetailScreen extends StatelessWidget {
             icon: Icons.calendar_today_outlined,
             iconColor: AppColors.textMuted,
             label: 'Active from',
-            value: _formatYearMonth(item.validFrom),
+            value: item.validFrom.label,
           ),
           if (item.frequency != PlanFrequency.oneTime) ...[
             const Divider(height: 1, indent: 56),
@@ -185,7 +183,7 @@ class PlanItemDetailScreen extends StatelessWidget {
               iconColor: AppColors.textMuted,
               label: 'Active until',
               value: item.validTo != null
-                  ? _formatYearMonth(item.validTo!)
+                  ? item.validTo!.label
                   : isIncome
                       ? 'Ongoing'
                       : 'No end date',

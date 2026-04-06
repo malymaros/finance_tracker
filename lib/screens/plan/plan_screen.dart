@@ -27,6 +27,8 @@ import 'add_plan_item_screen.dart';
 import 'manage_budgets_screen.dart';
 import 'plan_item_detail_screen.dart';
 
+enum _DeleteChoice { fromPeriod, wholeSeries }
+
 class PlanScreen extends StatefulWidget {
   final AppRepositories repositories;
   final ValueNotifier<YearMonth> selectedPeriod;
@@ -217,50 +219,123 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   Future<void> _confirmAndDelete(BuildContext context, PlanItem item) async {
-    final from = widget.selectedPeriod.value;
-    final isFullDelete = item.validFrom == from;
-
-    final String message;
-    if (isFullDelete) {
-      message = '"${item.name}" will be removed entirely.';
+    if (item.type == PlanItemType.fixedCost) {
+      await _confirmAndDeleteFixedCost(context, item);
     } else {
-      final fromLabel =
-          '${YearMonth.monthNames[from.month]} ${from.year}';
-      final prevMonth = from.addMonths(-1);
-      final prevLabel =
-          '${YearMonth.monthNames[prevMonth.month]} ${prevMonth.year}';
-      message =
-          '"${item.name}" will stop from $fromLabel onwards.\n$prevLabel and earlier will remain planned.';
+      // Income and one-time: single-action confirm with context-aware message.
+      final from = widget.selectedPeriod.value;
+      final isFullDelete = item.validFrom == from;
+      final message = isFullDelete
+          ? '"${item.name}" will be removed entirely.'
+          : '"${item.name}" will stop from ${from.label} onwards. '
+              '${from.addMonths(-1).label} and earlier will remain planned.';
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Remove plan item'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              style: TextButton.styleFrom(foregroundColor: AppColors.expense),
+              child: const Text('Remove'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed == true && context.mounted) {
+        widget.repositories.plan.removePlanItemFrom(item.id, from);
+      }
+    }
+  }
+
+  Future<void> _confirmAndDeleteFixedCost(
+      BuildContext context, PlanItem item) async {
+    final selectedPeriod = widget.selectedPeriod.value;
+
+    // Determine the cut point and descriptive labels for "from period onwards".
+    final YearMonth deleteFrom;
+    final String fromTitle;
+    final String fromSubtitle;
+
+    if (item.frequency == PlanFrequency.yearly) {
+      final anchor = item.validFrom.month;
+      final cycleStartYear = selectedPeriod.month >= anchor
+          ? selectedPeriod.year
+          : selectedPeriod.year - 1;
+      final cycleStart = YearMonth(cycleStartYear, anchor);
+      final cycleEnd = YearMonth(cycleStartYear + 1, anchor).addMonths(-1);
+      deleteFrom = cycleStart;
+      fromTitle = 'From ${cycleStart.label} onwards';
+      fromSubtitle =
+          'This cycle (${cycleStart.label} – ${cycleEnd.label}) '
+          'and all future cycles are removed.';
+    } else {
+      deleteFrom = selectedPeriod;
+      final prev = selectedPeriod.addMonths(-1);
+      fromTitle = 'From ${selectedPeriod.label} onwards';
+      fromSubtitle = 'History up to ${prev.label} is kept.';
     }
 
-    final confirmed = await showDialog<bool>(
+    // Find the earliest version to describe the whole-series start.
+    final allVersions = widget.repositories.plan.items
+        .where((i) => i.seriesId == item.seriesId)
+        .toList()
+      ..sort((a, b) => a.validFrom.compareTo(b.validFrom));
+    final seriesStart = allVersions.first.validFrom;
+
+    final result = await showDialog<_DeleteChoice>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Remove plan item'),
-        content: Text(message),
+        title: Text('Remove "${item.name}"'),
+        contentPadding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.delete_sweep_outlined,
+                  color: AppColors.expense),
+              title: const Text('Whole series',
+                  style: TextStyle(fontWeight: FontWeight.w600)),
+              subtitle:
+                  Text('All periods from ${seriesStart.label} are removed.'),
+              onTap: () => Navigator.of(ctx).pop(_DeleteChoice.wholeSeries),
+            ),
+            const Divider(height: 1),
+            ListTile(
+              leading:
+                  const Icon(Icons.content_cut, color: AppColors.expense),
+              title: Text(fromTitle,
+                  style: const TextStyle(fontWeight: FontWeight.w600)),
+              subtitle: Text(fromSubtitle),
+              onTap: () => Navigator.of(ctx).pop(_DeleteChoice.fromPeriod),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
+            onPressed: () => Navigator.of(ctx).pop(null),
             child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: AppColors.expense),
-            child: const Text('Remove'),
           ),
         ],
       ),
     );
 
-    if (confirmed == true && context.mounted) {
-      widget.repositories.plan.removePlanItemFrom(item.id, from);
+    if (!context.mounted) return;
+    if (result == _DeleteChoice.wholeSeries) {
+      widget.repositories.plan.removeEntireSeries(item.seriesId);
+    } else if (result == _DeleteChoice.fromPeriod) {
+      widget.repositories.plan.removePlanItemFrom(item.id, deleteFrom);
     }
   }
 
   Future<void> _onSilenceRequested(
       String seriesId, YearMonth period) async {
-    final periodLabel =
-        '${YearMonth.monthNames[period.month]} ${period.year}';
+    final periodLabel = period.label;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(

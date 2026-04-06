@@ -49,6 +49,9 @@ class YearMonth implements Comparable<YearMonth> {
   @override
   int get hashCode => year * 100 + month;
 
+  /// Human-readable "Month Year" label, e.g. "March 2026".
+  String get label => '${monthNames[month]} $year';
+
   @override
   String toString() => '$year-${month.toString().padLeft(2, '0')}';
 

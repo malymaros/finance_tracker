@@ -33,6 +33,12 @@ class GuardItemStatusCard extends StatelessWidget {
   final VoidCallback? onDeleteGuard;
   final bool showIfScheduled;
 
+  /// When non-null, displayed as "Next: <label>" below the item info.
+  final String? nextReminderLabel;
+
+  /// When non-null, displayed as "Last: <label>" below the item info.
+  final String? lastReminderLabel;
+
   const GuardItemStatusCard({
     super.key,
     required this.item,
@@ -42,6 +48,8 @@ class GuardItemStatusCard extends StatelessWidget {
     this.onChangeDueDay,
     this.onDeleteGuard,
     this.showIfScheduled = false,
+    this.nextReminderLabel,
+    this.lastReminderLabel,
   });
 
   // ── Labels ────────────────────────────────────────────────────────────────
@@ -195,6 +203,18 @@ class GuardItemStatusCard extends StatelessWidget {
               style: const TextStyle(
                   fontSize: 12, color: AppColors.textMuted),
             ),
+            if (nextReminderLabel != null) ...[
+              const SizedBox(height: 4),
+              Text(
+                'Next: $nextReminderLabel',
+                style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+              ),
+            ],
+            if (lastReminderLabel != null)
+              Text(
+                'Last: $lastReminderLabel',
+                style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+              ),
             const SizedBox(height: 12),
             _buildStateContent(context, state),
             if (onChangeDueDay != null || onDeleteGuard != null) ...[

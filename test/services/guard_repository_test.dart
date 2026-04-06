@@ -18,7 +18,6 @@ PlanItem _monthlyGuarded({
   int fromYear = 2024,
   int fromMonth = 1,
   int? dueDay,
-  bool guardOneTime = false,
 }) =>
     PlanItem(
       id: id,
@@ -32,7 +31,6 @@ PlanItem _monthlyGuarded({
       financialType: FinancialType.consumption,
       isGuarded: true,
       guardDueDay: dueDay ?? 1,
-      guardOneTime: guardOneTime,
     );
 
 PlanItem _yearlyGuarded({
@@ -41,7 +39,7 @@ PlanItem _yearlyGuarded({
   int fromYear = 2024,
   int fromMonth = 1,
   int? dueDay,
-  int? dueMonth,
+  YearMonth? validTo,
 }) =>
     PlanItem(
       id: id,
@@ -51,11 +49,11 @@ PlanItem _yearlyGuarded({
       type: PlanItemType.fixedCost,
       frequency: PlanFrequency.yearly,
       validFrom: YearMonth(fromYear, fromMonth),
+      validTo: validTo,
       category: ExpenseCategory.taxes,
       financialType: FinancialType.consumption,
       isGuarded: true,
       guardDueDay: dueDay ?? 1,
-      guardDueMonth: dueMonth,
     );
 
 // ── GuardPayment model ────────────────────────────────────────────────────────
@@ -237,126 +235,83 @@ void main() {
       expect(all.length, 2); // Jan (silenced) + Feb (unpaid)
     });
 
-    test('one-time guard only fires once (guardOneTime=true)', () {
-      final repo = _repo();
-      final item = _monthlyGuarded(
-          fromYear: 2024, fromMonth: 1, dueDay: 1, guardOneTime: true);
-      final now = YearMonth(2024, 6);
-      final result = repo.unpaidActiveItems([item], now);
-      expect(result.length, 1); // Only validFrom month
-      expect(result.first.$2, YearMonth(2024, 1));
-    });
   });
 
-  // ── yearly items — M1 per-period dueMonth ────────────────────────────────
+  // ── yearly items — anchor month = validFrom.month ─────────────────────────
 
-  group('yearly guard — per-period dueMonth (M1)', () {
-    test('uses guardDueMonth from active version for each year', () {
+  group('yearly guard — anchor month is validFrom.month', () {
+    test('fires in validFrom.month of the active version each year', () {
       final repo = _repo();
+      // Yearly item starting in March 2023 — anchor month is March.
+      final item = _yearlyGuarded(
+        fromYear: 2023,
+        fromMonth: 3, // anchor month = March
+        dueDay: 1,
+      );
+      final now = YearMonth(2025, 6);
+      final result = repo.unpaidActiveItems([item], now);
+      final periods = result.map((p) => p.$2).toList();
 
-      // Version 1: validFrom Jan 2023, dueMonth = 3 (March)
+      // March 2023, March 2024, March 2025 should all fire.
+      expect(periods, contains(YearMonth(2023, 3)));
+      expect(periods, contains(YearMonth(2024, 3)));
+      expect(periods, contains(YearMonth(2025, 3)));
+      // Non-anchor months must NOT fire.
+      expect(periods, isNot(contains(YearMonth(2024, 6))));
+      expect(periods, isNot(contains(YearMonth(2024, 1))));
+    });
+
+    test('versioned series: each version uses its own validFrom.month as anchor', () {
+      final repo = _repo();
+      // v1: validFrom = Jan 2023 (anchor = January)
       final v1 = _yearlyGuarded(
         id: 'y_v1',
         seriesId: 'sy1',
         fromYear: 2023,
         fromMonth: 1,
         dueDay: 1,
-        dueMonth: 3,
+        validTo: YearMonth(2023, 12), // capped by v2
       );
-
-      // Version 2: validFrom Jan 2024, dueMonth = 6 (June) — plan changed
-      final v2 = PlanItem(
+      // v2: validFrom = Jan 2024, but a different anchor month would require
+      // a cycle-boundary edit; for yearly versioning the anchor must stay the same.
+      // Here we model it correctly: v2 also starts in January (same anchor).
+      final v2 = _yearlyGuarded(
         id: 'y_v2',
         seriesId: 'sy1',
-        name: 'Tax',
-        amount: 1200,
-        type: PlanItemType.fixedCost,
-        frequency: PlanFrequency.yearly,
-        validFrom: YearMonth(2024, 1),
-        category: ExpenseCategory.taxes,
-        financialType: FinancialType.consumption,
-        isGuarded: true,
-        guardDueDay: 1,
-        guardDueMonth: 6,
+        fromYear: 2024,
+        fromMonth: 1,
+        dueDay: 1,
       );
-
-      // now = Jul 2024 (both 2023-March and 2024-June are due)
-      final now = YearMonth(2024, 7);
+      final now = YearMonth(2025, 6);
       final result = repo.unpaidActiveItems([v1, v2], now);
-
       final periods = result.map((p) => p.$2).toList();
-      // 2023: v1 was active → dueMonth=3 → March 2023
-      expect(periods, contains(YearMonth(2023, 3)));
-      // 2024: v2 is active → dueMonth=6 → June 2024
-      expect(periods, contains(YearMonth(2024, 6)));
-      // Should NOT contain e.g. March 2024 (that would be latestVersion's wrong month)
-      expect(periods, isNot(contains(YearMonth(2024, 3))));
+
+      // January fires in 2023 (v1), 2024, 2025 (v2).
+      expect(periods, contains(YearMonth(2023, 1)));
+      expect(periods, contains(YearMonth(2024, 1)));
+      expect(periods, contains(YearMonth(2025, 1)));
     });
 
-    // Regression: _activeGuardedVersionForYear used year-only validTo comparison.
-    // An item expiring mid-year (e.g. validTo=March 2025) should not contribute
-    // a reminder for a dueMonth that falls after that expiry.
-    test('yearly item with mid-year validTo does not fire for dueMonth after expiry',
-        () {
+    test('yearly item with validTo does not fire after expiry', () {
       final repo = _repo();
-      // Single version: active Jan 2023 – March 2025, due in December each year.
-      final item = PlanItem(
-        id: 'y1',
-        seriesId: 'sy1',
-        name: 'Tax',
-        amount: 1000,
-        type: PlanItemType.fixedCost,
-        frequency: PlanFrequency.yearly,
-        validFrom: YearMonth(2023, 1),
+      // Item active Jan 2023 – March 2025, anchor month = January.
+      final item = _yearlyGuarded(
+        fromYear: 2023,
+        fromMonth: 1,
+        dueDay: 1,
         validTo: YearMonth(2025, 3), // expires March 2025
-        category: ExpenseCategory.taxes,
-        financialType: FinancialType.consumption,
-        isGuarded: true,
-        guardDueDay: 1,
-        guardDueMonth: 12, // due in December
       );
-
-      // now = Jan 2026 — December 2025 is in the past but item expired in March 2025
-      final now = YearMonth(2026, 1);
+      final now = YearMonth(2026, 6);
       final result = repo.unpaidActiveItems([item], now);
       final periods = result.map((p) => p.$2).toList();
 
-      // Dec 2023 and Dec 2024 are within the item's active range — should appear
-      expect(periods, contains(YearMonth(2023, 12)));
-      expect(periods, contains(YearMonth(2024, 12)));
-      // Dec 2025 is after the item expired (validTo = March 2025) — must NOT appear
-      expect(periods, isNot(contains(YearMonth(2025, 12))));
-    });
-
-    test('yearly item fires for the dueMonth year that matches validTo year when due month is within range',
-        () {
-      final repo = _repo();
-      // validTo = June 2025, dueMonth = 3 (March) — March 2025 is before validTo
-      final item = PlanItem(
-        id: 'y1',
-        seriesId: 'sy1',
-        name: 'Tax',
-        amount: 800,
-        type: PlanItemType.fixedCost,
-        frequency: PlanFrequency.yearly,
-        validFrom: YearMonth(2024, 1),
-        validTo: YearMonth(2025, 6),
-        category: ExpenseCategory.taxes,
-        financialType: FinancialType.consumption,
-        isGuarded: true,
-        guardDueDay: 1,
-        guardDueMonth: 3,
-      );
-
-      final now = YearMonth(2026, 1);
-      final result = repo.unpaidActiveItems([item], now);
-      final periods = result.map((p) => p.$2).toList();
-
-      // March 2024 and March 2025 are both within the active range
-      expect(periods, contains(YearMonth(2024, 3)));
-      expect(periods, contains(YearMonth(2025, 3)));
-      // March 2026 is after expiry — must NOT appear
-      expect(periods, isNot(contains(YearMonth(2026, 3))));
+      // Jan 2023 and Jan 2024 are within active range.
+      expect(periods, contains(YearMonth(2023, 1)));
+      expect(periods, contains(YearMonth(2024, 1)));
+      // Jan 2025 is within validTo (March 2025) — should appear.
+      expect(periods, contains(YearMonth(2025, 1)));
+      // Jan 2026 is after expiry — must NOT appear.
+      expect(periods, isNot(contains(YearMonth(2026, 1))));
     });
   });
 

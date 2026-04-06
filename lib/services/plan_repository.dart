@@ -42,14 +42,12 @@ class PlanRepository extends ChangeNotifier {
     await _save();
   }
 
-  /// Updates [guardDueDay] and optionally [guardDueMonth] on every version of
-  /// [seriesId]. Used by GuardScreen to change the due-day without creating a
-  /// new plan item version — guard config is a notification preference, not a
-  /// financial change.
+  /// Updates [guardDueDay] on every version of [seriesId]. Used by GuardScreen
+  /// to change the due-day without creating a new plan item version — guard
+  /// config is a notification preference, not a financial change.
   Future<void> updateGuardConfigForSeries(
     String seriesId, {
     required int? guardDueDay,
-    int? guardDueMonth,
   }) async {
     bool changed = false;
     for (int i = 0; i < _items.length; i++) {
@@ -57,7 +55,6 @@ class PlanRepository extends ChangeNotifier {
       final old = _items[i];
       _items[i] = old.copyWith(
         guardDueDay: guardDueDay,
-        guardDueMonth: guardDueMonth ?? old.guardDueMonth,
       );
       changed = true;
     }
@@ -77,8 +74,6 @@ class PlanRepository extends ChangeNotifier {
       _items[i] = _items[i].copyWith(
         isGuarded: false,
         guardDueDay: null,
-        guardDueMonth: null,
-        guardOneTime: false,
       );
       changed = true;
     }
@@ -133,6 +128,14 @@ class PlanRepository extends ChangeNotifier {
     await _save();
   }
 
+  /// Removes ALL versions in [seriesId] — entire history wiped.
+  /// Used when the user explicitly deletes the whole series.
+  Future<void> removeEntireSeries(String seriesId) async {
+    _items.removeWhere((e) => e.seriesId == seriesId);
+    notifyListeners();
+    await _save();
+  }
+
   /// Removes all versions in [seriesId] whose validFrom is strictly after [after].
   /// Used after an edit to truncate superseded future versions.
   Future<void> removeFutureVersions(String seriesId, YearMonth after) async {
@@ -177,8 +180,6 @@ class PlanRepository extends ChangeNotifier {
     FinancialType? financialType,
     bool isGuarded = false,
     int? guardDueDay,
-    int? guardDueMonth,
-    bool guardOneTime = false,
   }) async {
     final inPlace = existing.type == PlanItemType.income ||
         existing.frequency == PlanFrequency.oneTime ||
@@ -199,8 +200,6 @@ class PlanRepository extends ChangeNotifier {
         financialType: financialType,
         isGuarded: isGuarded,
         guardDueDay: guardDueDay,
-        guardDueMonth: guardDueMonth,
-        guardOneTime: guardOneTime,
       ));
     } else {
       // Yearly items may only start a new version at their cycle boundary month.
@@ -228,12 +227,53 @@ class PlanRepository extends ChangeNotifier {
         financialType: financialType,
         isGuarded: isGuarded,
         guardDueDay: guardDueDay,
-        guardDueMonth: guardDueMonth,
-        guardOneTime: guardOneTime,
       ));
       await removeFutureVersions(existing.seriesId, startFrom);
     }
     return PlanItemEditResult.success;
+  }
+
+  /// Splits [existing] at [newSeriesStart], creating an independent new series.
+  ///
+  /// - [existing] (and any later versions of its seriesId) is capped so it
+  ///   ends the month before [newSeriesStart].
+  /// - A new [PlanItem] with a fresh [id] and [seriesId] is created starting
+  ///   at [newSeriesStart], inheriting the original [validTo] (if bounded) or
+  ///   open-ended (if the original was open-ended).
+  /// - GUARD settings ([isGuarded], [guardDueDay]) are inherited by the new
+  ///   series; payment history stays attached to the old seriesId.
+  Future<void> splitYearlySeries(
+    PlanItem existing, {
+    required YearMonth newSeriesStart,
+    required String name,
+    required double amount,
+    required ExpenseCategory? category,
+    required FinancialType? financialType,
+    String? note,
+    bool isGuarded = false,
+    int? guardDueDay,
+  }) async {
+    // Cap the old series so it ends the month before the new series starts.
+    await updatePlanItem(existing.copyWith(validTo: newSeriesStart.addMonths(-1)));
+    // Remove any future versions of the old series (validFrom >= newSeriesStart).
+    await removeFutureVersions(existing.seriesId, newSeriesStart);
+    // Create the new independent series.
+    final newId = IdGenerator.generate();
+    await addPlanItem(PlanItem(
+      id: newId,
+      seriesId: newId,
+      name: name,
+      amount: amount,
+      type: existing.type,
+      frequency: existing.frequency,
+      validFrom: newSeriesStart,
+      validTo: existing.validTo, // inherit original end date (already read before cap)
+      note: note,
+      category: category,
+      financialType: financialType,
+      isGuarded: isGuarded,
+      guardDueDay: guardDueDay,
+    ));
   }
 
   Future<void> clearAll() async {

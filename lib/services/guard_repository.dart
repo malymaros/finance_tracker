@@ -76,6 +76,89 @@ class GuardRepository extends ChangeNotifier {
     return _collectGuardedPeriods(allItems, now, includeSilenced: false);
   }
 
+  /// Returns the next [YearMonth] in which [item]'s GUARD will fire, relative
+  /// to [now]. Returns the current period when today is before the due day.
+  /// Returns null if the item is not guarded, not a fixedCost, or has no
+  /// future active period.
+  YearMonth? nextReminderPeriod(
+      PlanItem item, YearMonth now, List<PlanItem> allItems) {
+    if (!item.isGuarded || item.type != PlanItemType.fixedCost) return null;
+    if (item.frequency == PlanFrequency.oneTime) return null;
+
+    final today = DateTime.now();
+
+    if (item.frequency == PlanFrequency.monthly) {
+      // Walk forward from now to find the next active period.
+      for (var period = now;
+          period.isBefore(now.addMonths(25));
+          period = period.addMonths(1)) {
+        final active = _activeGuardedVersionForPeriod(allItems, item.seriesId, period);
+        if (active == null) continue;
+        final rawDueDay = active.guardDueDay ?? 1;
+        final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
+        final dueDay = rawDueDay.clamp(1, daysInMonth);
+        if (period != now || today.day <= dueDay) return period;
+      }
+    } else if (item.frequency == PlanFrequency.yearly) {
+      // Walk forward year by year; anchor month is validFrom.month of the
+      // active version for that period.
+      for (var year = now.year; year <= now.year + 25; year++) {
+        // Try the anchor month of the active version at the start of this year.
+        final probe = YearMonth(year, item.validFrom.month);
+        final active = _activeGuardedVersionForPeriod(allItems, item.seriesId, probe);
+        if (active == null) continue;
+        final anchorMonth = active.validFrom.month;
+        final period = YearMonth(year, anchorMonth);
+        final rawDueDay = active.guardDueDay ?? 1;
+        final daysInMonth = DateTime(year, anchorMonth + 1, 0).day;
+        final dueDay = rawDueDay.clamp(1, daysInMonth);
+        final notYetPast = period.isAfter(now) ||
+            (period == now && today.day <= dueDay);
+        if (notYetPast) return period;
+      }
+    }
+    return null;
+  }
+
+  /// Returns the last [YearMonth] in which [item]'s GUARD will fire, based on
+  /// the effective end of the series. Returns null if the series is open-ended
+  /// (the latest version has no [validTo]).
+  YearMonth? lastReminderPeriod(PlanItem item, List<PlanItem> allItems) {
+    if (!item.isGuarded || item.type != PlanItemType.fixedCost) return null;
+    if (item.frequency == PlanFrequency.oneTime) return null;
+
+    // Find all versions of this series. Filter by seriesId only — the early
+    // isGuarded guard above already ensures the item is guarded; individual
+    // versions may not all have the flag set in legacy data.
+    final seriesVersions = allItems
+        .where((i) => i.seriesId == item.seriesId)
+        .toList();
+    if (seriesVersions.isEmpty) return null;
+
+    // If the latest version (highest validFrom) has no validTo, the series
+    // is open-ended.
+    final latestVersion = seriesVersions
+        .reduce((a, b) => a.validFrom.isAfter(b.validFrom) ? a : b);
+    if (latestVersion.validTo == null) return null;
+
+    // The last reminder fires in the last anchor month at or before validTo.
+    final effectiveEnd = latestVersion.validTo!;
+
+    if (item.frequency == PlanFrequency.monthly) {
+      return effectiveEnd;
+    } else {
+      // Yearly: find the last anchor month occurrence at or before validTo.
+      final anchorMonth = latestVersion.validFrom.month;
+      // Try current validTo year, then year-1 if anchor month is past validTo month.
+      final candidate = YearMonth(effectiveEnd.year, anchorMonth);
+      if (!candidate.isAfter(effectiveEnd)) return candidate;
+      if (effectiveEnd.year > latestVersion.validFrom.year) {
+        return YearMonth(effectiveEnd.year - 1, anchorMonth);
+      }
+      return null;
+    }
+  }
+
   // ── Mutations ─────────────────────────────────────────────────────────────
 
   Future<void> confirmPayment(String seriesId, YearMonth period) async {
@@ -200,7 +283,7 @@ class GuardRepository extends ChangeNotifier {
       itemsFingerprint.write(
         '${item.seriesId}:${item.validFrom.year}/${item.validFrom.month}:'
         '${item.validTo?.year ?? 0}/${item.validTo?.month ?? 0}:'
-        '${item.guardDueDay}:${item.guardDueMonth}:${item.guardOneTime};',
+        '${item.guardDueDay};',
       );
     }
     final key =
@@ -258,11 +341,10 @@ class GuardRepository extends ChangeNotifier {
                 }
               }
             }
-            if (activeVersion.guardOneTime) break;
           } else if (freq == PlanFrequency.yearly) {
-            // Yearly: only fire for the specific due month, and only once per year.
-            final dueMonth =
-                activeVersion.guardDueMonth ?? activeVersion.validFrom.month;
+            // Yearly: only fire in the cycle anchor month (validFrom.month of
+            // the active version), and only once per calendar year.
+            final dueMonth = activeVersion.validFrom.month;
             if (period.month == dueMonth &&
                 !processedYears.contains(period.year)) {
               processedYears.add(period.year);
@@ -279,7 +361,6 @@ class GuardRepository extends ChangeNotifier {
                   }
                 }
               }
-              if (activeVersion.guardOneTime) break;
             }
           }
         }

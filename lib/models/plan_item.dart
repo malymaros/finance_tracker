@@ -54,17 +54,9 @@ class PlanItem {
   /// Day of month the payment is due (1–31). Null defaults to day 1.
   /// When the month has fewer days the due day is capped to the last day of
   /// that month at runtime (e.g. day 31 in February → 28 or 29).
-  /// Used for both monthly and yearly guarded items.
+  /// For yearly items the due month is always [validFrom.month] of the active
+  /// version (the cycle anchor month).
   final int? guardDueDay;
-
-  /// Month the payment is due (1–12). Only relevant for yearly guarded items.
-  /// Null defaults to [validFrom.month].
-  final int? guardDueMonth;
-
-  /// When true, GUARD fires only for the first eligible period (the period
-  /// containing [validFrom]) and ignores all later periods.
-  /// When false (default) GUARD fires every period the item is active.
-  final bool guardOneTime;
 
   const PlanItem({
     required this.id,
@@ -80,8 +72,6 @@ class PlanItem {
     this.financialType,
     this.isGuarded = false,
     this.guardDueDay,
-    this.guardDueMonth,
-    this.guardOneTime = false,
   });
 
   // Sentinel used by copyWith to distinguish "not provided" from explicit null.
@@ -101,8 +91,6 @@ class PlanItem {
     Object? financialType = _absent,
     bool? isGuarded,
     Object? guardDueDay = _absent,
-    Object? guardDueMonth = _absent,
-    bool? guardOneTime,
   }) {
     return PlanItem(
       id: id ?? this.id,
@@ -118,8 +106,6 @@ class PlanItem {
       financialType: financialType == _absent ? this.financialType : financialType as FinancialType?,
       isGuarded: isGuarded ?? this.isGuarded,
       guardDueDay: guardDueDay == _absent ? this.guardDueDay : guardDueDay as int?,
-      guardDueMonth: guardDueMonth == _absent ? this.guardDueMonth : guardDueMonth as int?,
-      guardOneTime: guardOneTime ?? this.guardOneTime,
     );
   }
 
@@ -137,8 +123,6 @@ class PlanItem {
         if (financialType != null) 'financialType': financialType!.name,
         if (isGuarded) 'isGuarded': isGuarded,
         if (guardDueDay != null) 'guardDueDay': guardDueDay,
-        if (guardDueMonth != null) 'guardDueMonth': guardDueMonth,
-        if (guardOneTime) 'guardOneTime': guardOneTime,
       };
 
   factory PlanItem.fromJson(Map<String, dynamic> json) {
@@ -165,8 +149,7 @@ class PlanItem {
           : null,
       isGuarded: json['isGuarded'] as bool? ?? false,
       guardDueDay: json['guardDueDay'] as int?,
-      guardDueMonth: json['guardDueMonth'] as int?,
-      guardOneTime: json['guardOneTime'] as bool? ?? false,
+      // guardDueMonth and guardOneTime are legacy fields — silently ignored.
     );
   }
 }

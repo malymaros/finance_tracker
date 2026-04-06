@@ -56,8 +56,6 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   // ── GUARD state ────────────────────────────────────────────────────────────
   bool _isGuarded = false;
   int _guardDueDay = 1;
-  int _guardDueMonth = 1;
-  bool _guardOneTime = false;
 
   /// Type is locked when editing or when pre-set via [initialType].
   bool get _typeIsLocked =>
@@ -98,7 +96,28 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   bool get _canShowGuard =>
       _type == PlanItemType.fixedCost && _frequency != PlanFrequency.oneTime;
 
-  @override
+  /// True when editing an existing yearly fixed cost. In this mode the
+  /// From/Until dates are locked (only name, amount, category, financial type
+  /// and note are editable) and the save dialog offers whole-series or
+  /// split-from-next-period choices.
+  bool get _isEditingYearlyFixedCost =>
+      widget.existing != null &&
+      _type == PlanItemType.fixedCost &&
+      _frequency == PlanFrequency.yearly;
+
+  // ── Yearly helpers ─────────────────────────────────────────────────────────
+
+  /// The next occurrence of the anchor month (validFrom.month) that is
+  /// strictly after [YearMonth.now()]. This is the earliest date from which
+  /// a split can start.
+  YearMonth _nextUpcomingPeriod() {
+    final anchor = widget.existing!.validFrom.month;
+    final now = YearMonth.now();
+    final year = anchor <= now.month ? now.year + 1 : now.year;
+    return YearMonth(year, anchor);
+  }
+
+@override
   void initState() {
     super.initState();
     final e = widget.existing;
@@ -110,9 +129,11 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       _frequency = e.frequency;
       // Income edits and one-time items: always start from the item's own
       // validFrom — income is always updated in place, no new version.
-      // Fixed cost recurring edits: use the selected period as the new version start.
+      // Yearly fixed cost edits: From is locked, always show e.validFrom.
+      // Monthly fixed cost edits: use the selected period as the new version start.
       _validFrom = (e.type == PlanItemType.income ||
-              e.frequency == PlanFrequency.oneTime)
+              e.frequency == PlanFrequency.oneTime ||
+              e.frequency == PlanFrequency.yearly)
           ? e.validFrom
           : (widget.initialValidFrom ?? YearMonth.now());
       _validTo = e.validTo;
@@ -121,15 +142,12 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       // Restore GUARD settings from existing item.
       _isGuarded = e.isGuarded;
       _guardDueDay = e.guardDueDay ?? 1;
-      _guardDueMonth = e.guardDueMonth ?? e.validFrom.month;
-      _guardOneTime = e.guardOneTime;
     } else {
       _type = widget.initialType ?? PlanItemType.income;
       _frequency = widget.initialFrequency ?? PlanFrequency.monthly;
       _validFrom = widget.initialValidFrom ?? YearMonth.now();
       _selectedCategory = ExpenseCategory.other;
       _selectedFinancialType = FinancialType.consumption;
-      _guardDueMonth = _validFrom.month;
     }
   }
 
@@ -229,13 +247,13 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     if (picked != null) {
       setState(() {
         _validFrom = picked;
-        // Keep validTo consistent for yearly items.
+        // Keep validTo consistent for yearly items: maintain the same number
+        // of cycles with the new anchor month.
+        // validTo = YearMonth(lastCycleYear + 1, anchorMonth).addMonths(-1)
+        // so lastCycleYear = validTo.addMonths(1).year - 1
         if (_frequency == PlanFrequency.yearly && _validTo != null) {
-          _validTo = YearMonth(_validTo!.year, picked.month);
-        }
-        // Keep guard due month in sync with validFrom for yearly items.
-        if (_frequency == PlanFrequency.yearly) {
-          _guardDueMonth = picked.month;
+          final lastCycleYear = _validTo!.addMonths(1).year - 1;
+          _validTo = YearMonth(lastCycleYear + 1, picked.month).addMonths(-1);
         }
       });
     }
@@ -255,53 +273,151 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     }
   }
 
-  /// For yearly items: shows a year-only dropdown. The anchor month is fixed
-  /// to [_validFrom.month]; only the year is chosen.
+  /// For yearly items: shows a picker where the user selects the last renewal
+  /// year. The stored [validTo] is the month BEFORE the next cycle would start
+  /// (= last inclusive active month).
+  ///
+  /// Example: anchor = March, last renewal year = 2026
+  ///   → validTo = February 2027  (March 2026 through February 2027 = 12 months)
   Future<void> _pickYearlyEndYear() async {
     final anchorMonth = _validFrom.month;
-    final currentEndYear = _validTo?.year ?? (_validFrom.year + 1);
+
+    // Derive the current "last renewal year" from existing validTo.
+    // validTo = YearMonth(lastRenewalYear + 1, anchorMonth).addMonths(-1)
+    // → lastRenewalYear = validTo.addMonths(1).year - 1
+    int currentLastRenewalYear;
+    if (_validTo != null) {
+      final next = _validTo!.addMonths(1);
+      currentLastRenewalYear = next.month == anchorMonth
+          ? next.year - 1
+          : _validFrom.year; // fallback for legacy data
+    } else {
+      currentLastRenewalYear = _validFrom.year;
+    }
 
     final picked = await showDialog<int>(
       context: context,
       builder: (ctx) {
-        var selected = currentEndYear;
+        var selected = currentLastRenewalYear;
         return StatefulBuilder(
-          builder: (ctx, setInner) => AlertDialog(
-            title: const Text('Renewal ends after'),
-            content: DropdownButtonFormField<int>(
-              initialValue: selected,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                isDense: true,
+          builder: (ctx, setInner) {
+            final endDate =
+                YearMonth(selected + 1, anchorMonth).addMonths(-1);
+            return AlertDialog(
+              title: const Text('Last renewal year'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  DropdownButtonFormField<int>(
+                    initialValue: selected,
+                    decoration: InputDecoration(
+                      labelText:
+                          'Last ${YearMonth.monthNames[anchorMonth]} renewal',
+                      border: const OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                    items: List.generate(20, (i) {
+                      final y = _validFrom.year + i;
+                      return DropdownMenuItem(
+                        value: y,
+                        child: Text(
+                            '${YearMonth.monthNames[anchorMonth]} $y'),
+                      );
+                    }),
+                    onChanged: (v) {
+                      if (v != null) setInner(() => selected = v);
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Last active month: ${endDate.label}',
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColors.textMuted),
+                  ),
+                ],
               ),
-              items: List.generate(20, (i) {
-                final y = _validFrom.year + 1 + i;
-                return DropdownMenuItem(
-                  value: y,
-                  child: Text('${YearMonth.monthNames[anchorMonth]} $y'),
-                );
-              }),
-              onChanged: (v) {
-                if (v != null) setInner(() => selected = v);
-              },
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(null),
-                child: const Text('Cancel'),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.of(ctx).pop(selected),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(null),
+                  child: const Text('Cancel'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.of(ctx).pop(selected),
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
         );
       },
     );
     if (picked != null) {
-      setState(() => _validTo = YearMonth(picked, anchorMonth));
+      setState(() =>
+          _validTo = YearMonth(picked + 1, anchorMonth).addMonths(-1));
     }
+  }
+
+  /// Shows the save-choice dialog for yearly fixed cost edits.
+  ///
+  /// Returns true  → apply to whole series (in-place update).
+  /// Returns false → split from the next upcoming period (new series).
+  /// Returns null  → cancelled.
+  Future<bool?> _showYearlySaveDialog() async {
+    final nextPeriod = _nextUpcomingPeriod();
+    final nextLabel = nextPeriod.label;
+    final capLabel = nextPeriod.addMonths(-1).label;
+    final seriesStartLabel = widget.existing!.validFrom.label;
+
+    // Check whether the split is meaningful: nextPeriod must still be within
+    // the item's active range (for bounded items).
+    final e = widget.existing!;
+    final canSplit =
+        e.validTo == null || nextPeriod.isAtOrBefore(e.validTo!);
+
+    return showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Apply changes to...'),
+        contentPadding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Option 1 — whole series
+            ListTile(
+              leading: const Icon(Icons.history, color: AppColors.navy),
+              title: const Text('Whole series',
+                  style: TextStyle(fontWeight: FontWeight.w600)),
+              subtitle: Text('All periods from $seriesStartLabel onwards'),
+              onTap: () => Navigator.of(ctx).pop(true),
+            ),
+            const Divider(height: 1),
+            // Option 2 — split from next period
+            ListTile(
+              enabled: canSplit,
+              leading: Icon(Icons.call_split,
+                  color: canSplit ? AppColors.navy : AppColors.border),
+              title: Text('From $nextLabel onwards',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: canSplit ? null : AppColors.textMuted,
+                  )),
+              subtitle: Text(
+                canSplit
+                    ? 'Original series ends $capLabel.\nNew series starts $nextLabel.'
+                    : 'No future period available in this series.',
+              ),
+              onTap: canSplit ? () => Navigator.of(ctx).pop(false) : null,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(null),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _submit() async {
@@ -321,10 +437,6 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     // GUARD fields: only persist for guarded recurring fixed costs.
     final guardEnabled = _canShowGuard && _isGuarded;
     final guardDueDay = guardEnabled ? _guardDueDay : null;
-    final guardDueMonth = (guardEnabled && _frequency == PlanFrequency.yearly)
-        ? _guardDueMonth
-        : null;
-    final guardOneTime = guardEnabled && _guardOneTime;
 
     if (e == null) {
       final newId = IdGenerator.generate();
@@ -342,10 +454,43 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         financialType: isFixedCost ? _selectedFinancialType : null,
         isGuarded: guardEnabled,
         guardDueDay: guardDueDay,
-        guardDueMonth: guardDueMonth,
-        guardOneTime: guardOneTime,
       ));
+    } else if (_isEditingYearlyFixedCost) {
+      // Yearly fixed cost edits: show choice dialog (whole series vs split).
+      final wholeSeries = await _showYearlySaveDialog();
+      if (wholeSeries == null || !mounted) return; // cancelled
+
+      if (wholeSeries) {
+        // Apply to whole (currently active) series version in place.
+        await widget.planRepository.applyPlanItemEdit(
+          e,
+          name: name,
+          amount: amount,
+          frequency: _frequency,
+          startFrom: e.validFrom, // same validFrom → triggers in-place update
+          validTo: e.validTo,     // keep original dates (locked in form)
+          note: note,
+          category: isFixedCost ? _selectedCategory : null,
+          financialType: isFixedCost ? _selectedFinancialType : null,
+          isGuarded: guardEnabled,
+          guardDueDay: guardDueDay,
+        );
+      } else {
+        // Split: cap old series, create new independent series.
+        await widget.planRepository.splitYearlySeries(
+          e,
+          newSeriesStart: _nextUpcomingPeriod(),
+          name: name,
+          amount: amount,
+          category: isFixedCost ? _selectedCategory : null,
+          financialType: isFixedCost ? _selectedFinancialType : null,
+          note: note,
+          isGuarded: guardEnabled,
+          guardDueDay: guardDueDay,
+        );
+      }
     } else {
+      // Income / monthly fixed cost / one-time: standard edit flow.
       final result = await widget.planRepository.applyPlanItemEdit(
         e,
         name: name,
@@ -358,8 +503,6 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         financialType: isFixedCost ? _selectedFinancialType : null,
         isGuarded: guardEnabled,
         guardDueDay: guardDueDay,
-        guardDueMonth: guardDueMonth,
-        guardOneTime: guardOneTime,
       );
 
       if (result == PlanItemEditResult.invalidYearlyCycleBoundary) {
@@ -378,14 +521,43 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     if (mounted) Navigator.of(context).pop();
   }
 
+  /// A read-only date field shown when the date cannot be edited (e.g. yearly
+  /// fixed cost edit mode).
+  Widget _buildLockedDateRow({
+    required String label,
+    required String value,
+    String? hint,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InputDecorator(
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            suffixIcon: const Icon(Icons.lock_outline,
+                size: 16, color: AppColors.textMuted),
+          ),
+          child: Text(value,
+              style: const TextStyle(color: AppColors.textMuted)),
+        ),
+        if (hint != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 4, left: 4),
+            child: Text(hint,
+                style: const TextStyle(
+                    fontSize: 12, color: AppColors.textMuted)),
+          ),
+      ],
+    );
+  }
+
   Widget _buildEndDateSection() {
     final hasEndDate = _validTo != null;
     final isYearly = _frequency == PlanFrequency.yearly;
     final isInvalid = hasEndDate && _validTo!.isBefore(_validFrom);
 
-    final String? validToLabel = hasEndDate
-        ? '${YearMonth.monthNames[_validTo!.month]} ${_validTo!.year}'
-        : null;
+    final String? validToLabel = hasEndDate ? _validTo!.label : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -396,8 +568,11 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               value: hasEndDate,
               onChanged: (on) => setState(() {
                 if (on) {
+                  // Yearly: one full cycle = 12 months; validTo is the last
+                  // inclusive month (month before next cycle starts).
                   _validTo = isYearly
                       ? YearMonth(_validFrom.year + 1, _validFrom.month)
+                          .addMonths(-1)
                       : _validFrom.addMonths(11);
                 } else {
                   _validTo = null;
@@ -420,12 +595,13 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             ),
           ),
-          if (isYearly)
-            const Padding(
-              padding: EdgeInsets.only(top: 6),
+          if (isYearly && hasEndDate)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
               child: Text(
-                'Yearly items end at their renewal month.',
-                style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                '${_validTo!.label} is the last active month.',
+                style: const TextStyle(
+                    fontSize: 12, color: AppColors.textMuted),
               ),
             ),
           if (isInvalid)
@@ -444,15 +620,15 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   // ── GUARD section ──────────────────────────────────────────────────────────
 
   Future<void> _pickGuardDueDay() async {
-    final anchorMonth =
-        _frequency == PlanFrequency.yearly ? _guardDueMonth : _validFrom.month;
+    // For yearly items the anchor month is always validFrom.month.
+    final anchorMonth = _validFrom.month;
     final daysInMonth = DateTime(_validFrom.year, anchorMonth + 1, 0).day;
     final safeDay = _guardDueDay.clamp(1, daysInMonth);
 
     int selected = safeDay;
     final title = _frequency == PlanFrequency.monthly
         ? 'Due day (repeats monthly)'
-        : 'Due day';
+        : 'Due day (repeats every ${YearMonth.monthNames[anchorMonth]})';
 
     final picked = await showDialog<int>(
       context: context,
@@ -491,9 +667,10 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   }
 
   Widget _buildGuardSection() {
+    final anchorMonth = _validFrom.month;
     final dueDayLabel = _frequency == PlanFrequency.monthly
         ? 'Day $_guardDueDay of each month'
-        : 'Day $_guardDueDay of ${YearMonth.monthNames[_guardDueMonth]}';
+        : 'Day $_guardDueDay of ${YearMonth.monthNames[anchorMonth]} each year';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -531,54 +708,6 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         ),
         if (_isGuarded) ...[
           const SizedBox(height: 12),
-          // ── Recurring vs one-time ──────────────────────────────────────
-          SegmentedButton<bool>(
-            segments: const [
-              ButtonSegment(
-                value: false,
-                label: Text('Recurring'),
-                icon: Icon(Icons.repeat, size: 16),
-              ),
-              ButtonSegment(
-                value: true,
-                label: Text('One-time'),
-                icon: Icon(Icons.looks_one_outlined, size: 16),
-              ),
-            ],
-            selected: {_guardOneTime},
-            onSelectionChanged: (s) =>
-                setState(() => _guardOneTime = s.first),
-          ),
-          const SizedBox(height: 12),
-          // ── Due month (yearly only) ────────────────────────────────────
-          if (_frequency == PlanFrequency.yearly) ...[
-            DropdownButtonFormField<int>(
-              initialValue: _guardDueMonth,
-              decoration: const InputDecoration(
-                labelText: 'Due month',
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-              items: List.generate(12, (i) {
-                final month = i + 1;
-                return DropdownMenuItem(
-                  value: month,
-                  child: Text(YearMonth.monthNames[month]),
-                );
-              }),
-              onChanged: (v) {
-                if (v != null) {
-                  setState(() {
-                    _guardDueMonth = v;
-                    final daysInNewMonth =
-                        DateTime(_validFrom.year, v + 1, 0).day;
-                    _guardDueDay = _guardDueDay.clamp(1, daysInNewMonth);
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 12),
-          ],
           // ── Due day picker ─────────────────────────────────────────────
           OutlinedButton.icon(
             onPressed: _pickGuardDueDay,
@@ -592,13 +721,12 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               foregroundColor: AppColors.gold,
             ),
           ),
-          if (_frequency == PlanFrequency.monthly && _guardDueDay > 28)
+          if (_guardDueDay > 28)
             const Padding(
               padding: EdgeInsets.only(top: 6),
               child: Text(
                 'Shorter months will use their last day.',
-                style:
-                    TextStyle(fontSize: 12, color: AppColors.textMuted),
+                style: TextStyle(fontSize: 12, color: AppColors.textMuted),
               ),
             ),
         ],
@@ -610,8 +738,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.existing != null;
-    final validFromLabel =
-        '${YearMonth.monthNames[_validFrom.month]} ${_validFrom.year}';
+    final validFromLabel = _validFrom.label;
 
     return Scaffold(
       appBar: AppBar(
@@ -787,42 +914,60 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               const SizedBox(height: 16),
             ],
 
-            // ── Valid from ──────────────────────────────────────────────────
-            OutlinedButton.icon(
-              onPressed: _pickValidFrom,
-              icon: const Icon(Icons.calendar_month, size: 18),
-              label: Text('From: $validFromLabel'),
-              style: OutlinedButton.styleFrom(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 16),
+            // ── Valid from / Until ──────────────────────────────────────────
+            if (_isEditingYearlyFixedCost) ...[
+              // Dates are locked for yearly fixed cost edits. Changes apply
+              // to the existing cycle boundaries via the save dialog.
+              _buildLockedDateRow(
+                label: 'From',
+                value: validFromLabel,
+                hint:
+                    'Renewed each ${YearMonth.monthNames[_validFrom.month]}. '
+                    'Dates are fixed.',
               ),
-            ),
-            if (isEditing &&
-                _type == PlanItemType.fixedCost &&
-                _frequency != PlanFrequency.oneTime)
-              Padding(
-                padding: const EdgeInsets.only(top: 6),
-                child: Text(
-                  _validFrom == widget.existing!.validFrom
-                      ? 'Same month as original — will update in place.'
-                      : _frequency == PlanFrequency.yearly
-                          ? 'Different year — will create a new version from this renewal.'
-                          : 'Different month — will create a new version.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: _validFrom == widget.existing!.validFrom
-                        ? AppColors.textMuted
-                        : Theme.of(context).colorScheme.primary,
-                  ),
+              const SizedBox(height: 12),
+              _buildLockedDateRow(
+                label: 'Until',
+                value: _validTo != null
+                    ? '${_validTo!.label} (last active month)'
+                    : 'Open-ended',
+              ),
+              const SizedBox(height: 16),
+            ] else ...[
+              OutlinedButton.icon(
+                onPressed: _pickValidFrom,
+                icon: const Icon(Icons.calendar_month, size: 18),
+                label: Text('From: $validFromLabel'),
+                style: OutlinedButton.styleFrom(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 16),
                 ),
               ),
-            const SizedBox(height: 16),
-
-            // ── End date (income or fixedCost, recurring only) ──────────────
-            if (_frequency != PlanFrequency.oneTime) ...[
-              _buildEndDateSection(),
+              if (isEditing &&
+                  _type == PlanItemType.fixedCost &&
+                  _frequency != PlanFrequency.oneTime)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    _validFrom == widget.existing!.validFrom
+                        ? 'Same month as original — will update in place.'
+                        : 'Different month — will create a new version.',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: _validFrom == widget.existing!.validFrom
+                          ? AppColors.textMuted
+                          : Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
               const SizedBox(height: 16),
+
+              // ── End date (income or fixedCost, recurring only) ──────────
+              if (_frequency != PlanFrequency.oneTime) ...[
+                _buildEndDateSection(),
+                const SizedBox(height: 16),
+              ],
             ],
 
             // ── Note ────────────────────────────────────────────────────────

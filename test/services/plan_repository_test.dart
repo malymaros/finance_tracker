@@ -30,8 +30,6 @@ PlanItem makeGuardedItem({
   int? toYear,
   int? toMonth,
   int guardDueDay = 1,
-  int? guardDueMonth,
-  bool guardOneTime = false,
 }) =>
     PlanItem(
       id: id,
@@ -48,8 +46,6 @@ PlanItem makeGuardedItem({
       financialType: FinancialType.consumption,
       isGuarded: true,
       guardDueDay: guardDueDay,
-      guardDueMonth: guardDueMonth,
-      guardOneTime: guardOneTime,
     );
 
 void main() {
@@ -463,24 +459,6 @@ void main() {
       expect(repo.items.first.guardDueDay, 15);
     });
 
-    test('truncated item keeps guardDueMonth', () async {
-      final repo = PlanRepository(persist: false);
-      await repo.addPlanItem(
-          makeGuardedItem(id: 'a', seriesId: 'a', guardDueMonth: 6));
-      await repo.removePlanItemFrom('a', YearMonth(2024, 3));
-
-      expect(repo.items.first.guardDueMonth, 6);
-    });
-
-    test('truncated item keeps guardOneTime=true', () async {
-      final repo = PlanRepository(persist: false);
-      await repo.addPlanItem(
-          makeGuardedItem(id: 'a', seriesId: 'a', guardOneTime: true));
-      await repo.removePlanItemFrom('a', YearMonth(2024, 3));
-
-      expect(repo.items.first.guardOneTime, isTrue);
-    });
-
     test('non-guarded item truncated normally with isGuarded=false', () async {
       final repo = PlanRepository(persist: false);
       await repo.addPlanItem(makeItem(id: 'a', seriesId: 'a'));
@@ -503,24 +481,6 @@ void main() {
       for (final item in repo.items) {
         expect(item.guardDueDay, 20);
       }
-    });
-
-    test('updates guardDueMonth when provided', () async {
-      final repo = PlanRepository(persist: false);
-      await repo.addPlanItem(makeGuardedItem(id: 'v1', seriesId: 's', guardDueMonth: 3));
-
-      await repo.updateGuardConfigForSeries('s', guardDueDay: 5, guardDueMonth: 9);
-
-      expect(repo.items.first.guardDueMonth, 9);
-    });
-
-    test('preserves existing guardDueMonth when not provided', () async {
-      final repo = PlanRepository(persist: false);
-      await repo.addPlanItem(makeGuardedItem(id: 'v1', seriesId: 's', guardDueMonth: 6));
-
-      await repo.updateGuardConfigForSeries('s', guardDueDay: 10);
-
-      expect(repo.items.first.guardDueMonth, 6); // unchanged
     });
 
     test('does not touch items in a different series', () async {
@@ -572,25 +532,14 @@ void main() {
       }
     });
 
-    test('clears guardDueDay and guardDueMonth', () async {
+    test('clears guardDueDay', () async {
       final repo = PlanRepository(persist: false);
       await repo.addPlanItem(
-          makeGuardedItem(id: 'v1', seriesId: 's', guardDueDay: 15, guardDueMonth: 6));
+          makeGuardedItem(id: 'v1', seriesId: 's', guardDueDay: 15));
 
       await repo.disableGuardForSeries('s');
 
       expect(repo.items.first.guardDueDay, isNull);
-      expect(repo.items.first.guardDueMonth, isNull);
-    });
-
-    test('clears guardOneTime', () async {
-      final repo = PlanRepository(persist: false);
-      await repo.addPlanItem(
-          makeGuardedItem(id: 'v1', seriesId: 's', guardOneTime: true));
-
-      await repo.disableGuardForSeries('s');
-
-      expect(repo.items.first.guardOneTime, isFalse);
     });
 
     test('does not touch items in a different series', () async {
@@ -629,17 +578,10 @@ void main() {
 
   group('PlanItem — guard field serialization', () {
     test('guard fields round-trip through toJson/fromJson', () {
-      final original = makeGuardedItem(
-        id: 'g1',
-        guardDueDay: 15,
-        guardDueMonth: 6,
-        guardOneTime: true,
-      );
+      final original = makeGuardedItem(id: 'g1', guardDueDay: 15);
       final restored = PlanItem.fromJson(original.toJson());
       expect(restored.isGuarded, isTrue);
       expect(restored.guardDueDay, 15);
-      expect(restored.guardDueMonth, 6);
-      expect(restored.guardOneTime, isTrue);
     });
 
     test('fromJson with missing guard keys defaults to false/null', () {
@@ -654,8 +596,6 @@ void main() {
       });
       expect(item.isGuarded, isFalse);
       expect(item.guardDueDay, isNull);
-      expect(item.guardDueMonth, isNull);
-      expect(item.guardOneTime, isFalse);
     });
 
     test('unguarded item toJson omits guard keys', () {
@@ -667,12 +607,11 @@ void main() {
       expect(json.containsKey('guardOneTime'), isFalse);
     });
 
-    test('guarded item toJson writes isGuarded=true and due fields', () {
-      final item = makeGuardedItem(id: 'g1', guardDueDay: 10, guardDueMonth: 3);
+    test('guarded item toJson writes isGuarded=true and guardDueDay', () {
+      final item = makeGuardedItem(id: 'g1', guardDueDay: 10);
       final json = item.toJson();
       expect(json['isGuarded'], isTrue);
       expect(json['guardDueDay'], 10);
-      expect(json['guardDueMonth'], 3);
     });
   });
 
@@ -1025,6 +964,218 @@ void main() {
       expect(untouchedV1.validTo, isNull); // v1 not modified
 
       expect(repo.items.where((i) => i.seriesId == 'sx').length, 3);
+    });
+  });
+
+  // ── splitYearlySeries ─────────────────────────────────────────────────────
+
+  group('splitYearlySeries', () {
+    PlanItem yearlyItem({
+      String id = 'y1',
+      String? seriesId,
+      int fromYear = 2023,
+      int fromMonth = 3, // March anchor
+      YearMonth? validTo,
+    }) =>
+        PlanItem(
+          id: id,
+          seriesId: seriesId ?? id,
+          name: 'Insurance',
+          amount: 1200,
+          type: PlanItemType.fixedCost,
+          frequency: PlanFrequency.yearly,
+          validFrom: YearMonth(fromYear, fromMonth),
+          validTo: validTo,
+          category: ExpenseCategory.insurance,
+          financialType: FinancialType.insurance,
+        );
+
+    test('old series is capped at month before newSeriesStart', () async {
+      final repo = PlanRepository(persist: false);
+      final item = yearlyItem(); // March 2023, open-ended
+      await repo.addPlanItem(item);
+
+      await repo.splitYearlySeries(
+        item,
+        newSeriesStart: YearMonth(2026, 3), // next March cycle
+        name: 'Insurance Plus',
+        amount: 1500,
+        category: ExpenseCategory.insurance,
+        financialType: FinancialType.insurance,
+      );
+
+      final old = repo.items.firstWhere((i) => i.id == 'y1');
+      expect(old.validTo, YearMonth(2026, 2)); // capped at February 2026
+    });
+
+    test('new series has a new independent seriesId', () async {
+      final repo = PlanRepository(persist: false);
+      final item = yearlyItem();
+      await repo.addPlanItem(item);
+
+      await repo.splitYearlySeries(
+        item,
+        newSeriesStart: YearMonth(2026, 3),
+        name: 'Insurance Plus',
+        amount: 1500,
+        category: ExpenseCategory.insurance,
+        financialType: FinancialType.insurance,
+      );
+
+      final newItem = repo.items.firstWhere((i) => i.id != 'y1');
+      expect(newItem.seriesId, isNot('y1')); // different seriesId
+      expect(newItem.seriesId, newItem.id); // new seriesId == new id
+    });
+
+    test('new series starts at newSeriesStart with edited fields', () async {
+      final repo = PlanRepository(persist: false);
+      final item = yearlyItem();
+      await repo.addPlanItem(item);
+
+      await repo.splitYearlySeries(
+        item,
+        newSeriesStart: YearMonth(2026, 3),
+        name: 'Insurance Plus',
+        amount: 1500,
+        category: ExpenseCategory.insurance,
+        financialType: FinancialType.insurance,
+        note: 'Updated plan',
+      );
+
+      final newItem = repo.items.firstWhere((i) => i.id != 'y1');
+      expect(newItem.validFrom, YearMonth(2026, 3));
+      expect(newItem.name, 'Insurance Plus');
+      expect(newItem.amount, 1500);
+      expect(newItem.note, 'Updated plan');
+      expect(newItem.frequency, PlanFrequency.yearly);
+      expect(newItem.type, PlanItemType.fixedCost);
+    });
+
+    test('open-ended original → new series is also open-ended', () async {
+      final repo = PlanRepository(persist: false);
+      final item = yearlyItem(validTo: null); // open-ended
+      await repo.addPlanItem(item);
+
+      await repo.splitYearlySeries(
+        item,
+        newSeriesStart: YearMonth(2026, 3),
+        name: 'Insurance Plus',
+        amount: 1500,
+        category: ExpenseCategory.insurance,
+        financialType: FinancialType.insurance,
+      );
+
+      final newItem = repo.items.firstWhere((i) => i.id != 'y1');
+      expect(newItem.validTo, isNull);
+    });
+
+    test('bounded original → new series inherits original validTo', () async {
+      final repo = PlanRepository(persist: false);
+      // Original ends February 2030 (last active month of 2029 renewal cycle).
+      final item = yearlyItem(validTo: YearMonth(2030, 2));
+      await repo.addPlanItem(item);
+
+      await repo.splitYearlySeries(
+        item,
+        newSeriesStart: YearMonth(2026, 3),
+        name: 'Insurance Plus',
+        amount: 1500,
+        category: ExpenseCategory.insurance,
+        financialType: FinancialType.insurance,
+      );
+
+      final newItem = repo.items.firstWhere((i) => i.id != 'y1');
+      expect(newItem.validTo, YearMonth(2030, 2));
+    });
+
+    test('future versions of old series are removed before newSeriesStart', () async {
+      final repo = PlanRepository(persist: false);
+      final v1 = yearlyItem(id: 'v1', seriesId: 'sy'); // March 2023
+      final v2 = PlanItem( // future version: March 2027
+        id: 'v2',
+        seriesId: 'sy',
+        name: 'Insurance',
+        amount: 1300,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.yearly,
+        validFrom: YearMonth(2027, 3),
+        category: ExpenseCategory.insurance,
+        financialType: FinancialType.insurance,
+      );
+      await repo.addPlanItem(v1);
+      await repo.addPlanItem(v2);
+
+      // Split from March 2026 — v2 (March 2027) must be removed.
+      await repo.splitYearlySeries(
+        v1,
+        newSeriesStart: YearMonth(2026, 3),
+        name: 'Insurance New',
+        amount: 1400,
+        category: ExpenseCategory.insurance,
+        financialType: FinancialType.insurance,
+      );
+
+      expect(repo.items.any((i) => i.id == 'v2'), isFalse);
+      expect(repo.items.length, 2); // v1 (capped) + new series
+    });
+
+    test('GUARD settings are inherited by new series', () async {
+      final repo = PlanRepository(persist: false);
+      final item = yearlyItem();
+      await repo.addPlanItem(item);
+
+      await repo.splitYearlySeries(
+        item,
+        newSeriesStart: YearMonth(2026, 3),
+        name: 'Insurance',
+        amount: 1200,
+        category: ExpenseCategory.insurance,
+        financialType: FinancialType.insurance,
+        isGuarded: true,
+        guardDueDay: 10,
+      );
+
+      final newItem = repo.items.firstWhere((i) => i.id != 'y1');
+      expect(newItem.isGuarded, isTrue);
+      expect(newItem.guardDueDay, 10);
+    });
+  });
+
+  // ── yearly validTo formula ────────────────────────────────────────────────
+
+  group('yearly validTo — last active month is anchorMonth - 1 of next year', () {
+    // These tests verify the convention: for a yearly item starting in
+    // anchorMonth of year Y, validTo = YearMonth(Y+1, anchorMonth).addMonths(-1).
+
+    test('March anchor: one cycle → validTo = February next year', () {
+      const anchorMonth = 3; // March
+      const lastRenewalYear = 2026;
+      final validTo =
+          YearMonth(lastRenewalYear + 1, anchorMonth).addMonths(-1);
+      expect(validTo, YearMonth(2027, 2)); // February 2027
+    });
+
+    test('January anchor: one cycle → validTo = December same year', () {
+      const anchorMonth = 1; // January
+      const lastRenewalYear = 2026;
+      final validTo =
+          YearMonth(lastRenewalYear + 1, anchorMonth).addMonths(-1);
+      expect(validTo, YearMonth(2026, 12)); // December 2026
+    });
+
+    test('December anchor: one cycle → validTo = November next year', () {
+      const anchorMonth = 12; // December
+      const lastRenewalYear = 2026;
+      final validTo =
+          YearMonth(lastRenewalYear + 1, anchorMonth).addMonths(-1);
+      expect(validTo, YearMonth(2027, 11)); // November 2027
+    });
+
+    test('split cap: March anchor, split from March 2026 → cap = February 2026', () {
+      const anchorMonth = 3;
+      final newSeriesStart = YearMonth(2026, anchorMonth);
+      final cap = newSeriesStart.addMonths(-1);
+      expect(cap, YearMonth(2026, 2)); // February 2026
     });
   });
 }
