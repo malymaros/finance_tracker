@@ -18,6 +18,11 @@ class AddPlanItemScreen extends StatefulWidget {
   /// Ignored when [existing] is non-null.
   final PlanItemType? initialType;
 
+  /// Pre-selects the frequency when opening the form for a new income or
+  /// fixed-cost item. Ignored when [existing] is non-null. When set, the
+  /// frequency selector is hidden and the frequency is locked for the session.
+  final PlanFrequency? initialFrequency;
+
   /// Pre-selects the validFrom month for new items or for a new version of a
   /// recurring item. Defaults to [YearMonth.now] when null.
   final YearMonth? initialValidFrom;
@@ -27,6 +32,7 @@ class AddPlanItemScreen extends StatefulWidget {
     required this.planRepository,
     this.existing,
     this.initialType,
+    this.initialFrequency,
     this.initialValidFrom,
   });
 
@@ -53,15 +59,38 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   int _guardDueMonth = 1;
   bool _guardOneTime = false;
 
+  /// Type is locked when editing or when pre-set via [initialType].
   bool get _typeIsLocked =>
       widget.existing != null || widget.initialType != null;
 
+  /// Frequency is locked when editing or when pre-set via [initialFrequency].
+  bool get _frequencyIsLocked =>
+      widget.existing != null || widget.initialFrequency != null;
+
   String get _screenTitle {
     if (widget.existing != null) {
-      return _type == PlanItemType.income ? 'Edit Income' : 'Edit Fixed Cost';
+      if (_type == PlanItemType.income) {
+        return switch (_frequency) {
+          PlanFrequency.yearly  => 'Edit Yearly Income',
+          PlanFrequency.oneTime => 'Edit One-time Income',
+          _                     => 'Edit Monthly Income',
+        };
+      }
+      return _frequency == PlanFrequency.yearly
+          ? 'Edit Yearly Fixed Cost'
+          : 'Edit Monthly Fixed Cost';
     }
     if (widget.initialType != null) {
-      return _type == PlanItemType.income ? 'Add Income' : 'Add Fixed Cost';
+      if (_type == PlanItemType.income) {
+        return switch (_frequency) {
+          PlanFrequency.yearly  => 'Add Yearly Income',
+          PlanFrequency.oneTime => 'Add One-time Income',
+          _                     => 'Add Monthly Income',
+        };
+      }
+      return _frequency == PlanFrequency.yearly
+          ? 'Add Yearly Fixed Cost'
+          : 'Add Monthly Fixed Cost';
     }
     return 'Add Plan Item';
   }
@@ -96,7 +125,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       _guardOneTime = e.guardOneTime;
     } else {
       _type = widget.initialType ?? PlanItemType.income;
-      _frequency = PlanFrequency.monthly;
+      _frequency = widget.initialFrequency ?? PlanFrequency.monthly;
       _validFrom = widget.initialValidFrom ?? YearMonth.now();
       _selectedCategory = ExpenseCategory.other;
       _selectedFinancialType = FinancialType.consumption;
@@ -112,32 +141,166 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     super.dispose();
   }
 
-  Future<void> _pickValidFrom() async {
-    final initial = DateTime(_validFrom.year, _validFrom.month, 1);
-    final picked = await showDatePicker(
+  // ── Month/year picker ──────────────────────────────────────────────────────
+
+  /// Shows a dialog with month and year dropdowns. Returns the selected
+  /// [YearMonth] or null if the user cancelled.
+  Future<YearMonth?> _showMonthYearPicker(
+    BuildContext context, {
+    required YearMonth initial,
+    int firstYear = 2000,
+    int lastYear = 2100,
+  }) {
+    return showDialog<YearMonth>(
       context: context,
-      initialDate: initial,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      helpText: 'Select start month (day is ignored)',
+      builder: (ctx) {
+        var selectedMonth = initial.month;
+        var selectedYear = initial.year.clamp(firstYear, lastYear);
+        return StatefulBuilder(
+          builder: (ctx, setInner) => AlertDialog(
+            title: const Text('Select month'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<int>(
+                  initialValue: selectedMonth,
+                  decoration: const InputDecoration(
+                    labelText: 'Month',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                  items: List.generate(12, (i) {
+                    final m = i + 1;
+                    return DropdownMenuItem(
+                      value: m,
+                      child: Text(YearMonth.monthNames[m]),
+                    );
+                  }),
+                  onChanged: (v) {
+                    if (v != null) setInner(() => selectedMonth = v);
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<int>(
+                  initialValue: selectedYear,
+                  decoration: const InputDecoration(
+                    labelText: 'Year',
+                    border: OutlineInputBorder(),
+                    isDense: true,
+                  ),
+                  items: List.generate(
+                    lastYear - firstYear + 1,
+                    (i) {
+                      final y = firstYear + i;
+                      return DropdownMenuItem(value: y, child: Text('$y'));
+                    },
+                  ),
+                  onChanged: (v) {
+                    if (v != null) setInner(() => selectedYear = v);
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(null),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () =>
+                    Navigator.of(ctx).pop(YearMonth(selectedYear, selectedMonth)),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickValidFrom() async {
+    final now = YearMonth.now();
+    final picked = await _showMonthYearPicker(
+      context,
+      initial: _validFrom,
+      firstYear: now.year - 10,
+      lastYear: now.year + 20,
     );
     if (picked != null) {
-      setState(() => _validFrom = YearMonth(picked.year, picked.month));
+      setState(() {
+        _validFrom = picked;
+        // Keep validTo consistent for yearly items.
+        if (_frequency == PlanFrequency.yearly && _validTo != null) {
+          _validTo = YearMonth(_validTo!.year, picked.month);
+        }
+        // Keep guard due month in sync with validFrom for yearly items.
+        if (_frequency == PlanFrequency.yearly) {
+          _guardDueMonth = picked.month;
+        }
+      });
     }
   }
 
   Future<void> _pickValidTo() async {
-    final current = _validTo ?? _validFrom.addMonths(11);
-    final initial = DateTime(current.year, current.month, 1);
-    final picked = await showDatePicker(
+    if (_frequency == PlanFrequency.yearly) {
+      await _pickYearlyEndYear();
+    } else {
+      final picked = await _showMonthYearPicker(
+        context,
+        initial: _validTo ?? _validFrom.addMonths(11),
+        firstYear: _validFrom.year,
+        lastYear: _validFrom.year + 20,
+      );
+      if (picked != null) setState(() => _validTo = picked);
+    }
+  }
+
+  /// For yearly items: shows a year-only dropdown. The anchor month is fixed
+  /// to [_validFrom.month]; only the year is chosen.
+  Future<void> _pickYearlyEndYear() async {
+    final anchorMonth = _validFrom.month;
+    final currentEndYear = _validTo?.year ?? (_validFrom.year + 1);
+
+    final picked = await showDialog<int>(
       context: context,
-      initialDate: initial,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
-      helpText: 'Select end month (day is ignored)',
+      builder: (ctx) {
+        var selected = currentEndYear;
+        return StatefulBuilder(
+          builder: (ctx, setInner) => AlertDialog(
+            title: const Text('Renewal ends after'),
+            content: DropdownButtonFormField<int>(
+              initialValue: selected,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+              items: List.generate(20, (i) {
+                final y = _validFrom.year + 1 + i;
+                return DropdownMenuItem(
+                  value: y,
+                  child: Text('${YearMonth.monthNames[anchorMonth]} $y'),
+                );
+              }),
+              onChanged: (v) {
+                if (v != null) setInner(() => selected = v);
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(null),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(ctx).pop(selected),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      },
     );
     if (picked != null) {
-      setState(() => _validTo = YearMonth(picked.year, picked.month));
+      setState(() => _validTo = YearMonth(picked, anchorMonth));
     }
   }
 
@@ -153,7 +316,6 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     final e = widget.existing;
     final isFixedCost = _type == PlanItemType.fixedCost;
 
-    // validTo applies to both income and fixedCost for monthly/yearly frequency.
     final savedValidTo = _frequency != PlanFrequency.oneTime ? _validTo : null;
 
     // GUARD fields: only persist for guarded recurring fixed costs.
@@ -165,7 +327,6 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     final guardOneTime = guardEnabled && _guardOneTime;
 
     if (e == null) {
-      // New item — new series.
       final newId = IdGenerator.generate();
       await widget.planRepository.addPlanItem(PlanItem(
         id: newId,
@@ -185,8 +346,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         guardOneTime: guardOneTime,
       ));
     } else {
-      // Edit — versioning rules are owned by the repository.
-      await widget.planRepository.applyPlanItemEdit(
+      final result = await widget.planRepository.applyPlanItemEdit(
         e,
         name: name,
         amount: amount,
@@ -201,6 +361,18 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         guardDueMonth: guardDueMonth,
         guardOneTime: guardOneTime,
       );
+
+      if (result == PlanItemEditResult.invalidYearlyCycleBoundary) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Yearly items can only be changed at their renewal month.'),
+            ),
+          );
+        }
+        return;
+      }
     }
 
     if (mounted) Navigator.of(context).pop();
@@ -208,10 +380,12 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
 
   Widget _buildEndDateSection() {
     final hasEndDate = _validTo != null;
-    final validToLabel = hasEndDate
+    final isYearly = _frequency == PlanFrequency.yearly;
+    final isInvalid = hasEndDate && _validTo!.isBefore(_validFrom);
+
+    final String? validToLabel = hasEndDate
         ? '${YearMonth.monthNames[_validTo!.month]} ${_validTo!.year}'
         : null;
-    final isInvalid = hasEndDate && _validTo!.isBefore(_validFrom);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,12 +395,17 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             Switch(
               value: hasEndDate,
               onChanged: (on) => setState(() {
-                _validTo = on ? _validFrom.addMonths(11) : null;
+                if (on) {
+                  _validTo = isYearly
+                      ? YearMonth(_validFrom.year + 1, _validFrom.month)
+                      : _validFrom.addMonths(11);
+                } else {
+                  _validTo = null;
+                }
               }),
             ),
             const SizedBox(width: 8),
-            const Text('Set end date',
-                style: TextStyle(fontSize: 14)),
+            const Text('Set end date', style: TextStyle(fontSize: 14)),
           ],
         ),
         if (hasEndDate) ...[
@@ -241,6 +420,14 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                   const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             ),
           ),
+          if (isYearly)
+            const Padding(
+              padding: EdgeInsets.only(top: 6),
+              child: Text(
+                'Yearly items end at their renewal month.',
+                style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+              ),
+            ),
           if (isInvalid)
             const Padding(
               padding: EdgeInsets.only(top: 6),
@@ -383,7 +570,6 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                 if (v != null) {
                   setState(() {
                     _guardDueMonth = v;
-                    // Re-clamp day to the new month.
                     final daysInNewMonth =
                         DateTime(_validFrom.year, v + 1, 0).day;
                     _guardDueDay = _guardDueDay.clamp(1, daysInNewMonth);
@@ -463,7 +649,6 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                         _frequency == PlanFrequency.oneTime) {
                       _frequency = PlanFrequency.monthly;
                     }
-                    // Reset guard when switching away from fixedCost.
                     if (newType != PlanItemType.fixedCost) {
                       _isGuarded = false;
                     }
@@ -512,36 +697,41 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             const SizedBox(height: 16),
 
             // ── Frequency ───────────────────────────────────────────────────
-            const Text('Frequency',
-                style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
-            const SizedBox(height: 8),
-            SegmentedButton<PlanFrequency>(
-              segments: [
-                const ButtonSegment(
-                  value: PlanFrequency.monthly,
-                  label: Text('Monthly'),
-                  icon: Icon(Icons.repeat),
-                ),
-                const ButtonSegment(
-                  value: PlanFrequency.yearly,
-                  label: Text('Yearly'),
-                  icon: Icon(Icons.event_repeat),
-                ),
-                if (_type == PlanItemType.income)
+            // Hidden when locked — the screen title ("Add Monthly Fixed Cost"
+            // etc.) already communicates the frequency. Editable segmented
+            // button is shown only when type is also unlocked (rare path
+            // where no initialType/initialFrequency was passed).
+            if (!_frequencyIsLocked) ...[
+              const Text('Frequency',
+                  style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+              const SizedBox(height: 8),
+              SegmentedButton<PlanFrequency>(
+                segments: [
                   const ButtonSegment(
-                    value: PlanFrequency.oneTime,
-                    label: Text('One-time'),
-                    icon: Icon(Icons.looks_one_outlined),
+                    value: PlanFrequency.monthly,
+                    label: Text('Monthly'),
+                    icon: Icon(Icons.repeat),
                   ),
-              ],
-              selected: {_frequency},
-              onSelectionChanged: (s) => setState(() {
-                _frequency = s.first;
-                // Reset guard when switching to one-time.
-                if (_frequency == PlanFrequency.oneTime) _isGuarded = false;
-              }),
-            ),
-            const SizedBox(height: 16),
+                  const ButtonSegment(
+                    value: PlanFrequency.yearly,
+                    label: Text('Yearly'),
+                    icon: Icon(Icons.event_repeat),
+                  ),
+                  if (_type == PlanItemType.income)
+                    const ButtonSegment(
+                      value: PlanFrequency.oneTime,
+                      label: Text('One-time'),
+                      icon: Icon(Icons.looks_one_outlined),
+                    ),
+                ],
+                selected: {_frequency},
+                onSelectionChanged: (s) => setState(() {
+                  _frequency = s.first;
+                  if (_frequency == PlanFrequency.oneTime) _isGuarded = false;
+                }),
+              ),
+              const SizedBox(height: 16),
+            ],
 
             // ── Category (fixedCost only) ────────────────────────────────────
             if (_type == PlanItemType.fixedCost) ...[
@@ -616,7 +806,9 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                 child: Text(
                   _validFrom == widget.existing!.validFrom
                       ? 'Same month as original — will update in place.'
-                      : 'Different month — will create a new version.',
+                      : _frequency == PlanFrequency.yearly
+                          ? 'Different year — will create a new version from this renewal.'
+                          : 'Different month — will create a new version.',
                   style: TextStyle(
                     fontSize: 12,
                     color: _validFrom == widget.existing!.validFrom

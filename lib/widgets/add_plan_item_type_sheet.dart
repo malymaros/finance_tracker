@@ -2,71 +2,21 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_theme.dart';
 
-/// Bottom sheet that asks the user what type of plan item they want to add.
-/// Tapping a card pops the sheet and fires the corresponding callback.
-class AddPlanItemTypeSheet extends StatelessWidget {
-  final VoidCallback onIncomeSelected;
-  final VoidCallback onFixedCostSelected;
-
-  const AddPlanItemTypeSheet({
-    super.key,
-    required this.onIncomeSelected,
-    required this.onFixedCostSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'What are you adding?',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleMedium
-                  ?.copyWith(fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 16),
-            _TypeCard(
-              icon: Icons.savings,
-              color: AppColors.income,
-              title: 'Income',
-              subtitle: 'Salary, freelance, recurring income',
-              onTap: () {
-                Navigator.of(context).pop();
-                onIncomeSelected();
-              },
-            ),
-            const SizedBox(height: 10),
-            _TypeCard(
-              icon: Icons.lock_outline,
-              color: AppColors.textMuted,
-              title: 'Fixed Cost',
-              subtitle: 'Rent, subscriptions, recurring bills',
-              onTap: () {
-                Navigator.of(context).pop();
-                onFixedCostSelected();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TypeCard extends StatelessWidget {
+/// Shared card used by the plan-item selection bottom sheets
+/// ([AddPlanItemTypeSheet], [AddFixedCostFrequencySheet],
+/// [AddIncomeFrequencySheet]).
+///
+/// Renders an icon, title, and subtitle with a coloured left accent strip.
+/// Tapping fires [onTap].
+class PlanItemSelectionCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
 
-  const _TypeCard({
+  const PlanItemSelectionCard({
+    super.key,
     required this.icon,
     required this.color,
     required this.title,
@@ -85,7 +35,6 @@ class _TypeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppColors.border),
         ),
-        // 1px less than outer radius so the accent strip doesn't bleed at corners.
         child: ClipRRect(
           borderRadius: BorderRadius.circular(13),
           child: IntrinsicHeight(
@@ -131,6 +80,63 @@ class _TypeCard extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Bottom sheet that asks the user what type of plan item they want to add.
+/// Tapping a card pops the sheet and fires the corresponding callback.
+class AddPlanItemTypeSheet extends StatelessWidget {
+  final VoidCallback onIncomeSelected;
+  final VoidCallback onFixedCostSelected;
+
+  const AddPlanItemTypeSheet({
+    super.key,
+    required this.onIncomeSelected,
+    required this.onFixedCostSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'What are you adding?',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 16),
+            PlanItemSelectionCard(
+              icon: Icons.savings,
+              color: AppColors.income,
+              title: 'Income',
+              subtitle: 'Salary, freelance, recurring income',
+              onTap: () {
+                Navigator.of(context).pop();
+                onIncomeSelected();
+              },
+            ),
+            const SizedBox(height: 10),
+            PlanItemSelectionCard(
+              icon: Icons.lock_outline,
+              color: AppColors.textMuted,
+              title: 'Fixed Cost',
+              subtitle: 'Rent, subscriptions, recurring bills',
+              onTap: () {
+                Navigator.of(context).pop();
+                onFixedCostSelected();
+              },
+            ),
+          ],
         ),
       ),
     );

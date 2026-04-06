@@ -2,6 +2,16 @@ import 'expense_category.dart';
 import 'financial_type.dart';
 import 'year_month.dart';
 
+/// Result returned by [PlanRepository.applyPlanItemEdit].
+enum PlanItemEditResult {
+  success,
+
+  /// A new version was requested for a yearly item whose [startFrom] month
+  /// does not match the series anchor month ([existing.validFrom.month]).
+  /// No changes are made when this is returned.
+  invalidYearlyCycleBoundary,
+}
+
 enum PlanItemType { income, fixedCost }
 
 enum PlanFrequency { monthly, yearly, oneTime }

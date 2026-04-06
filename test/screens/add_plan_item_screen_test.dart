@@ -191,21 +191,52 @@ void main() {
   });
 
   group('AddPlanItemScreen — screen title', () {
-    testWidgets('shows "Add Income" when initialType is income', (tester) async {
+    testWidgets('shows "Add Monthly Income" for monthly income', (tester) async {
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
         initialType: PlanItemType.income,
+        initialFrequency: PlanFrequency.monthly,
       )));
-      expect(find.text('Add Income'), findsOneWidget);
+      expect(find.text('Add Monthly Income'), findsOneWidget);
     });
 
-    testWidgets('shows "Add Fixed Cost" when initialType is fixedCost',
+    testWidgets('shows "Add Yearly Income" for yearly income', (tester) async {
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: _repo(),
+        initialType: PlanItemType.income,
+        initialFrequency: PlanFrequency.yearly,
+      )));
+      expect(find.text('Add Yearly Income'), findsOneWidget);
+    });
+
+    testWidgets('shows "Add One-time Income" for one-time income',
+        (tester) async {
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: _repo(),
+        initialType: PlanItemType.income,
+        initialFrequency: PlanFrequency.oneTime,
+      )));
+      expect(find.text('Add One-time Income'), findsOneWidget);
+    });
+
+    testWidgets('shows "Add Monthly Fixed Cost" for monthly fixed cost',
         (tester) async {
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
         initialType: PlanItemType.fixedCost,
+        initialFrequency: PlanFrequency.monthly,
       )));
-      expect(find.text('Add Fixed Cost'), findsOneWidget);
+      expect(find.text('Add Monthly Fixed Cost'), findsOneWidget);
+    });
+
+    testWidgets('shows "Add Yearly Fixed Cost" for yearly fixed cost',
+        (tester) async {
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: _repo(),
+        initialType: PlanItemType.fixedCost,
+        initialFrequency: PlanFrequency.yearly,
+      )));
+      expect(find.text('Add Yearly Fixed Cost'), findsOneWidget);
     });
 
     testWidgets('shows generic "Add Plan Item" when no initialType',
@@ -216,7 +247,7 @@ void main() {
       expect(find.text('Add Plan Item'), findsOneWidget);
     });
 
-    testWidgets('shows "Edit Income" when editing an income item',
+    testWidgets('shows "Edit Monthly Income" when editing a monthly income item',
         (tester) async {
       final repo = _repo();
       final item = PlanItem(
@@ -233,10 +264,50 @@ void main() {
         planRepository: repo,
         existing: item,
       )));
-      expect(find.text('Edit Income'), findsOneWidget);
+      expect(find.text('Edit Monthly Income'), findsOneWidget);
     });
 
-    testWidgets('shows "Edit Fixed Cost" when editing a fixed cost item',
+    testWidgets('shows "Edit Yearly Income" when editing a yearly income item',
+        (tester) async {
+      final repo = _repo();
+      final item = PlanItem(
+        id: '1',
+        seriesId: '1',
+        name: 'Annual Bonus',
+        amount: 5000,
+        type: PlanItemType.income,
+        frequency: PlanFrequency.yearly,
+        validFrom: YearMonth(2025, 1),
+      );
+      await repo.addPlanItem(item);
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: repo,
+        existing: item,
+      )));
+      expect(find.text('Edit Yearly Income'), findsOneWidget);
+    });
+
+    testWidgets('shows "Edit One-time Income" when editing a one-time income item',
+        (tester) async {
+      final repo = _repo();
+      final item = PlanItem(
+        id: '1',
+        seriesId: '1',
+        name: 'Bonus',
+        amount: 2000,
+        type: PlanItemType.income,
+        frequency: PlanFrequency.oneTime,
+        validFrom: YearMonth(2025, 6),
+      );
+      await repo.addPlanItem(item);
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: repo,
+        existing: item,
+      )));
+      expect(find.text('Edit One-time Income'), findsOneWidget);
+    });
+
+    testWidgets('shows "Edit Monthly Fixed Cost" when editing a monthly fixed cost',
         (tester) async {
       final repo = _repo();
       final item = PlanItem(
@@ -255,7 +326,29 @@ void main() {
         planRepository: repo,
         existing: item,
       )));
-      expect(find.text('Edit Fixed Cost'), findsOneWidget);
+      expect(find.text('Edit Monthly Fixed Cost'), findsOneWidget);
+    });
+
+    testWidgets('shows "Edit Yearly Fixed Cost" when editing a yearly fixed cost',
+        (tester) async {
+      final repo = _repo();
+      final item = PlanItem(
+        id: '1',
+        seriesId: '1',
+        name: 'Insurance',
+        amount: 1200,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.yearly,
+        validFrom: YearMonth(2025, 1),
+        category: ExpenseCategory.insurance,
+        financialType: FinancialType.insurance,
+      );
+      await repo.addPlanItem(item);
+      await tester.pumpWidget(_wrap(AddPlanItemScreen(
+        planRepository: repo,
+        existing: item,
+      )));
+      expect(find.text('Edit Yearly Fixed Cost'), findsOneWidget);
     });
   });
 

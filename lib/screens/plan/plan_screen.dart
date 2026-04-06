@@ -19,6 +19,8 @@ import '../../widgets/plan_category_tile.dart';
 import '../../widgets/plan_financial_type_tile.dart';
 import '../../widgets/plan_fixed_costs_summary_tile.dart';
 import '../../widgets/plan_income_summary_tile.dart';
+import '../../widgets/add_fixed_cost_frequency_sheet.dart';
+import '../../widgets/add_income_frequency_sheet.dart';
 import '../../widgets/add_plan_item_type_sheet.dart';
 import '../../widgets/plan_item_tile.dart';
 import 'add_plan_item_screen.dart';
@@ -121,20 +123,66 @@ class _PlanScreenState extends State<PlanScreen> {
       context: context,
       builder: (_) => AddPlanItemTypeSheet(
         onIncomeSelected: () {
-          if (context.mounted) _navigateToAdd(context, PlanItemType.income);
+          if (context.mounted) _showIncomeFrequencySheet(context);
         },
         onFixedCostSelected: () {
-          if (context.mounted) _navigateToAdd(context, PlanItemType.fixedCost);
+          if (context.mounted) _showFixedCostFrequencySheet(context);
         },
       ),
     );
   }
 
-  void _navigateToAdd(BuildContext context, PlanItemType type) {
+  void _showIncomeFrequencySheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => AddIncomeFrequencySheet(
+        onMonthlySelected: () {
+          if (context.mounted) {
+            _navigateToAdd(context, PlanItemType.income, PlanFrequency.monthly);
+          }
+        },
+        onYearlySelected: () {
+          if (context.mounted) {
+            _navigateToAdd(context, PlanItemType.income, PlanFrequency.yearly);
+          }
+        },
+        onOneTimeSelected: () {
+          if (context.mounted) {
+            _navigateToAdd(
+                context, PlanItemType.income, PlanFrequency.oneTime);
+          }
+        },
+      ),
+    );
+  }
+
+  void _showFixedCostFrequencySheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (_) => AddFixedCostFrequencySheet(
+        onMonthlySelected: () {
+          if (context.mounted) {
+            _navigateToAdd(
+                context, PlanItemType.fixedCost, PlanFrequency.monthly);
+          }
+        },
+        onYearlySelected: () {
+          if (context.mounted) {
+            _navigateToAdd(
+                context, PlanItemType.fixedCost, PlanFrequency.yearly);
+          }
+        },
+      ),
+    );
+  }
+
+  void _navigateToAdd(
+      BuildContext context, PlanItemType type, PlanFrequency frequency) {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => AddPlanItemScreen(
         planRepository: widget.repositories.plan,
         initialType: type,
+        initialFrequency: frequency,
         initialValidFrom: widget.selectedPeriod.value,
       ),
     ));

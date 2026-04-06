@@ -867,5 +867,164 @@ void main() {
 
       expect(notified, isTrue);
     });
+
+    // ── old-version capping ───────────────────────────────────────────────────
+
+    test('fixed cost new version: old version is capped at startFrom − 1 month',
+        () async {
+      final repo = PlanRepository(persist: false);
+      final existing = PlanItem(
+        id: 'f1',
+        seriesId: 's1',
+        name: 'Rent',
+        amount: 500,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 1),
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+      await repo.addPlanItem(existing);
+
+      await repo.applyPlanItemEdit(
+        existing,
+        name: 'Rent',
+        amount: 600,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2025, 4),
+        validTo: null,
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      expect(repo.items.length, 2);
+      final old = repo.items.firstWhere((i) => i.id == 'f1');
+      expect(old.validTo, YearMonth(2025, 3)); // capped at March 2025
+      final newVersion = repo.items.firstWhere((i) => i.id != 'f1');
+      expect(newVersion.validFrom, YearMonth(2025, 4));
+      expect(newVersion.validTo, isNull);
+    });
+
+    test(
+        'fixed cost new version: old version capped correctly across year boundary '
+        '(startFrom = January caps at December of previous year)',
+        () async {
+      final repo = PlanRepository(persist: false);
+      final existing = PlanItem(
+        id: 'f1',
+        seriesId: 's1',
+        name: 'Rent',
+        amount: 500,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 1),
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+      await repo.addPlanItem(existing);
+
+      await repo.applyPlanItemEdit(
+        existing,
+        name: 'Rent',
+        amount: 600,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2026, 1),
+        validTo: null,
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      final old = repo.items.firstWhere((i) => i.id == 'f1');
+      expect(old.validTo, YearMonth(2025, 12)); // December 2025
+    });
+
+    test('fixed cost in-place edit: old version is replaced, validTo remains null',
+        () async {
+      final repo = PlanRepository(persist: false);
+      final existing = PlanItem(
+        id: 'f1',
+        seriesId: 's1',
+        name: 'Rent',
+        amount: 500,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 1),
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+      await repo.addPlanItem(existing);
+
+      await repo.applyPlanItemEdit(
+        existing,
+        name: 'Rent Updated',
+        amount: 600,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2025, 1), // same as validFrom → in-place
+        validTo: null,
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      expect(repo.items.length, 1);
+      expect(repo.items.first.id, 'f1');
+      expect(repo.items.first.validTo, isNull); // no capping on in-place edit
+    });
+
+    test(
+        'fixed cost new version: old version capped and future versions beyond '
+        'startFrom are still purged', () async {
+      final repo = PlanRepository(persist: false);
+      final v1 = PlanItem(
+        id: 'v1',
+        seriesId: 'sx',
+        name: 'Rent',
+        amount: 500,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 1),
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+      final v2 = PlanItem(
+        id: 'v2',
+        seriesId: 'sx',
+        name: 'Rent',
+        amount: 600,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 6),
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+      await repo.addPlanItem(v1);
+      await repo.addPlanItem(v2);
+
+      // Edit v2 (Jun 2025) with startFrom = Sep 2025 → v2 gets capped at Aug 2025,
+      // new version created from Sep 2025, v1 left untouched.
+      await repo.applyPlanItemEdit(
+        v2,
+        name: 'Rent',
+        amount: 700,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2025, 9),
+        validTo: null,
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      final cappedV2 = repo.items.firstWhere((i) => i.id == 'v2');
+      expect(cappedV2.validTo, YearMonth(2025, 8)); // capped at August 2025
+
+      final newVersion =
+          repo.items.firstWhere((i) => i.id != 'v1' && i.id != 'v2');
+      expect(newVersion.validFrom, YearMonth(2025, 9));
+      expect(newVersion.seriesId, 'sx');
+
+      final untouchedV1 = repo.items.firstWhere((i) => i.id == 'v1');
+      expect(untouchedV1.validFrom, YearMonth(2025, 1));
+      expect(untouchedV1.validTo, isNull); // v1 not modified
+
+      expect(repo.items.where((i) => i.seriesId == 'sx').length, 3);
+    });
   });
 }

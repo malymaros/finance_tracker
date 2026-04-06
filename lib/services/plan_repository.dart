@@ -144,6 +144,9 @@ class PlanRepository extends ChangeNotifier {
 
   /// Applies an edit to [existing] using the given form values.
   ///
+  /// Returns [PlanItemEditResult.success] on success, or a specific error
+  /// value when the edit violates a domain rule (no changes are made on error).
+  ///
   /// Versioning rules:
   /// - **Income items**: always updated in place; [startFrom] is ignored and
   ///   the original [PlanItem.validFrom] is preserved.
@@ -151,9 +154,18 @@ class PlanRepository extends ChangeNotifier {
   /// - **Fixed cost, [startFrom] == [existing.validFrom]**: updated in place
   ///   (error correction; no new version created).
   /// - **Fixed cost, [startFrom] != [existing.validFrom]**: a new version
-  ///   starting at [startFrom] is added and future versions of the same series
-  ///   are removed via [removeFutureVersions].
-  Future<void> applyPlanItemEdit(
+  ///   starting at [startFrom] is added; the old version is capped with
+  ///   `validTo = startFrom − 1`; future versions of the same series are
+  ///   removed via [removeFutureVersions].
+  /// - **Yearly fixed cost, new version**: [startFrom.month] must equal
+  ///   [existing.validFrom.month] (cycle boundary rule). Violating this returns
+  ///   [PlanItemEditResult.invalidYearlyCycleBoundary] without making changes.
+  ///
+  /// **Caller contract**: [frequency] must equal [existing.frequency] when
+  /// editing a recurring fixed cost. The UI enforces this by locking the
+  /// frequency selector, but the service does not validate it — a mismatch
+  /// would silently change the normalization factor across the series history.
+  Future<PlanItemEditResult> applyPlanItemEdit(
     PlanItem existing, {
     required String name,
     required double amount,
@@ -191,6 +203,16 @@ class PlanRepository extends ChangeNotifier {
         guardOneTime: guardOneTime,
       ));
     } else {
+      // Yearly items may only start a new version at their cycle boundary month.
+      if (existing.frequency == PlanFrequency.yearly &&
+          startFrom.month != existing.validFrom.month) {
+        return PlanItemEditResult.invalidYearlyCycleBoundary;
+      }
+
+      // Cap the old version so it explicitly ends the month before the new
+      // version starts. This aligns with CategoryBudgetRepository behaviour
+      // and makes version resolution safe regardless of iteration order.
+      await updatePlanItem(existing.copyWith(validTo: startFrom.addMonths(-1)));
       final newId = IdGenerator.generate();
       await addPlanItem(PlanItem(
         id: newId,
@@ -211,6 +233,7 @@ class PlanRepository extends ChangeNotifier {
       ));
       await removeFutureVersions(existing.seriesId, startFrom);
     }
+    return PlanItemEditResult.success;
   }
 
   Future<void> clearAll() async {
