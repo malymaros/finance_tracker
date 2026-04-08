@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'models/year_month.dart';
 import 'screens/main_screen.dart';
@@ -14,6 +15,10 @@ import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   final repository = FinanceRepository();
   final planRepository = PlanRepository();
   final budgetRepository = CategoryBudgetRepository();
