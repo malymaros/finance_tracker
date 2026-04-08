@@ -315,6 +315,63 @@ void main() {
     });
   });
 
+  // ── itemStateForPeriod — yearly non-anchor month ─────────────────────────
+
+  group('itemStateForPeriod — yearly non-anchor month', () {
+    test('returns none for a non-anchor month even when period is in the past',
+        () {
+      final repo = _repo();
+      // Yearly item, anchor month = March (validFrom.month = 3).
+      final item = _yearlyGuarded(
+        fromYear: 2026,
+        fromMonth: 3, // anchor = March
+        dueDay: 1,
+      );
+      // April 2026 is a past/current period but is NOT the anchor month.
+      expect(
+        repo.itemStateForPeriod(item, YearMonth(2026, 4)),
+        GuardState.none,
+      );
+      // Any other non-anchor month should also be none.
+      expect(
+        repo.itemStateForPeriod(item, YearMonth(2026, 6)),
+        GuardState.none,
+      );
+      expect(
+        repo.itemStateForPeriod(item, YearMonth(2026, 1)),
+        GuardState.none,
+      );
+    });
+
+    test('returns correct state for the anchor month (March)', () {
+      final repo = _repo();
+      final item = _yearlyGuarded(
+        fromYear: 2024,
+        fromMonth: 3,
+        dueDay: 1,
+      );
+      // March 2024 is the anchor month — should return unpaidActive (no record).
+      expect(
+        repo.itemStateForPeriod(item, YearMonth(2024, 3)),
+        GuardState.unpaidActive,
+      );
+    });
+
+    test('future anchor month returns scheduled', () {
+      final repo = _repo();
+      final item = _yearlyGuarded(
+        fromYear: 2024,
+        fromMonth: 3,
+        dueDay: 1,
+      );
+      // March 2099 is the anchor month but far in the future.
+      expect(
+        repo.itemStateForPeriod(item, YearMonth(2099, 3)),
+        GuardState.scheduled,
+      );
+    });
+  });
+
   // ── itemStateForPeriod — scheduled ───────────────────────────────────────
 
   group('itemStateForPeriod — scheduled state', () {
@@ -360,6 +417,76 @@ void main() {
 
       await repo.revokePayment('s1', period);
       expect(repo.itemStateForPeriod(item, period), GuardState.unpaidActive);
+    });
+  });
+
+  // ── updatePaidDate ────────────────────────────────────────────────────────
+
+  group('updatePaidDate', () {
+    test('updates paidAt on an existing paid record', () async {
+      final repo = _repo();
+      final item = _monthlyGuarded();
+      final period = YearMonth(2024, 3);
+
+      await repo.confirmPayment('s1', period);
+      final newDate = DateTime(2024, 3, 15);
+      await repo.updatePaidDate('s1', period, newDate);
+
+      final record = repo.payments.firstWhere(
+          (p) => p.planItemSeriesId == 's1' && p.period == period);
+      expect(record.paidAt, newDate);
+      expect(repo.itemStateForPeriod(item, period), GuardState.paid);
+    });
+
+    test('preserves the original record id after update', () async {
+      final repo = _repo();
+      final period = YearMonth(2024, 3);
+
+      await repo.confirmPayment('s1', period);
+      final originalId = repo.payments
+          .firstWhere((p) => p.planItemSeriesId == 's1' && p.period == period)
+          .id;
+
+      await repo.updatePaidDate('s1', period, DateTime(2024, 3, 20));
+
+      final updatedId = repo.payments
+          .firstWhere((p) => p.planItemSeriesId == 's1' && p.period == period)
+          .id;
+      expect(updatedId, originalId);
+    });
+
+    test('is a no-op when no paid record exists', () async {
+      final repo = _repo();
+      final period = YearMonth(2024, 3);
+
+      await repo.updatePaidDate('s1', period, DateTime(2024, 3, 10));
+      expect(repo.payments, isEmpty);
+    });
+
+    test('is a no-op when the record is silenced (not paid)', () async {
+      final repo = _repo();
+      final period = YearMonth(2024, 3);
+
+      await repo.silencePayment('s1', period);
+      await repo.updatePaidDate('s1', period, DateTime(2024, 3, 10));
+
+      final record = repo.payments.firstWhere(
+          (p) => p.planItemSeriesId == 's1' && p.period == period);
+      expect(record.paidAt, isNull);
+      expect(record.silencedAt, isNotNull);
+    });
+
+    test('notifies listeners after update', () async {
+      final repo = _repo();
+      final period = YearMonth(2024, 3);
+      await repo.confirmPayment('s1', period);
+
+      var notified = false;
+      repo.addListener(() => notified = true);
+      notified = false; // reset after confirmPayment notification
+
+      await repo.updatePaidDate('s1', period, DateTime(2024, 3, 5));
+      expect(notified, isTrue);
     });
   });
 

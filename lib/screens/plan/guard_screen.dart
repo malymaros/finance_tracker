@@ -118,6 +118,20 @@ class _GuardScreenState extends State<GuardScreen> {
     );
   }
 
+  /// Returns the period that should be displayed for [item] in the GUARD screen.
+  ///
+  /// Monthly items always use [now].
+  /// Yearly items use the most recent anchor month (validFrom.month):
+  ///   - current year if the anchor month has already arrived this year,
+  ///   - previous year otherwise (anchor month is still upcoming this year).
+  YearMonth _effectivePeriod(PlanItem item, YearMonth now) {
+    if (item.frequency != PlanFrequency.yearly) return now;
+    final anchor = item.validFrom.month;
+    return anchor <= now.month
+        ? YearMonth(now.year, anchor)
+        : YearMonth(now.year - 1, anchor);
+  }
+
   // ── Build ──────────────────────────────────────────────────────────────────
 
   @override
@@ -208,14 +222,15 @@ class _GuardScreenState extends State<GuardScreen> {
             _buildSectionHeader('Guarded items', guardedItems.length),
             const SizedBox(height: 6),
             ...guardedItems.values.map((item) {
+              final period = _effectivePeriod(item, now);
               final nextPeriod = widget.guardRepository
                   .nextReminderPeriod(item, now, all);
               final lastPeriod = widget.guardRepository
                   .lastReminderPeriod(item, all);
               return GuardItemStatusCard(
                 item: item,
-                period: now,
-                state: widget.guardRepository.itemStateForPeriod(item, now),
+                period: period,
+                state: widget.guardRepository.itemStateForPeriod(item, period),
                 guardRepository: widget.guardRepository,
                 onChangeDueDay: () => _pickDueDay(item),
                 onDeleteGuard: () => widget.planRepository

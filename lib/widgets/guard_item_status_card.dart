@@ -6,24 +6,21 @@ import '../models/year_month.dart';
 import '../services/guard_repository.dart';
 import '../theme/app_theme.dart';
 
-/// A stateless card that shows the GUARD status for a single [item] in a
-/// specific [period] and provides all available actions:
-///   - Mark as Paid
-///   - Silence
-///   - Mark as Unpaid (revoke a previous confirmation)
+/// A card showing the GUARD status for a single [item] in a specific [period].
 ///
-/// Used in both [PlanItemDetailScreen] and [GuardScreen].
+/// Layout: a small "🐾 GUARD" identity chip at the top, then a two-column row
+/// (item info on the left, state-driven action controls on the right), followed
+/// by optional Next/Last reminder labels and management actions (change day,
+/// remove GUARD).
 ///
-/// The caller is responsible for providing the current [state] and for
-/// wrapping this widget in a [ListenableBuilder] when reactivity is needed.
+/// Used in both [GuardScreen] and [PlanItemDetailScreen].
 ///
 /// When [showIfScheduled] is false (default) the widget renders nothing for
-/// [GuardState.scheduled] (period not yet due). Set to true in management
-/// contexts where all configured guards should be visible regardless of due
-/// date.
+/// [GuardState.scheduled]. Set to true in management contexts where all
+/// configured guards should be visible.
 ///
-/// When [onChangeDueDay] is provided a "Change day" button is appended inside
-/// the card, allowing due-day edits without navigating to the item form.
+/// When [onChangeDueDay] / [onDeleteGuard] are provided they appear below a
+/// Divider at the bottom of the card.
 class GuardItemStatusCard extends StatelessWidget {
   final PlanItem item;
   final YearMonth period;
@@ -33,10 +30,10 @@ class GuardItemStatusCard extends StatelessWidget {
   final VoidCallback? onDeleteGuard;
   final bool showIfScheduled;
 
-  /// When non-null, displayed as "Next: <label>" below the item info.
+  /// Displayed as "Next: <label>" below the item info when non-null.
   final String? nextReminderLabel;
 
-  /// When non-null, displayed as "Last: <label>" below the item info.
+  /// Displayed as "Last: <label>" below the item info when non-null.
   final String? lastReminderLabel;
 
   const GuardItemStatusCard({
@@ -54,9 +51,6 @@ class GuardItemStatusCard extends StatelessWidget {
 
   // ── Labels ────────────────────────────────────────────────────────────────
 
-  String get _periodLabel =>
-      '${YearMonth.monthNames[period.month]} ${period.year}';
-
   String get _amountLabel {
     final suffix = switch (item.frequency) {
       PlanFrequency.monthly => '/ month',
@@ -68,17 +62,54 @@ class GuardItemStatusCard extends StatelessWidget {
 
   String get _dueDateLabel {
     final rawDueDay = item.guardDueDay ?? 1;
-    final daysInMonth =
-        DateTime(period.year, period.month + 1, 0).day;
+    final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
     final effectiveDueDay = rawDueDay.clamp(1, daysInMonth);
     return 'Due ${YearMonth.monthNames[period.month]} '
         '$effectiveDueDay, ${period.year}';
   }
 
+  DateTime? get _paidDate => guardRepository.payments
+      .where((p) =>
+          p.planItemSeriesId == item.seriesId &&
+          p.period == period &&
+          p.paidAt != null)
+      .firstOrNull
+      ?.paidAt;
+
+  static String _formatDate(DateTime dt) =>
+      '${dt.day} ${YearMonth.monthNames[dt.month]} ${dt.year}';
+
   // ── Actions ───────────────────────────────────────────────────────────────
 
   Future<void> _confirmAndMarkPaid(BuildContext context) async {
     await guardRepository.confirmPayment(item.seriesId, period);
+  }
+
+  Future<void> _confirmAndSilence(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Silence this reminder?'),
+        content: Text(
+          'The ${YearMonth.monthNames[period.month]} ${period.year} payment '
+          'will still be shown as unconfirmed. '
+          'You can mark it as paid at any time.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Yes, Silence'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && context.mounted) {
+      await guardRepository.silencePayment(item.seriesId, period);
+    }
   }
 
   Future<void> _confirmAndRevoke(BuildContext context) async {
@@ -87,7 +118,9 @@ class GuardItemStatusCard extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         title: const Text('Mark as unpaid?'),
         content: Text(
-            'This will remove the payment confirmation for $_periodLabel.'),
+          'This will remove the payment confirmation for '
+          '${YearMonth.monthNames[period.month]} ${period.year}.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -121,8 +154,7 @@ class GuardItemStatusCard extends StatelessWidget {
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: FilledButton.styleFrom(
-                backgroundColor: AppColors.expense),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.expense),
             child: const Text('Remove'),
           ),
         ],
@@ -133,29 +165,36 @@ class GuardItemStatusCard extends StatelessWidget {
     }
   }
 
-  Future<void> _confirmAndSilence(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
+  /// Opens a date picker constrained to the period's month (capped at today).
+  Future<void> _editPaidDate(BuildContext context) async {
+    final paidDate = _paidDate;
+    if (paidDate == null) return;
+
+    final firstDate = DateTime(period.year, period.month, 1);
+    final lastDayOfMonth = DateTime(period.year, period.month + 1, 0);
+    final today = DateTime.now();
+    final lastDate = lastDayOfMonth.isAfter(today)
+        ? DateTime(today.year, today.month, today.day)
+        : lastDayOfMonth;
+
+    // Abort silently if the entire period is still in the future.
+    if (lastDate.isBefore(firstDate)) return;
+
+    final safeInitial = paidDate.isBefore(firstDate)
+        ? firstDate
+        : (paidDate.isAfter(lastDate)
+            ? lastDate
+            : DateTime(paidDate.year, paidDate.month, paidDate.day));
+
+    final picked = await showDatePicker(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Silence this reminder?'),
-        content: Text(
-          'The $_periodLabel payment will still be shown as unconfirmed. '
-          'You can mark it as paid at any time.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Yes, Silence'),
-          ),
-        ],
-      ),
+      initialDate: safeInitial,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      helpText: 'Select paid date',
     );
-    if (confirmed == true && context.mounted) {
-      await guardRepository.silencePayment(item.seriesId, period);
+    if (picked != null && context.mounted) {
+      await guardRepository.updatePaidDate(item.seriesId, period, picked);
     }
   }
 
@@ -174,51 +213,50 @@ class GuardItemStatusCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            // ── Identity chip ────────────────────────────────────────────
+            const Row(
               children: [
-                const Icon(Icons.pets, color: AppColors.gold, size: 16),
-                const SizedBox(width: 8),
+                Icon(Icons.pets, color: AppColors.gold, size: 14),
+                SizedBox(width: 6),
                 Text(
-                  'GUARD — $_periodLabel',
-                  style: const TextStyle(
-                    fontSize: 13,
+                  'GUARD',
+                  style: TextStyle(
+                    fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: AppColors.gold,
                   ),
                 ),
               ],
             ),
-            const Divider(height: 20),
-            Text(
-              item.name,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: AppColors.guardItemText,
-              ),
+            const SizedBox(height: 10),
+            // ── Two-column body ──────────────────────────────────────────
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: _buildLeftColumn()),
+                const SizedBox(width: 12),
+                _buildRightColumn(context),
+              ],
             ),
-            const SizedBox(height: 2),
-            Text(
-              _amountLabel,
-              style: const TextStyle(
-                  fontSize: 12, color: AppColors.textMuted),
-            ),
-            if (nextReminderLabel != null) ...[
-              const SizedBox(height: 4),
-              Text(
-                'Next: $nextReminderLabel',
-                style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-              ),
+            // ── Next / Last reminder labels ──────────────────────────────
+            if (nextReminderLabel != null || lastReminderLabel != null) ...[
+              const SizedBox(height: 8),
+              if (nextReminderLabel != null)
+                Text(
+                  'Next: $nextReminderLabel',
+                  style: const TextStyle(
+                      fontSize: 11, color: AppColors.textMuted),
+                ),
+              if (lastReminderLabel != null)
+                Text(
+                  'Last: $lastReminderLabel',
+                  style: const TextStyle(
+                      fontSize: 11, color: AppColors.textMuted),
+                ),
             ],
-            if (lastReminderLabel != null)
-              Text(
-                'Last: $lastReminderLabel',
-                style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-              ),
-            const SizedBox(height: 12),
-            _buildStateContent(context, state),
+            // ── Management actions ───────────────────────────────────────
             if (onChangeDueDay != null || onDeleteGuard != null) ...[
-              const Divider(height: 24),
+              const Divider(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -253,130 +291,137 @@ class GuardItemStatusCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStateContent(BuildContext context, GuardState state) {
+  // ── Column builders ───────────────────────────────────────────────────────
+
+  Widget _buildLeftColumn() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          item.name,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: AppColors.guardItemText,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          _amountLabel,
+          style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+        ),
+        if (state != GuardState.paid) ...[
+          const SizedBox(height: 2),
+          Text(
+            _dueDateLabel,
+            style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+          ),
+        ],
+        if (state == GuardState.scheduled) ...[
+          const SizedBox(height: 2),
+          const Text(
+            'Not yet due',
+            style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildRightColumn(BuildContext context) {
     switch (state) {
       case GuardState.unpaidActive:
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Payment not confirmed',
-              style: TextStyle(fontSize: 14, color: AppColors.textMuted),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              _dueDateLabel,
-              style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: () => _confirmAndMarkPaid(context),
-                    icon: const Icon(Icons.check, size: 16),
-                    label: const Text('Mark as Paid'),
-                    style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.gold),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                TextButton(
-                  onPressed: () => _confirmAndSilence(context),
-                  style: TextButton.styleFrom(
-                      foregroundColor: AppColors.textMuted),
-                  child: const Text('Silence'),
-                ),
-              ],
+            _markAsPaidButton(context),
+            TextButton(
+              onPressed: () => _confirmAndSilence(context),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.textMuted,
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+              ),
+              child: const Text('Silence', style: TextStyle(fontSize: 12)),
             ),
           ],
         );
 
       case GuardState.silenced:
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              children: const [
+            _markAsPaidButton(context),
+            const SizedBox(height: 4),
+            const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Icon(Icons.notifications_off,
-                    size: 14, color: AppColors.textMuted),
-                SizedBox(width: 6),
+                    size: 12, color: AppColors.textMuted),
+                SizedBox(width: 4),
                 Text(
-                  'Silenced — payment not confirmed',
-                  style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textMuted,
-                      fontStyle: FontStyle.italic),
+                  'Silenced',
+                  style:
+                      TextStyle(fontSize: 11, color: AppColors.textMuted),
                 ),
               ],
-            ),
-            const SizedBox(height: 2),
-            Text(
-              _dueDateLabel,
-              style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-            ),
-            const SizedBox(height: 10),
-            FilledButton.icon(
-              onPressed: () => _confirmAndMarkPaid(context),
-              icon: const Icon(Icons.check, size: 16),
-              label: const Text('Mark as Paid'),
-              style: FilledButton.styleFrom(backgroundColor: AppColors.gold),
             ),
           ],
         );
 
       case GuardState.paid:
-        final record = guardRepository.payments
-            .where((p) =>
-                p.planItemSeriesId == item.seriesId &&
-                p.period == period &&
-                p.paidAt != null)
-            .firstOrNull;
-        final paidLabel =
-            record != null ? _formatDate(record.paidAt!) : 'confirmed';
+        final paidDate = _paidDate;
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Row(
-              children: [
-                const Icon(Icons.check_circle,
-                    size: 16, color: AppColors.income),
-                const SizedBox(width: 6),
-                Text(
-                  'Paid $paidLabel',
-                  style: const TextStyle(fontSize: 14, color: AppColors.income),
+            InkWell(
+              onTap: () => _editPaidDate(context),
+              borderRadius: BorderRadius.circular(4),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.check_circle,
+                        size: 14, color: AppColors.income),
+                    const SizedBox(width: 4),
+                    Text(
+                      paidDate != null
+                          ? 'Paid ${_formatDate(paidDate)}'
+                          : 'Paid',
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.income),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.edit, size: 11, color: AppColors.income),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton(
-                onPressed: () => _confirmAndRevoke(context),
-                style: TextButton.styleFrom(
-                    foregroundColor: AppColors.textMuted,
-                    visualDensity: VisualDensity.compact),
-                child: const Text('Mark as Unpaid',
-                    style: TextStyle(fontSize: 12)),
               ),
+            ),
+            TextButton(
+              onPressed: () => _confirmAndRevoke(context),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.textMuted,
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.zero,
+              ),
+              child: const Text('Mark as Unpaid',
+                  style: TextStyle(fontSize: 12)),
             ),
           ],
         );
 
       case GuardState.scheduled:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              _dueDateLabel,
-              style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-            ),
-            const SizedBox(height: 4),
-            const Text(
-              'Not yet due',
-              style: TextStyle(fontSize: 14, color: AppColors.textMuted),
-            ),
-          ],
+        return const Text(
+          'Scheduled',
+          style: TextStyle(
+            fontSize: 12,
+            color: AppColors.textMuted,
+            fontStyle: FontStyle.italic,
+          ),
         );
 
       case GuardState.none:
@@ -384,6 +429,17 @@ class GuardItemStatusCard extends StatelessWidget {
     }
   }
 
-  static String _formatDate(DateTime dt) =>
-      '${dt.day} ${YearMonth.monthNames[dt.month]} ${dt.year}';
+  Widget _markAsPaidButton(BuildContext context) {
+    return FilledButton.icon(
+      onPressed: () => _confirmAndMarkPaid(context),
+      icon: const Icon(Icons.check, size: 14),
+      label: const Text('Mark as Paid'),
+      style: FilledButton.styleFrom(
+        backgroundColor: AppColors.gold,
+        visualDensity: VisualDensity.compact,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        textStyle: const TextStyle(fontSize: 12),
+      ),
+    );
+  }
 }

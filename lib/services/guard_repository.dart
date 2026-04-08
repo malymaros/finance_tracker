@@ -43,6 +43,13 @@ class GuardRepository extends ChangeNotifier {
       return GuardState.none;
     }
 
+    // Yearly items only fire in their anchor month (validFrom.month).
+    // Any other month is irrelevant regardless of the period's relation to now.
+    if (item.frequency == PlanFrequency.yearly &&
+        period.month != item.validFrom.month) {
+      return GuardState.none;
+    }
+
     final now = YearMonth.now();
 
     // Future period — reminder not yet due; show faint icon only.
@@ -187,6 +194,25 @@ class GuardRepository extends ChangeNotifier {
       planItemSeriesId: seriesId,
       period: period,
       silencedAt: DateTime.now(),
+    ));
+    _guardedPeriodsCache.clear();
+    notifyListeners();
+    await _save();
+  }
+
+  /// Updates the [paidAt] timestamp on an existing paid record.
+  /// No-op if the record does not exist or is not in the paid state.
+  Future<void> updatePaidDate(
+      String seriesId, YearMonth period, DateTime newDate) async {
+    final existing = _findRecord(seriesId, period);
+    if (existing?.paidAt == null) return;
+    _payments.removeWhere(
+        (p) => p.planItemSeriesId == seriesId && p.period == period);
+    _payments.add(GuardPayment(
+      id: existing!.id,
+      planItemSeriesId: seriesId,
+      period: period,
+      paidAt: newDate,
     ));
     _guardedPeriodsCache.clear();
     notifyListeners();

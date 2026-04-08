@@ -316,6 +316,60 @@ void main() {
       // Card should now show unpaid state
       expect(find.text('Mark as Paid'), findsOneWidget);
     });
+
+    testWidgets('paid state shows formatted paid date', (tester) async {
+      final payment = GuardPayment(
+        id: 'g1',
+        planItemSeriesId: 's1',
+        period: _pastPeriod,
+        paidAt: DateTime(2024, 1, 10),
+      );
+      final repo = GuardRepository(persist: false, seed: [payment]);
+      await tester.pumpWidget(_card(
+        item: _guardedItem(),
+        period: _pastPeriod,
+        guardRepo: repo,
+      ));
+
+      // Should show "Paid 10 January 2024"
+      expect(find.textContaining('10 January 2024'), findsOneWidget);
+    });
+
+    testWidgets('paid state shows edit icon for date editing', (tester) async {
+      final payment = GuardPayment(
+        id: 'g1',
+        planItemSeriesId: 's1',
+        period: _pastPeriod,
+        paidAt: DateTime(2024, 1, 10),
+      );
+      final repo = GuardRepository(persist: false, seed: [payment]);
+      await tester.pumpWidget(_card(
+        item: _guardedItem(),
+        period: _pastPeriod,
+        guardRepo: repo,
+      ));
+
+      expect(find.byIcon(Icons.edit), findsOneWidget);
+    });
+
+    testWidgets('paid state does not show due date in left column',
+        (tester) async {
+      final payment = GuardPayment(
+        id: 'g1',
+        planItemSeriesId: 's1',
+        period: _pastPeriod,
+        paidAt: DateTime(2024, 1, 10),
+      );
+      final repo = GuardRepository(persist: false, seed: [payment]);
+      await tester.pumpWidget(_card(
+        item: _guardedItem(guardDueDay: 15),
+        period: _pastPeriod,
+        guardRepo: repo,
+      ));
+
+      // Due date label should not appear when paid
+      expect(find.textContaining('Due January'), findsNothing);
+    });
   });
 
   group('GuardItemStatusCard — optional buttons', () {
