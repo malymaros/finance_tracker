@@ -64,6 +64,18 @@ class PlanRepository extends ChangeNotifier {
     }
   }
 
+  /// Enables GUARD on the specific item version identified by [itemId].
+  /// Only that single version is updated; older versions of the same series
+  /// are not touched (GUARD config is forward-looking from the active version).
+  Future<void> enableGuardForItem(String itemId, {int dueDay = 1}) async {
+    final i = _items.indexWhere((e) => e.id == itemId);
+    if (i == -1) return;
+    if (_items[i].isGuarded && _items[i].guardDueDay == dueDay) return;
+    _items[i] = _items[i].copyWith(isGuarded: true, guardDueDay: dueDay);
+    notifyListeners();
+    await _save();
+  }
+
   /// Disables GUARD on every version of [seriesId], clearing all guard fields.
   /// Used by GuardScreen to remove a guard without editing the item form.
   Future<void> disableGuardForSeries(String seriesId) async {

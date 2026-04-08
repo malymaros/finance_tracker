@@ -7,6 +7,7 @@ import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/plan/plan_item_detail_screen.dart';
 import 'package:finance_tracker/services/guard_repository.dart';
+import 'package:finance_tracker/services/plan_repository.dart';
 import 'package:finance_tracker/widgets/guard_item_status_card.dart';
 
 void main() {
@@ -180,32 +181,51 @@ void main() {
 
     // GuardItemStatusCard is below the fold in PlanItemDetailScreen's ListView.
     // Use skipOffstage: false so that off-screen widgets are included in finds.
-    testWidgets('shows GuardItemStatusCard for guarded fixed cost with guardRepository',
+    testWidgets('shows GuardItemStatusCard for guarded fixed cost',
         (tester) async {
+      final planRepo = PlanRepository(persist: false, seed: [guardedFixedCost]);
       final guardRepo = GuardRepository(persist: false);
       await tester.pumpWidget(MaterialApp(
         home: PlanItemDetailScreen(
           item: guardedFixedCost,
           period: pastPeriod,
+          planRepository: planRepo,
           guardRepository: guardRepo,
         ),
       ));
       expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsOneWidget);
     });
 
-    testWidgets('does not show GuardItemStatusCard when guardRepository is null',
+    testWidgets('does not show GUARD section when planRepository is null',
         (tester) async {
       await tester.pumpWidget(MaterialApp(
         home: PlanItemDetailScreen(
           item: guardedFixedCost,
           period: pastPeriod,
-          // no guardRepository
+          // neither planRepository nor guardRepository
         ),
       ));
       expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsNothing);
+      expect(find.text('GUARD'), findsNothing);
     });
 
-    testWidgets('does not show GuardItemStatusCard for income item even with guardRepository',
+    testWidgets('hides GUARD section when item is guarded but guardRepository is null',
+        (tester) async {
+      final planRepo = PlanRepository(persist: false, seed: [guardedFixedCost]);
+      await tester.pumpWidget(MaterialApp(
+        home: PlanItemDetailScreen(
+          item: guardedFixedCost,
+          period: pastPeriod,
+          planRepository: planRepo,
+          // no guardRepository — section must be hidden, not show "Not enabled"
+        ),
+      ));
+      expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsNothing);
+      expect(find.text('Not enabled'), findsNothing);
+      expect(find.text('GUARD'), findsNothing);
+    });
+
+    testWidgets('does not show GUARD section for income item',
         (tester) async {
       const income = PlanItem(
         id: '11',
@@ -217,24 +237,29 @@ void main() {
         validFrom: pastPeriod,
         isGuarded: true, // income items are ignored by GUARD
       );
+      final planRepo = PlanRepository(persist: false, seed: [income]);
       final guardRepo = GuardRepository(persist: false);
       await tester.pumpWidget(MaterialApp(
         home: PlanItemDetailScreen(
           item: income,
           period: pastPeriod,
+          planRepository: planRepo,
           guardRepository: guardRepo,
         ),
       ));
       expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsNothing);
+      expect(find.text('GUARD'), findsNothing);
     });
 
     testWidgets('shows Mark as Paid button after scrolling to GUARD card',
         (tester) async {
+      final planRepo = PlanRepository(persist: false, seed: [guardedFixedCost]);
       final guardRepo = GuardRepository(persist: false);
       await tester.pumpWidget(MaterialApp(
         home: PlanItemDetailScreen(
           item: guardedFixedCost,
           period: pastPeriod,
+          planRepository: planRepo,
           guardRepository: guardRepo,
         ),
       ));
@@ -252,11 +277,13 @@ void main() {
         period: pastPeriod,
         paidAt: DateTime(2024, 1, 10),
       );
+      final planRepo = PlanRepository(persist: false, seed: [guardedFixedCost]);
       final guardRepo = GuardRepository(persist: false, seed: [paidPayment]);
       await tester.pumpWidget(MaterialApp(
         home: PlanItemDetailScreen(
           item: guardedFixedCost,
           period: pastPeriod,
+          planRepository: planRepo,
           guardRepository: guardRepo,
         ),
       ));
@@ -264,6 +291,33 @@ void main() {
           find.byType(GuardItemStatusCard, skipOffstage: false));
       await tester.pump();
       expect(find.text('Mark as Unpaid'), findsOneWidget);
+    });
+
+    testWidgets('shows Not enabled row for unguarded fixed cost',
+        (tester) async {
+      const unguarded = PlanItem(
+        id: '12',
+        seriesId: '12',
+        name: 'Electricity',
+        amount: 60,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: pastPeriod,
+        isGuarded: false,
+      );
+      final planRepo = PlanRepository(persist: false, seed: [unguarded]);
+      final guardRepo = GuardRepository(persist: false);
+      await tester.pumpWidget(MaterialApp(
+        home: PlanItemDetailScreen(
+          item: unguarded,
+          period: pastPeriod,
+          planRepository: planRepo,
+          guardRepository: guardRepo,
+        ),
+      ));
+      expect(find.text('Not enabled'), findsOneWidget);
+      expect(find.text('GUARD'), findsOneWidget);
+      expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsNothing);
     });
   });
 }

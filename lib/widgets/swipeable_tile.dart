@@ -15,12 +15,16 @@ class SwipeableTile extends StatelessWidget {
   /// Pass null to suppress the Edit action in the bottom sheet.
   final VoidCallback? onEdit;
 
+  /// Pass null to suppress the GUARD action in the bottom sheet.
+  final VoidCallback? onGuard;
+
   const SwipeableTile({
     super.key,
     required this.itemId,
     required this.child,
     required this.onDelete,
     this.onEdit,
+    this.onGuard,
   });
 
   @override
@@ -48,6 +52,18 @@ class SwipeableTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
+            if (onGuard != null)
+              ListTile(
+                leading: const Icon(Icons.pets, color: AppColors.gold),
+                title: const Text(
+                  'GUARD',
+                  style: TextStyle(color: AppColors.gold),
+                ),
+                onTap: () {
+                  Navigator.pop(sheetContext);
+                  onGuard!();
+                },
+              ),
             if (onEdit != null)
               ListTile(
                 leading: const Icon(Icons.edit_outlined),

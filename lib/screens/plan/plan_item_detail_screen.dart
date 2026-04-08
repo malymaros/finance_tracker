@@ -5,8 +5,10 @@ import '../../models/financial_type.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/guard_repository.dart';
+import '../../services/plan_repository.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/guard_item_status_card.dart';
+import '../../widgets/guard_setup_sheet.dart';
 
 class PlanItemDetailScreen extends StatelessWidget {
   final PlanItem item;
@@ -20,7 +22,12 @@ class PlanItemDetailScreen extends StatelessWidget {
   /// Called when the user taps Delete in the AppBar.
   final VoidCallback? onDelete;
 
-  /// Optional — when set, the GUARD section is shown for guarded items.
+  /// When set, the GUARD section is shown for fixed cost items.
+  /// Allows enabling GUARD directly from the detail screen.
+  final PlanRepository? planRepository;
+
+  /// When set alongside [planRepository], shows the full GUARD status card
+  /// for already-guarded items.
   final GuardRepository? guardRepository;
 
   const PlanItemDetailScreen({
@@ -29,6 +36,7 @@ class PlanItemDetailScreen extends StatelessWidget {
     required this.period,
     this.onEdit,
     this.onDelete,
+    this.planRepository,
     this.guardRepository,
   });
 
@@ -41,8 +49,8 @@ class PlanItemDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isIncome = item.type == PlanItemType.income;
-    final showGuard =
-        item.isGuarded && guardRepository != null && !isIncome;
+    final showGuardSection =
+        !isIncome && planRepository != null;
 
     return Scaffold(
       appBar: AppBar(
@@ -70,21 +78,116 @@ class PlanItemDetailScreen extends StatelessWidget {
           _buildHeaderCard(context, isIncome),
           const SizedBox(height: 16),
           _buildDetailsCard(isIncome),
-          if (showGuard) ...[
+          if (showGuardSection) ...[
             const SizedBox(height: 16),
-            ListenableBuilder(
-              listenable: guardRepository!,
-              builder: (_, _) => GuardItemStatusCard(
-                item: item,
-                period: period,
-                state: guardRepository!.itemStateForPeriod(item, period),
-                guardRepository: guardRepository!,
-              ),
-            ),
+            _buildGuardSection(context),
           ],
         ],
       ),
     );
+  }
+
+  Widget _buildGuardSection(BuildContext context) {
+    final listenables = <Listenable>[planRepository!];
+    if (guardRepository != null) listenables.add(guardRepository!);
+
+    return ListenableBuilder(
+      listenable: Listenable.merge(listenables),
+      builder: (context, _) {
+        // Always read the freshest version of the item from the repository so
+        // the section reacts immediately after GUARD is enabled or disabled.
+        final current = planRepository!.items
+            .firstWhere((e) => e.id == item.id, orElse: () => item);
+
+        if (current.isGuarded) {
+          // Guard repo must be present to render the full status card.
+          // Without it, hide the section rather than show a misleading state.
+          if (guardRepository == null) return const SizedBox.shrink();
+          return GuardItemStatusCard(
+            item: current,
+            period: period,
+            state: guardRepository!.itemStateForPeriod(current, period),
+            guardRepository: guardRepository!,
+            onChangeDueDay: () => _pickDueDay(context, current),
+            onDeleteGuard: () =>
+                planRepository!.disableGuardForSeries(current.seriesId),
+          );
+        }
+
+        // Not guarded — show an enable prompt.
+        return Card(
+          child: ListTile(
+            leading: const Icon(Icons.pets, color: AppColors.gold),
+            title: const Text(
+              'GUARD',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.gold,
+              ),
+            ),
+            subtitle: const Text('Not enabled'),
+            trailing: const Icon(Icons.chevron_right,
+                color: AppColors.textMuted, size: 20),
+            onTap: () => GuardSetupSheet.show(
+              context,
+              item: current,
+              planRepository: planRepository!,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickDueDay(BuildContext context, PlanItem current) async {
+    final anchorMonth = current.validFrom.month;
+    final daysInMonth =
+        DateTime(current.validFrom.year, anchorMonth + 1, 0).day;
+    final currentDay = (current.guardDueDay ?? 1).clamp(1, daysInMonth);
+    int selected = currentDay;
+
+    final title = current.frequency == PlanFrequency.monthly
+        ? 'Due day (repeats monthly)'
+        : 'Due day (repeats every ${YearMonth.monthNames[anchorMonth]})';
+
+    final picked = await showDialog<int>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setInner) => AlertDialog(
+          title: Text(title),
+          content: DropdownButtonFormField<int>(
+            initialValue: selected,
+            decoration: const InputDecoration(
+              labelText: 'Day of month',
+              border: OutlineInputBorder(),
+              isDense: true,
+            ),
+            items: List.generate(daysInMonth, (i) {
+              final d = i + 1;
+              return DropdownMenuItem(value: d, child: Text('$d'));
+            }),
+            onChanged: (v) {
+              if (v != null) setInner(() => selected = v);
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(null),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(selected),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (picked != null && context.mounted) {
+      await planRepository!
+          .updateGuardConfigForSeries(current.seriesId, guardDueDay: picked);
+    }
   }
 
   Widget _buildHeaderCard(BuildContext context, bool isIncome) {

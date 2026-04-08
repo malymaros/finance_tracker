@@ -19,6 +19,10 @@ class PlanItemTile extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback? onTap;
 
+  /// When set, adds a GUARD option to the long-press action sheet.
+  /// Should only be provided for fixed cost items.
+  final VoidCallback? onGuard;
+
   /// GUARD state for the currently viewed period. Defaults to [GuardState.none].
   final GuardState guardState;
 
@@ -32,6 +36,7 @@ class PlanItemTile extends StatelessWidget {
     required this.onDelete,
     required this.onEdit,
     this.onTap,
+    this.onGuard,
     this.guardState = GuardState.none,
     this.isHighlighted = false,
   });
@@ -64,6 +69,7 @@ class PlanItemTile extends StatelessWidget {
       itemId: item.id,
       onDelete: onDelete,
       onEdit: onEdit,
+      onGuard: onGuard,
       child: Container(
         decoration: BoxDecoration(
           color: isHighlighted

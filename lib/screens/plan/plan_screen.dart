@@ -25,6 +25,7 @@ import '../../widgets/add_plan_item_type_sheet.dart';
 import '../../widgets/plan_item_tile.dart';
 import 'add_plan_item_screen.dart';
 import 'manage_budgets_screen.dart';
+import '../../widgets/guard_setup_sheet.dart';
 import 'plan_item_detail_screen.dart';
 
 enum _DeleteChoice { fromPeriod, wholeSeries }
@@ -205,6 +206,7 @@ class _PlanScreenState extends State<PlanScreen> {
       builder: (routeContext) => PlanItemDetailScreen(
         item: item,
         period: widget.selectedPeriod.value,
+        planRepository: widget.repositories.plan,
         guardRepository: widget.repositories.guard,
         onEdit: () {
           Navigator.of(routeContext).pop();
@@ -779,6 +781,11 @@ class _PlanScreenState extends State<PlanScreen> {
             onTap: () => _openDetail(context, item),
             onEdit: () => _navigateToEdit(context, item),
             onDelete: () => _confirmAndDelete(context, item),
+            onGuard: () => GuardSetupSheet.show(
+              context,
+              item: item,
+              planRepository: widget.repositories.plan,
+            ),
           ));
         }
       }
@@ -808,6 +815,11 @@ class _PlanScreenState extends State<PlanScreen> {
         onTap: () => _openDetail(context, item),
         onEdit: () => _navigateToEdit(context, item),
         onDelete: () => _confirmAndDelete(context, item),
+        onGuard: () => GuardSetupSheet.show(
+          context,
+          item: item,
+          planRepository: widget.repositories.plan,
+        ),
       );
     }).toList();
   }
