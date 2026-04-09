@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
+import '../../services/guard_calculator.dart';
 import '../../services/guard_notification_service.dart';
 import '../../services/guard_repository.dart';
 import '../../services/plan_repository.dart';
@@ -69,8 +70,9 @@ class _GuardScreenState extends State<GuardScreen> {
   Future<void> _pickDueDay(PlanItem item) async {
     // For yearly items the anchor month is always validFrom.month.
     final anchorMonth = item.validFrom.month;
-    final daysInMonth = DateTime(YearMonth.now().year, anchorMonth + 1, 0).day;
-    final currentDay = (item.guardDueDay ?? 1).clamp(1, daysInMonth);
+    final anchorPeriod = YearMonth(YearMonth.now().year, anchorMonth);
+    final daysInMonth = GuardCalculator.daysInMonth(anchorPeriod);
+    final currentDay = GuardCalculator.clampDueDay(item.guardDueDay, anchorPeriod);
 
     int selected = currentDay;
     final title = item.frequency == PlanFrequency.monthly
@@ -250,12 +252,8 @@ class _GuardScreenState extends State<GuardScreen> {
     );
   }
 
-  String _formatReminderPeriod(PlanItem item, YearMonth period) {
-    final rawDueDay = item.guardDueDay ?? 1;
-    final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
-    final dueDay = rawDueDay.clamp(1, daysInMonth);
-    return '${YearMonth.monthNames[period.month]} $dueDay, ${period.year}';
-  }
+  String _formatReminderPeriod(PlanItem item, YearMonth period) =>
+      GuardCalculator.formatReminderPeriod(item.guardDueDay, period);
 
   Widget _buildSectionHeader(String title, int count) {
     return Padding(

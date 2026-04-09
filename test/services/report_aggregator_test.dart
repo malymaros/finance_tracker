@@ -113,15 +113,15 @@ void main() {
       expect(other.percentage, closeTo(5, 0.001));
     });
 
-    test('always absorbs real ExpenseCategory.other regardless of size', () {
+    test('ExpenseCategory.other above threshold stays as its own chart row', () {
       final totals = [
         makeTotal(ExpenseCategory.groceries, 600, 60),
         makeTotal(ExpenseCategory.housing, 300, 30),
-        // real "other" is 10% — above a 5% threshold, but still absorbed
+        // real "other" is 10% — above the 5% threshold, so it stays
         makeTotal(ExpenseCategory.other, 100, 10),
       ];
       final result = ReportAggregator.applyThreshold(totals, 5.0);
-      // groceries and housing stay; real "other" is folded into the bucket
+      // All three are above threshold → no collapsing; list returned unchanged
       expect(result.length, 3);
       final otherRow =
           result.firstWhere((ct) => ct.category == ExpenseCategory.other);
@@ -366,16 +366,21 @@ void main() {
       );
     });
 
-    test('otherSubcategories includes real ExpenseCategory.other even above threshold', () {
-      // real other = 10% — above the 5% threshold, but still included
+    test('ExpenseCategory.other above threshold is NOT in otherSubcategories', () {
+      // real other = 10% — above the 5% threshold → kept as its own chart wedge,
+      // not absorbed into the collapsed bucket.
       final lines = [
         makeLine(category: ExpenseCategory.groceries, amount: 900),
         makeLine(category: ExpenseCategory.other, amount: 100),
       ];
       final data = ReportAggregator.buildReportData(lines, 5.0);
-      expect(data.otherSubcategories.length, 1);
-      expect(data.otherSubcategories.first.category, ExpenseCategory.other);
-      expect(data.otherSubcategories.first.amount, closeTo(100, 0.001));
+      // Neither category is below the threshold, so no collapsed bucket exists.
+      expect(data.otherSubcategories, isEmpty);
+      // The real "other" appears as its own row in chartTotals.
+      expect(
+        data.chartTotals.any((ct) => ct.category == ExpenseCategory.other),
+        isTrue,
+      );
     });
 
     test('otherSubcategories is sorted descending by amount (inherits listTotals order)', () {

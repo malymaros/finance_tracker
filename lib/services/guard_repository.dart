@@ -10,6 +10,7 @@ import '../models/plan_item.dart';
 import '../models/year_month.dart';
 import '../utils/id_generator.dart';
 import 'budget_calculator.dart';
+import 'guard_calculator.dart';
 
 class GuardRepository extends ChangeNotifier {
   final bool _persist;
@@ -57,9 +58,7 @@ class GuardRepository extends ChangeNotifier {
 
     // Current period — only alert from the due day onward.
     if (period == now) {
-      final rawDueDay = item.guardDueDay ?? 1;
-      final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
-      final dueDay = rawDueDay.clamp(1, daysInMonth);
+      final dueDay = GuardCalculator.clampDueDay(item.guardDueDay, period);
       if (DateTime.now().day < dueDay) return GuardState.scheduled;
     }
 
@@ -101,9 +100,7 @@ class GuardRepository extends ChangeNotifier {
           period = period.addMonths(1)) {
         final active = _activeGuardedVersionForPeriod(allItems, item.seriesId, period);
         if (active == null) continue;
-        final rawDueDay = active.guardDueDay ?? 1;
-        final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
-        final dueDay = rawDueDay.clamp(1, daysInMonth);
+        final dueDay = GuardCalculator.clampDueDay(active.guardDueDay, period);
         if (period != now || today.day <= dueDay) return period;
       }
     } else if (item.frequency == PlanFrequency.yearly) {
@@ -116,9 +113,7 @@ class GuardRepository extends ChangeNotifier {
         if (active == null) continue;
         final anchorMonth = active.validFrom.month;
         final period = YearMonth(year, anchorMonth);
-        final rawDueDay = active.guardDueDay ?? 1;
-        final daysInMonth = DateTime(year, anchorMonth + 1, 0).day;
-        final dueDay = rawDueDay.clamp(1, daysInMonth);
+        final dueDay = GuardCalculator.clampDueDay(active.guardDueDay, period);
         final notYetPast = period.isAfter(now) ||
             (period == now && today.day <= dueDay);
         if (notYetPast) return period;
@@ -354,10 +349,8 @@ class GuardRepository extends ChangeNotifier {
 
           if (freq == PlanFrequency.monthly) {
             // Monthly: check every period.
-            final rawDueDay = activeVersion.guardDueDay ?? 1;
-            final daysInMonth =
-                DateTime(period.year, period.month + 1, 0).day;
-            final dueDay = rawDueDay.clamp(1, daysInMonth);
+            final dueDay = GuardCalculator.clampDueDay(
+                activeVersion.guardDueDay, period);
             final isDue = period != now || today.day >= dueDay;
             if (isDue) {
               final state = _stateForRecord(seriesId, period);
@@ -374,10 +367,8 @@ class GuardRepository extends ChangeNotifier {
             if (period.month == dueMonth &&
                 !processedYears.contains(period.year)) {
               processedYears.add(period.year);
-              final rawDueDay = activeVersion.guardDueDay ?? 1;
-              final daysInMonth =
-                  DateTime(period.year, period.month + 1, 0).day;
-              final dueDay = rawDueDay.clamp(1, daysInMonth);
+              final dueDay = GuardCalculator.clampDueDay(
+                  activeVersion.guardDueDay, period);
               final isDue = period != now || today.day >= dueDay;
               if (isDue) {
                 final state = _stateForRecord(seriesId, period);

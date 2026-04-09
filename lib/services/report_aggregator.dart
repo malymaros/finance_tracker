@@ -29,13 +29,17 @@ class ReportAggregator {
   }
 
   /// Collapses any [CategoryTotal] whose percentage is below [thresholdPercent]
-  /// — plus any entry already using [ExpenseCategory.other] — into a single
-  /// trailing "Other" bucket.
+  /// into a single trailing "Other" bucket.
+  ///
+  /// [ExpenseCategory.other] is treated like any other category: if its
+  /// percentage is at or above [thresholdPercent] it remains as its own row;
+  /// only if it is below the threshold does it get absorbed into the collapsed
+  /// bucket. This prevents a user's real "Other" expenses from being silently
+  /// hidden when they make up a significant share of spending.
   ///
   /// Returns the input list unchanged when no categories fall below the
-  /// threshold and no real "other" entries exist.
-  /// The returned list is sorted descending by amount; the aggregated bucket
-  /// is always placed last.
+  /// threshold. The returned list is sorted descending by amount; the
+  /// aggregated bucket is always placed last.
   static List<CategoryTotal> applyThreshold(
       List<CategoryTotal> totals, double thresholdPercent) {
     if (totals.isEmpty) return totals;
@@ -45,8 +49,7 @@ class ReportAggregator {
     double smallPct = 0;
 
     for (final ct in totals) {
-      if (ct.category != ExpenseCategory.other &&
-          ct.percentage >= thresholdPercent) {
+      if (ct.percentage >= thresholdPercent) {
         big.add(ct);
       } else {
         smallAmount += ct.amount;
@@ -91,14 +94,12 @@ class ReportAggregator {
     final chartTotals = applyThreshold(listTotals, thresholdPct);
     final grandTotal = listTotals.fold(0.0, (s, ct) => s + ct.amount);
 
-    // Categories absorbed into the "Other categories" bucket: any entry below
-    // the threshold plus any real ExpenseCategory.other entry (which
-    // applyThreshold always absorbs regardless of size). Already sorted
-    // descending by amount because listTotals is sorted.
+    // Categories absorbed into the "Other categories" bucket: those below the
+    // threshold. ExpenseCategory.other is included only if it is itself below
+    // the threshold (i.e. treated the same as every other category).
+    // Already sorted descending by amount because listTotals is sorted.
     final otherSubcategories = listTotals
-        .where((ct) =>
-            ct.category == ExpenseCategory.other ||
-            ct.percentage < thresholdPct)
+        .where((ct) => ct.percentage < thresholdPct)
         .toList();
 
     return ReportData(

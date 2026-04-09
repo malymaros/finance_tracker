@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
+import '../services/guard_calculator.dart';
 import '../theme/app_theme.dart';
 
 /// In-app GUARD reminder card shown at the top of the Plan tab.
@@ -127,11 +128,7 @@ class _GuardRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rawDueDay = item.guardDueDay ?? 1;
-    final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
-    final effectiveDueDay = rawDueDay.clamp(1, daysInMonth);
-    final dueDateLabel =
-        '${YearMonth.monthNames[period.month]} $effectiveDueDay, ${period.year} due';
+    final dueDateLabel = GuardCalculator.dueDateLabel(item.guardDueDay, period);
     final nameColor =
         isSilenced ? AppColors.textMuted : AppColors.guardItemText;
 

@@ -70,6 +70,19 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   void _onPeriodChanged() => setState(() {});
 
+  /// Computes the budget status for [monthExpenses] against the active plan
+  /// for the current [_year]/[_month]. Returns null when no income is planned.
+  BudgetStatus? _computeBudgetStatus(List<Expense> monthExpenses) {
+    final actualSpent =
+        monthExpenses.fold(0.0, (sum, e) => sum + e.amount);
+    return BudgetCalculator.budgetStatus(
+      widget.repositories.plan.items,
+      actualSpent,
+      _year,
+      _month,
+    );
+  }
+
   bool _isCurrentMonth(DateTime now) =>
       _year == now.year && _month == now.month;
 
@@ -146,15 +159,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         final monthExpenses = widget.repositories.finance.expensesForMonth(_year, _month)
           ..sort((a, b) => b.date.compareTo(a.date));
 
-        final actualSpent =
-            monthExpenses.fold(0.0, (sum, e) => sum + e.amount);
-
-        final budgetStatus = BudgetCalculator.budgetStatus(
-          widget.repositories.plan.items,
-          actualSpent,
-          _year,
-          _month,
-        );
+        final budgetStatus = _computeBudgetStatus(monthExpenses);
 
         final unpaidGuardCount = widget.repositories.guard
             .unpaidActiveItems(widget.repositories.plan.items, YearMonth.now())

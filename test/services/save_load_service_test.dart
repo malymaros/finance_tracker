@@ -2,9 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/models/category_budget.dart';
+import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
-import 'package:finance_tracker/models/expense.dart';
+import 'package:finance_tracker/models/guard_payment.dart';
+import 'package:finance_tracker/models/plan_item.dart';
+import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/services/app_repositories.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
@@ -450,6 +454,225 @@ void main() {
         _repos(),
       );
       expect(ok, false);
+    });
+  });
+
+  // ── Full round-trip integration ───────────────────────────────────────────
+
+  group('full round-trip', () {
+    test('restores expenses, plan items, category budgets, and guard payments',
+        () async {
+      // ── Populate all four repositories ──────────────────────────────────────
+      final writeFinance = _financeRepo();
+      await writeFinance.addExpense(Expense(
+        id: 'e1',
+        amount: 120.50,
+        category: ExpenseCategory.groceries,
+        financialType: FinancialType.consumption,
+        date: DateTime(2025, 3, 10),
+        note: 'Weekly shop',
+      ));
+      await writeFinance.addExpense(Expense(
+        id: 'e2',
+        amount: 850.0,
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+        date: DateTime(2025, 3, 1),
+      ));
+
+      final writePlan = _planRepo();
+      await writePlan.addPlanItem(PlanItem(
+        id: 'p1',
+        seriesId: 'ps1',
+        name: 'Salary',
+        amount: 3000.0,
+        type: PlanItemType.income,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 1),
+      ));
+      await writePlan.addPlanItem(PlanItem(
+        id: 'p2',
+        seriesId: 'ps2',
+        name: 'Rent',
+        amount: 900.0,
+        type: PlanItemType.fixedCost,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 1),
+        isGuarded: true,
+        guardDueDay: 5,
+      ));
+
+      final writeBudget = CategoryBudgetRepository(persist: false);
+      await writeBudget.addCategoryBudget(CategoryBudget(
+        id: 'b1',
+        seriesId: 'bs1',
+        category: ExpenseCategory.groceries,
+        amount: 300.0,
+        validFrom: YearMonth(2025, 1),
+      ));
+
+      final writeGuard = _guardRepo();
+      await writeGuard.confirmPayment('ps2', YearMonth(2025, 3));
+
+      final writeRepos = AppRepositories(
+        finance: writeFinance,
+        plan: writePlan,
+        budget: writeBudget,
+        guard: writeGuard,
+      );
+
+      // ── Create the save ──────────────────────────────────────────────────────
+      final result = await SaveLoadService.createSave('Round-trip', writeRepos);
+      expect(result, isNull, reason: 'createSave must succeed (return null)');
+
+      final saves = await SaveLoadService.listSaves();
+      expect(saves.length, 1);
+      expect(saves.first.isDamaged, false);
+
+      // ── Clear all repositories ───────────────────────────────────────────────
+      final readFinance = _financeRepo();
+      final readPlan = _planRepo();
+      final readBudget = CategoryBudgetRepository(persist: false);
+      final readGuard = _guardRepo();
+
+      // Verify empty before restore
+      expect(readFinance.expenses, isEmpty);
+      expect(readPlan.items, isEmpty);
+      expect(readBudget.budgets, isEmpty);
+      expect(readGuard.payments, isEmpty);
+
+      // ── Restore from save ────────────────────────────────────────────────────
+      final ok = await SaveLoadService.loadSave(
+        saves.first.id,
+        AppRepositories(
+          finance: readFinance,
+          plan: readPlan,
+          budget: readBudget,
+          guard: readGuard,
+        ),
+      );
+      expect(ok, true, reason: 'loadSave must return true');
+
+      // ── Verify all four repositories are fully restored ──────────────────────
+      // Expenses
+      expect(readFinance.expenses.length, 2);
+      final restored = readFinance.expenses.toList()
+        ..sort((a, b) => a.id.compareTo(b.id));
+      expect(restored[0].id, 'e1');
+      expect(restored[0].amount, 120.50);
+      expect(restored[0].category, ExpenseCategory.groceries);
+      expect(restored[0].note, 'Weekly shop');
+      expect(restored[1].id, 'e2');
+      expect(restored[1].amount, 850.0);
+      expect(restored[1].category, ExpenseCategory.housing);
+
+      // Plan items
+      expect(readPlan.items.length, 2);
+      final restoredPlan = readPlan.items.toList()
+        ..sort((a, b) => a.id.compareTo(b.id));
+      expect(restoredPlan[0].id, 'p1');
+      expect(restoredPlan[0].name, 'Salary');
+      expect(restoredPlan[0].amount, 3000.0);
+      expect(restoredPlan[0].type, PlanItemType.income);
+      expect(restoredPlan[1].id, 'p2');
+      expect(restoredPlan[1].name, 'Rent');
+      expect(restoredPlan[1].isGuarded, true);
+      expect(restoredPlan[1].guardDueDay, 5);
+
+      // Category budgets
+      expect(readBudget.budgets.length, 1);
+      final restoredBudget = readBudget.budgets.first;
+      expect(restoredBudget.id, 'b1');
+      expect(restoredBudget.category, ExpenseCategory.groceries);
+      expect(restoredBudget.amount, 300.0);
+      expect(restoredBudget.validFrom, YearMonth(2025, 1));
+
+      // Guard payments
+      expect(readGuard.payments.length, 1);
+      final restoredPayment = readGuard.payments.first;
+      expect(restoredPayment.planItemSeriesId, 'ps2');
+      expect(restoredPayment.period, YearMonth(2025, 3));
+      expect(restoredPayment.paidAt, isNotNull);
+      expect(restoredPayment.silencedAt, isNull);
+    });
+
+    test('autosave round-trip restores all four repositories', () async {
+      final writeFinance = _financeRepo();
+      await writeFinance.addExpense(Expense(
+        id: 'ae1',
+        amount: 42.0,
+        category: ExpenseCategory.transport,
+        financialType: FinancialType.consumption,
+        date: DateTime(2025, 4, 5),
+      ));
+
+      final writePlan = _planRepo();
+      await writePlan.addPlanItem(PlanItem(
+        id: 'ap1',
+        seriesId: 'aps1',
+        name: 'Freelance',
+        amount: 500.0,
+        type: PlanItemType.income,
+        frequency: PlanFrequency.monthly,
+        validFrom: YearMonth(2025, 1),
+      ));
+
+      final writeBudget = CategoryBudgetRepository(persist: false);
+      await writeBudget.addCategoryBudget(CategoryBudget(
+        id: 'ab1',
+        seriesId: 'abs1',
+        category: ExpenseCategory.transport,
+        amount: 150.0,
+        validFrom: YearMonth(2025, 1),
+      ));
+
+      final writeGuard = GuardRepository(
+        persist: false,
+        seed: [
+          GuardPayment(
+            id: 'agp1',
+            planItemSeriesId: 'aps2',
+            period: YearMonth(2025, 4),
+            paidAt: DateTime(2025, 4, 3),
+          ),
+        ],
+      );
+
+      await SaveLoadService.checkAndRotate(AppRepositories(
+        finance: writeFinance,
+        plan: writePlan,
+        budget: writeBudget,
+        guard: writeGuard,
+      ));
+
+      // Restore into fresh repos
+      final readFinance = _financeRepo();
+      final readPlan = _planRepo();
+      final readBudget = CategoryBudgetRepository(persist: false);
+      final readGuard = _guardRepo();
+
+      final ok = await SaveLoadService.loadAutoSave(
+        'autosave_0',
+        AppRepositories(
+          finance: readFinance,
+          plan: readPlan,
+          budget: readBudget,
+          guard: readGuard,
+        ),
+      );
+      expect(ok, true);
+
+      expect(readFinance.expenses.length, 1);
+      expect(readFinance.expenses.first.id, 'ae1');
+
+      expect(readPlan.items.length, 1);
+      expect(readPlan.items.first.id, 'ap1');
+
+      expect(readBudget.budgets.length, 1);
+      expect(readBudget.budgets.first.category, ExpenseCategory.transport);
+
+      expect(readGuard.payments.length, 1);
+      expect(readGuard.payments.first.id, 'agp1');
     });
   });
 }
