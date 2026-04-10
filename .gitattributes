@@ -1,0 +1,2 @@
+# Normalize line endings on commit; let Git handle checkout conversion.
+* text=auto
