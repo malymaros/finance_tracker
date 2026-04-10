@@ -2,21 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
-import '../../models/financial_type_income_ratio.dart';
-import '../../models/guard_state.dart';
 import '../../models/period_bounds.dart';
 import '../../models/plan_item.dart';
+import '../../models/plan_snapshot.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/app_repositories.dart';
-import '../../services/report_aggregator.dart';
+import '../../services/plan_snapshot_builder.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/financial_type_distribution_card.dart';
 import '../../widgets/guard_banner.dart';
 import '../../widgets/period_navigator.dart';
 import 'guard_screen.dart';
-import '../../widgets/plan_category_tile.dart';
-import '../../widgets/plan_financial_type_tile.dart';
 import '../../widgets/plan_fixed_costs_summary_tile.dart';
 import '../../widgets/plan_income_summary_tile.dart';
 import '../../widgets/add_fixed_cost_frequency_sheet.dart';
@@ -26,6 +23,7 @@ import '../../widgets/plan_item_tile.dart';
 import 'add_plan_item_screen.dart';
 import 'manage_budgets_screen.dart';
 import '../../widgets/guard_setup_sheet.dart';
+import 'plan_fixed_costs_hierarchy.dart';
 import 'plan_item_detail_screen.dart';
 
 enum _DeleteChoice { fromPeriod, wholeSeries }
@@ -61,11 +59,8 @@ class _PlanScreenState extends State<PlanScreen> {
   /// Which category is currently expanded within the Consumption group.
   ExpenseCategory? _expandedCategory;
 
-  /// SeriesId of the item currently highlighted (from GuardBanner tap).
-  String? _highlightedSeriesId;
-
-  /// Key assigned to the highlighted PlanItemTile so we can scroll to it.
-  final _highlightKey = GlobalKey();
+  /// Manages the highlight-and-scroll animation when a GuardBanner item is tapped.
+  final _highlight = _PlanHighlightManager();
 
   int get _year => widget.selectedPeriod.value.year;
   int get _month => widget.selectedPeriod.value.month;
@@ -87,33 +82,24 @@ class _PlanScreenState extends State<PlanScreen> {
         _expandedCategory = null;
       });
 
-  /// Expands the tree to reveal [item], scrolls to it, and briefly highlights it.
+  /// Expands the accordion tree to reveal [item], scrolls to it, and briefly
+  /// highlights it. Uses [_PlanHighlightManager] to coordinate the animation.
   void _expandToItem(PlanItem item) {
-    final ft = item.financialType ?? FinancialType.consumption;
-    setState(() {
-      _isMonthly = true;
-      _fixedCostsExpanded = true;
-      _expandedFinancialType = ft;
-      _expandedCategory =
-          ft == FinancialType.consumption ? item.category : null;
-      _highlightedSeriesId = item.seriesId;
-    });
-    // Scroll after the tree has rebuilt.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ctx = _highlightKey.currentContext;
-      if (ctx != null) {
-        Scrollable.ensureVisible(
-          ctx,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.easeOut,
-          alignment: 0.3,
-        );
-      }
-    });
-    // Clear highlight after 2 s.
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) setState(() => _highlightedSeriesId = null);
-    });
+    _highlight.trigger(
+      item,
+      onExpand: ({required FinancialType financialType,
+          required ExpenseCategory? category}) {
+        setState(() {
+          _isMonthly = true;
+          _fixedCostsExpanded = true;
+          _expandedFinancialType = financialType;
+          _expandedCategory = category;
+        });
+      },
+      onClear: () {
+        if (mounted) setState(() {});
+      },
+    );
   }
 
   double _displayAmount(PlanItem item, Map<String, double> yearlyAmounts) {
@@ -259,7 +245,6 @@ class _PlanScreenState extends State<PlanScreen> {
       BuildContext context, PlanItem item) async {
     final selectedPeriod = widget.selectedPeriod.value;
 
-    // Determine the cut point and descriptive labels for "from period onwards".
     final YearMonth deleteFrom;
     final String fromTitle;
     final String fromSubtitle;
@@ -283,7 +268,6 @@ class _PlanScreenState extends State<PlanScreen> {
       fromSubtitle = 'History up to ${prev.label} is kept.';
     }
 
-    // Find the earliest version to describe the whole-series start.
     final allVersions = widget.repositories.plan.items
         .where((i) => i.seriesId == item.seriesId)
         .toList()
@@ -413,60 +397,30 @@ class _PlanScreenState extends State<PlanScreen> {
         ],
       ),
       body: ListenableBuilder(
-        listenable: Listenable.merge(
-            [widget.repositories.finance, widget.repositories.plan, widget.repositories.guard]),
+        listenable: Listenable.merge([
+          widget.repositories.finance,
+          widget.repositories.plan,
+          widget.repositories.guard,
+        ]),
         builder: (context, _) {
           final all = widget.repositories.plan.items;
           final now = YearMonth.now();
           final viewPeriod = widget.selectedPeriod.value;
 
-          final List<PlanItem> displayItems;
-          final double totalIncome;
-          final double totalFixedCosts;
-
-          if (_isMonthly) {
-            displayItems =
-                BudgetCalculator.activeItemsForMonth(all, _year, _month);
-            totalIncome =
-                BudgetCalculator.normalizedMonthlyIncome(all, _year, _month);
-            totalFixedCosts =
-                BudgetCalculator.normalizedMonthlyFixedCosts(all, _year, _month);
-          } else {
-            displayItems = BudgetCalculator.activeItemsForYear(all, _year);
-            totalIncome = BudgetCalculator.yearlyIncome(all, _year);
-            totalFixedCosts = BudgetCalculator.yearlyFixedCosts(all, _year);
-          }
-
-          final spendable = totalIncome - totalFixedCosts;
-          final incomeItems = displayItems
-              .where((i) => i.type == PlanItemType.income)
-              .toList();
-          final fixedCostItems = displayItems
-              .where((i) => i.type == PlanItemType.fixedCost)
-              .toList();
-
-          final mergedLines = _isMonthly
-              ? ReportAggregator.mergedLines(
-                  widget.repositories.finance.reportLinesForMonth(_year, _month),
-                  BudgetCalculator.planFixedCostReportLinesForMonth(
-                      all, _year, _month),
-                )
-              : ReportAggregator.mergedLines(
-                  widget.repositories.finance.reportLinesForYear(_year),
-                  BudgetCalculator.planFixedCostReportLinesForYear(all, _year),
-                );
-          final ratio = BudgetCalculator.financialTypeIncomeRatios(
-              mergedLines, totalIncome);
-
-          // Build guard state map for the viewed period (one lookup per item).
-          final guardStateMap = <String, GuardState>{};
-          for (final item in fixedCostItems) {
-            guardStateMap[item.seriesId] =
-                widget.repositories.guard.itemStateForPeriod(item, viewPeriod);
-          }
-
-          // Unresolved items for the banner (always based on "now", not viewed period).
-          // Use unpaidActiveItems() + set subtraction to avoid double state lookups.
+          // Guard data requires live repositories and cannot be moved into
+          // PlanSnapshotBuilder without coupling it to GuardRepository.
+          final fixedCostCandidates = _isMonthly
+              ? BudgetCalculator.activeItemsForMonth(all, _year, _month)
+                  .where((i) => i.type == PlanItemType.fixedCost)
+                  .toList()
+              : BudgetCalculator.activeItemsForYear(all, _year)
+                  .where((i) => i.type == PlanItemType.fixedCost)
+                  .toList();
+          final guardStateMap = {
+            for (final item in fixedCostCandidates)
+              item.seriesId:
+                  widget.repositories.guard.itemStateForPeriod(item, viewPeriod)
+          };
           final unpaidActive =
               widget.repositories.guard.unpaidActiveItems(all, now);
           final allUnresolved =
@@ -474,38 +428,45 @@ class _PlanScreenState extends State<PlanScreen> {
           final unpaidActiveKeys = {
             for (final p in unpaidActive) '${p.$1.seriesId}|${p.$2}'
           };
-          final silencedItems = allUnresolved
+          final silenced = allUnresolved
               .where((pair) =>
-                  !unpaidActiveKeys.contains('${pair.$1.seriesId}|${pair.$2}'))
+                  !unpaidActiveKeys
+                      .contains('${pair.$1.seriesId}|${pair.$2}'))
               .toList();
+
+          final reportLines = _isMonthly
+              ? widget.repositories.finance.reportLinesForMonth(_year, _month)
+              : widget.repositories.finance.reportLinesForYear(_year);
+
+          final snapshot = PlanSnapshotBuilder.build(
+            allItems: all,
+            reportLines: reportLines,
+            period: viewPeriod,
+            isMonthly: _isMonthly,
+            guardStateMap: guardStateMap,
+            unpaidActive: unpaidActive,
+            silenced: silenced,
+          );
 
           return Column(
             children: [
               _buildModeToggle(),
               _buildPeriodNavigator(),
               GuardBanner(
-                unpaidActive: unpaidActive,
-                silenced: silencedItems,
+                unpaidActive: snapshot.unpaidActive,
+                silenced: snapshot.silenced,
                 onMarkPaid: (seriesId, period) =>
                     widget.repositories.guard.confirmPayment(seriesId, period),
                 onSilence: _onSilenceRequested,
                 onTapItem: (item, _) => _expandToItem(item),
               ),
-              _buildSummaryCard(spendable),
+              _buildSummaryCard(snapshot.spendable),
               const Divider(height: 1),
               Expanded(
-                child: displayItems.isEmpty
+                child: snapshot.incomeItems.isEmpty &&
+                        snapshot.fixedCostItems.isEmpty
                     ? _buildEmptyState()
-                    : _buildPlanHierarchy(
-                        context,
-                        incomeItems,
-                        fixedCostItems,
-                        all,
-                        totalIncome,
-                        totalFixedCosts,
-                        ratio,
-                        guardStateMap,
-                      ),
+                    : _buildPlanHierarchy(context, snapshot, all),
               ),
             ],
           );
@@ -614,35 +575,34 @@ class _PlanScreenState extends State<PlanScreen> {
 
   Widget _buildPlanHierarchy(
     BuildContext context,
-    List<PlanItem> incomeItems,
-    List<PlanItem> fixedCostItems,
+    PlanSnapshot snapshot,
     List<PlanItem> allItems,
-    double totalIncome,
-    double totalFixedCosts,
-    FinancialTypeIncomeRatio ratio,
-    Map<String, GuardState> guardStateMap,
   ) {
-    // Precompute yearly amounts once per build so itemYearlyContribution is not
-    // called per tile during rendering.
+    // Precompute yearly amounts once so itemYearlyContribution is not called
+    // per tile during rendering. Empty in monthly mode.
     final yearlyAmounts = !_isMonthly
         ? {
-            for (final item in [...incomeItems, ...fixedCostItems])
-              item.id: BudgetCalculator.itemYearlyContribution(item, allItems, _year)
+            for (final item in [
+              ...snapshot.incomeItems,
+              ...snapshot.fixedCostItems
+            ])
+              item.id: BudgetCalculator.itemYearlyContribution(
+                  item, allItems, _year)
           }
         : const <String, double>{};
 
     return ListView(
       children: [
         PlanIncomeSummaryTile(
-          total: totalIncome,
-          count: incomeItems.length,
+          total: snapshot.totalIncome,
+          count: snapshot.incomeItems.length,
           isExpanded: _incomeExpanded,
-          onTap: incomeItems.isNotEmpty
+          onTap: snapshot.incomeItems.isNotEmpty
               ? () => setState(() => _incomeExpanded = !_incomeExpanded)
               : null,
         ),
         if (_incomeExpanded)
-          ...incomeItems.map((item) => PlanItemTile(
+          ...snapshot.incomeItems.map((item) => PlanItemTile(
                 item: item,
                 displayAmount: _displayAmount(item, yearlyAmounts),
                 onTap: () => _openDetail(context, item),
@@ -651,10 +611,10 @@ class _PlanScreenState extends State<PlanScreen> {
               )),
         const Divider(height: 1),
         PlanFixedCostsSummaryTile(
-          total: totalFixedCosts,
-          count: fixedCostItems.length,
+          total: snapshot.totalFixedCosts,
+          count: snapshot.fixedCostItems.length,
           isExpanded: _fixedCostsExpanded,
-          onTap: fixedCostItems.isNotEmpty
+          onTap: snapshot.fixedCostItems.isNotEmpty
               ? () => setState(() {
                     _fixedCostsExpanded = !_fixedCostsExpanded;
                     if (!_fixedCostsExpanded) {
@@ -665,162 +625,80 @@ class _PlanScreenState extends State<PlanScreen> {
               : null,
         ),
         if (_fixedCostsExpanded)
-          ..._buildFixedCostsSection(
-              context, fixedCostItems, allItems, guardStateMap, yearlyAmounts),
-        FinancialTypeDistributionCard(ratio: ratio, isMonthly: _isMonthly),
-        const SizedBox(height: 80),
-      ],
-    );
-  }
-
-  // ── Fixed Costs inline accordion ──────────────────────────────────────────
-
-  List<Widget> _buildFixedCostsSection(
-    BuildContext context,
-    List<PlanItem> fixedCostItems,
-    List<PlanItem> allItems,
-    Map<String, GuardState> guardStateMap,
-    Map<String, double> yearlyAmounts,
-  ) {
-    final typeTotals = BudgetCalculator.planFinancialTypeTotals(
-      fixedCostItems,
-      allItems,
-      _year,
-      _month,
-      _isMonthly,
-    );
-
-    const typeOrder = [
-      FinancialType.consumption,
-      FinancialType.asset,
-      FinancialType.insurance,
-    ];
-
-    final widgets = <Widget>[];
-    for (final type in typeOrder) {
-      if (!typeTotals.containsKey(type)) continue;
-      final data = typeTotals[type]!;
-      final isTypeExpanded = _expandedFinancialType == type;
-
-      widgets.add(PlanFinancialTypeTile(
-        type: type,
-        total: data.total,
-        count: data.count,
-        isExpanded: isTypeExpanded,
-        onTap: () => setState(() {
-          if (_expandedFinancialType == type) {
-            _expandedFinancialType = null;
-            _expandedCategory = null;
-          } else {
-            _expandedFinancialType = type;
-            _expandedCategory = null;
-          }
-        }),
-      ));
-
-      if (isTypeExpanded) {
-        if (type == FinancialType.consumption) {
-          widgets.addAll(_buildConsumptionCategories(
-              context, fixedCostItems, allItems, guardStateMap, yearlyAmounts));
-        } else {
-          widgets.addAll(_buildTypeItems(
-              context, fixedCostItems, type, guardStateMap, yearlyAmounts));
-        }
-      }
-    }
-    return widgets;
-  }
-
-  List<Widget> _buildConsumptionCategories(
-    BuildContext context,
-    List<PlanItem> fixedCostItems,
-    List<PlanItem> allItems,
-    Map<String, GuardState> guardStateMap,
-    Map<String, double> yearlyAmounts,
-  ) {
-    final categoryTotals = BudgetCalculator.planCategoryTotals(
-      fixedCostItems,
-      allItems,
-      _year,
-      _month,
-      _isMonthly,
-      financialTypeFilter: FinancialType.consumption,
-    );
-
-    final widgets = <Widget>[];
-    for (final entry in categoryTotals.entries) {
-      final cat = entry.key;
-      final data = entry.value;
-      final isCatExpanded = _expandedCategory == cat;
-
-      widgets.add(PlanCategoryTile(
-        category: cat,
-        total: data.total,
-        count: data.count,
-        isExpanded: isCatExpanded,
-        onTap: () => setState(() {
-          _expandedCategory = _expandedCategory == cat ? null : cat;
-        }),
-      ));
-
-      if (isCatExpanded) {
-        final items = fixedCostItems
-            .where((i) =>
-                i.category == cat &&
-                (i.financialType ?? FinancialType.consumption) ==
-                    FinancialType.consumption)
-            .toList();
-        for (final item in items) {
-          final isHighlighted = item.seriesId == _highlightedSeriesId;
-          widgets.add(PlanItemTile(
-            key: isHighlighted ? _highlightKey : null,
-            item: item,
-            displayAmount: _displayAmount(item, yearlyAmounts),
-            guardState: guardStateMap[item.seriesId] ?? GuardState.none,
-            isHighlighted: isHighlighted,
-            onTap: () => _openDetail(context, item),
-            onEdit: () => _navigateToEdit(context, item),
-            onDelete: () => _confirmAndDelete(context, item),
-            onGuard: () => GuardSetupSheet.show(
+          PlanFixedCostsHierarchy(
+            snapshot: snapshot,
+            allItems: allItems,
+            yearlyAmounts: yearlyAmounts,
+            expandedFinancialType: _expandedFinancialType,
+            expandedCategory: _expandedCategory,
+            highlightedSeriesId: _highlight.highlightedSeriesId,
+            highlightKey: _highlight.highlightKey,
+            onTypeExpanded: (ft) => setState(() {
+              _expandedFinancialType = ft;
+              if (ft == null) _expandedCategory = null;
+            }),
+            onCategoryExpanded: (cat) =>
+                setState(() => _expandedCategory = cat),
+            onTap: (item) => _openDetail(context, item),
+            onEdit: (item) => _navigateToEdit(context, item),
+            onDelete: (item) => _confirmAndDelete(context, item),
+            onGuard: (item) => GuardSetupSheet.show(
               context,
               item: item,
               planRepository: widget.repositories.plan,
             ),
-          ));
-        }
-      }
-    }
-    return widgets;
+          ),
+        FinancialTypeDistributionCard(
+            ratio: snapshot.financialTypeRatio, isMonthly: _isMonthly),
+        const SizedBox(height: 80),
+      ],
+    );
   }
+}
 
-  List<Widget> _buildTypeItems(
-    BuildContext context,
-    List<PlanItem> fixedCostItems,
-    FinancialType type,
-    Map<String, GuardState> guardStateMap,
-    Map<String, double> yearlyAmounts,
-  ) {
-    final items = fixedCostItems
-        .where(
-            (i) => (i.financialType ?? FinancialType.consumption) == type)
-        .toList();
-    return items.map((item) {
-      final isHighlighted = item.seriesId == _highlightedSeriesId;
-      return PlanItemTile(
-        key: isHighlighted ? _highlightKey : null,
-        item: item,
-        displayAmount: _displayAmount(item, yearlyAmounts),
-        guardState: guardStateMap[item.seriesId] ?? GuardState.none,
-        isHighlighted: isHighlighted,
-        onTap: () => _openDetail(context, item),
-        onEdit: () => _navigateToEdit(context, item),
-        onDelete: () => _confirmAndDelete(context, item),
-        onGuard: () => GuardSetupSheet.show(
-          context,
-          item: item,
-          planRepository: widget.repositories.plan,
-        ),
-      );
-    }).toList();
+// ── _PlanHighlightManager ──────────────────────────────────────────────────
+//
+// Coordinates the highlight-and-scroll animation for GuardBanner taps.
+// Owned by _PlanScreenState as a plain field; not a widget.
+
+class _PlanHighlightManager {
+  /// The seriesId of the currently highlighted item, or null if none.
+  String? highlightedSeriesId;
+
+  /// Key assigned to the highlighted PlanItemTile, used to scroll to it.
+  final GlobalKey highlightKey = GlobalKey();
+
+  /// Marks [item] as highlighted, calls [onExpand] to open the accordion,
+  /// schedules a scroll to the highlighted tile, and clears the highlight
+  /// after 2 seconds by calling [onClear].
+  void trigger(
+    PlanItem item, {
+    required void Function({
+      required FinancialType financialType,
+      required ExpenseCategory? category,
+    }) onExpand,
+    required VoidCallback onClear,
+  }) {
+    highlightedSeriesId = item.seriesId;
+    final ft = item.financialType ?? FinancialType.consumption;
+    onExpand(
+      financialType: ft,
+      category: ft == FinancialType.consumption ? item.category : null,
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = highlightKey.currentContext;
+      if (ctx != null) {
+        Scrollable.ensureVisible(
+          ctx,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOut,
+          alignment: 0.3,
+        );
+      }
+    });
+    Future.delayed(const Duration(seconds: 2), () {
+      highlightedSeriesId = null;
+      onClear();
+    });
   }
 }

@@ -747,4 +747,135 @@ void main() {
       expect(afterClear.length, 3);
     });
   });
+
+  // ── lifecycle — monthly item ──────────────────────────────────────────────
+  //
+  // These tests walk through real state transitions for a monthly guarded item,
+  // verifying that payment and silence records do not bleed into adjacent periods.
+
+  group('lifecycle — monthly item', () {
+    // Use dueDay: 1 so every past period is "due" regardless of today's date.
+    final item = _monthlyGuarded(fromYear: 2024, fromMonth: 3, dueDay: 1);
+
+    test('past period with no record → unpaidActive', () {
+      final repo = _repo();
+      expect(
+        repo.itemStateForPeriod(item, YearMonth(2024, 3)),
+        GuardState.unpaidActive,
+      );
+    });
+
+    test('marking a period paid → paid; does not affect the next period', () async {
+      final repo = _repo();
+      final paid = YearMonth(2024, 3);
+      final next = YearMonth(2024, 4);
+
+      await repo.confirmPayment('s1', paid);
+
+      expect(repo.itemStateForPeriod(item, paid), GuardState.paid);
+      // Next month has no record → still unpaidActive.
+      expect(repo.itemStateForPeriod(item, next), GuardState.unpaidActive);
+    });
+
+    test('paying two consecutive months leaves each in paid state', () async {
+      final repo = _repo();
+      await repo.confirmPayment('s1', YearMonth(2024, 3));
+      await repo.confirmPayment('s1', YearMonth(2024, 4));
+
+      expect(repo.itemStateForPeriod(item, YearMonth(2024, 3)), GuardState.paid);
+      expect(repo.itemStateForPeriod(item, YearMonth(2024, 4)), GuardState.paid);
+    });
+
+    test('silencing a period → silenced; next period is still unpaidActive', () async {
+      final repo = _repo();
+      final silenced = YearMonth(2024, 3);
+      final next = YearMonth(2024, 4);
+
+      await repo.silencePayment('s1', silenced);
+
+      expect(repo.itemStateForPeriod(item, silenced), GuardState.silenced);
+      expect(repo.itemStateForPeriod(item, next), GuardState.unpaidActive);
+    });
+
+    test('unpaidActiveItems shows only unresolved periods across a range', () async {
+      final repo = _repo();
+      // Mar, Apr, May 2024. Mark Mar paid, silence Apr.
+      await repo.confirmPayment('s1', YearMonth(2024, 3));
+      await repo.silencePayment('s1', YearMonth(2024, 4));
+
+      final now = YearMonth(2024, 5);
+      final unpaid = repo.unpaidActiveItems([item], now);
+
+      // Only May remains unpaidActive.
+      expect(unpaid.length, 1);
+      expect(unpaid.first.$2, YearMonth(2024, 5));
+    });
+
+    test('future period is scheduled regardless of prior payments', () async {
+      final repo = _repo();
+      await repo.confirmPayment('s1', YearMonth(2024, 3));
+
+      // 2099-12 is always in the future.
+      expect(
+        repo.itemStateForPeriod(item, YearMonth(2099, 12)),
+        GuardState.scheduled,
+      );
+    });
+  });
+
+  // ── lifecycle — yearly item ───────────────────────────────────────────────
+
+  group('lifecycle — yearly item', () {
+    // Anchor month = January (validFrom.month = 1), dueDay = 1.
+    final item = _yearlyGuarded(fromYear: 2023, fromMonth: 1, dueDay: 1);
+
+    test('non-anchor month → none regardless of year', () {
+      final repo = _repo();
+      expect(repo.itemStateForPeriod(item, YearMonth(2024, 2)), GuardState.none);
+      expect(repo.itemStateForPeriod(item, YearMonth(2024, 6)), GuardState.none);
+      expect(repo.itemStateForPeriod(item, YearMonth(2024, 12)), GuardState.none);
+    });
+
+    test('anchor month in the past with no record → unpaidActive', () {
+      final repo = _repo();
+      expect(
+        repo.itemStateForPeriod(item, YearMonth(2024, 1)),
+        GuardState.unpaidActive,
+      );
+    });
+
+    test('marking the anchor month paid → paid for that year only', () async {
+      final repo = _repo();
+      await repo.confirmPayment('sy1', YearMonth(2024, 1));
+
+      expect(repo.itemStateForPeriod(item, YearMonth(2024, 1)), GuardState.paid);
+      // The following year's anchor month is still unpaid.
+      expect(repo.itemStateForPeriod(item, YearMonth(2025, 1)), GuardState.unpaidActive);
+      // Non-anchor months remain none.
+      expect(repo.itemStateForPeriod(item, YearMonth(2024, 6)), GuardState.none);
+    });
+
+    test('paying one year, next year anchor month stays unpaidActive', () async {
+      final repo = _repo();
+      await repo.confirmPayment('sy1', YearMonth(2023, 1));
+
+      // 2023 paid, 2024 not paid.
+      expect(repo.itemStateForPeriod(item, YearMonth(2023, 1)), GuardState.paid);
+      expect(repo.itemStateForPeriod(item, YearMonth(2024, 1)), GuardState.unpaidActive);
+    });
+
+    test('unpaidActiveItems surfaces each unpaid anchor month', () async {
+      final repo = _repo();
+      // Pay 2023, leave 2024 and 2025 unpaid.
+      await repo.confirmPayment('sy1', YearMonth(2023, 1));
+
+      final now = YearMonth(2025, 6);
+      final unpaid = repo.unpaidActiveItems([item], now);
+      final periods = unpaid.map((p) => p.$2).toList();
+
+      expect(periods, contains(YearMonth(2024, 1)));
+      expect(periods, contains(YearMonth(2025, 1)));
+      expect(periods, isNot(contains(YearMonth(2023, 1)))); // paid
+    });
+  });
 }

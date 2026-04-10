@@ -105,8 +105,7 @@ class FinanceRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Loads every year that has a data file.
-  /// Use before export or save-slot creation to ensure no data is missing.
+  /// Loads every year that has a data file. Called automatically on startup.
   Future<void> loadAllYears() async {
     for (final year in List.of(_availableYears)) {
       await loadYear(year);
@@ -292,7 +291,9 @@ class FinanceRepository extends ChangeNotifier {
     _baseDirPath = (await getApplicationDocumentsDirectory()).path;
     await _migrateIfNeeded();
     await _loadIndex();
-    await loadYear(DateTime.now().year);
+    await loadAllYears();
+    // Ensure the current year bucket always exists, even on first launch with no data.
+    _expensesByYear.putIfAbsent(DateTime.now().year, () => []);
   }
 
   Future<void> _loadIndex() async {
