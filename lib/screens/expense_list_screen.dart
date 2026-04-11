@@ -16,6 +16,7 @@ import '../widgets/guard_expense_strip.dart';
 import '../widgets/expense_category_group.dart';
 import '../widgets/expense_group_tile.dart';
 import '../widgets/expense_list_tile.dart';
+import '../widgets/how_it_works_sheet.dart';
 import '../widgets/month_budget_summary.dart';
 import '../widgets/period_navigator.dart';
 import '../widgets/export_date_range_dialog.dart';
@@ -181,7 +182,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           ),
           body: Column(
             children: [
-              _buildMonthNavigator(),
+              _buildMonthNavigatorRow(),
               _buildGuardStrip(unpaidGuardCount),
               _buildBudgetWidget(budgetStatus, isCurrentMonth, isPastMonth),
               _buildViewToggle(),
@@ -215,16 +216,36 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   // ── Month navigator ────────────────────────────────────────────────────────
 
-  Widget _buildMonthNavigator() {
+  /// Period navigator with the [?] help button overlaid on the right.
+  Widget _buildMonthNavigatorRow() {
     final bounds = widget.periodBounds.value;
-    return PeriodNavigator(
-      selected: widget.selectedPeriod.value,
-      yearOnly: false,
-      min: bounds.min,
-      max: bounds.max,
-      onChanged: (ym) => setState(() {
-        widget.selectedPeriod.value = ym;
-      }),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        PeriodNavigator(
+          selected: widget.selectedPeriod.value,
+          yearOnly: false,
+          min: bounds.min,
+          max: bounds.max,
+          onChanged: (ym) => setState(() {
+            widget.selectedPeriod.value = ym;
+          }),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: IconButton(
+              icon: const Icon(Icons.help_outline),
+              tooltip: 'How it works',
+              onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexExpenses),
+              style: IconButton.styleFrom(
+                foregroundColor: AppColors.gold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -242,31 +263,64 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   Widget _buildBudgetWidget(
       BudgetStatus? status, bool isCurrentMonth, bool isPastMonth) {
-    if (!isPastMonth) {
-      // current month or future: show progress bar if plan exists
+    if (isPastMonth) {
       return status != null
-          ? BudgetProgressBar(status: status)
-          : const SizedBox.shrink();
+          ? MonthBudgetSummary(status: status)
+          : _buildNoBudgetCard();
     }
-    // past month
-    if (status != null) return MonthBudgetSummary(status: status);
-    return _buildNoBudgetHint();
+    // current month or future
+    return status != null
+        ? BudgetProgressBar(status: status)
+        : _buildNoBudgetCard();
   }
 
-  Widget _buildNoBudgetHint() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-      child: Row(
-        children: const [
-          Icon(Icons.info_outline, size: 16, color: AppColors.textMuted),
-          SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              'No budget set for this month — add items in the Plan tab.',
-              style: TextStyle(fontSize: 12, color: AppColors.textMuted),
-            ),
+  Widget _buildNoBudgetCard() {
+    return Card(
+      margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: widget.onSwitchToPlanTab,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  Text(
+                    "This month's budget",
+                    style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Budget not set',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Set income in Plan',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.navy,
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Icon(Icons.arrow_forward, size: 16, color: AppColors.navy),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -317,6 +371,19 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           const Text(
             'Tap + to add one.',
             style: TextStyle(color: AppColors.textMuted),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Fixed bills like rent belong in Plan.',
+            style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          TextButton.icon(
+            onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexExpenses),
+            icon: const Icon(Icons.help_outline, size: 16),
+            label: const Text('How it works?'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.gold),
           ),
         ],
       ),

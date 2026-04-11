@@ -24,7 +24,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1; // start on Expenses tab
   late final PageController _pageController;
   final _selectedPeriod = ValueNotifier<YearMonth>(YearMonth.now());
   final _periodBounds = ValueNotifier<PeriodBounds>(const PeriodBounds());
@@ -33,21 +33,12 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _pageController = PageController(initialPage: 1);
     widget.repositories.plan.addListener(_updateBounds);
     widget.repositories.guard.addListener(_onGuardChanged);
     _selectedPeriod.addListener(_onPeriodChanged);
     _updateBounds();
     _screens = [
-      _KeepAliveTab(
-        child: ExpenseListScreen(
-            repositories: widget.repositories,
-            selectedPeriod: _selectedPeriod,
-            periodBounds: _periodBounds,
-            onClearAll: () => _clearAllData(context),
-            onOpenSaves: () => _openSaves(context),
-            onSwitchToPlanTab: () => _navigateToTab(1)),
-      ),
       _KeepAliveTab(
         child: PlanScreen(
             repositories: widget.repositories,
@@ -57,13 +48,22 @@ class _MainScreenState extends State<MainScreen> {
             onOpenSaves: () => _openSaves(context)),
       ),
       _KeepAliveTab(
+        child: ExpenseListScreen(
+            repositories: widget.repositories,
+            selectedPeriod: _selectedPeriod,
+            periodBounds: _periodBounds,
+            onClearAll: () => _clearAllData(context),
+            onOpenSaves: () => _openSaves(context),
+            onSwitchToPlanTab: () => _navigateToTab(0)),
+      ),
+      _KeepAliveTab(
         child: ReportScreen(
             repository: widget.repositories.finance,
             planRepository: widget.repositories.plan,
             budgetRepository: widget.repositories.budget,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
-            onNavigateToPlan: () => _navigateToTab(1),
+            onNavigateToPlan: () => _navigateToTab(0),
             onClearAll: () => _clearAllData(context),
             onOpenSaves: () => _openSaves(context)),
       ),
@@ -182,11 +182,6 @@ class _MainScreenState extends State<MainScreen> {
           selectedIndex: _selectedIndex,
           onDestinationSelected: _navigateToTab,
           destinations: [
-            const NavigationDestination(
-              icon: Icon(Icons.receipt_long_outlined),
-              selectedIcon: Icon(Icons.receipt_long),
-              label: 'Expenses',
-            ),
             NavigationDestination(
               icon: Badge(
                 isLabelVisible: unpaidCount > 0,
@@ -199,6 +194,11 @@ class _MainScreenState extends State<MainScreen> {
                 child: const Icon(Icons.account_balance),
               ),
               label: 'Plan',
+            ),
+            const NavigationDestination(
+              icon: Icon(Icons.receipt_long_outlined),
+              selectedIcon: Icon(Icons.receipt_long),
+              label: 'Expenses',
             ),
             const NavigationDestination(
               icon: Icon(Icons.pie_chart_outline),

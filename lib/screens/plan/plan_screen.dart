@@ -12,6 +12,7 @@ import '../../services/plan_snapshot_builder.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/financial_type_distribution_card.dart';
 import '../../widgets/guard_banner.dart';
+import '../../widgets/how_it_works_sheet.dart';
 import '../../widgets/period_navigator.dart';
 import 'guard_screen.dart';
 import '../../widgets/plan_fixed_costs_summary_tile.dart';
@@ -450,8 +451,8 @@ class _PlanScreenState extends State<PlanScreen> {
 
           return Column(
             children: [
-              _buildModeToggle(),
               _buildPeriodNavigator(),
+              _buildModeToggle(),
               GuardBanner(
                 unpaidActive: snapshot.unpaidActive,
                 silenced: snapshot.silenced,
@@ -511,14 +512,31 @@ class _PlanScreenState extends State<PlanScreen> {
 
   Widget _buildPeriodNavigator() {
     final bounds = widget.periodBounds.value;
-    return PeriodNavigator(
-      selected: widget.selectedPeriod.value,
-      yearOnly: !_isMonthly,
-      min: bounds.min,
-      max: bounds.max,
-      onChanged: (ym) => setState(() {
-        widget.selectedPeriod.value = ym;
-      }),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        PeriodNavigator(
+          selected: widget.selectedPeriod.value,
+          yearOnly: !_isMonthly,
+          min: bounds.min,
+          max: bounds.max,
+          onChanged: (ym) => setState(() {
+            widget.selectedPeriod.value = ym;
+          }),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: IconButton(
+              icon: const Icon(Icons.help_outline),
+              tooltip: 'How it works',
+              onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexPlan),
+              style: IconButton.styleFrom(foregroundColor: AppColors.gold),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -556,18 +574,25 @@ class _PlanScreenState extends State<PlanScreen> {
   }
 
   Widget _buildEmptyState() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.account_balance_outlined,
+          const Icon(Icons.account_balance_outlined,
               size: 64, color: AppColors.textMuted),
-          SizedBox(height: 16),
-          Text('No plan items yet.',
+          const SizedBox(height: 16),
+          const Text('No plan items yet.',
               style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
-          SizedBox(height: 8),
-          Text('Tap + to add income or fixed costs.',
+          const SizedBox(height: 8),
+          const Text('Tap + to add income or fixed costs.',
               style: TextStyle(color: AppColors.textMuted)),
+          const SizedBox(height: 16),
+          TextButton.icon(
+            onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexPlan),
+            icon: const Icon(Icons.help_outline, size: 16),
+            label: const Text('How it works?'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.gold),
+          ),
         ],
       ),
     );

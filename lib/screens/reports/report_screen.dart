@@ -18,6 +18,7 @@ import '../../services/plan_repository.dart';
 import '../../services/report_aggregator.dart';
 import '../../services/share_service.dart';
 import '../../theme/app_theme.dart';
+import '../../widgets/how_it_works_sheet.dart';
 import '../../widgets/overview_month_row.dart';
 import '../../widgets/period_navigator.dart';
 import '../../widgets/report_category_row.dart';
@@ -151,8 +152,8 @@ class _ReportScreenState extends State<ReportScreen> {
           _reportCache = null;
           return Column(
             children: [
-              _buildModeToggle(),
               _buildPeriodNavigator(),
+              _buildModeToggle(),
               Expanded(child: _buildContent()),
             ],
           );
@@ -379,14 +380,31 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget _buildPeriodNavigator() {
     final yearOnly = _mode != _ReportMode.monthly;
     final bounds = widget.periodBounds.value;
-    return PeriodNavigator(
-      selected: widget.selectedPeriod.value,
-      yearOnly: yearOnly,
-      min: bounds.min,
-      max: bounds.max,
-      onChanged: (ym) => setState(() {
-        widget.selectedPeriod.value = ym;
-      }),
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        PeriodNavigator(
+          selected: widget.selectedPeriod.value,
+          yearOnly: yearOnly,
+          min: bounds.min,
+          max: bounds.max,
+          onChanged: (ym) => setState(() {
+            widget.selectedPeriod.value = ym;
+          }),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 4),
+            child: IconButton(
+              icon: const Icon(Icons.help_outline),
+              tooltip: 'How it works',
+              onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexReports),
+              style: IconButton.styleFrom(foregroundColor: AppColors.gold),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -443,15 +461,22 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Widget _buildEmptyState() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.pie_chart_outline, size: 64, color: AppColors.textMuted),
-          SizedBox(height: 16),
-          Text(
+          const Icon(Icons.pie_chart_outline, size: 64, color: AppColors.textMuted),
+          const SizedBox(height: 16),
+          const Text(
             'No expenses for this period.',
             style: TextStyle(color: AppColors.textMuted, fontSize: 16),
+          ),
+          const SizedBox(height: 16),
+          TextButton.icon(
+            onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexReports),
+            icon: const Icon(Icons.help_outline, size: 16),
+            label: const Text('How it works?'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.gold),
           ),
         ],
       ),
