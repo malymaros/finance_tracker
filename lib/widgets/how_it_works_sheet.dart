@@ -8,6 +8,7 @@ import '../models/monthly_overview_summary.dart';
 import '../models/year_month.dart';
 import '../theme/app_theme.dart';
 import 'overview_month_row.dart';
+import 'sub_step_indicator.dart';
 
 /// Bottom sheet explaining the Plan → Budget → Expenses → Result → Reports flow.
 ///
@@ -422,7 +423,7 @@ class _StepHeader extends StatelessWidget {
         ),
         if (subStep != null) ...[
           const SizedBox(height: 10),
-          _SubStepIndicator(
+          SubStepIndicator(
             activeSubStep: subStep!,
             labels: subStepLabels ?? const ['Budget', 'Spending', 'Result'],
             onTap: onSubStepTap,
@@ -433,53 +434,7 @@ class _StepHeader extends StatelessWidget {
   }
 }
 
-// ── Sub-step indicator (configurable labels) ───────────────────────────────
 
-class _SubStepIndicator extends StatelessWidget {
-  final int activeSubStep;
-  final List<String> labels;
-  final void Function(int)? onTap;
-
-  const _SubStepIndicator({
-    required this.activeSubStep,
-    required this.labels,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: List.generate(labels.length, (i) {
-        final isActive = i == activeSubStep;
-        return Expanded(
-          child: GestureDetector(
-            onTap: onTap != null ? () => onTap!(i) : null,
-            child: Container(
-              margin: EdgeInsets.only(right: i < labels.length - 1 ? 6 : 0),
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              decoration: BoxDecoration(
-                color: isActive ? AppColors.navy : Colors.transparent,
-                border: Border.all(
-                  color: isActive ? AppColors.navy : AppColors.border,
-                ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                labels[i],
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-                  color: isActive ? Colors.white : AppColors.textMuted,
-                ),
-              ),
-            ),
-          ),
-        );
-      }),
-    );
-  }
-}
 
 // ── Plan screen — fixed header + inner PageView (3 sub-pages) ────────────
 

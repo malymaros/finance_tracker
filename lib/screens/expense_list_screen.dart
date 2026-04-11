@@ -16,6 +16,7 @@ import '../widgets/guard_expense_strip.dart';
 import '../widgets/expense_category_group.dart';
 import '../widgets/expense_group_tile.dart';
 import '../widgets/expense_list_tile.dart';
+import '../widgets/how_groups_work_sheet.dart';
 import '../widgets/how_it_works_sheet.dart';
 import '../widgets/month_budget_summary.dart';
 import '../widgets/period_navigator.dart';
@@ -489,9 +490,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   Widget _buildGroupList(List<Expense> monthExpenses) {
     if (!monthExpenses.any((e) => e.group != null)) {
-      final hasAnyGroups =
-          widget.repositories.finance.expenses.any((e) => e.group != null);
-      return hasAnyGroups ? _buildNoGroupExpensesState() : _buildNoGroupsState();
+      return _buildNoGroupsState();
     }
 
     final summaries =
@@ -509,43 +508,34 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
   }
 
   Widget _buildNoGroupsState() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.folder_outlined, size: 64, color: AppColors.textMuted),
-          SizedBox(height: 16),
-          Text(
-            'No groups yet.',
+          const Icon(Icons.folder_outlined, size: 64, color: AppColors.textMuted),
+          const SizedBox(height: 16),
+          const Text(
+            'No groups this month.',
             style: TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
-          SizedBox(height: 8),
-          Text(
+          const SizedBox(height: 8),
+          const Text(
             'Add a group when creating\nor editing an expense.',
             style: TextStyle(color: AppColors.textMuted),
             textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          TextButton.icon(
+            onPressed: () => HowGroupsWorkSheet.show(context),
+            icon: const Icon(Icons.folder_outlined, size: 16),
+            label: const Text('How groups work?'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.gold),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildNoGroupExpensesState() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.folder_open, size: 64, color: AppColors.textMuted),
-          const SizedBox(height: 16),
-          Text(
-            'No group expenses in\n${YearMonth.monthNames[_month]} $_year.',
-            style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
 
   void _navigateToGroupDetail(String groupName) {
     Navigator.of(context).push(
