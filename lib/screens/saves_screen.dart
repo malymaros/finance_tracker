@@ -11,6 +11,7 @@ import '../services/save_load_service.dart';
 import '../services/share_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/auto_backup_tile.dart';
+import '../widgets/save_action_dialog.dart';
 import '../widgets/save_slot_tile.dart';
 
 class SavesScreen extends StatefulWidget {
@@ -274,7 +275,8 @@ class _SavesScreenState extends State<SavesScreen> {
     final name = await showDialog<String>(
       context: context,
       builder: (_) => _SaveNameDialog(
-        title: "Overwrite '${slot.name}'?",
+        isOverwrite: true,
+        replacingName: slot.name,
         initialName: _defaultSaveName(),
       ),
     );
@@ -283,6 +285,11 @@ class _SavesScreenState extends State<SavesScreen> {
       await SaveLoadService.deleteSave(slot.id);
       await SaveLoadService.createSave(name, widget.repositories);
       await _loadList();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("'$name' saved.")),
+        );
+      }
     }
   }
 
@@ -295,30 +302,26 @@ class _SavesScreenState extends State<SavesScreen> {
     if (name != null && mounted) {
       await SaveLoadService.createSave(name, widget.repositories);
       await _loadList();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("'$name' saved.")),
+        );
+      }
     }
   }
 
   Future<void> _confirmLoad(SaveSlot slot) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text("Load '${slot.name}'?"),
-        content: const Text(
-            'This will replace all current data with this saved snapshot.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Load'),
-          ),
-        ],
-      ),
+    final confirmed = await SaveActionDialog.show(
+      context,
+      icon: Icons.download_outlined,
+      iconColor: AppColors.navy,
+      actionLabel: 'LOAD',
+      targetName: slot.name,
+      description: 'All current data will be replaced with this saved snapshot.',
+      confirmLabel: 'Load',
     );
 
-    if (confirmed != true) return;
+    if (!confirmed) return;
     if (!mounted) return;
 
     final scaffoldMessenger = ScaffoldMessenger.of(context);
@@ -338,29 +341,17 @@ class _SavesScreenState extends State<SavesScreen> {
   }
 
   Future<void> _confirmDelete(SaveSlot slot) async {
-    final title =
-        slot.isDamaged ? 'Delete damaged save?' : "Delete '${slot.name}'?";
-
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(title),
-        content: const Text('This save will be permanently deleted.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.expense),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+    final confirmed = await SaveActionDialog.show(
+      context,
+      icon: slot.isDamaged ? Icons.warning_amber_outlined : Icons.delete_outline,
+      iconColor: AppColors.expense,
+      actionLabel: 'DELETE',
+      targetName: slot.isDamaged ? 'Damaged save file' : slot.name,
+      description: 'This saved snapshot will be permanently deleted.',
+      confirmLabel: 'Delete',
     );
 
-    if (confirmed == true) {
+    if (confirmed) {
       await SaveLoadService.deleteSave(slot.id);
       await _loadList();
     }
@@ -435,14 +426,20 @@ class _DashedBorderPainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-// ── Save name dialog ──────────────────────────────────────────────────────────
+// ── Save name dialog (SAVE / OVERWRITE) ──────────────────────────────────────
 
 class _SaveNameDialog extends StatefulWidget {
-  final String title;
+  /// When true, the dialog is styled as OVERWRITE and shows [replacingName].
+  final bool isOverwrite;
+
+  /// The name of the slot being replaced — shown as a subtitle when [isOverwrite].
+  final String? replacingName;
+
   final String initialName;
 
   const _SaveNameDialog({
-    this.title = 'Save current data',
+    this.isOverwrite = false,
+    this.replacingName,
     required this.initialName,
   });
 
@@ -468,34 +465,102 @@ class _SaveNameDialogState extends State<_SaveNameDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(widget.title),
-      content: TextField(
-        controller: _controller,
-        maxLength: 50,
-        autofocus: true,
-        decoration: InputDecoration(
-          labelText: 'Save name',
-          errorText: _showError ? 'Name cannot be empty' : null,
+    final isOverwrite = widget.isOverwrite;
+    final iconColor = isOverwrite ? AppColors.warning : AppColors.income;
+    final iconData = isOverwrite ? Icons.swap_horiz : Icons.save_outlined;
+    final actionLabel = isOverwrite ? 'OVERWRITE' : 'SAVE';
+    final confirmLabel = isOverwrite ? 'Overwrite' : 'Save';
+    final confirmForeground =
+        isOverwrite ? const Color(0xFF1A1A1A) : Colors.white;
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── Icon ──────────────────────────────────────────────────────────
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: iconColor.withAlpha(24),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(iconData, color: iconColor, size: 34),
+            ),
+            const SizedBox(height: 18),
+
+            // ── Action label ──────────────────────────────────────────────────
+            Text(
+              actionLabel,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.navy,
+                letterSpacing: 2.5,
+              ),
+            ),
+
+            // ── Replacing hint (overwrite only) ───────────────────────────────
+            if (isOverwrite && widget.replacingName != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Replacing: ${widget.replacingName}',
+                style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
+                textAlign: TextAlign.center,
+              ),
+            ],
+            const SizedBox(height: 20),
+
+            // ── Name input ────────────────────────────────────────────────────
+            TextField(
+              controller: _controller,
+              maxLength: 50,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: 'Save name',
+                errorText: _showError ? 'Name cannot be empty' : null,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // ── Buttons ───────────────────────────────────────────────────────
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Cancel'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () {
+                      final name = _controller.text.trim();
+                      if (name.isEmpty) {
+                        setState(() => _showError = true);
+                        return;
+                      }
+                      Navigator.of(context).pop(name);
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: iconColor,
+                      foregroundColor: confirmForeground,
+                    ),
+                    child: Text(confirmLabel),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        FilledButton(
-          onPressed: () {
-            final name = _controller.text.trim();
-            if (name.isEmpty) {
-              setState(() => _showError = true);
-              return;
-            }
-            Navigator.of(context).pop(name);
-          },
-          child: const Text('Save'),
-        ),
-      ],
     );
   }
 }

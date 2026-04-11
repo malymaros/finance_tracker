@@ -21,6 +21,7 @@ import '../../widgets/add_fixed_cost_frequency_sheet.dart';
 import '../../widgets/add_income_frequency_sheet.dart';
 import '../../widgets/add_plan_item_type_sheet.dart';
 import '../../widgets/plan_item_tile.dart';
+import '../../widgets/save_action_dialog.dart';
 import 'add_plan_item_screen.dart';
 import 'manage_budgets_screen.dart';
 import '../../widgets/guard_setup_sheet.dart';
@@ -211,32 +212,22 @@ class _PlanScreenState extends State<PlanScreen> {
     if (item.type == PlanItemType.fixedCost) {
       await _confirmAndDeleteFixedCost(context, item);
     } else {
-      // Income and one-time: single-action confirm with context-aware message.
       final from = widget.selectedPeriod.value;
       final isFullDelete = item.validFrom == from;
-      final message = isFullDelete
+      final description = isFullDelete
           ? '"${item.name}" will be removed entirely.'
           : '"${item.name}" will stop from ${from.label} onwards. '
               '${from.addMonths(-1).label} and earlier will remain planned.';
-      final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Remove plan item'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(true),
-              style: TextButton.styleFrom(foregroundColor: AppColors.expense),
-              child: const Text('Remove'),
-            ),
-          ],
-        ),
+      final confirmed = await SaveActionDialog.show(
+        context,
+        icon: Icons.remove_circle_outline,
+        iconColor: AppColors.expense,
+        actionLabel: 'REMOVE',
+        targetName: item.name,
+        description: description,
+        confirmLabel: 'Remove',
       );
-      if (confirmed == true && context.mounted) {
+      if (confirmed && context.mounted) {
         widget.repositories.plan.removePlanItemFrom(item.id, from);
       }
     }
@@ -277,38 +268,11 @@ class _PlanScreenState extends State<PlanScreen> {
 
     final result = await showDialog<_DeleteChoice>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Remove "${item.name}"'),
-        contentPadding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.delete_sweep_outlined,
-                  color: AppColors.expense),
-              title: const Text('Whole series',
-                  style: TextStyle(fontWeight: FontWeight.w600)),
-              subtitle:
-                  Text('All periods from ${seriesStart.label} are removed.'),
-              onTap: () => Navigator.of(ctx).pop(_DeleteChoice.wholeSeries),
-            ),
-            const Divider(height: 1),
-            ListTile(
-              leading:
-                  const Icon(Icons.content_cut, color: AppColors.expense),
-              title: Text(fromTitle,
-                  style: const TextStyle(fontWeight: FontWeight.w600)),
-              subtitle: Text(fromSubtitle),
-              onTap: () => Navigator.of(ctx).pop(_DeleteChoice.fromPeriod),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(null),
-            child: const Text('Cancel'),
-          ),
-        ],
+      builder: (_) => _FixedCostDeleteDialog(
+        itemName: item.name,
+        seriesStartLabel: seriesStart.label,
+        fromTitle: fromTitle,
+        fromSubtitle: fromSubtitle,
       ),
     );
 
@@ -725,5 +689,166 @@ class _PlanHighlightManager {
       highlightedSeriesId = null;
       onClear();
     });
+  }
+}
+
+// ── Fixed cost delete dialog ──────────────────────────────────────────────────
+
+/// Premium two-choice dialog for removing a recurring fixed cost.
+/// Shares the same header style as [SaveActionDialog] but presents two
+/// tappable option cards instead of a single confirm button.
+class _FixedCostDeleteDialog extends StatelessWidget {
+  final String itemName;
+  final String seriesStartLabel;
+  final String fromTitle;
+  final String fromSubtitle;
+
+  const _FixedCostDeleteDialog({
+    required this.itemName,
+    required this.seriesStartLabel,
+    required this.fromTitle,
+    required this.fromSubtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── Icon ──────────────────────────────────────────────────────────
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: AppColors.expense.withAlpha(24),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.remove_circle_outline,
+                  color: AppColors.expense, size: 34),
+            ),
+            const SizedBox(height: 18),
+
+            // ── Action label ──────────────────────────────────────────────────
+            const Text(
+              'REMOVE',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.navy,
+                letterSpacing: 2.5,
+              ),
+            ),
+            const SizedBox(height: 6),
+
+            // ── Item name ─────────────────────────────────────────────────────
+            Text(
+              itemName,
+              style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+
+            // ── Whole series option ───────────────────────────────────────────
+            _OptionCard(
+              icon: Icons.delete_sweep_outlined,
+              title: 'Whole series',
+              subtitle: 'All periods from $seriesStartLabel are removed.',
+              onTap: () =>
+                  Navigator.of(context).pop(_DeleteChoice.wholeSeries),
+            ),
+            const SizedBox(height: 8),
+
+            // ── From period option ────────────────────────────────────────────
+            _OptionCard(
+              icon: Icons.content_cut,
+              title: fromTitle,
+              subtitle: fromSubtitle,
+              onTap: () =>
+                  Navigator.of(context).pop(_DeleteChoice.fromPeriod),
+            ),
+            const SizedBox(height: 20),
+
+            // ── Cancel ────────────────────────────────────────────────────────
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(null),
+                child: const Text('Cancel'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _OptionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _OptionCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.expense.withAlpha(10),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppColors.expense.withAlpha(60)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 1),
+              child: Icon(icon, color: AppColors.expense, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.chevron_right,
+                color: AppColors.textMuted, size: 18),
+          ],
+        ),
+      ),
+    );
   }
 }

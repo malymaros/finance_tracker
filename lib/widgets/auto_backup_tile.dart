@@ -5,6 +5,7 @@ import '../models/year_month.dart';
 import '../services/app_repositories.dart';
 import '../services/save_load_service.dart';
 import '../theme/app_theme.dart';
+import 'save_action_dialog.dart';
 import 'save_slot_tile.dart';
 
 class AutoBackupTile extends StatefulWidget {
@@ -135,29 +136,20 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
   }
 
   Future<void> _confirmRestore(SaveSlot slot) async {
-    final date = _formatDate(slot.createdAt);
     if (!mounted) return;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Restore backup from $date?'),
-        content: const Text(
-          'This will replace all current data with this auto-backup snapshot.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Restore'),
-          ),
-        ],
-      ),
+    final date = _formatDate(slot.createdAt);
+    final confirmed = await SaveActionDialog.show(
+      context,
+      icon: Icons.history,
+      iconColor: AppColors.gold,
+      actionLabel: 'RESTORE',
+      targetName: '${slot.name} · $date',
+      description: 'All current data will be replaced with this auto-backup snapshot.',
+      confirmLabel: 'Restore',
+      confirmForeground: const Color(0xFF1A1A1A),
     );
 
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
 
     final navigator = Navigator.of(context);
     final scaffoldMessenger = ScaffoldMessenger.of(context);

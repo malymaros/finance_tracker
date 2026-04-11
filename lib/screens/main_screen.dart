@@ -10,6 +10,7 @@ import 'expense_list_screen.dart';
 import 'plan/plan_screen.dart';
 import 'reports/report_screen.dart';
 import 'saves_screen.dart';
+import '../widgets/save_action_dialog.dart';
 
 class MainScreen extends StatefulWidget {
   final AppRepositories repositories;
@@ -130,27 +131,17 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _clearAllData(BuildContext context) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('Delete all data?'),
-        content: const Text(
-            'This will permanently delete all expenses, income, plan items, and fixed costs. This cannot be undone.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-                backgroundColor: AppColors.expense),
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete all'),
-          ),
-        ],
-      ),
+    final confirmed = await SaveActionDialog.show(
+      context,
+      icon: Icons.delete_outline,
+      iconColor: AppColors.expense,
+      actionLabel: 'DELETE',
+      description:
+          'Expenses, plan items, budgets and guard payments will be permanently deleted. This cannot be undone.',
+      preservedNote: 'Saved snapshots and auto-backups are not affected.',
+      confirmLabel: 'Delete all',
     );
-    if (confirmed == true && context.mounted) {
+    if (confirmed && context.mounted) {
       await Future.wait([
         widget.repositories.finance.clearAll(),
         widget.repositories.plan.clearAll(),
