@@ -10,8 +10,10 @@ import '../../models/monthly_pdf_data.dart';
 import '../../models/period_bounds.dart';
 import '../../models/year_month.dart';
 import '../../models/yearly_pdf_data.dart';
+import '../../l10n/l10n.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/category_budget_repository.dart';
+import '../../services/currency_formatter.dart';
 import '../../services/finance_repository.dart';
 import '../../services/pdf_report_service.dart';
 import '../../services/plan_repository.dart';
@@ -115,12 +117,12 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reports'),
+        title: Text(context.l10n.reportsTitle),
         automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.save_outlined),
-          tooltip: 'Saves',
+          tooltip: context.l10n.savesTooltip,
           onPressed: widget.onOpenSaves,
         ),
         actions: [
@@ -139,7 +141,7 @@ class _ReportScreenState extends State<ReportScreen> {
             else
               IconButton(
                 icon: const Icon(Icons.picture_as_pdf_outlined),
-                tooltip: 'Export PDF',
+                tooltip: context.l10n.exportPdf,
                 onPressed: _onExportPdf,
               ),
         ],
@@ -209,7 +211,7 @@ class _ReportScreenState extends State<ReportScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to generate PDF: $e')),
+          SnackBar(content: Text(context.l10n.exportFailed(e))),
         );
       }
     } finally {
@@ -350,21 +352,21 @@ class _ReportScreenState extends State<ReportScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       child: SegmentedButton<_ReportMode>(
-        segments: const [
+        segments: [
           ButtonSegment(
             value: _ReportMode.monthly,
-            label: Text('Monthly'),
-            icon: Icon(Icons.calendar_view_month),
+            label: Text(context.l10n.reportModeMonthly),
+            icon: const Icon(Icons.calendar_view_month),
           ),
           ButtonSegment(
             value: _ReportMode.yearly,
-            label: Text('Yearly'),
-            icon: Icon(Icons.calendar_today),
+            label: Text(context.l10n.reportModeYearly),
+            icon: const Icon(Icons.calendar_today),
           ),
           ButtonSegment(
             value: _ReportMode.overview,
-            label: Text('Overview'),
-            icon: Icon(Icons.table_rows_outlined),
+            label: Text(context.l10n.reportModeOverview),
+            icon: const Icon(Icons.table_rows_outlined),
           ),
         ],
         selected: {_mode},
@@ -398,7 +400,7 @@ class _ReportScreenState extends State<ReportScreen> {
             padding: const EdgeInsets.only(right: 4),
             child: IconButton(
               icon: const Icon(Icons.help_outline),
-              tooltip: 'How it works',
+              tooltip: context.l10n.howItWorksTooltip,
               onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexReports),
               style: IconButton.styleFrom(foregroundColor: AppColors.gold),
             ),
@@ -431,15 +433,15 @@ class _ReportScreenState extends State<ReportScreen> {
     final hasAnyData = summaries.any((s) => s.hasData);
 
     if (!hasAnyData) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.table_rows_outlined, size: 64, color: AppColors.textMuted),
-            SizedBox(height: 16),
+            const Icon(Icons.table_rows_outlined, size: 64, color: AppColors.textMuted),
+            const SizedBox(height: 16),
             Text(
-              'No income or spending data for this year.',
-              style: TextStyle(color: AppColors.textMuted, fontSize: 16),
+              context.l10n.noIncomeOrSpendingDataForYear,
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
             ),
           ],
         ),
@@ -467,15 +469,15 @@ class _ReportScreenState extends State<ReportScreen> {
         children: [
           const Icon(Icons.pie_chart_outline, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
-          const Text(
-            'No expenses for this period.',
-            style: TextStyle(color: AppColors.textMuted, fontSize: 16),
+          Text(
+            context.l10n.noExpensesForPeriod,
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
           const SizedBox(height: 16),
           TextButton.icon(
             onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexReports),
             icon: const Icon(Icons.help_outline, size: 16),
-            label: const Text('How it works?'),
+            label: Text(context.l10n.howItWorksQuestion),
             style: TextButton.styleFrom(foregroundColor: AppColors.gold),
           ),
         ],
@@ -622,7 +624,7 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
           ),
           Text(
-            '${total.toStringAsFixed(2)} €',
+            CurrencyFormatter.format(total),
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
           ),
         ],

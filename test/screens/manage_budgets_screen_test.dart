@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/category_budget.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/year_month.dart';
@@ -12,6 +13,8 @@ import 'package:finance_tracker/widgets/period_navigator.dart';
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 Widget _wrap(CategoryBudgetRepository repo) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: ManageBudgetsScreen(budgetRepository: repo),
     );
 

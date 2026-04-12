@@ -1,0 +1,606 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Finance Tracker",
+  "@appTitle": {"description": "The application title"},
+
+  "welcomeTagline": "Take control of your money",
+  "@welcomeTagline": {"description": "Welcome screen subtitle below the app name"},
+
+  "getStarted": "Get Started",
+  "@getStarted": {"description": "Welcome screen primary action button"},
+
+  "tabExpenses": "Expenses",
+  "@tabExpenses": {"description": "Bottom navigation tab label"},
+
+  "tabPlan": "Plan",
+  "@tabPlan": {"description": "Bottom navigation tab label"},
+
+  "tabReports": "Reports",
+  "@tabReports": {"description": "Bottom navigation tab label"},
+
+  "actionEdit": "Edit",
+  "@actionEdit": {"description": "Generic edit action label"},
+
+  "actionDelete": "Delete",
+  "@actionDelete": {"description": "Generic delete action label"},
+
+  "actionSave": "Save",
+  "@actionSave": {"description": "Generic save / submit button label"},
+
+  "actionCancel": "Cancel",
+  "@actionCancel": {"description": "Generic cancel button label"},
+
+  "actionLoad": "Load",
+  "@actionLoad": {"description": "Load a saved snapshot"},
+
+  "actionImport": "Import",
+  "@actionImport": {"description": "Generic import button label"},
+
+  "actionOverwrite": "Overwrite",
+  "@actionOverwrite": {"description": "Overwrite a save slot"},
+
+  "labelAmount": "Amount",
+  "@labelAmount": {"description": "Form field label for monetary amount"},
+
+  "labelCategory": "Category",
+  "@labelCategory": {"description": "Form field / detail row label for expense category"},
+
+  "labelFinancialType": "Financial type",
+  "@labelFinancialType": {"description": "Form section / detail row label for financial type"},
+
+  "labelDate": "Date",
+  "@labelDate": {"description": "Form field / detail row label for date"},
+
+  "labelNote": "Note",
+  "@labelNote": {"description": "Detail row label for note"},
+
+  "labelNoteOptional": "Note (optional)",
+  "@labelNoteOptional": {"description": "Form field label for optional note"},
+
+  "labelGroup": "Group",
+  "@labelGroup": {"description": "Detail row label for group"},
+
+  "labelGroupOptional": "Group (optional)",
+  "@labelGroupOptional": {"description": "Form field label for optional group"},
+
+  "groupHintText": "e.g. Vacation, Birthday",
+  "@groupHintText": {"description": "Hint text inside the group text field"},
+
+  "labelName": "Name",
+  "@labelName": {"description": "Form field label for item name"},
+
+  "labelFrequency": "Frequency",
+  "@labelFrequency": {"description": "Form field label for payment frequency"},
+
+  "labelValidFrom": "Valid from",
+  "@labelValidFrom": {"description": "Form field label for start period"},
+
+  "labelValidTo": "Valid to (optional)",
+  "@labelValidTo": {"description": "Form field label for optional end period"},
+
+  "menuImportExpenses": "Import Expenses",
+  "@menuImportExpenses": {"description": "Overflow menu item on the Expenses screen"},
+
+  "menuExportExpenses": "Export Expenses",
+  "@menuExportExpenses": {"description": "Overflow menu item on the Expenses screen"},
+
+  "menuImport": "Import",
+  "@menuImport": {"description": "Overflow menu item for generic import"},
+
+  "menuSaves": "Saves",
+  "@menuSaves": {"description": "Overflow menu item to open the saves screen"},
+
+  "menuDeleteAll": "Delete all data",
+  "@menuDeleteAll": {"description": "Overflow menu item to delete all data"},
+
+  "menuHowItWorks": "How it works",
+  "@menuHowItWorks": {"description": "Overflow menu item to open the how-it-works explainer"},
+
+  "menuResetWithDummyData": "Reset with dummy data",
+  "@menuResetWithDummyData": {"description": "Debug-only overflow menu item"},
+
+  "menuManageBudgets": "Manage Budgets",
+  "@menuManageBudgets": {"description": "Overflow menu item on Plan tab"},
+
+  "menuGuard": "GUARD",
+  "@menuGuard": {"description": "Overflow menu item to open the GUARD screen"},
+
+  "expenseListTitle": "Expenses",
+  "@expenseListTitle": {"description": "AppBar title for the expense list screen"},
+
+  "savesTooltip": "Saves",
+  "@savesTooltip": {"description": "Tooltip for the saves icon button in the AppBar"},
+
+  "howItWorksTooltip": "How it works",
+  "@howItWorksTooltip": {"description": "Tooltip for the help icon button"},
+
+  "howItWorksQuestion": "How it works?",
+  "@howItWorksQuestion": {"description": "Link text to open the how-it-works sheet"},
+
+  "viewModeItems": "Items",
+  "@viewModeItems": {"description": "Segmented toggle label for item-list view"},
+
+  "viewModeByCategory": "Category",
+  "@viewModeByCategory": {"description": "Segmented toggle label for category-group view"},
+
+  "viewModeByGroup": "Groups",
+  "@viewModeByGroup": {"description": "Segmented toggle label for group view"},
+
+  "thisMonthsBudget": "This month's budget",
+  "@thisMonthsBudget": {"description": "Label on the budget card / progress bar"},
+
+  "budgetNotSet": "Budget not set",
+  "@budgetNotSet": {"description": "Shown on the no-budget card when no income is planned"},
+
+  "setIncomeInPlan": "Set income in Plan",
+  "@setIncomeInPlan": {"description": "Call-to-action on the no-budget card"},
+
+  "noExpensesInMonth": "No expenses in {monthName} {year}.",
+  "@noExpensesInMonth": {
+    "description": "Empty state message on the expense list screen for the selected month",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "tapPlusToAddOne": "Tap + to add one.",
+  "@tapPlusToAddOne": {"description": "Empty state hint on the expense list screen"},
+
+  "fixedBillsHint": "Fixed bills like rent belong in Plan.",
+  "@fixedBillsHint": {"description": "Empty state secondary hint on the expense list screen"},
+
+  "noGroupsThisMonth": "No groups this month.",
+  "@noGroupsThisMonth": {"description": "Empty state when no expenses have a group in this month"},
+
+  "addGroupHint": "Add a group when creating\nor editing an expense.",
+  "@addGroupHint": {"description": "Secondary hint below the no-groups empty state"},
+
+  "howGroupsWorkQuestion": "How groups work?",
+  "@howGroupsWorkQuestion": {"description": "Link text to open the how-groups-work sheet"},
+
+  "itemCount": "{count, plural, =1{1 item} other{{count} items}}",
+  "@itemCount": {
+    "description": "Number of items in a category or group header",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "addExpenseTitle": "Add Expense",
+  "@addExpenseTitle": {"description": "AppBar title when adding a new expense"},
+
+  "editExpenseTitle": "Edit Expense",
+  "@editExpenseTitle": {"description": "AppBar title when editing an existing expense"},
+
+  "validationAmountEmpty": "Enter an amount",
+  "@validationAmountEmpty": {"description": "Validation error when amount field is empty"},
+
+  "validationAmountInvalid": "Enter a valid positive number",
+  "@validationAmountInvalid": {"description": "Validation error when amount is zero or non-numeric"},
+
+  "expenseDetailTitle": "Expense",
+  "@expenseDetailTitle": {"description": "AppBar title for the expense detail screen"},
+
+  "noExpensesInNamedGroup": "No expenses in \"{name}\".",
+  "@noExpensesInNamedGroup": {
+    "description": "Empty state in the group expense list screen",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "planTitle": "Plan",
+  "@planTitle": {"description": "AppBar title for the Plan tab"},
+
+  "toggleMonthly": "Monthly",
+  "@toggleMonthly": {"description": "Toggle label for monthly view mode"},
+
+  "toggleYearly": "Yearly",
+  "@toggleYearly": {"description": "Toggle label for yearly view mode"},
+
+  "sectionIncome": "INCOME",
+  "@sectionIncome": {"description": "Section header in the Plan screen"},
+
+  "sectionFixedCosts": "FIXED COSTS",
+  "@sectionFixedCosts": {"description": "Section header in the Plan screen"},
+
+  "noIncomeItems": "No income items.",
+  "@noIncomeItems": {"description": "Empty state inside the income accordion"},
+
+  "noFixedCostItems": "No fixed cost items.",
+  "@noFixedCostItems": {"description": "Empty state inside the fixed costs accordion"},
+
+  "spendableBudget": "Spendable budget",
+  "@spendableBudget": {"description": "Label for the spendable budget amount in the Plan screen header"},
+
+  "deleteItemDialogTitle": "Delete plan item",
+  "@deleteItemDialogTitle": {"description": "Title of the dialog when deleting a plan item"},
+
+  "deleteItemFromPeriod": "From this period",
+  "@deleteItemFromPeriod": {"description": "Option to remove item from the current period only"},
+
+  "deleteItemWholeSeries": "Entire series",
+  "@deleteItemWholeSeries": {"description": "Option to delete all versions of the plan item"},
+
+  "planItemDeleted": "Plan item deleted.",
+  "@planItemDeleted": {"description": "Snackbar confirmation after deleting a plan item"},
+
+  "addIncomeTitle": "Add Income",
+  "@addIncomeTitle": {"description": "AppBar title when adding a new income item"},
+
+  "addFixedCostTitle": "Add Fixed Cost",
+  "@addFixedCostTitle": {"description": "AppBar title when adding a new fixed cost item"},
+
+  "editIncomeTitle": "Edit Income",
+  "@editIncomeTitle": {"description": "AppBar title when editing an existing income item"},
+
+  "editFixedCostTitle": "Edit Fixed Cost",
+  "@editFixedCostTitle": {"description": "AppBar title when editing an existing fixed cost item"},
+
+  "frequencyOneTime": "One-time",
+  "@frequencyOneTime": {"description": "Frequency option label"},
+
+  "frequencyMonthly": "Monthly",
+  "@frequencyMonthly": {"description": "Frequency option label"},
+
+  "frequencyYearly": "Yearly",
+  "@frequencyYearly": {"description": "Frequency option label"},
+
+  "guardSectionLabel": "GUARD",
+  "@guardSectionLabel": {"description": "Section label for GUARD fields in add plan item screen"},
+
+  "guardTrackPayment": "Track payment",
+  "@guardTrackPayment": {"description": "GUARD toggle label in add plan item screen"},
+
+  "guardDueDayLabel": "Due day",
+  "@guardDueDayLabel": {"description": "GUARD due day picker label"},
+
+  "guardOneTimeLabel": "One-time payment",
+  "@guardOneTimeLabel": {"description": "GUARD one-time toggle label"},
+
+  "planItemSaved": "Plan item saved.",
+  "@planItemSaved": {"description": "Snackbar confirmation after saving a plan item"},
+
+  "addNewItemSheetTitle": "Add New",
+  "@addNewItemSheetTitle": {"description": "Title of the type-selector bottom sheet before adding a plan item"},
+
+  "typeIncome": "Income",
+  "@typeIncome": {"description": "Plan item type label"},
+
+  "typeFixedCost": "Fixed Cost",
+  "@typeFixedCost": {"description": "Plan item type label"},
+
+  "ongoing": "Ongoing",
+  "@ongoing": {"description": "Shown when a plan item has no end date"},
+
+  "manageBudgetsTitle": "Manage Budgets",
+  "@manageBudgetsTitle": {"description": "AppBar title for the manage budgets screen"},
+
+  "noBudgetsSet": "No budgets set for this period.",
+  "@noBudgetsSet": {"description": "Empty state message on the manage budgets screen"},
+
+  "addFirstBudget": "Add your first budget.",
+  "@addFirstBudget": {"description": "Empty state call-to-action on the manage budgets screen"},
+
+  "addBudgetTitle": "Add Budget",
+  "@addBudgetTitle": {"description": "AppBar title when adding a new category budget"},
+
+  "editBudgetTitle": "Edit Budget",
+  "@editBudgetTitle": {"description": "AppBar title when editing an existing category budget"},
+
+  "budgetAmount": "Budget amount",
+  "@budgetAmount": {"description": "Form field label for the budget amount"},
+
+  "effectiveFrom": "Effective from",
+  "@effectiveFrom": {"description": "Form field label for the budget start month"},
+
+  "pastMonthBudgetWarning": "Setting a budget in the past will not affect past spending.",
+  "@pastMonthBudgetWarning": {"description": "Inline warning when user picks a past month for a budget"},
+
+  "budgetSaved": "Budget saved.",
+  "@budgetSaved": {"description": "Snackbar confirmation after saving a category budget"},
+
+  "budgetDeleted": "Budget deleted.",
+  "@budgetDeleted": {"description": "Snackbar confirmation after deleting a category budget"},
+
+  "guardScreenTitle": "GUARD",
+  "@guardScreenTitle": {"description": "AppBar title for the GUARD screen"},
+
+  "guardDailyReminderTime": "Daily reminder time",
+  "@guardDailyReminderTime": {"description": "Label for the daily GUARD reminder time setting"},
+
+  "guardTimePicker": "Daily GUARD reminder time",
+  "@guardTimePicker": {"description": "Help text in the time picker dialog for GUARD reminders"},
+
+  "guardMarkPaid": "Mark paid",
+  "@guardMarkPaid": {"description": "Action to mark a GUARD item as paid"},
+
+  "guardSilence": "Silence",
+  "@guardSilence": {"description": "Action to silence a GUARD reminder"},
+
+  "guardStatusPaid": "Paid",
+  "@guardStatusPaid": {"description": "GUARD payment status label"},
+
+  "guardStatusScheduled": "Scheduled",
+  "@guardStatusScheduled": {"description": "GUARD payment status label"},
+
+  "guardStatusUnpaid": "Unpaid",
+  "@guardStatusUnpaid": {"description": "GUARD payment status label"},
+
+  "guardStatusSilenced": "Silenced",
+  "@guardStatusSilenced": {"description": "GUARD payment status label"},
+
+  "noGuardedItems": "No guarded items.",
+  "@noGuardedItems": {"description": "Empty state message on the GUARD screen"},
+
+  "reportsTitle": "Reports",
+  "@reportsTitle": {"description": "AppBar title for the reports screen"},
+
+  "reportModeMonthly": "Monthly",
+  "@reportModeMonthly": {"description": "Report mode tab label"},
+
+  "reportModeYearly": "Yearly",
+  "@reportModeYearly": {"description": "Report mode tab label"},
+
+  "reportModeOverview": "Overview",
+  "@reportModeOverview": {"description": "Report mode tab label"},
+
+  "exportPdf": "Export PDF",
+  "@exportPdf": {"description": "Button to export the current report as a PDF"},
+
+  "noExpensesForPeriod": "No expenses recorded for this period.",
+  "@noExpensesForPeriod": {"description": "Empty state on the report screen (monthly/yearly modes)"},
+
+  "noIncomeOrSpendingDataForYear": "No income or spending data for this year.",
+  "@noIncomeOrSpendingDataForYear": {"description": "Overview mode empty state on the report screen"},
+
+  "pieChartOther": "Other",
+  "@pieChartOther": {"description": "Label for the collapsed small-category slice in pie charts"},
+
+  "reportSectionFixedCosts": "FIXED COSTS",
+  "@reportSectionFixedCosts": {"description": "Section header in the category report detail screen"},
+
+  "reportSectionExpenses": "EXPENSES",
+  "@reportSectionExpenses": {"description": "Section header in the category report detail screen"},
+
+  "noneInPeriod": "None in this period.",
+  "@noneInPeriod": {"description": "Empty state within a section of the category report detail screen"},
+
+  "fixedCostCount": "{count, plural, =1{1 fixed cost} other{{count} fixed costs}}",
+  "@fixedCostCount": {
+    "description": "Count of fixed costs in category report header",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "expenseCount": "{count, plural, =1{1 expense} other{{count} expenses}}",
+  "@expenseCount": {
+    "description": "Count of expenses in category report header",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "noItemsInPeriod": "No items in this period",
+  "@noItemsInPeriod": {"description": "Subtitle in category report header when there are no items"},
+
+  "importTitle": "Import Expenses",
+  "@importTitle": {"description": "AppBar title for the import screen"},
+
+  "importStep1Title": "Download Template",
+  "@importStep1Title": {"description": "Step card title on the import idle screen"},
+
+  "importStep1Description": "Get the official Excel template with all required columns and a guide to valid values.",
+  "@importStep1Description": {"description": "Step card description on the import idle screen"},
+
+  "importStep1Button": "Download Template",
+  "@importStep1Button": {"description": "Step card button label on the import idle screen"},
+
+  "importStep2Title": "Fill & Import",
+  "@importStep2Title": {"description": "Step card title on the import idle screen"},
+
+  "importStep2Description": "Fill the template in Excel or Google Sheets, then select the file here to import your expenses.",
+  "@importStep2Description": {"description": "Step card description on the import idle screen"},
+
+  "importStep2Button": "Select File (.xlsx or .csv)",
+  "@importStep2Button": {"description": "Step card button label on the import idle screen"},
+
+  "importInfoText": "Only expenses can be imported. Income and plan items are not supported.\n\nAccepted formats: .xlsx (Excel) and .csv.\nCSV files must have the same column order as the template: Date, Amount, Category, Financial Type, Note, Group.\n\nFiles exported from this app can also be imported directly.",
+  "@importInfoText": {"description": "Informational text on the import idle screen"},
+
+  "importReadyCount": "{count, plural, =1{1 expense ready to import} other{{count} expenses ready to import}}",
+  "@importReadyCount": {
+    "description": "Summary line showing how many valid rows were parsed",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorCount": "{count, plural, =1{1 row could not be read} other{{count} rows could not be read}}",
+  "@importErrorCount": {
+    "description": "Error count line when no valid rows are present",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorCountSkipped": "{count, plural, =1{1 row could not be read — will be skipped} other{{count} rows could not be read — will be skipped}}",
+  "@importErrorCountSkipped": {
+    "description": "Error count line when valid rows are also present",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importNoDataFound": "No data found in the file.",
+  "@importNoDataFound": {"description": "Shown when file parses successfully but contains no rows"},
+
+  "importTapToEdit": "Tap any row to edit or remove it before importing.",
+  "@importTapToEdit": {"description": "Hint text on the import preview screen"},
+
+  "importRowsWithErrors": "Rows with errors",
+  "@importRowsWithErrors": {"description": "Section header above error rows in the import preview"},
+
+  "importNoDataRows": "No data rows found.",
+  "@importNoDataRows": {"description": "Empty state when both valid and invalid row lists are empty"},
+
+  "importConfirmButton": "{count, plural, =1{Import 1 expense} other{Import {count} expenses}}",
+  "@importConfirmButton": {
+    "description": "Confirm button label on the import preview screen",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importSuccessMessage": "{count, plural, =1{1 expense imported · {range}} other{{count} expenses imported · {range}}}",
+  "@importSuccessMessage": {
+    "description": "Snackbar shown after a successful import",
+    "placeholders": {
+      "count": {"type": "int"},
+      "range": {"type": "String"}
+    }
+  },
+
+  "importUnsupportedFile": "Unsupported file type. Please select an .xlsx or .csv file.",
+  "@importUnsupportedFile": {"description": "Snackbar when the selected file has an unsupported extension"},
+
+  "importCouldNotReadFile": "Could not read the file. Please try again.",
+  "@importCouldNotReadFile": {"description": "Snackbar when file bytes could not be loaded"},
+
+  "importPickerError": "Could not open file picker: {error}",
+  "@importPickerError": {
+    "description": "Snackbar when the file picker throws an exception",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importTemplateError": "Could not generate template: {error}",
+  "@importTemplateError": {
+    "description": "Snackbar when the template download fails",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "tryAnotherFile": "Try Another File",
+  "@tryAnotherFile": {"description": "Button to reset to the idle phase after a hard parse error"},
+
+  "savesTitle": "Saves",
+  "@savesTitle": {"description": "AppBar title for the saves screen"},
+
+  "sectionAutoBackup": "AUTO BACKUP",
+  "@sectionAutoBackup": {"description": "Section header on the saves screen"},
+
+  "sectionSaves": "SAVES",
+  "@sectionSaves": {"description": "Section header on the saves screen"},
+
+  "sectionDataTransfer": "DATA TRANSFER",
+  "@sectionDataTransfer": {"description": "Section header on the saves screen"},
+
+  "sectionDataDeletion": "DATA DELETION",
+  "@sectionDataDeletion": {"description": "Section header on the saves screen"},
+
+  "exportAllData": "Export all data",
+  "@exportAllData": {"description": "Action button to export all data as JSON"},
+
+  "importAllData": "Import all data",
+  "@importAllData": {"description": "Action button to import all data from JSON"},
+
+  "deleteAllData": "Delete all data",
+  "@deleteAllData": {"description": "Destructive action button to wipe all data"},
+
+  "emptySlot": "Empty slot",
+  "@emptySlot": {"description": "Placeholder for an unused save slot"},
+
+  "savedConfirmation": "'{name}' saved.",
+  "@savedConfirmation": {
+    "description": "Snackbar after creating or overwriting a save slot",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "loadedConfirmation": "'{name}' loaded.",
+  "@loadedConfirmation": {
+    "description": "Snackbar after loading a save slot",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "exportFailed": "Export failed: {error}",
+  "@exportFailed": {
+    "description": "Snackbar when any export fails",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importFailedInvalid": "Invalid file: {error}",
+  "@importFailedInvalid": {
+    "description": "Snackbar when JSON import fails due to invalid content",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importDataSuccess": "Data imported successfully.",
+  "@importDataSuccess": {"description": "Snackbar after a successful full-data JSON import"},
+
+  "couldNotReadSelectedFile": "Could not read the selected file.",
+  "@couldNotReadSelectedFile": {"description": "Snackbar when the selected file bytes are unavailable"},
+
+  "importDataDialogTitle": "Import data?",
+  "@importDataDialogTitle": {"description": "Title of the confirmation dialog before importing full data"},
+
+  "importDataDialogContent": "This will replace ALL current expenses and plan items with the contents of the file. This cannot be undone.",
+  "@importDataDialogContent": {"description": "Body text of the confirmation dialog before importing full data"},
+
+  "saveName": "Save name",
+  "@saveName": {"description": "Text field label in the save name dialog"},
+
+  "saveNameCannotBeEmpty": "Name cannot be empty",
+  "@saveNameCannotBeEmpty": {"description": "Validation error in the save name dialog"},
+
+  "replacingLabel": "Replacing: {name}",
+  "@replacingLabel": {
+    "description": "Subtitle in the overwrite save dialog showing which slot will be replaced",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "loadDialogDescription": "All current data will be replaced with this saved snapshot.",
+  "@loadDialogDescription": {"description": "Description text in the load confirmation dialog"},
+
+  "deleteDialogDescription": "This saved snapshot will be permanently deleted.",
+  "@deleteDialogDescription": {"description": "Description text in the delete confirmation dialog"},
+
+  "damagedSaveFile": "Damaged save file",
+  "@damagedSaveFile": {"description": "Label shown when a save file is corrupted"},
+
+  "overBudgetAmount": "{amount} over",
+  "@overBudgetAmount": {
+    "description": "Budget progress bar label when spending exceeds budget",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "underBudgetAmount": "{amount} left",
+  "@underBudgetAmount": {
+    "description": "Budget progress bar label when spending is under budget",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "spentLabel": "Spent: {amount}",
+  "@spentLabel": {
+    "description": "Budget progress bar detail line",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "budgetLabel": "Budget: {amount}",
+  "@budgetLabel": {
+    "description": "Budget progress bar detail line",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "progressBarLabel": "{spent} spent  /  {budget} budget",
+  "@progressBarLabel": {
+    "description": "Single-line label on the category budget progress bar",
+    "placeholders": {
+      "spent": {"type": "String"},
+      "budget": {"type": "String"}
+    }
+  },
+
+  "categoryBudgetOverBy": "{category} budget: over by {amount}",
+  "@categoryBudgetOverBy": {
+    "description": "Warning card entry showing how much a category is over budget",
+    "placeholders": {
+      "category": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+
+  "deleteAllDataDialogTitle": "Delete all data?",
+  "@deleteAllDataDialogTitle": {"description": "Title of the confirmation dialog before wiping all data"},
+
+  "deleteAllDataDialogContent": "This will permanently delete all expenses, income, and plan items. This cannot be undone.",
+  "@deleteAllDataDialogContent": {"description": "Body text of the confirmation dialog before wiping all data"},
+
+  "deleteAllDataConfirm": "Delete all",
+  "@deleteAllDataConfirm": {"description": "Confirm button label in the delete-all dialog"}
+}

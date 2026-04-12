@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/period_bounds.dart';
@@ -17,6 +18,8 @@ import 'package:finance_tracker/widgets/plan_financial_type_tile.dart';
 
 Widget _wrapScreen(PlanRepository repo, {YearMonth? period}) {
   return MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     home: PlanScreen(
       repositories: AppRepositories(
         finance: FinanceRepository(persist: false),
@@ -298,6 +301,8 @@ void main() {
       ]);
 
       await tester.pumpWidget(MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: PlanScreen(
           repositories: AppRepositories(
             finance: FinanceRepository(persist: false),

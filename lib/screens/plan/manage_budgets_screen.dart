@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/expense_category.dart';
 import '../../models/year_month.dart';
 import '../../services/category_budget_repository.dart';
@@ -241,17 +242,17 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.tune_outlined, size: 64, color: AppColors.textMuted),
-          SizedBox(height: 16),
-          Text(
+        children: [
+          const Icon(Icons.tune_outlined, size: 64, color: AppColors.textMuted),
+          const SizedBox(height: 16),
+          const Text(
             'No category budgets set.',
             style: TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
-            'Tap + to add one.',
-            style: TextStyle(color: AppColors.textMuted),
+            context.l10n.tapPlusToAddOne,
+            style: const TextStyle(color: AppColors.textMuted),
           ),
         ],
       ),

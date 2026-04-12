@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/widgets/category_budget_warning_card.dart';
 
 Widget _wrap(Map<ExpenseCategory, double> overages) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: CategoryBudgetWarningCard(overages: overages),
       ),

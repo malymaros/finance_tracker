@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/theme/app_theme.dart';
 import 'package:finance_tracker/widgets/category_budget_progress_bar.dart';
 
 Widget _wrap(double spent, double budget) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: CategoryBudgetProgressBar(spent: spent, budget: budget),
       ),

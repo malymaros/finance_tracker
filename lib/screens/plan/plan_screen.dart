@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/period_bounds.dart';
@@ -8,6 +9,7 @@ import '../../models/plan_snapshot.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/app_repositories.dart';
+import '../../services/currency_formatter.dart';
 import '../../services/plan_snapshot_builder.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/financial_type_distribution_card.dart';
@@ -298,7 +300,7 @@ class _PlanScreenState extends State<PlanScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.actionCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
@@ -318,12 +320,12 @@ class _PlanScreenState extends State<PlanScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Plan'),
+        title: Text(context.l10n.planTitle),
         automaticallyImplyLeading: false,
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.save_outlined),
-          tooltip: 'Saves',
+          tooltip: context.l10n.savesTooltip,
           onPressed: () => widget.onOpenSaves(),
         ),
         actions: [
@@ -345,17 +347,13 @@ class _PlanScreenState extends State<PlanScreen> {
               }
             },
             itemBuilder: (_) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'manage_budgets',
-                child: Text('Manage Budgets'),
+                child: Text(context.l10n.menuManageBudgets),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'guard',
-                child: Row(
-                  children: [
-                    Text('GUARD settings'),
-                  ],
-                ),
+                child: Text(context.l10n.menuGuard),
               ),
             ],
           ),
@@ -452,16 +450,16 @@ class _PlanScreenState extends State<PlanScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: SegmentedButton<bool>(
-        segments: const [
+        segments: [
           ButtonSegment(
             value: true,
-            label: Text('Monthly'),
-            icon: Icon(Icons.calendar_view_month),
+            label: Text(context.l10n.toggleMonthly),
+            icon: const Icon(Icons.calendar_view_month),
           ),
           ButtonSegment(
             value: false,
-            label: Text('Yearly'),
-            icon: Icon(Icons.calendar_today),
+            label: Text(context.l10n.toggleYearly),
+            icon: const Icon(Icons.calendar_today),
           ),
         ],
         selected: {_isMonthly},
@@ -494,7 +492,7 @@ class _PlanScreenState extends State<PlanScreen> {
             padding: const EdgeInsets.only(right: 4),
             child: IconButton(
               icon: const Icon(Icons.help_outline),
-              tooltip: 'How it works',
+              tooltip: context.l10n.howItWorksTooltip,
               onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexPlan),
               style: IconButton.styleFrom(foregroundColor: AppColors.gold),
             ),
@@ -524,7 +522,7 @@ class _PlanScreenState extends State<PlanScreen> {
               ),
             ),
             Text(
-              '${isPositive ? '+' : ''}${spendable.toStringAsFixed(2)} €',
+              '${isPositive ? '+' : ''}${CurrencyFormatter.format(spendable)}',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -554,7 +552,7 @@ class _PlanScreenState extends State<PlanScreen> {
           TextButton.icon(
             onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexPlan),
             icon: const Icon(Icons.help_outline, size: 16),
-            label: const Text('How it works?'),
+            label: Text(context.l10n.howItWorksQuestion),
             style: TextButton.styleFrom(foregroundColor: AppColors.gold),
           ),
         ],
@@ -777,7 +775,7 @@ class _FixedCostDeleteDialog extends StatelessWidget {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () => Navigator.of(context).pop(null),
-                child: const Text('Cancel'),
+                child: Text(context.l10n.actionCancel),
               ),
             ),
           ],

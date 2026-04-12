@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/expense_category.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 /// Displays over-budget warnings for expense categories.
@@ -46,7 +48,10 @@ class CategoryBudgetWarningCard extends StatelessWidget {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
-                    '${entry.key.displayName} budget: over by ${entry.value.toStringAsFixed(2)} €',
+                    context.l10n.categoryBudgetOverBy(
+                      entry.key.displayName,
+                      CurrencyFormatter.format(entry.value),
+                    ),
                     style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.warning,

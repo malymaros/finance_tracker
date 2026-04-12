@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../l10n/l10n.dart';
 import '../models/expense.dart';
 import '../models/import_result.dart';
 import '../models/imported_expense.dart';
@@ -56,7 +57,7 @@ class _ImportScreenState extends State<ImportScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not generate template: $e')),
+          SnackBar(content: Text(context.l10n.importTemplateError(e))),
         );
       }
     }
@@ -78,7 +79,7 @@ class _ImportScreenState extends State<ImportScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not open file picker: $e')),
+          SnackBar(content: Text(context.l10n.importPickerError(e))),
         );
       }
       return;
@@ -91,8 +92,7 @@ class _ImportScreenState extends State<ImportScreen> {
     if (bytes == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Could not read the file. Please try again.')),
+          SnackBar(content: Text(context.l10n.importCouldNotReadFile)),
         );
       }
       return;
@@ -126,9 +126,8 @@ class _ImportScreenState extends State<ImportScreen> {
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(
-                    'Unsupported file type. Please select an .xlsx or .csv file.')),
+            SnackBar(
+                content: Text(context.l10n.importUnsupportedFile)),
           );
         }
         return;
@@ -212,8 +211,7 @@ class _ImportScreenState extends State<ImportScreen> {
               '${monthNames[last.month]} ${last.year}';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-              '$count ${count == 1 ? 'expense' : 'expenses'} imported · $rangeLabel'),
+          content: Text(context.l10n.importSuccessMessage(count, rangeLabel)),
         ),
       );
       Navigator.of(context).pop();
@@ -226,7 +224,7 @@ class _ImportScreenState extends State<ImportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Import Expenses'),
+        title: Text(context.l10n.importTitle),
         scrolledUnderElevation: 0,
       ),
       body: _buildBody(),
@@ -253,36 +251,27 @@ class _ImportScreenState extends State<ImportScreen> {
       children: [
         _StepCard(
           step: '1',
-          title: 'Download Template',
-          description:
-              'Get the official Excel template with all required columns '
-              'and a guide to valid values.',
+          title: context.l10n.importStep1Title,
+          description: context.l10n.importStep1Description,
           icon: Icons.download_outlined,
-          buttonLabel: 'Download Template',
+          buttonLabel: context.l10n.importStep1Button,
           onTap: _downloadTemplate,
         ),
         const SizedBox(height: 12),
         _StepCard(
           step: '2',
-          title: 'Fill & Import',
-          description:
-              'Fill the template in Excel or Google Sheets, then select '
-              'the file here to import your expenses.',
+          title: context.l10n.importStep2Title,
+          description: context.l10n.importStep2Description,
           icon: Icons.upload_file_outlined,
-          buttonLabel: 'Select File (.xlsx or .csv)',
+          buttonLabel: context.l10n.importStep2Button,
           onTap: _pickFile,
         ),
         const SizedBox(height: 20),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(
-            'Only expenses can be imported. Income and plan items '
-            'are not supported.\n\n'
-            'Accepted formats: .xlsx (Excel) and .csv.\n'
-            'CSV files must have the same column order as the template: '
-            'Date, Amount, Category, Financial Type, Note, Group.\n\n'
-            'Files exported from this app can also be imported directly.',
-            style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+            context.l10n.importInfoText,
+            style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
           ),
         ),
       ],
@@ -338,7 +327,7 @@ class _ImportScreenState extends State<ImportScreen> {
           const SizedBox(height: 16),
           OutlinedButton.icon(
             icon: const Icon(Icons.upload_file_outlined),
-            label: const Text('Try Another File'),
+            label: Text(context.l10n.tryAnotherFile),
             onPressed: () => setState(() {
               _phase = _ImportPhase.idle;
               _result = null;
@@ -358,26 +347,27 @@ class _ImportScreenState extends State<ImportScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '$validCount ${validCount == 1 ? 'expense' : 'expenses'} ready to import',
+            context.l10n.importReadyCount(validCount),
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           if (errorCount > 0) ...[
             const SizedBox(height: 4),
             Text(
-              '$errorCount ${errorCount == 1 ? 'row' : 'rows'} could not be read'
-              '${validCount > 0 ? ' — will be skipped' : ''}',
+              validCount > 0
+                  ? context.l10n.importErrorCountSkipped(errorCount)
+                  : context.l10n.importErrorCount(errorCount),
               style: const TextStyle(color: AppColors.warning, fontSize: 13),
             ),
           ],
           if (validCount == 0 && errorCount == 0)
-            const Text(
-              'No data found in the file.',
-              style: TextStyle(color: AppColors.textMuted, fontSize: 13),
+            Text(
+              context.l10n.importNoDataFound,
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 13),
             ),
           const SizedBox(height: 4),
-          const Text(
-            'Tap any row to edit or remove it before importing.',
-            style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+          Text(
+            context.l10n.importTapToEdit,
+            style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
           ),
         ],
       ),
@@ -386,14 +376,14 @@ class _ImportScreenState extends State<ImportScreen> {
 
   Widget _buildPreviewList(ImportResult result) {
     if (_editableRows.isEmpty && result.invalidRows.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.inbox_outlined, size: 48, color: AppColors.textMuted),
-            SizedBox(height: 12),
-            Text('No data rows found.',
-                style: TextStyle(color: AppColors.textMuted)),
+            const Icon(Icons.inbox_outlined, size: 48, color: AppColors.textMuted),
+            const SizedBox(height: 12),
+            Text(context.l10n.importNoDataRows,
+                style: const TextStyle(color: AppColors.textMuted)),
           ],
         ),
       );
@@ -407,11 +397,11 @@ class _ImportScreenState extends State<ImportScreen> {
             onTap: () => _openEditSheet(i),
           ),
         if (result.invalidRows.isNotEmpty) ...[
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
             child: Text(
-              'Rows with errors',
-              style: TextStyle(
+              context.l10n.importRowsWithErrors,
+              style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: AppColors.warning,
@@ -439,14 +429,12 @@ class _ImportScreenState extends State<ImportScreen> {
               _result = null;
               _editableRows.clear();
             }),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.actionCancel),
           ),
           const Spacer(),
           FilledButton(
             onPressed: validCount > 0 ? _confirmImport : null,
-            child: Text(
-              'Import $validCount ${validCount == 1 ? 'expense' : 'expenses'}',
-            ),
+            child: Text(context.l10n.importConfirmButton(validCount)),
           ),
         ],
       ),

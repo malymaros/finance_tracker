@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
@@ -47,6 +48,8 @@ Widget _wrap({
   VoidCallback? onNavigateToPlan,
 }) {
   return MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     home: ReportScreen(
       repository: financeRepo ?? FinanceRepository(persist: false),
       planRepository: planRepo ?? PlanRepository(persist: false),
@@ -85,7 +88,7 @@ void main() {
   group('ReportScreen — empty states', () {
     testWidgets('monthly mode shows empty state when no data', (tester) async {
       await tester.pumpWidget(_wrap());
-      expect(find.text('No expenses for this period.'), findsOneWidget);
+      expect(find.text('No expenses recorded for this period.'), findsOneWidget);
       expect(find.byIcon(Icons.pie_chart_outline), findsOneWidget);
     });
 
@@ -93,7 +96,7 @@ void main() {
       await tester.pumpWidget(_wrap());
       await tester.tap(find.text('Yearly'));
       await tester.pumpAndSettle();
-      expect(find.text('No expenses for this period.'), findsOneWidget);
+      expect(find.text('No expenses recorded for this period.'), findsOneWidget);
     });
 
     testWidgets('overview mode shows empty state when no data', (tester) async {
@@ -118,7 +121,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Empty state must not appear.
-      expect(find.text('No expenses for this period.'), findsNothing);
+      expect(find.text('No expenses recorded for this period.'), findsNothing);
       // The category display name must be visible.
       expect(find.textContaining('Housing'), findsOneWidget);
     });
@@ -146,7 +149,7 @@ void main() {
       await tester.tap(find.text('Yearly'));
       await tester.pumpAndSettle();
 
-      expect(find.text('No expenses for this period.'), findsNothing);
+      expect(find.text('No expenses recorded for this period.'), findsNothing);
       expect(find.textContaining('Groceries'), findsOneWidget);
       expect(find.textContaining('Transport'), findsOneWidget);
     });
@@ -194,6 +197,8 @@ void main() {
       final period = ValueNotifier<YearMonth>(_period); // Jan 2024
 
       await tester.pumpWidget(MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: ReportScreen(
           repository: FinanceRepository(persist: false),
           planRepository: planRepo,
@@ -235,7 +240,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Data visible initially.
-      expect(find.text('No expenses for this period.'), findsNothing);
+      expect(find.text('No expenses recorded for this period.'), findsNothing);
       expect(find.textContaining('Groceries'), findsOneWidget);
 
       // Remove the expense — this triggers notifyListeners on the repository,
@@ -244,7 +249,7 @@ void main() {
       await tester.pump();
 
       // Cache must have been cleared: screen re-derives from empty data.
-      expect(find.text('No expenses for this period.'), findsOneWidget);
+      expect(find.text('No expenses recorded for this period.'), findsOneWidget);
       expect(find.textContaining('Groceries'), findsNothing);
     });
 
@@ -254,12 +259,12 @@ void main() {
       await tester.pumpWidget(_wrap(financeRepo: repo));
       await tester.pump();
 
-      expect(find.text('No expenses for this period.'), findsOneWidget);
+      expect(find.text('No expenses recorded for this period.'), findsOneWidget);
 
       await repo.addExpense(_expense());
       await tester.pump();
 
-      expect(find.text('No expenses for this period.'), findsNothing);
+      expect(find.text('No expenses recorded for this period.'), findsNothing);
       expect(find.textContaining('Groceries'), findsOneWidget);
     });
   });

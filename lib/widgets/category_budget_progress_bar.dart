@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 /// A progress bar showing spending against a category budget.
@@ -46,7 +48,10 @@ class CategoryBudgetProgressBar extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            '${spent.toStringAsFixed(2)} € spent  /  ${budget.toStringAsFixed(2)} € budget',
+            context.l10n.progressBarLabel(
+              CurrencyFormatter.format(spent),
+              CurrencyFormatter.format(budget),
+            ),
             style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
           ),
         ],

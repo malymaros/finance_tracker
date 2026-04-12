@@ -16,6 +16,7 @@ import '../widgets/guard_expense_strip.dart';
 import '../widgets/expense_category_group.dart';
 import '../widgets/expense_group_tile.dart';
 import '../widgets/expense_list_tile.dart';
+import '../l10n/l10n.dart';
 import '../widgets/how_groups_work_sheet.dart';
 import '../widgets/how_it_works_sheet.dart';
 import '../widgets/month_budget_summary.dart';
@@ -103,9 +104,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         if (value == 'import_expenses') _navigateToImport();
         if (value == 'export_expenses') _handleExport();
       },
-      itemBuilder: (_) => [
-        const PopupMenuItem(value: 'import_expenses', child: Text('Import Expenses')),
-        const PopupMenuItem(value: 'export_expenses', child: Text('Export Expenses')),
+      itemBuilder: (ctx) => [
+        PopupMenuItem(value: 'import_expenses', child: Text(ctx.l10n.menuImportExpenses)),
+        PopupMenuItem(value: 'export_expenses', child: Text(ctx.l10n.menuExportExpenses)),
       ],
     );
   }
@@ -169,12 +170,12 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Expenses'),
+            title: Text(context.l10n.expenseListTitle),
             automaticallyImplyLeading: false,
             scrolledUnderElevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.save_outlined),
-              tooltip: 'Saves',
+              tooltip: context.l10n.savesTooltip,
               onPressed: widget.onOpenSaves,
             ),
             actions: [
@@ -238,7 +239,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             padding: const EdgeInsets.only(right: 4),
             child: IconButton(
               icon: const Icon(Icons.help_outline),
-              tooltip: 'How it works',
+              tooltip: context.l10n.howItWorksTooltip,
               onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexExpenses),
               style: IconButton.styleFrom(
                 foregroundColor: AppColors.gold,
@@ -287,15 +288,15 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    "This month's budget",
-                    style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                    context.l10n.thisMonthsBudget,
+                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    'Budget not set',
-                    style: TextStyle(
+                    context.l10n.budgetNotSet,
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87,
@@ -304,19 +305,19 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 ],
               ),
               const Spacer(),
-              const Row(
+              Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Set income in Plan',
-                    style: TextStyle(
+                    context.l10n.setIncomeInPlan,
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: AppColors.navy,
                     ),
                   ),
-                  SizedBox(width: 4),
-                  Icon(Icons.arrow_forward, size: 16, color: AppColors.navy),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.arrow_forward, size: 16, color: AppColors.navy),
                 ],
               ),
             ],
@@ -332,21 +333,21 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
       child: SegmentedButton<_ViewMode>(
-        segments: const [
+        segments: [
           ButtonSegment(
             value: _ViewMode.items,
-            label: Text('Items'),
-            icon: Icon(Icons.list),
+            label: Text(context.l10n.viewModeItems),
+            icon: const Icon(Icons.list),
           ),
           ButtonSegment(
             value: _ViewMode.byCategory,
-            label: Text('Category'),
-            icon: Icon(Icons.category_outlined),
+            label: Text(context.l10n.viewModeByCategory),
+            icon: const Icon(Icons.category_outlined),
           ),
           ButtonSegment(
             value: _ViewMode.byGroup,
-            label: Text('Groups'),
-            icon: Icon(Icons.folder_outlined),
+            label: Text(context.l10n.viewModeByGroup),
+            icon: const Icon(Icons.folder_outlined),
           ),
         ],
         selected: {_mode},
@@ -365,25 +366,25 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           const Icon(Icons.receipt_long, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
-            'No expenses in ${YearMonth.monthNames[_month]} $_year.',
+            context.l10n.noExpensesInMonth(YearMonth.monthNames[_month], _year),
             style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Tap + to add one.',
-            style: TextStyle(color: AppColors.textMuted),
+          Text(
+            context.l10n.tapPlusToAddOne,
+            style: const TextStyle(color: AppColors.textMuted),
           ),
           const SizedBox(height: 12),
-          const Text(
-            'Fixed bills like rent belong in Plan.',
-            style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+          Text(
+            context.l10n.fixedBillsHint,
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           TextButton.icon(
             onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexExpenses),
             icon: const Icon(Icons.help_outline, size: 16),
-            label: const Text('How it works?'),
+            label: Text(context.l10n.howItWorksQuestion),
             style: TextButton.styleFrom(foregroundColor: AppColors.gold),
           ),
         ],
@@ -514,21 +515,21 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         children: [
           const Icon(Icons.folder_outlined, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
-          const Text(
-            'No groups this month.',
-            style: TextStyle(color: AppColors.textMuted, fontSize: 16),
+          Text(
+            context.l10n.noGroupsThisMonth,
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Add a group when creating\nor editing an expense.',
-            style: TextStyle(color: AppColors.textMuted),
+          Text(
+            context.l10n.addGroupHint,
+            style: const TextStyle(color: AppColors.textMuted),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
           TextButton.icon(
             onPressed: () => HowGroupsWorkSheet.show(context),
             icon: const Icon(Icons.folder_outlined, size: 16),
-            label: const Text('How groups work?'),
+            label: Text(context.l10n.howGroupsWorkQuestion),
             style: TextButton.styleFrom(foregroundColor: AppColors.gold),
           ),
         ],
