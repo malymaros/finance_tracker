@@ -806,10 +806,10 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             // ── Amount ──────────────────────────────────────────────────────
             TextFormField(
               controller: _amountController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Amount',
                 suffixText: ' ${CurrencyFormatter.currencySymbol}',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),

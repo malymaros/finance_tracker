@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 
 import '../l10n/l10n.dart';
+import '../services/currency_service.dart';
+import '../widgets/currency_picker_sheet.dart';
 
 // ── WelcomeScreen ─────────────────────────────────────────────────────────────
 
@@ -23,6 +25,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   // Minimum upward velocity (dp/s) to trigger the toss.
   // Negative = upward in Flutter's coordinate system.
   static const _swipeVelocityThreshold = 400.0;
+
+  void _showCurrencyPicker(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (_) => const CurrencyPickerDialog(),
+    );
+  }
 
   void _onGetStarted(BuildContext context) {
     Navigator.of(context).push(
@@ -86,7 +95,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  const _LocaleIndicators(),
+                  _LocaleIndicators(
+                    onCurrencyTap: () => _showCurrencyPicker(context),
+                  ),
                   const Spacer(flex: 3),
                   _GetStartedButton(onPressed: () => _onGetStarted(context)),
                   const SizedBox(height: 20),
@@ -112,17 +123,32 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 // ── Locale indicators ─────────────────────────────────────────────────────────
 
 class _LocaleIndicators extends StatelessWidget {
-  const _LocaleIndicators();
+  final VoidCallback onCurrencyTap;
+
+  const _LocaleIndicators({required this.onCurrencyTap});
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(width: 90, child: _LocaleChip(label: 'EN  🇬🇧')),
-        SizedBox(width: 8),
-        SizedBox(width: 90, child: _LocaleChip(label: 'EUR €')),
-      ],
+    return ListenableBuilder(
+      listenable: CurrencyService.instance,
+      builder: (context, _) {
+        final label =
+            '${CurrencyService.instance.code} ${CurrencyService.instance.symbol}';
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(width: 90, child: _LocaleChip(label: 'EN  🇬🇧')),
+            const SizedBox(width: 8),
+            SizedBox(
+              width: 90,
+              child: GestureDetector(
+                onTap: onCurrencyTap,
+                child: _LocaleChip(label: label),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

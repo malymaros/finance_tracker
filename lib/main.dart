@@ -8,6 +8,7 @@ import 'screens/main_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'services/app_repositories.dart';
 import 'services/category_budget_repository.dart';
+import 'services/currency_service.dart';
 import 'services/finance_repository.dart';
 import 'services/guard_notification_service.dart';
 import 'services/guard_repository.dart';
@@ -38,6 +39,9 @@ void main() async {
     guard: guardRepository,
   );
   await SaveLoadService.checkAndRotate(repositories);
+
+  CurrencyService.instance = CurrencyService();
+  await CurrencyService.instance.load();
 
   // Initialise notifications and schedule the daily GUARD reminder.
   // Wrapped in try-catch: exact-alarm permission may not be granted yet on

@@ -107,10 +107,10 @@ class _EditImportRowSheetState extends State<EditImportRowSheet> {
             // ── Amount ──────────────────────────────────────────────────────
             TextFormField(
               controller: _amountController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Amount',
                 suffixText: ' ${CurrencyFormatter.currencySymbol}',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),

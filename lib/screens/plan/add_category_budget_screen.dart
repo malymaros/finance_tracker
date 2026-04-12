@@ -254,10 +254,10 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
             // ── Amount ───────────────────────────────────────────────────────
             TextFormField(
               controller: _amountController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Monthly budget',
                 suffixText: ' ${CurrencyFormatter.currencySymbol}',
-                border: OutlineInputBorder(),
+                border: const OutlineInputBorder(),
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),

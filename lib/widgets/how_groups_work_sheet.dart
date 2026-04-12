@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 import 'sub_step_indicator.dart';
 
@@ -192,9 +193,9 @@ class _TagPage extends StatelessWidget {
                 '15 items',
                 style: TextStyle(fontSize: 12),
               ),
-              trailing: const Text(
-                '440.00 €',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              trailing: Text(
+                '440.00 ${CurrencyFormatter.currencySymbol}',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
           ),
