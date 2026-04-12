@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/budget_status.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 /// Compact past-month budget result card.
@@ -35,8 +36,8 @@ class MonthBudgetSummary extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   isOver
-                      ? 'Over budget by ${diff.toStringAsFixed(2)} €'
-                      : 'Saved ${diff.toStringAsFixed(2)} €',
+                      ? 'Over budget by ${CurrencyFormatter.format(diff)}'
+                      : 'Saved ${CurrencyFormatter.format(diff)}',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -50,14 +51,14 @@ class MonthBudgetSummary extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Spent: ${status.actualSpent.toStringAsFixed(2)} €',
+                  'Spent: ${CurrencyFormatter.format(status.actualSpent)}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,
                   ),
                 ),
                 Text(
-                  'Budget: ${status.spendableBudget.toStringAsFixed(2)} €',
+                  'Budget: ${CurrencyFormatter.format(status.spendableBudget)}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,

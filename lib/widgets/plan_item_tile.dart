@@ -5,6 +5,7 @@ import '../models/financial_type.dart';
 import '../models/guard_state.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 import 'guard_status_icon.dart';
 import 'swipeable_tile.dart';
@@ -104,7 +105,7 @@ class PlanItemTile extends StatelessWidget {
             style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
           ),
           trailing: Text(
-            '$sign${displayAmount.toStringAsFixed(2)} €',
+            '$sign${CurrencyFormatter.format(displayAmount)}',
             style: TextStyle(
               color: amountColor,
               fontWeight: FontWeight.bold,

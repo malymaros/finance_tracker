@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/category_budget.dart';
 import '../models/expense_category.dart';
+import '../services/currency_formatter.dart';
 import 'swipeable_tile.dart';
 
 /// A list tile representing a single category budget in [ManageBudgetsScreen].
@@ -35,7 +36,7 @@ class CategoryBudgetTile extends StatelessWidget {
         ),
         title: Text(cat.displayName),
         trailing: Text(
-          '${budget.amount.toStringAsFixed(2)} €/month',
+          '${CurrencyFormatter.format(budget.amount)}/month',
           style: const TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 14,

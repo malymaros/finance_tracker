@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/category_budget.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
@@ -42,6 +43,8 @@ Widget _wrapScreen({
   CategoryBudgetRepository? budgetRepo,
 }) =>
     MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: ExpenseListScreen(
         repositories: AppRepositories(
           finance: financeRepo ?? FinanceRepository(persist: false),
@@ -58,6 +61,8 @@ Widget _wrapScreen({
 
 // Keep legacy helper used by the original tests.
 Widget wrapInMaterial(FinanceRepository repo) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: ExpenseListScreen(
         repositories: AppRepositories(
           finance: repo,
@@ -219,7 +224,7 @@ void main() {
       await tester.tap(find.text('Groups'));
       await tester.pump();
 
-      expect(find.text('No groups yet.'), findsOneWidget);
+      expect(find.text('No groups this month.'), findsOneWidget);
     });
 
     testWidgets('shows ExpenseGroupTile for each group in the month',

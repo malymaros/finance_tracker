@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+
 // ── WelcomeScreen ─────────────────────────────────────────────────────────────
 
 class WelcomeScreen extends StatefulWidget {
@@ -61,10 +63,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   const Spacer(flex: 2),
                   _TossableCoin(key: _coinKey),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Finance Tracker',
+                  Text(
+                    context.l10n.appTitle,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 32,
                       fontWeight: FontWeight.w700,
@@ -74,7 +76,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Take control of your money',
+                    context.l10n.welcomeTagline,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white.withAlpha(140),
@@ -83,6 +85,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       letterSpacing: 0.2,
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  const _LocaleIndicators(),
                   const Spacer(flex: 3),
                   _GetStartedButton(onPressed: () => _onGetStarted(context)),
                   const SizedBox(height: 20),
@@ -99,6 +103,51 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Locale indicators ─────────────────────────────────────────────────────────
+
+class _LocaleIndicators extends StatelessWidget {
+  const _LocaleIndicators();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SizedBox(width: 90, child: _LocaleChip(label: 'EN  🇬🇧')),
+        SizedBox(width: 8),
+        SizedBox(width: 90, child: _LocaleChip(label: 'EUR €')),
+      ],
+    );
+  }
+}
+
+class _LocaleChip extends StatelessWidget {
+  final String label;
+
+  const _LocaleChip({required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withAlpha(40)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: Colors.white.withAlpha(140),
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
+          letterSpacing: 0.3,
         ),
       ),
     );
@@ -405,9 +454,9 @@ class _GetStartedButtonState extends State<_GetStartedButton>
             borderRadius: BorderRadius.circular(27),
           ),
           alignment: Alignment.center,
-          child: const Text(
-            'Get Started',
-            style: TextStyle(
+          child: Text(
+            context.l10n.getStarted,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w600,

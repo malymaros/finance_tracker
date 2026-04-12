@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/expense_category.dart';
 import '../models/imported_expense.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 /// Compact tile showing one successfully parsed import row in the preview list.
@@ -36,7 +37,7 @@ class ImportRowTile extends StatelessWidget {
         style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
       ),
       trailing: Text(
-        '${expense.amount.toStringAsFixed(2)} €',
+        CurrencyFormatter.format(expense.amount),
         style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 16,

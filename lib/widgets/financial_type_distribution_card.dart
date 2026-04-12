@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/financial_type.dart';
 import '../models/financial_type_income_ratio.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 import 'financial_type_ratio_row.dart';
 
@@ -55,7 +56,7 @@ class FinancialTypeDistributionCard extends StatelessWidget {
                         children: [
                           TextSpan(text: 'This $periodLabel you spent '),
                           TextSpan(
-                            text: '${overspend.toStringAsFixed(2)} €',
+                            text: CurrencyFormatter.format(overspend),
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           const TextSpan(text: ' more than you earned!'),

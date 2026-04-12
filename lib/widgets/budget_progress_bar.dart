@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/budget_status.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 class BudgetProgressBar extends StatelessWidget {
@@ -33,17 +35,17 @@ class BudgetProgressBar extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "This month's budget",
-                  style: TextStyle(
+                Text(
+                  context.l10n.thisMonthsBudget,
+                  style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,
                   ),
                 ),
                 Text(
                   isOver
-                      ? '${(-remaining).toStringAsFixed(2)} € over'
-                      : '${remaining.toStringAsFixed(2)} € left',
+                      ? context.l10n.overBudgetAmount(CurrencyFormatter.format(-remaining))
+                      : context.l10n.underBudgetAmount(CurrencyFormatter.format(remaining)),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -67,14 +69,14 @@ class BudgetProgressBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Spent: ${status.actualSpent.toStringAsFixed(2)} €',
+                  context.l10n.spentLabel(CurrencyFormatter.format(status.actualSpent)),
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,
                   ),
                 ),
                 Text(
-                  'Budget: ${status.spendableBudget.toStringAsFixed(2)} €',
+                  context.l10n.budgetLabel(CurrencyFormatter.format(status.spendableBudget)),
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,

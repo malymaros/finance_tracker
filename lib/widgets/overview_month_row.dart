@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/financial_type.dart';
 import '../models/monthly_overview_summary.dart';
 import '../models/year_month.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 /// A single row in the Reports → Overview tab.
@@ -25,9 +26,10 @@ class OverviewMonthRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final diff = summary.result;
     final diffColor = diff >= 0 ? AppColors.income : AppColors.expense;
+    final symbol = CurrencyFormatter.currencySymbol;
     final diffText = diff >= 0
-        ? '+${diff.toStringAsFixed(0)} €'
-        : '${diff.toStringAsFixed(0)} €';
+        ? '+${diff.toStringAsFixed(0)} $symbol'
+        : '${diff.toStringAsFixed(0)} $symbol';
 
     return InkWell(
       onTap: onTap,
@@ -138,7 +140,7 @@ class OverviewMonthRow extends StatelessWidget {
                 size: 11, color: AppColors.income),
             const SizedBox(width: 3),
             Text(
-              '${summary.assets.toStringAsFixed(0)} €',
+              '${summary.assets.toStringAsFixed(0)} ${CurrencyFormatter.currencySymbol}',
               style: const TextStyle(fontSize: 11, color: AppColors.income),
             ),
           ],
@@ -150,13 +152,13 @@ class OverviewMonthRow extends StatelessWidget {
                 size: 11, color: AppColors.expense),
             const SizedBox(width: 3),
             Text(
-              '${summary.consumption.toStringAsFixed(0)} €',
+              '${summary.consumption.toStringAsFixed(0)} ${CurrencyFormatter.currencySymbol}',
               style: const TextStyle(fontSize: 11, color: AppColors.expense),
             ),
           ],
         ),
         Text(
-          'Earned: ${summary.earned.toStringAsFixed(0)} €',
+          'Earned: ${summary.earned.toStringAsFixed(0)} ${CurrencyFormatter.currencySymbol}',
           style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
         ),
       ],

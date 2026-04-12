@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
+import '../services/currency_formatter.dart';
 import '../services/finance_repository.dart';
 import '../theme/app_theme.dart';
 import '../utils/id_generator.dart';
@@ -101,8 +103,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
     return Scaffold(
       appBar: AppBar(
-          title:
-              Text(widget.existing != null ? 'Edit Expense' : 'Add Expense')),
+          title: Text(widget.existing != null
+              ? context.l10n.editExpenseTitle
+              : context.l10n.addExpenseTitle)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -111,19 +114,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             // ── Amount ──────────────────────────────────────────────────────
             TextFormField(
               controller: _amountController,
-              decoration: const InputDecoration(
-                labelText: 'Amount',
-                suffixText: ' €',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.labelAmount,
+                suffixText: ' ${CurrencyFormatter.currencySymbol}',
+                border: const OutlineInputBorder(),
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               autofocus: true,
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Enter an amount';
+                if (v == null || v.trim().isEmpty) {
+                  return context.l10n.validationAmountEmpty;
+                }
                 final parsed = double.tryParse(v.trim());
                 if (parsed == null || parsed <= 0) {
-                  return 'Enter a valid positive number';
+                  return context.l10n.validationAmountInvalid;
                 }
                 return null;
               },
@@ -133,9 +138,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             // ── Category ────────────────────────────────────────────────────
             DropdownButtonFormField<ExpenseCategory>(
               initialValue: _selectedCategory,
-              decoration: const InputDecoration(
-                labelText: 'Category',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.labelCategory,
+                border: const OutlineInputBorder(),
               ),
               items: (ExpenseCategory.values.toList()
                     ..sort((a, b) {
@@ -167,8 +172,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             const SizedBox(height: 16),
 
             // ── Financial type ───────────────────────────────────────────────
-            const Text('Financial type',
-                style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+            Text(context.l10n.labelFinancialType,
+                style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
             const SizedBox(height: 8),
             SegmentedButton<FinancialType>(
               segments: FinancialType.values
@@ -200,9 +205,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             // ── Note ────────────────────────────────────────────────────────
             TextFormField(
               controller: _noteController,
-              decoration: const InputDecoration(
-                labelText: 'Note (optional)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.labelNoteOptional,
+                border: const OutlineInputBorder(),
               ),
               maxLines: 2,
             ),
@@ -211,17 +216,17 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             // ── Group ────────────────────────────────────────────────────────
             TextFormField(
               controller: _groupController,
-              decoration: const InputDecoration(
-                labelText: 'Group (optional)',
-                hintText: 'e.g. Vacation, Birthday',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.labelGroupOptional,
+                hintText: context.l10n.groupHintText,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 24),
 
             FilledButton(
               onPressed: _submit,
-              child: const Text('Save'),
+              child: Text(context.l10n.actionSave),
             ),
           ],
         ),

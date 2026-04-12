@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/expense.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 /// Aggregate row for a single user-defined group in the By-Groups view.
@@ -31,7 +32,7 @@ class ExpenseGroupTile extends StatelessWidget {
         style: const TextStyle(fontSize: 12),
       ),
       trailing: Text(
-        '${total.toStringAsFixed(2)} €',
+        CurrencyFormatter.format(total),
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
     );

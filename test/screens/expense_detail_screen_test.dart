@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/screens/expense_detail_screen.dart';
+
+Widget _wrap(Widget child) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child,
+    );
 
 void main() {
   group('ExpenseDetailScreen', () {
@@ -17,7 +24,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-          MaterialApp(home: ExpenseDetailScreen(expense: expense)));
+          _wrap(ExpenseDetailScreen(expense: expense)));
 
       expect(find.text('42.50 €'), findsOneWidget);
     });
@@ -32,7 +39,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-          MaterialApp(home: ExpenseDetailScreen(expense: expense)));
+          _wrap(ExpenseDetailScreen(expense: expense)));
 
       expect(find.text('Housing'), findsOneWidget);
     });
@@ -47,7 +54,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-          MaterialApp(home: ExpenseDetailScreen(expense: expense)));
+          _wrap(ExpenseDetailScreen(expense: expense)));
 
       expect(find.text('Asset'), findsOneWidget);
     });
@@ -62,7 +69,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-          MaterialApp(home: ExpenseDetailScreen(expense: expense)));
+          _wrap(ExpenseDetailScreen(expense: expense)));
 
       expect(find.text('10 March 2026'), findsOneWidget);
     });
@@ -78,7 +85,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-          MaterialApp(home: ExpenseDetailScreen(expense: expense)));
+          _wrap(ExpenseDetailScreen(expense: expense)));
 
       expect(find.text('weekly shopping'), findsOneWidget);
     });
@@ -93,7 +100,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-          MaterialApp(home: ExpenseDetailScreen(expense: expense)));
+          _wrap(ExpenseDetailScreen(expense: expense)));
 
       expect(find.text('Note'), findsNothing);
     });

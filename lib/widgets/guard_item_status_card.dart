@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/guard_state.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
+import '../services/currency_formatter.dart';
 import '../services/guard_repository.dart';
 import '../theme/app_theme.dart';
 
@@ -57,7 +58,7 @@ class GuardItemStatusCard extends StatelessWidget {
       PlanFrequency.yearly => '/ year',
       PlanFrequency.oneTime => '',
     };
-    return '${item.amount.toStringAsFixed(2)} € $suffix'.trim();
+    return '${CurrencyFormatter.format(item.amount)} $suffix'.trim();
   }
 
   String get _dueDateLabel {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/financial_type.dart';
-
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 class FinancialTypeRatioRow extends StatelessWidget {
@@ -37,7 +37,7 @@ class FinancialTypeRatioRow extends StatelessWidget {
                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
                 Text(
-                  '${amount.toStringAsFixed(2)} €',
+                  CurrencyFormatter.format(amount),
                   style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
                 ),
               ],

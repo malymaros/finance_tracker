@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
@@ -41,6 +42,12 @@ Expense _expenseOn(DateTime date) => Expense(
       date: date,
     );
 
+MaterialApp _l10nApp(Widget home) => MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: home,
+    );
+
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 void main() {
@@ -69,20 +76,18 @@ void main() {
       final repo = _financeRepo();
       final planRepo = _planRepo();
 
-      await tester.pumpWidget(MaterialApp(
-        home: ExpenseListScreen(
-          repositories: AppRepositories(
-            finance: repo,
-            plan: planRepo,
-            budget: CategoryBudgetRepository(persist: false),
-            guard: GuardRepository(persist: false),
-          ),
-          selectedPeriod: period,
-          periodBounds: bounds,
-          onClearAll: () {},
-          onOpenSaves: () {},
+      await tester.pumpWidget(_l10nApp(ExpenseListScreen(
+        repositories: AppRepositories(
+          finance: repo,
+          plan: planRepo,
+          budget: CategoryBudgetRepository(persist: false),
+          guard: GuardRepository(persist: false),
         ),
-      ));
+        selectedPeriod: period,
+        periodBounds: bounds,
+        onClearAll: () {},
+        onOpenSaves: () {},
+      )));
 
       // Change period externally (simulates another tab changing it)
       period.value = YearMonth(2025, 3);
@@ -102,20 +107,18 @@ void main() {
       final bounds = ValueNotifier<PeriodBounds>(const PeriodBounds());
       final planRepo = _planRepo();
 
-      await tester.pumpWidget(MaterialApp(
-        home: PlanScreen(
-          repositories: AppRepositories(
-            finance: _financeRepo(),
-            plan: planRepo,
-            budget: CategoryBudgetRepository(persist: false),
-            guard: GuardRepository(persist: false),
-          ),
-          selectedPeriod: period,
-          periodBounds: bounds,
-          onClearAll: () {},
-          onOpenSaves: () {},
+      await tester.pumpWidget(_l10nApp(PlanScreen(
+        repositories: AppRepositories(
+          finance: _financeRepo(),
+          plan: planRepo,
+          budget: CategoryBudgetRepository(persist: false),
+          guard: GuardRepository(persist: false),
         ),
-      ));
+        selectedPeriod: period,
+        periodBounds: bounds,
+        onClearAll: () {},
+        onOpenSaves: () {},
+      )));
 
       period.value = YearMonth(2025, 11);
       await tester.pump();
@@ -133,20 +136,18 @@ void main() {
       final bounds = ValueNotifier<PeriodBounds>(const PeriodBounds());
       final planRepo = _planRepo();
 
-      await tester.pumpWidget(MaterialApp(
-        home: PlanScreen(
-          repositories: AppRepositories(
-            finance: _financeRepo(),
-            plan: planRepo,
-            budget: CategoryBudgetRepository(persist: false),
-            guard: GuardRepository(persist: false),
-          ),
-          selectedPeriod: period,
-          periodBounds: bounds,
-          onClearAll: () {},
-          onOpenSaves: () {},
+      await tester.pumpWidget(_l10nApp(PlanScreen(
+        repositories: AppRepositories(
+          finance: _financeRepo(),
+          plan: planRepo,
+          budget: CategoryBudgetRepository(persist: false),
+          guard: GuardRepository(persist: false),
         ),
-      ));
+        selectedPeriod: period,
+        periodBounds: bounds,
+        onClearAll: () {},
+        onOpenSaves: () {},
+      )));
 
       // Open the Add Plan Item screen via the FAB
       await tester.tap(find.byType(FloatingActionButton));
@@ -170,20 +171,18 @@ void main() {
       final now = DateTime.now();
       await repo.addExpense(_expenseOn(now));
 
-      await tester.pumpWidget(MaterialApp(
-        home: ExpenseListScreen(
-          repositories: AppRepositories(
-            finance: repo,
-            plan: planRepo,
-            budget: CategoryBudgetRepository(persist: false),
-            guard: GuardRepository(persist: false),
-          ),
-          selectedPeriod: period,
-          periodBounds: bounds,
-          onClearAll: () {},
-          onOpenSaves: () {},
+      await tester.pumpWidget(_l10nApp(ExpenseListScreen(
+        repositories: AppRepositories(
+          finance: repo,
+          plan: planRepo,
+          budget: CategoryBudgetRepository(persist: false),
+          guard: GuardRepository(persist: false),
         ),
-      ));
+        selectedPeriod: period,
+        periodBounds: bounds,
+        onClearAll: () {},
+        onOpenSaves: () {},
+      )));
       await tester.pump();
 
       // The expense amount should be visible
@@ -199,20 +198,18 @@ void main() {
       final bounds = ValueNotifier<PeriodBounds>(const PeriodBounds());
       final planRepo = _planRepo();
 
-      await tester.pumpWidget(MaterialApp(
-        home: PlanScreen(
-          repositories: AppRepositories(
-            finance: _financeRepo(),
-            plan: planRepo,
-            budget: CategoryBudgetRepository(persist: false),
-            guard: GuardRepository(persist: false),
-          ),
-          selectedPeriod: period,
-          periodBounds: bounds,
-          onClearAll: () {},
-          onOpenSaves: () {},
+      await tester.pumpWidget(_l10nApp(PlanScreen(
+        repositories: AppRepositories(
+          finance: _financeRepo(),
+          plan: planRepo,
+          budget: CategoryBudgetRepository(persist: false),
+          guard: GuardRepository(persist: false),
         ),
-      ));
+        selectedPeriod: period,
+        periodBounds: bounds,
+        onClearAll: () {},
+        onOpenSaves: () {},
+      )));
 
       // Screen shows empty state before item is added
       expect(find.text('No plan items yet.'), findsOneWidget);
@@ -401,20 +398,18 @@ void main() {
       final repo = _financeRepo();
       final planRepo = _planRepo();
 
-      await tester.pumpWidget(MaterialApp(
-        home: ExpenseListScreen(
-          repositories: AppRepositories(
-            finance: repo,
-            plan: planRepo,
-            budget: CategoryBudgetRepository(persist: false),
-            guard: GuardRepository(persist: false),
-          ),
-          selectedPeriod: period,
-          periodBounds: boundsNotifier,
-          onClearAll: () {},
-          onOpenSaves: () {},
+      await tester.pumpWidget(_l10nApp(ExpenseListScreen(
+        repositories: AppRepositories(
+          finance: repo,
+          plan: planRepo,
+          budget: CategoryBudgetRepository(persist: false),
+          guard: GuardRepository(persist: false),
         ),
-      ));
+        selectedPeriod: period,
+        periodBounds: boundsNotifier,
+        onClearAll: () {},
+        onOpenSaves: () {},
+      )));
 
       // Both tabs use the same boundsNotifier; update it and verify
       // ExpenseListScreen re-reads it on rebuild.

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
@@ -53,6 +54,8 @@ Widget _wrapMonthly({
   int month = 1,
 }) =>
     MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: CategoryReportDetailScreen(
         category: category,
         year: year,
@@ -69,6 +72,8 @@ Widget _wrapYearly({
   int year = 2024,
 }) =>
     MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: CategoryReportDetailScreen(
         category: category,
         year: year,

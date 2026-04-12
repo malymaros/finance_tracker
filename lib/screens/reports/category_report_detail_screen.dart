@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
 import '../../models/expense.dart';
 import '../../models/expense_category.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
+import '../../services/currency_formatter.dart';
 import '../../services/finance_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../theme/app_theme.dart';
@@ -130,7 +132,7 @@ class _CategoryReportDetailScreenState
               Expanded(
                 child: ListView(
                   children: [
-                    _buildSectionHeader('FIXED COSTS'),
+                    _buildSectionHeader(context.l10n.reportSectionFixedCosts),
                     if (fixedCosts.isEmpty)
                       _buildEmptySectionRow()
                     else
@@ -139,11 +141,11 @@ class _CategoryReportDetailScreenState
                       ),
                     const Divider(height: 1),
                     _buildSectionHeader(
-                      'EXPENSES',
+                      context.l10n.reportSectionExpenses,
                       trailing: expenses.isEmpty
                           ? null
                           : '${expenses.length} · '
-                              '${expenseTotal.toStringAsFixed(2)} €',
+                              '${CurrencyFormatter.format(expenseTotal)}',
                     ),
                     if (expenses.isEmpty)
                       _buildEmptySectionRow()
@@ -167,13 +169,11 @@ class _CategoryReportDetailScreenState
   Widget _buildHeader(double total, int itemCount, int fixedCostCount) {
     final expenseCount = itemCount - fixedCostCount;
     final parts = <String>[
-      if (fixedCostCount > 0)
-        '$fixedCostCount fixed ${fixedCostCount == 1 ? 'cost' : 'costs'}',
-      if (expenseCount > 0)
-        '$expenseCount ${expenseCount == 1 ? 'expense' : 'expenses'}',
+      if (fixedCostCount > 0) context.l10n.fixedCostCount(fixedCostCount),
+      if (expenseCount > 0) context.l10n.expenseCount(expenseCount),
     ];
     final subtitle =
-        parts.isEmpty ? 'No items in this period' : parts.join(' · ');
+        parts.isEmpty ? context.l10n.noItemsInPeriod : parts.join(' · ');
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -198,7 +198,7 @@ class _CategoryReportDetailScreenState
             ),
           ),
           Text(
-            '${total.toStringAsFixed(2)} €',
+            CurrencyFormatter.format(total),
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 18,
@@ -244,7 +244,7 @@ class _CategoryReportDetailScreenState
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Text(
-        'None in this period.',
+        context.l10n.noneInPeriod,
         style: const TextStyle(
           color: AppColors.textMuted,
           fontSize: 14,

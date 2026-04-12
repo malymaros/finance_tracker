@@ -6,6 +6,7 @@ import '../models/expense_category.dart';
 import '../models/financial_type.dart';
 import '../models/monthly_overview_summary.dart';
 import '../models/year_month.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 import 'overview_month_row.dart';
 import 'sub_step_indicator.dart';
@@ -1135,7 +1136,7 @@ class _MockBudgetProgressBar extends StatelessWidget {
                   style: TextStyle(fontSize: 12, color: AppColors.textMuted),
                 ),
                 Text(
-                  '${_remaining.toStringAsFixed(2)} € left',
+                  '${CurrencyFormatter.format(_remaining)} left',
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
@@ -1160,12 +1161,12 @@ class _MockBudgetProgressBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Spent: ${_spent.toStringAsFixed(2)} €',
+                  'Spent: ${CurrencyFormatter.format(_spent)}',
                   style: const TextStyle(
                       fontSize: 12, color: AppColors.textMuted),
                 ),
                 Text(
-                  'Budget: ${_budget.toStringAsFixed(2)} €',
+                  'Budget: ${CurrencyFormatter.format(_budget)}',
                   style: const TextStyle(
                       fontSize: 12, color: AppColors.textMuted),
                 ),
@@ -1215,8 +1216,8 @@ class _MockMonthBudgetSummary extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   isOver
-                      ? 'Over budget by ${diff.toStringAsFixed(2)} €'
-                      : 'Saved ${diff.toStringAsFixed(2)} €',
+                      ? 'Over budget by ${CurrencyFormatter.format(diff)}'
+                      : 'Saved ${CurrencyFormatter.format(diff)}',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -1230,12 +1231,12 @@ class _MockMonthBudgetSummary extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Spent: ${spent.toStringAsFixed(2)} €',
+                  'Spent: ${CurrencyFormatter.format(spent)}',
                   style: const TextStyle(
                       fontSize: 12, color: AppColors.textMuted),
                 ),
                 Text(
-                  'Budget: ${_budget.toStringAsFixed(2)} €',
+                  'Budget: ${CurrencyFormatter.format(_budget)}',
                   style: const TextStyle(
                       fontSize: 12, color: AppColors.textMuted),
                 ),
@@ -1586,7 +1587,7 @@ class _MockBreakdownRow extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            '$amount €',
+            '$amount ${CurrencyFormatter.currencySymbol}',
             style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
           ),
         ],

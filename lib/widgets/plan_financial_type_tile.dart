@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/financial_type.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 /// Displays a single financial type group row inside the Fixed Costs accordion.
@@ -53,7 +54,7 @@ class PlanFinancialTypeTile extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              '${total.toStringAsFixed(2)} €',
+              CurrencyFormatter.format(total),
               style: TextStyle(
                 color: amountColor,
                 fontWeight: FontWeight.w600,

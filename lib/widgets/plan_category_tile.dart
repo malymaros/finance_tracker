@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/expense_category.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 class PlanCategoryTile extends StatelessWidget {
@@ -42,7 +43,7 @@ class PlanCategoryTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '${total.toStringAsFixed(2)} €',
+            CurrencyFormatter.format(total),
             style: const TextStyle(
               color: AppColors.expense,
               fontWeight: FontWeight.w600,

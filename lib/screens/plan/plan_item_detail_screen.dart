@@ -4,6 +4,7 @@ import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
+import '../../services/currency_formatter.dart';
 import '../../services/guard_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../theme/app_theme.dart';
@@ -245,7 +246,7 @@ class PlanItemDetailScreen extends StatelessWidget {
             icon: Icons.euro_outlined,
             iconColor: typeColor,
             label: 'Amount',
-            value: '${item.amount.toStringAsFixed(2)} € $amountSuffix',
+            value: '${CurrencyFormatter.format(item.amount)} $amountSuffix'.trim(),
           ),
           const Divider(height: 1, indent: 56),
           _buildDetailRow(

@@ -14,6 +14,7 @@ import '../models/plan_item.dart';
 import '../models/year_month.dart';
 import '../models/yearly_pdf_data.dart';
 import '../services/budget_calculator.dart';
+import '../services/currency_formatter.dart';
 
 /// Pure static service that builds PDF documents from pre-assembled data.
 /// Produces a [Uint8List] suitable for writing to disk and sharing via OS.
@@ -390,7 +391,7 @@ class PdfReportService {
                 style: pw.TextStyle(fontSize: 9, color: _textMuted),
               ),
               pw.Text(
-                '${ratio.income.toStringAsFixed(2)} EUR',
+                CurrencyFormatter.formatForPdf(ratio.income),
                 style: pw.TextStyle(
                   fontSize: 12,
                   fontWeight: pw.FontWeight.bold,
@@ -434,7 +435,7 @@ class PdfReportService {
                   ),
                   pw.Expanded(
                     child: pw.Text(
-                      'This $periodLabel you spent ${overspend.toStringAsFixed(2)} EUR more than you earned!',
+                      'This $periodLabel you spent ${CurrencyFormatter.formatForPdf(overspend)} more than you earned!',
                       style: pw.TextStyle(fontSize: 9, color: _amber),
                     ),
                   ),
@@ -498,7 +499,7 @@ class PdfReportService {
           pw.SizedBox(
             width: 85,
             child: pw.Text(
-              '${amount.toStringAsFixed(2)} EUR',
+              CurrencyFormatter.formatForPdf(amount),
               style: pw.TextStyle(
                 fontSize: 10,
                 fontWeight: pw.FontWeight.bold,
@@ -606,7 +607,7 @@ class PdfReportService {
                 ),
               ),
               pw.Text(
-                '${total.toStringAsFixed(2)} EUR',
+                CurrencyFormatter.formatForPdf(total),
                 style: pw.TextStyle(
                   fontSize: 11,
                   fontWeight: pw.FontWeight.bold,
@@ -631,7 +632,7 @@ class PdfReportService {
                     ),
                   ),
                   pw.Text(
-                    '${amount.toStringAsFixed(2)} EUR',
+                    CurrencyFormatter.formatForPdf(amount),
                     style: const pw.TextStyle(fontSize: 9),
                   ),
                 ],
@@ -686,7 +687,7 @@ class PdfReportService {
                 ),
               ),
               pw.Text(
-                '${grandTotal.toStringAsFixed(2)} EUR',
+                CurrencyFormatter.formatForPdf(grandTotal),
                 style: pw.TextStyle(
                   fontSize: 11,
                   fontWeight: pw.FontWeight.bold,
@@ -736,7 +737,7 @@ class PdfReportService {
                 ),
               ),
               pw.Text(
-                '${typeTotal.toStringAsFixed(2)} EUR',
+                CurrencyFormatter.formatForPdf(typeTotal),
                 style: pw.TextStyle(
                   fontSize: 10,
                   fontWeight: pw.FontWeight.bold,
@@ -797,7 +798,7 @@ class PdfReportService {
                         fontSize: 9, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.Text(
-                    '${catTotal.toStringAsFixed(2)} EUR',
+                    CurrencyFormatter.formatForPdf(catTotal),
                     style: pw.TextStyle(
                         fontSize: 9, fontWeight: pw.FontWeight.bold),
                   ),
@@ -819,7 +820,7 @@ class PdfReportService {
                       ),
                     ),
                     pw.Text(
-                      '${amount.toStringAsFixed(2)} EUR',
+                      CurrencyFormatter.formatForPdf(amount),
                       style: pw.TextStyle(fontSize: 9, color: _textMuted),
                     ),
                   ],
@@ -853,7 +854,7 @@ class PdfReportService {
                 ),
               ),
               pw.Text(
-                '${amount.toStringAsFixed(2)} EUR',
+                CurrencyFormatter.formatForPdf(amount),
                 style: pw.TextStyle(fontSize: 9, color: _textMuted),
               ),
             ],
@@ -908,7 +909,7 @@ class PdfReportService {
                         ),
                         pw.Expanded(
                           child: pw.Text(
-                            '${o.category.displayName} budget: over by ${o.overage.toStringAsFixed(2)} EUR',
+                            '${o.category.displayName} budget: over by ${CurrencyFormatter.formatForPdf(o.overage)}',
                             style: pw.TextStyle(fontSize: 9, color: _amber),
                           ),
                         ),
@@ -991,7 +992,7 @@ class PdfReportService {
                   pw.SizedBox(
                     width: 70,
                     child: pw.Text(
-                      budget != null ? '${budget.toStringAsFixed(2)} EUR' : '',
+                      budget != null ? CurrencyFormatter.formatForPdf(budget) : '',
                       style: pw.TextStyle(fontSize: 9, color: _textMuted),
                       textAlign: pw.TextAlign.right,
                     ),
@@ -1002,7 +1003,7 @@ class PdfReportService {
                 pw.SizedBox(
                   width: 80,
                   child: pw.Text(
-                    '${ct.amount.toStringAsFixed(2)} EUR',
+                    CurrencyFormatter.formatForPdf(ct.amount),
                     style: pw.TextStyle(
                       fontSize: hasBudgets ? 9 : 10,
                       fontWeight: pw.FontWeight.bold,
@@ -1055,7 +1056,7 @@ class PdfReportService {
               pw.SizedBox(
                 width: 80,
                 child: pw.Text(
-                  '${grandTotal.toStringAsFixed(2)} EUR',
+                  CurrencyFormatter.formatForPdf(grandTotal),
                   style: pw.TextStyle(
                     fontSize: 11,
                     fontWeight: pw.FontWeight.bold,
@@ -1165,7 +1166,7 @@ class PdfReportService {
                 pw.SizedBox(
                   width: 76,
                   child: pw.Text(
-                    '${e.amount.toStringAsFixed(2)} EUR',
+                    CurrencyFormatter.formatForPdf(e.amount),
                     style: pw.TextStyle(
                         fontSize: 9, fontWeight: pw.FontWeight.bold),
                     textAlign: pw.TextAlign.right,
@@ -1216,7 +1217,7 @@ class PdfReportService {
                   pw.SizedBox(
                     width: 76,
                     child: pw.Text(
-                      '${e.amount.toStringAsFixed(2)} EUR',
+                      CurrencyFormatter.formatForPdf(e.amount),
                       style: pw.TextStyle(fontSize: 8, color: _textMuted),
                       textAlign: pw.TextAlign.right,
                     ),
@@ -1249,7 +1250,7 @@ class PdfReportService {
                 ),
               ),
               pw.Text(
-                '${monthTotal.toStringAsFixed(2)} EUR',
+                CurrencyFormatter.formatForPdf(monthTotal),
                 style: pw.TextStyle(
                     fontSize: 10, fontWeight: pw.FontWeight.bold),
               ),
@@ -1272,7 +1273,7 @@ class PdfReportService {
                 ),
               ),
               pw.Text(
-                '${allTimeTotal.toStringAsFixed(2)} EUR',
+                CurrencyFormatter.formatForPdf(allTimeTotal),
                 style: pw.TextStyle(fontSize: 8, color: _textMuted),
               ),
             ],
@@ -1322,7 +1323,7 @@ class PdfReportService {
               _tableCell(note),
               _tableCell(e.category.displayName),
               _tableCell(
-                '${e.amount.toStringAsFixed(2)} EUR',
+                CurrencyFormatter.formatForPdf(e.amount),
                 align: pw.TextAlign.right,
               ),
             ],
@@ -1335,7 +1336,7 @@ class PdfReportService {
             _tableHeader(''),
             _tableHeader('TOTAL', align: pw.TextAlign.right),
             _tableHeader(
-              '${grandTotal.toStringAsFixed(2)} EUR',
+              CurrencyFormatter.formatForPdf(grandTotal),
               align: pw.TextAlign.right,
             ),
           ],
@@ -1386,8 +1387,8 @@ class PdfReportService {
           YearMonth.monthAbbreviations[s.period.month]; // e.g. "Jan"
       final diff = s.result;
       final diffText = diff >= 0
-          ? '+${diff.toStringAsFixed(0)} EUR'
-          : '${diff.toStringAsFixed(0)} EUR';
+          ? '+${diff.toStringAsFixed(0)} ${CurrencyFormatter.currencyCode}'
+          : '${diff.toStringAsFixed(0)} ${CurrencyFormatter.currencyCode}';
       final diffColor = diff >= 0 ? _green : _red;
 
       rows.add(
@@ -1518,7 +1519,7 @@ class PdfReportService {
             ),
             pw.SizedBox(width: 3),
             pw.Text(
-              '${s.assets.toStringAsFixed(0)} EUR',
+              '${s.assets.toStringAsFixed(0)} ${CurrencyFormatter.currencyCode}',
               style: pw.TextStyle(fontSize: 9, color: _assetGreen),
             ),
           ],
@@ -1534,14 +1535,14 @@ class PdfReportService {
             ),
             pw.SizedBox(width: 3),
             pw.Text(
-              '${s.consumption.toStringAsFixed(0)} EUR',
+              '${s.consumption.toStringAsFixed(0)} ${CurrencyFormatter.currencyCode}',
               style: pw.TextStyle(fontSize: 9, color: _red),
             ),
           ],
         ),
         // Earned
         pw.Text(
-          'Earned: ${s.earned.toStringAsFixed(0)} EUR',
+          'Earned: ${s.earned.toStringAsFixed(0)} ${CurrencyFormatter.currencyCode}',
           style: pw.TextStyle(fontSize: 9, color: _textMuted),
         ),
       ],
@@ -1614,7 +1615,7 @@ class PdfReportService {
                 );
               }),
               _tableCellBold(
-                '${total.toStringAsFixed(0)} EUR',
+                '${total.toStringAsFixed(0)} ${CurrencyFormatter.currencyCode}',
                 align: pw.TextAlign.right,
               ),
             ],

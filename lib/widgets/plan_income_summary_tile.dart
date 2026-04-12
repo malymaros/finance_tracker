@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 class PlanIncomeSummaryTile extends StatelessWidget {
@@ -56,7 +57,7 @@ class PlanIncomeSummaryTile extends StatelessWidget {
               ),
             ),
             Text(
-              '${total.toStringAsFixed(2)} €',
+              CurrencyFormatter.format(total),
               style: const TextStyle(
                 color: AppColors.income,
                 fontWeight: FontWeight.w700,

@@ -4,6 +4,7 @@ import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
+import '../../services/currency_formatter.dart';
 import '../../services/plan_repository.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/id_generator.dart';
@@ -807,7 +808,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               controller: _amountController,
               decoration: const InputDecoration(
                 labelText: 'Amount',
-                suffixText: ' €',
+                suffixText: ' ${CurrencyFormatter.currencySymbol}',
                 border: OutlineInputBorder(),
               ),
               keyboardType:

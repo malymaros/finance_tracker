@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 class ExpenseListTile extends StatelessWidget {
@@ -44,7 +45,7 @@ class ExpenseListTile extends StatelessWidget {
           style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
         ),
         trailing: Text(
-          '${expense.amount.toStringAsFixed(2)} €',
+          CurrencyFormatter.format(expense.amount),
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 16,

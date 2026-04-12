@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'l10n/app_localizations.dart';
 import 'models/year_month.dart';
 import 'screens/main_screen.dart';
 import 'screens/welcome_screen.dart';
@@ -70,6 +72,15 @@ class FinanceTrackerApp extends StatelessWidget {
       title: 'Finance Tracker',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+      ],
       home: WelcomeScreen(
         mainScreenBuilder: () => MainScreen(repositories: repositories),
       ),

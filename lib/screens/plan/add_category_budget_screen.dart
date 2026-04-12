@@ -4,6 +4,7 @@ import '../../models/category_budget.dart';
 import '../../models/expense_category.dart';
 import '../../models/year_month.dart';
 import '../../services/category_budget_repository.dart';
+import '../../services/currency_formatter.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/id_generator.dart';
 
@@ -255,7 +256,7 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
               controller: _amountController,
               decoration: const InputDecoration(
                 labelText: 'Monthly budget',
-                suffixText: ' €',
+                suffixText: ' ${CurrencyFormatter.currencySymbol}',
                 border: OutlineInputBorder(),
               ),
               keyboardType:

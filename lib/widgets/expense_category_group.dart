@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/expense.dart';
 import '../models/expense_category.dart';
+import '../services/currency_formatter.dart';
 import 'category_budget_progress_bar.dart';
 
 /// Aggregate row for a single category in the By-Category view.
@@ -41,7 +42,7 @@ class ExpenseCategoryGroup extends StatelessWidget {
         style: const TextStyle(fontSize: 12),
       ),
       trailing: Text(
-        '${total.toStringAsFixed(2)} €',
+        CurrencyFormatter.format(total),
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
 import '../models/imported_expense.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 /// Full-screen edit for a single [ImportedExpense] before it is committed.
@@ -108,7 +109,7 @@ class _EditImportRowSheetState extends State<EditImportRowSheet> {
               controller: _amountController,
               decoration: const InputDecoration(
                 labelText: 'Amount',
-                suffixText: ' €',
+                suffixText: ' ${CurrencyFormatter.currencySymbol}',
                 border: OutlineInputBorder(),
               ),
               keyboardType:

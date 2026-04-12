@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/year_month.dart';
+import '../services/currency_formatter.dart';
 import '../services/finance_repository.dart';
 import '../theme/app_theme.dart';
 import '../widgets/expense_list_tile.dart';
@@ -106,13 +108,13 @@ class _CategoryExpenseListScreenState
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              '$count ${count == 1 ? 'item' : 'items'}',
+              context.l10n.itemCount(count),
               style: const TextStyle(
                   color: AppColors.textMuted, fontSize: 14),
             ),
           ),
           Text(
-            '${total.toStringAsFixed(2)} €',
+            CurrencyFormatter.format(total),
             style: const TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 18),
           ),

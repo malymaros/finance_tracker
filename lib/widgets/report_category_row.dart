@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/category_total.dart';
 import '../models/expense_category.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 /// A single row in the report category breakdown.
@@ -84,7 +85,7 @@ class ReportCategoryRow extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               Text(
-                '${ct.amount.toStringAsFixed(2)} €',
+                CurrencyFormatter.format(ct.amount),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,

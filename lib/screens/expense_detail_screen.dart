@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
+import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
 class ExpenseDetailScreen extends StatelessWidget {
@@ -38,19 +40,19 @@ class ExpenseDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Expense'),
+        title: Text(context.l10n.expenseDetailTitle),
         scrolledUnderElevation: 0,
         actions: [
           if (onEdit != null)
             IconButton(
               icon: const Icon(Icons.edit_outlined),
-              tooltip: 'Edit',
+              tooltip: context.l10n.actionEdit,
               onPressed: onEdit,
             ),
           if (onDelete != null)
             IconButton(
               icon: const Icon(Icons.delete_outline),
-              tooltip: 'Delete',
+              tooltip: context.l10n.actionDelete,
               color: AppColors.expense,
               onPressed: onDelete,
             ),
@@ -75,7 +77,7 @@ class ExpenseDetailScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 16),
         child: Center(
           child: Text(
-            '${expense.amount.toStringAsFixed(2)} €',
+            CurrencyFormatter.format(expense.amount),
             style: Theme.of(context)
                 .textTheme
                 .headlineMedium
@@ -93,21 +95,21 @@ class ExpenseDetailScreen extends StatelessWidget {
           _buildDetailRow(
             icon: expense.category.icon,
             iconColor: expense.category.color,
-            label: 'Category',
+            label: context.l10n.labelCategory,
             value: expense.category.displayName,
           ),
           const Divider(height: 1, indent: 56),
           _buildDetailRow(
             icon: expense.financialType.icon,
             iconColor: expense.financialType.color,
-            label: 'Financial type',
+            label: context.l10n.labelFinancialType,
             value: expense.financialType.displayName,
           ),
           const Divider(height: 1, indent: 56),
           _buildDetailRow(
             icon: Icons.calendar_today_outlined,
             iconColor: AppColors.textMuted,
-            label: 'Date',
+            label: context.l10n.labelDate,
             value: _formatDate(expense.date),
           ),
           if (expense.group != null) ...[
@@ -115,7 +117,7 @@ class ExpenseDetailScreen extends StatelessWidget {
             _buildDetailRow(
               icon: Icons.folder_outlined,
               iconColor: AppColors.textMuted,
-              label: 'Group',
+              label: context.l10n.labelGroup,
               value: expense.group!,
             ),
           ],
@@ -124,7 +126,7 @@ class ExpenseDetailScreen extends StatelessWidget {
             _buildDetailRow(
               icon: Icons.notes_outlined,
               iconColor: AppColors.textMuted,
-              label: 'Note',
+              label: context.l10n.labelNote,
               value: expense.note!,
             ),
           ],
