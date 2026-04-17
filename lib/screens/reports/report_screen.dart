@@ -469,12 +469,14 @@ class _ReportScreenState extends State<ReportScreen> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(Icons.pie_chart_outline, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
             context.l10n.noExpensesForPeriod,
             style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           TextButton.icon(

@@ -538,15 +538,18 @@ class _PlanScreenState extends State<PlanScreen> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(Icons.account_balance_outlined,
               size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(context.l10n.noPlanItemsYet,
-              style: const TextStyle(color: AppColors.textMuted, fontSize: 16)),
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
+              textAlign: TextAlign.center),
           const SizedBox(height: 8),
           Text(context.l10n.tapPlusToAddPlanItems,
-              style: const TextStyle(color: AppColors.textMuted)),
+              style: const TextStyle(color: AppColors.textMuted),
+              textAlign: TextAlign.center),
           const SizedBox(height: 16),
           TextButton.icon(
             onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexPlan),

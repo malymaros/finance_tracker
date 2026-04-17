@@ -363,17 +363,20 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(Icons.receipt_long, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
             context.l10n.noExpensesInMonth(context.l10n.monthName(_month), _year),
             style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             context.l10n.tapPlusToAddOne,
             style: const TextStyle(color: AppColors.textMuted),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
           Text(
