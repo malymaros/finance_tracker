@@ -1,0 +1,1611 @@
+{
+  "@@locale": "de",
+
+  "appTitle": "Finance Tracker",
+  "@appTitle": { "description": "Der Titel der Anwendung" },
+
+  "welcomeTagline": "Übernimm die Kontrolle über dein Geld",
+  "@welcomeTagline": { "description": "Untertitel auf dem Begrüßungsbildschirm unter dem App-Namen" },
+
+  "getStarted": "Loslegen",
+  "@getStarted": { "description": "Primäre Aktionsschaltfläche auf dem Begrüßungsbildschirm" },
+
+  "tabExpenses": "Ausgaben",
+  "@tabExpenses": { "description": "Beschriftung des Tabs in der unteren Navigation" },
+
+  "tabPlan": "Plan",
+  "@tabPlan": { "description": "Beschriftung des Tabs in der unteren Navigation" },
+
+  "tabReports": "Berichte",
+  "@tabReports": { "description": "Beschriftung des Tabs in der unteren Navigation" },
+
+  "actionEdit": "Bearbeiten",
+  "@actionEdit": { "description": "Allgemeine Beschriftung für die Bearbeiten-Aktion" },
+
+  "actionDelete": "Löschen",
+  "@actionDelete": { "description": "Allgemeine Beschriftung für die Löschen-Aktion" },
+
+  "actionSave": "Speichern",
+  "@actionSave": { "description": "Allgemeine Beschriftung für die Speichern-/Bestätigen-Schaltfläche" },
+
+  "actionCancel": "Abbrechen",
+  "@actionCancel": { "description": "Allgemeine Beschriftung für die Abbrechen-Schaltfläche" },
+
+  "actionLoad": "Laden",
+  "@actionLoad": { "description": "Einen gespeicherten Stand laden" },
+
+  "actionImport": "Importieren",
+  "@actionImport": { "description": "Allgemeine Beschriftung für die Import-Schaltfläche" },
+
+  "actionOverwrite": "Überschreiben",
+  "@actionOverwrite": { "description": "Einen Speicherplatz überschreiben" },
+
+  "labelAmount": "Betrag",
+  "@labelAmount": { "description": "Beschriftung des Formularfelds für einen Geldbetrag" },
+
+  "labelCategory": "Kategorie",
+  "@labelCategory": { "description": "Beschriftung eines Formularfelds / einer Detailzeile für die Ausgabenkategorie" },
+
+  "labelFinancialType": "Finanztyp",
+  "@labelFinancialType": { "description": "Beschriftung eines Formularabschnitts / einer Detailzeile für den Finanztyp" },
+
+  "labelDate": "Datum",
+  "@labelDate": { "description": "Beschriftung eines Formularfelds / einer Detailzeile für das Datum" },
+
+  "labelNote": "Notiz",
+  "@labelNote": { "description": "Beschriftung einer Detailzeile für eine Notiz" },
+
+  "labelNoteOptional": "Notiz (optional)",
+  "@labelNoteOptional": { "description": "Beschriftung des Formularfelds für eine optionale Notiz" },
+
+  "labelGroup": "Gruppe",
+  "@labelGroup": { "description": "Beschriftung einer Detailzeile für eine Gruppe" },
+
+  "labelGroupOptional": "Gruppe (optional)",
+  "@labelGroupOptional": { "description": "Beschriftung des Formularfelds für eine optionale Gruppe" },
+
+  "groupHintText": "z. B. Urlaub, Geburtstag",
+  "@groupHintText": { "description": "Hinweistext im Gruppen-Textfeld" },
+
+  "labelName": "Name",
+  "@labelName": { "description": "Beschriftung des Formularfelds für den Namen eines Eintrags" },
+
+  "labelFrequency": "Häufigkeit",
+  "@labelFrequency": { "description": "Beschriftung des Formularfelds für die Zahlungshäufigkeit" },
+
+  "labelValidFrom": "Gültig ab",
+  "@labelValidFrom": { "description": "Beschriftung des Formularfelds für den Startzeitraum" },
+
+  "labelValidTo": "Gültig bis (optional)",
+  "@labelValidTo": { "description": "Beschriftung des Formularfelds für den optionalen Endzeitraum" },
+
+  "menuImportExpenses": "Ausgaben importieren",
+  "@menuImportExpenses": { "description": "Menüeintrag im Überlaufmenü auf dem Ausgabenbildschirm" },
+
+  "menuExportExpenses": "Ausgaben exportieren",
+  "@menuExportExpenses": { "description": "Menüeintrag im Überlaufmenü auf dem Ausgabenbildschirm" },
+
+  "menuImport": "Importieren",
+  "@menuImport": { "description": "Menüeintrag im Überlaufmenü für allgemeinen Import" },
+
+  "menuSaves": "Speicherstände",
+  "@menuSaves": { "description": "Menüeintrag im Überlaufmenü zum Öffnen des Speicherstandsbildschirms" },
+
+  "menuDeleteAll": "Alle Daten löschen",
+  "@menuDeleteAll": { "description": "Menüeintrag im Überlaufmenü zum Löschen aller Daten" },
+
+  "menuHowItWorks": "So funktioniert's",
+  "@menuHowItWorks": { "description": "Menüeintrag im Überlaufmenü zum Öffnen der Erklärung" },
+
+  "menuResetWithDummyData": "Mit Beispieldaten zurücksetzen",
+  "@menuResetWithDummyData": { "description": "Menüeintrag nur für Debug-Zwecke" },
+
+  "menuManageBudgets": "Budgets verwalten",
+  "@menuManageBudgets": { "description": "Menüeintrag im Überlaufmenü auf dem Plan-Tab" },
+
+  "menuGuard": "GUARD",
+  "@menuGuard": { "description": "Menüeintrag im Überlaufmenü zum Öffnen des GUARD-Bildschirms" },
+
+  "expenseListTitle": "Ausgaben",
+  "@expenseListTitle": { "description": "AppBar-Titel des Ausgabenlistenbildschirms" },
+
+  "savesTooltip": "Speicherstände",
+  "@savesTooltip": { "description": "Tooltip für die Speicherstände-Schaltfläche in der AppBar" },
+
+  "howItWorksTooltip": "So funktioniert's",
+  "@howItWorksTooltip": { "description": "Tooltip für die Hilfe-Schaltfläche" },
+
+  "howItWorksQuestion": "Wie funktioniert's?",
+  "@howItWorksQuestion": { "description": "Linktext zum Öffnen des Erklärungssheets" },
+
+  "viewModeItems": "Einträge",
+  "@viewModeItems": { "description": "Beschriftung des segmentierten Schalters für die Eintragslistenansicht" },
+
+  "viewModeByCategory": "Kategorie",
+  "@viewModeByCategory": { "description": "Beschriftung des segmentierten Schalters für die nach Kategorien gruppierte Ansicht" },
+
+  "viewModeByGroup": "Gruppen",
+  "@viewModeByGroup": { "description": "Beschriftung des segmentierten Schalters für die Gruppenansicht" },
+
+  "thisMonthsBudget": "Budget dieses Monats",
+  "@thisMonthsBudget": { "description": "Beschriftung auf der Budgetkarte / Fortschrittsleiste" },
+
+  "budgetNotSet": "Budget nicht festgelegt",
+  "@budgetNotSet": { "description": "Wird auf der Karte ohne Budget angezeigt, wenn kein Einkommen geplant ist" },
+
+  "setIncomeInPlan": "Einnahmen im Plan festlegen",
+  "@setIncomeInPlan": { "description": "Handlungsaufforderung auf der Karte ohne Budget" },
+
+  "noExpensesInMonth": "Keine Ausgaben im {monthName} {year}.",
+  "@noExpensesInMonth": {
+    "description": "Leerer Zustand auf dem Ausgabenbildschirm für den ausgewählten Monat",
+    "placeholders": {
+      "monthName": { "type": "String" },
+      "year": { "type": "int" }
+    }
+  },
+
+  "tapPlusToAddOne": "Tippe auf +, um eine hinzuzufügen.",
+  "@tapPlusToAddOne": { "description": "Hinweis im leeren Zustand auf dem Ausgabenbildschirm" },
+
+  "fixedBillsHint": "Feste Kosten wie Miete gehören in den Plan.",
+  "@fixedBillsHint": { "description": "Sekundärer Hinweis im leeren Zustand auf dem Ausgabenbildschirm" },
+
+  "noGroupsThisMonth": "Keine Gruppen in diesem Monat.",
+  "@noGroupsThisMonth": { "description": "Leerer Zustand, wenn in diesem Monat keine Ausgaben einer Gruppe zugeordnet sind" },
+
+  "addGroupHint": "Füge beim Erstellen\noder Bearbeiten einer Ausgabe eine Gruppe hinzu.",
+  "@addGroupHint": { "description": "Sekundärer Hinweis unter dem leeren Zustand ohne Gruppen" },
+
+  "howGroupsWorkQuestion": "Wie funktionieren Gruppen?",
+  "@howGroupsWorkQuestion": { "description": "Linktext zum Öffnen des Sheets zur Erklärung von Gruppen" },
+
+  "itemCount": "{count, plural, =1{1 Eintrag} other{{count} Einträge}}",
+  "@itemCount": {
+    "description": "Anzahl der Einträge in einer Kategorie- oder Gruppenüberschrift",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "addExpenseTitle": "Ausgabe hinzufügen",
+  "@addExpenseTitle": { "description": "AppBar-Titel beim Hinzufügen einer neuen Ausgabe" },
+
+  "editExpenseTitle": "Ausgabe bearbeiten",
+  "@editExpenseTitle": { "description": "AppBar-Titel beim Bearbeiten einer vorhandenen Ausgabe" },
+
+  "validationAmountEmpty": "Bitte einen Betrag eingeben",
+  "@validationAmountEmpty": { "description": "Validierungsfehler, wenn das Betragsfeld leer ist" },
+
+  "validationAmountInvalid": "Bitte eine gültige positive Zahl eingeben",
+  "@validationAmountInvalid": { "description": "Validierungsfehler, wenn der Betrag null oder keine Zahl ist" },
+
+  "expenseDetailTitle": "Ausgabe",
+  "@expenseDetailTitle": { "description": "AppBar-Titel für den Detailbildschirm einer Ausgabe" },
+
+  "noExpensesInNamedGroup": "Keine Ausgaben in „{name}“.",
+  "@noExpensesInNamedGroup": {
+    "description": "Leerer Zustand auf dem Ausgabenlistenbildschirm einer Gruppe",
+    "placeholders": { "name": { "type": "String" } }
+  },
+
+  "planTitle": "Plan",
+  "@planTitle": { "description": "AppBar-Titel des Plan-Tabs" },
+
+  "toggleMonthly": "Monatlich",
+  "@toggleMonthly": { "description": "Beschriftung des Schalters für die Monatsansicht" },
+
+  "toggleYearly": "Jährlich",
+  "@toggleYearly": { "description": "Beschriftung des Schalters für die Jahresansicht" },
+
+  "sectionIncome": "Einnahmen",
+  "@sectionIncome": { "description": "Abschnittsüberschrift auf dem Plan-Bildschirm" },
+
+  "sectionFixedCosts": "Fixkosten",
+  "@sectionFixedCosts": { "description": "Abschnittsüberschrift auf dem Plan-Bildschirm" },
+
+  "noIncomeItems": "Keine Einnahmen.",
+  "@noIncomeItems": { "description": "Leerer Zustand innerhalb des Akkordeons für Einnahmen" },
+
+  "noFixedCostItems": "Keine Fixkosten.",
+  "@noFixedCostItems": { "description": "Leerer Zustand innerhalb des Akkordeons für Fixkosten" },
+
+  "spendableBudget": "Verfügbares Budget",
+  "@spendableBudget": { "description": "Beschriftung für den verfügbaren Budgetbetrag im Kopfbereich des Plan-Bildschirms" },
+
+  "deleteItemDialogTitle": "Plan-Eintrag löschen",
+  "@deleteItemDialogTitle": { "description": "Titel des Dialogs beim Löschen eines Plan-Eintrags" },
+
+  "deleteItemFromPeriod": "Ab diesem Zeitraum",
+  "@deleteItemFromPeriod": { "description": "Option, um den Eintrag nur ab dem aktuellen Zeitraum zu entfernen" },
+
+  "deleteItemWholeSeries": "Gesamte Serie",
+  "@deleteItemWholeSeries": { "description": "Option zum Löschen aller Versionen des Plan-Eintrags" },
+
+  "planItemDeleted": "Plan-Eintrag gelöscht.",
+  "@planItemDeleted": { "description": "Snackbar-Bestätigung nach dem Löschen eines Plan-Eintrags" },
+
+  "addIncomeTitle": "Einnahme hinzufügen",
+  "@addIncomeTitle": { "description": "AppBar-Titel beim Hinzufügen einer neuen Einnahme" },
+
+  "addFixedCostTitle": "Fixkosten hinzufügen",
+  "@addFixedCostTitle": { "description": "AppBar-Titel beim Hinzufügen neuer Fixkosten" },
+
+  "editIncomeTitle": "Einnahme bearbeiten",
+  "@editIncomeTitle": { "description": "AppBar-Titel beim Bearbeiten einer vorhandenen Einnahme" },
+
+  "editFixedCostTitle": "Fixkosten bearbeiten",
+  "@editFixedCostTitle": { "description": "AppBar-Titel beim Bearbeiten vorhandener Fixkosten" },
+
+  "frequencyOneTime": "Einmalig",
+  "@frequencyOneTime": { "description": "Beschriftung einer Häufigkeitsoption" },
+
+  "frequencyMonthly": "Monatlich",
+  "@frequencyMonthly": { "description": "Beschriftung einer Häufigkeitsoption" },
+
+  "frequencyYearly": "Jährlich",
+  "@frequencyYearly": { "description": "Beschriftung einer Häufigkeitsoption" },
+
+  "guardSectionLabel": "GUARD",
+  "@guardSectionLabel": { "description": "Abschnittsüberschrift für GUARD-Felder im Bildschirm zum Hinzufügen eines Plan-Eintrags" },
+
+  "guardTrackPayment": "Zahlung verfolgen",
+  "@guardTrackPayment": { "description": "Beschriftung des GUARD-Schalters im Bildschirm zum Hinzufügen eines Plan-Eintrags" },
+
+  "guardDueDayLabel": "Fälligkeitstag",
+  "@guardDueDayLabel": { "description": "Beschriftung des GUARD-Pickers für den Fälligkeitstag" },
+
+  "guardOneTimeLabel": "Einmalige Zahlung",
+  "@guardOneTimeLabel": { "description": "Beschriftung des GUARD-Schalters für einmalige Zahlungen" },
+
+  "planItemSaved": "Plan-Eintrag gespeichert.",
+  "@planItemSaved": { "description": "Snackbar-Bestätigung nach dem Speichern eines Plan-Eintrags" },
+
+  "addNewItemSheetTitle": "Neu hinzufügen",
+  "@addNewItemSheetTitle": { "description": "Titel des Auswahl-Bottom-Sheets vor dem Hinzufügen eines Plan-Eintrags" },
+
+  "typeIncome": "Einnahme",
+  "@typeIncome": { "description": "Beschriftung des Plan-Eintragstyps" },
+
+  "typeFixedCost": "Fixkosten",
+  "@typeFixedCost": { "description": "Beschriftung des Plan-Eintragstyps" },
+
+  "ongoing": "Laufend",
+  "@ongoing": { "description": "Wird angezeigt, wenn ein Plan-Eintrag kein Enddatum hat" },
+
+  "manageBudgetsTitle": "Budgets verwalten",
+  "@manageBudgetsTitle": { "description": "AppBar-Titel des Bildschirms zum Verwalten von Budgets" },
+
+  "noBudgetsSet": "Für diesen Zeitraum sind keine Budgets festgelegt.",
+  "@noBudgetsSet": { "description": "Leere-Zustand-Nachricht auf dem Bildschirm zum Verwalten von Budgets" },
+
+  "addFirstBudget": "Füge dein erstes Budget hinzu.",
+  "@addFirstBudget": { "description": "Handlungsaufforderung im leeren Zustand auf dem Bildschirm zum Verwalten von Budgets" },
+
+  "addBudgetTitle": "Budget hinzufügen",
+  "@addBudgetTitle": { "description": "AppBar-Titel beim Hinzufügen eines neuen Kategoriebudgets" },
+
+  "editBudgetTitle": "Budget bearbeiten",
+  "@editBudgetTitle": { "description": "AppBar-Titel beim Bearbeiten eines vorhandenen Kategoriebudgets" },
+
+  "budgetAmount": "Budgetbetrag",
+  "@budgetAmount": { "description": "Beschriftung des Formularfelds für den Budgetbetrag" },
+
+  "effectiveFrom": "Gültig ab",
+  "@effectiveFrom": { "description": "Beschriftung des Formularfelds für den Startmonat des Budgets" },
+
+  "pastMonthBudgetWarning": "Ein Budget in der Vergangenheit hat keine Auswirkungen auf frühere Ausgaben.",
+  "@pastMonthBudgetWarning": { "description": "Inline-Warnung, wenn der Benutzer einen vergangenen Monat für ein Budget auswählt" },
+
+  "budgetSaved": "Budget gespeichert.",
+  "@budgetSaved": { "description": "Snackbar-Bestätigung nach dem Speichern eines Kategoriebudgets" },
+
+  "budgetDeleted": "Budget gelöscht.",
+  "@budgetDeleted": { "description": "Snackbar-Bestätigung nach dem Löschen eines Kategoriebudgets" },
+
+  "guardScreenTitle": "GUARD",
+  "@guardScreenTitle": { "description": "AppBar-Titel des GUARD-Bildschirms" },
+
+  "guardDailyReminderTime": "Tägliche Erinnerungszeit",
+  "@guardDailyReminderTime": { "description": "Beschriftung für die tägliche GUARD-Erinnerungszeit" },
+
+  "guardTimePicker": "Tägliche GUARD-Erinnerungszeit",
+  "@guardTimePicker": { "description": "Hilfetext im Zeitpicker-Dialog für GUARD-Erinnerungen" },
+
+  "guardMarkPaid": "Als bezahlt markieren",
+  "@guardMarkPaid": { "description": "Aktion zum Markieren eines GUARD-Eintrags als bezahlt" },
+
+  "guardSilence": "Stummschalten",
+  "@guardSilence": { "description": "Aktion zum Stummschalten einer GUARD-Erinnerung" },
+
+  "guardStatusPaid": "Bezahlt",
+  "@guardStatusPaid": { "description": "Beschriftung des GUARD-Zahlungsstatus" },
+
+  "guardStatusScheduled": "Geplant",
+  "@guardStatusScheduled": { "description": "Beschriftung des GUARD-Zahlungsstatus" },
+
+  "guardStatusUnpaid": "Unbezahlt",
+  "@guardStatusUnpaid": { "description": "Beschriftung des GUARD-Zahlungsstatus" },
+
+  "guardStatusSilenced": "Stummgeschaltet",
+  "@guardStatusSilenced": { "description": "Beschriftung des GUARD-Zahlungsstatus" },
+
+  "noGuardedItems": "Keine überwachten Einträge.",
+  "@noGuardedItems": { "description": "Leere-Zustand-Nachricht auf dem GUARD-Bildschirm" },
+
+  "reportsTitle": "Berichte",
+  "@reportsTitle": { "description": "AppBar-Titel des Berichtsbildschirms" },
+
+  "reportModeMonthly": "Monatlich",
+  "@reportModeMonthly": { "description": "Beschriftung des Berichtmodus-Tabs" },
+
+  "reportModeYearly": "Jährlich",
+  "@reportModeYearly": { "description": "Beschriftung des Berichtmodus-Tabs" },
+
+  "reportModeOverview": "Übersicht",
+  "@reportModeOverview": { "description": "Beschriftung des Berichtmodus-Tabs" },
+
+  "exportPdf": "PDF exportieren",
+  "@exportPdf": { "description": "Schaltfläche zum Exportieren des aktuellen Berichts als PDF" },
+
+  "noExpensesForPeriod": "Für diesen Zeitraum wurden keine Ausgaben erfasst.",
+  "@noExpensesForPeriod": { "description": "Leerer Zustand auf dem Berichtsbildschirm (Monats-/Jahresmodus)" },
+
+  "noIncomeOrSpendingDataForYear": "Für dieses Jahr liegen keine Einnahmen- oder Ausgabendaten vor.",
+  "@noIncomeOrSpendingDataForYear": { "description": "Leerer Zustand im Übersichtsmodus auf dem Berichtsbildschirm" },
+
+  "pieChartOther": "Sonstiges",
+  "@pieChartOther": { "description": "Beschriftung für den zusammengefassten Bereich kleiner Kategorien im Kreisdiagramm" },
+
+  "reportSectionFixedCosts": "FIXKOSTEN",
+  "@reportSectionFixedCosts": { "description": "Abschnittsüberschrift auf dem Detailbildschirm des Kategorienberichts" },
+
+  "reportSectionExpenses": "AUSGABEN",
+  "@reportSectionExpenses": { "description": "Abschnittsüberschrift auf dem Detailbildschirm des Kategorienberichts" },
+
+  "noneInPeriod": "Keine in diesem Zeitraum.",
+  "@noneInPeriod": { "description": "Leerer Zustand innerhalb eines Abschnitts auf dem Detailbildschirm des Kategorienberichts" },
+
+  "fixedCostCount": "{count, plural, =1{1 Fixkosten-Eintrag} other{{count} Fixkosten-Einträge}}",
+  "@fixedCostCount": {
+    "description": "Anzahl der Fixkosten in der Kopfzeile des Kategorienberichts",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "expenseCount": "{count, plural, =1{1 Ausgabe} other{{count} Ausgaben}}",
+  "@expenseCount": {
+    "description": "Anzahl der Ausgaben in der Kopfzeile des Kategorienberichts",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "noItemsInPeriod": "Keine Einträge in diesem Zeitraum",
+  "@noItemsInPeriod": { "description": "Untertitel in der Kopfzeile des Kategorienberichts, wenn keine Einträge vorhanden sind" },
+
+  "importTitle": "Ausgaben importieren",
+  "@importTitle": { "description": "AppBar-Titel des Import-Bildschirms" },
+
+  "importStep1Title": "Vorlage herunterladen",
+  "@importStep1Title": { "description": "Titel der Schritt-Karte auf dem Import-Startbildschirm" },
+
+  "importStep1Description": "Lade die offizielle Excel-Vorlage mit allen erforderlichen Spalten und einer Anleitung zu zulässigen Werten herunter.",
+  "@importStep1Description": { "description": "Beschreibung der Schritt-Karte auf dem Import-Startbildschirm" },
+
+  "importStep1Button": "Vorlage herunterladen",
+  "@importStep1Button": { "description": "Beschriftung der Schritt-Karten-Schaltfläche auf dem Import-Startbildschirm" },
+
+  "importStep2Title": "Ausfüllen und importieren",
+  "@importStep2Title": { "description": "Titel der Schritt-Karte auf dem Import-Startbildschirm" },
+
+  "importStep2Description": "Fülle die Vorlage in Excel oder Google Sheets aus und wähle die Datei dann hier aus, um deine Ausgaben zu importieren.",
+  "@importStep2Description": { "description": "Beschreibung der Schritt-Karte auf dem Import-Startbildschirm" },
+
+  "importStep2Button": "Datei auswählen (.xlsx oder .csv)",
+  "@importStep2Button": { "description": "Beschriftung der Schritt-Karten-Schaltfläche auf dem Import-Startbildschirm" },
+
+  "importInfoText": "Nur Ausgaben können importiert werden. Einnahmen und Plan-Einträge werden nicht unterstützt.\n\nAkzeptierte Formate: .xlsx (Excel) und .csv.\nCSV-Dateien müssen dieselbe Spaltenreihenfolge wie die Vorlage haben: Datum, Betrag, Kategorie, Finanztyp, Notiz, Gruppe.\n\nAus dieser App exportierte Dateien können ebenfalls direkt importiert werden.",
+  "@importInfoText": { "description": "Informationstext auf dem Import-Startbildschirm" },
+
+  "importReadyCount": "{count, plural, =1{1 Ausgabe zum Import bereit} other{{count} Ausgaben zum Import bereit}}",
+  "@importReadyCount": {
+    "description": "Zusammenfassende Zeile, die zeigt, wie viele gültige Zeilen erkannt wurden",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "importErrorCount": "{count, plural, =1{1 Zeile konnte nicht gelesen werden} other{{count} Zeilen konnten nicht gelesen werden}}",
+  "@importErrorCount": {
+    "description": "Zeile mit der Fehleranzahl, wenn keine gültigen Zeilen vorhanden sind",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "importErrorCountSkipped": "{count, plural, =1{1 Zeile konnte nicht gelesen werden — wird übersprungen} other{{count} Zeilen konnten nicht gelesen werden — werden übersprungen}}",
+  "@importErrorCountSkipped": {
+    "description": "Zeile mit der Fehleranzahl, wenn zusätzlich gültige Zeilen vorhanden sind",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "importNoDataFound": "In der Datei wurden keine Daten gefunden.",
+  "@importNoDataFound": { "description": "Wird angezeigt, wenn die Datei erfolgreich verarbeitet wurde, aber keine Zeilen enthält" },
+
+  "importTapToEdit": "Tippe auf eine beliebige Zeile, um sie vor dem Import zu bearbeiten oder zu entfernen.",
+  "@importTapToEdit": { "description": "Hinweistext auf dem Import-Vorschaubildschirm" },
+
+  "importRowsWithErrors": "Zeilen mit Fehlern",
+  "@importRowsWithErrors": { "description": "Abschnittsüberschrift über fehlerhaften Zeilen in der Import-Vorschau" },
+
+  "importNoDataRows": "Keine Datenzeilen gefunden.",
+  "@importNoDataRows": { "description": "Leerer Zustand, wenn sowohl gültige als auch ungültige Zeilenlisten leer sind" },
+
+  "importConfirmButton": "{count, plural, =1{1 Ausgabe importieren} other{{count} Ausgaben importieren}}",
+  "@importConfirmButton": {
+    "description": "Beschriftung der Bestätigungs-Schaltfläche auf dem Import-Vorschaubildschirm",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "importSuccessMessage": "{count, plural, =1{1 Ausgabe importiert · {range}} other{{count} Ausgaben importiert · {range}}}",
+  "@importSuccessMessage": {
+    "description": "Snackbar, die nach einem erfolgreichen Import angezeigt wird",
+    "placeholders": {
+      "count": { "type": "int" },
+      "range": { "type": "String" }
+    }
+  },
+
+  "importUnsupportedFile": "Nicht unterstützter Dateityp. Bitte wähle eine .xlsx- oder .csv-Datei aus.",
+  "@importUnsupportedFile": { "description": "Snackbar, wenn die ausgewählte Datei eine nicht unterstützte Erweiterung hat" },
+
+  "importCouldNotReadFile": "Die Datei konnte nicht gelesen werden. Bitte versuche es erneut.",
+  "@importCouldNotReadFile": { "description": "Snackbar, wenn die Dateibytes nicht geladen werden konnten" },
+
+  "importPickerError": "Dateiauswahl konnte nicht geöffnet werden: {error}",
+  "@importPickerError": {
+    "description": "Snackbar, wenn der Dateiauswahldialog eine Ausnahme auslöst",
+    "placeholders": { "error": { "type": "Object" } }
+  },
+
+  "importTemplateError": "Vorlage konnte nicht erstellt werden: {error}",
+  "@importTemplateError": {
+    "description": "Snackbar, wenn das Herunterladen der Vorlage fehlschlägt",
+    "placeholders": { "error": { "type": "Object" } }
+  },
+
+  "tryAnotherFile": "Andere Datei versuchen",
+  "@tryAnotherFile": { "description": "Schaltfläche zum Zurücksetzen auf die Startphase nach einem schwerwiegenden Verarbeitungsfehler" },
+
+  "savesTitle": "Speicherstände",
+  "@savesTitle": { "description": "AppBar-Titel des Speicherstandsbildschirms" },
+
+  "sectionAutoBackup": "AUTOMATISCHES BACKUP",
+  "@sectionAutoBackup": { "description": "Abschnittsüberschrift auf dem Speicherstandsbildschirm" },
+
+  "sectionSaves": "SPEICHERSTÄNDE",
+  "@sectionSaves": { "description": "Abschnittsüberschrift auf dem Speicherstandsbildschirm" },
+
+  "sectionDataTransfer": "DATENÜBERTRAGUNG",
+  "@sectionDataTransfer": { "description": "Abschnittsüberschrift auf dem Speicherstandsbildschirm" },
+
+  "sectionDataDeletion": "DATENLÖSCHUNG",
+  "@sectionDataDeletion": { "description": "Abschnittsüberschrift auf dem Speicherstandsbildschirm" },
+
+  "exportAllData": "Alle Daten exportieren",
+  "@exportAllData": { "description": "Aktionsschaltfläche zum Exportieren aller Daten als JSON" },
+
+  "importAllData": "Alle Daten importieren",
+  "@importAllData": { "description": "Aktionsschaltfläche zum Importieren aller Daten aus JSON" },
+
+  "deleteAllData": "Alle Daten löschen",
+  "@deleteAllData": { "description": "Destruktive Aktionsschaltfläche zum vollständigen Löschen aller Daten" },
+
+  "emptySlot": "Leerer Speicherplatz",
+  "@emptySlot": { "description": "Platzhalter für einen unbenutzten Speicherplatz" },
+
+  "savedConfirmation": "'{name}' gespeichert.",
+  "@savedConfirmation": {
+    "description": "Snackbar nach dem Erstellen oder Überschreiben eines Speicherplatzes",
+    "placeholders": { "name": { "type": "String" } }
+  },
+
+  "loadedConfirmation": "'{name}' geladen.",
+  "@loadedConfirmation": {
+    "description": "Snackbar nach dem Laden eines Speicherplatzes",
+    "placeholders": { "name": { "type": "String" } }
+  },
+
+  "exportFailed": "Export fehlgeschlagen: {error}",
+  "@exportFailed": {
+    "description": "Snackbar, wenn ein Export fehlschlägt",
+    "placeholders": { "error": { "type": "Object" } }
+  },
+
+  "importFailedInvalid": "Ungültige Datei: {error}",
+  "@importFailedInvalid": {
+    "description": "Snackbar, wenn der JSON-Import aufgrund ungültiger Inhalte fehlschlägt",
+    "placeholders": { "error": { "type": "Object" } }
+  },
+
+  "importDataSuccess": "Daten erfolgreich importiert.",
+  "@importDataSuccess": { "description": "Snackbar nach einem erfolgreichen vollständigen JSON-Datenimport" },
+
+  "couldNotReadSelectedFile": "Die ausgewählte Datei konnte nicht gelesen werden.",
+  "@couldNotReadSelectedFile": { "description": "Snackbar, wenn die Dateibytes der ausgewählten Datei nicht verfügbar sind" },
+
+  "importDataDialogTitle": "Daten importieren?",
+  "@importDataDialogTitle": { "description": "Titel des Bestätigungsdialogs vor dem Import aller Daten" },
+
+  "importDataDialogContent": "Dadurch werden ALLE aktuellen Ausgaben und Plan-Einträge durch den Inhalt der Datei ersetzt. Dies kann nicht rückgängig gemacht werden.",
+  "@importDataDialogContent": { "description": "Text des Bestätigungsdialogs vor dem Import aller Daten" },
+
+  "saveName": "Name des Speicherstands",
+  "@saveName": { "description": "Beschriftung des Textfelds im Dialog für den Namen des Speicherstands" },
+
+  "saveNameCannotBeEmpty": "Der Name darf nicht leer sein",
+  "@saveNameCannotBeEmpty": { "description": "Validierungsfehler im Dialog für den Namen des Speicherstands" },
+
+  "replacingLabel": "Wird ersetzt: {name}",
+  "@replacingLabel": {
+    "description": "Untertitel im Dialog zum Überschreiben eines Speicherstands, der zeigt, welcher Platz ersetzt wird",
+    "placeholders": { "name": { "type": "String" } }
+  },
+
+  "loadDialogDescription": "Alle aktuellen Daten werden durch diesen gespeicherten Stand ersetzt.",
+  "@loadDialogDescription": { "description": "Beschreibungstext im Bestätigungsdialog zum Laden" },
+
+  "deleteDialogDescription": "Dieser gespeicherte Stand wird dauerhaft gelöscht.",
+  "@deleteDialogDescription": { "description": "Beschreibungstext im Bestätigungsdialog zum Löschen" },
+
+  "damagedSaveFile": "Beschädigte Speicherdatei",
+  "@damagedSaveFile": { "description": "Beschriftung, die angezeigt wird, wenn eine Speicherdatei beschädigt ist" },
+
+  "overBudgetAmount": "{amount} über dem Budget",
+  "@overBudgetAmount": {
+    "description": "Beschriftung der Budget-Fortschrittsleiste, wenn die Ausgaben das Budget überschreiten",
+    "placeholders": { "amount": { "type": "String" } }
+  },
+
+  "underBudgetAmount": "{amount} übrig",
+  "@underBudgetAmount": {
+    "description": "Beschriftung der Budget-Fortschrittsleiste, wenn die Ausgaben unter dem Budget liegen",
+    "placeholders": { "amount": { "type": "String" } }
+  },
+
+  "spentLabel": "Ausgegeben: {amount}",
+  "@spentLabel": {
+    "description": "Detailzeile der Budget-Fortschrittsleiste",
+    "placeholders": { "amount": { "type": "String" } }
+  },
+
+  "budgetLabel": "Budget: {amount}",
+  "@budgetLabel": {
+    "description": "Detailzeile der Budget-Fortschrittsleiste",
+    "placeholders": { "amount": { "type": "String" } }
+  },
+
+  "progressBarLabel": "{spent} ausgegeben  /  {budget} Budget",
+  "@progressBarLabel": {
+    "description": "Einzeilige Beschriftung auf der Kategoriebudget-Fortschrittsleiste",
+    "placeholders": {
+      "spent": { "type": "String" },
+      "budget": { "type": "String" }
+    }
+  },
+
+  "categoryBudgetOverBy": "{category}-Budget: um {amount} überschritten",
+  "@categoryBudgetOverBy": {
+    "description": "Eintrag auf der Warnkarte, der zeigt, um wie viel eine Kategorie über dem Budget liegt",
+    "placeholders": {
+      "category": { "type": "String" },
+      "amount": { "type": "String" }
+    }
+  },
+
+  "deleteAllDataDialogTitle": "Alle Daten löschen?",
+  "@deleteAllDataDialogTitle": { "description": "Titel des Bestätigungsdialogs vor dem vollständigen Löschen aller Daten" },
+
+  "deleteAllDataDialogContent": "Dadurch werden alle Ausgaben, Einnahmen und Plan-Einträge dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.",
+  "@deleteAllDataDialogContent": { "description": "Text des Bestätigungsdialogs vor dem vollständigen Löschen aller Daten" },
+
+  "deleteAllDataConfirm": "Alles löschen",
+  "@deleteAllDataConfirm": { "description": "Beschriftung der Bestätigungs-Schaltfläche im Alles-löschen-Dialog" },
+
+  "monthJanuary": "Januar",
+  "@monthJanuary": { "description": "Vollständiger Monatsname" },
+  "monthFebruary": "Februar",
+  "@monthFebruary": { "description": "Vollständiger Monatsname" },
+  "monthMarch": "März",
+  "@monthMarch": { "description": "Vollständiger Monatsname" },
+  "monthApril": "April",
+  "@monthApril": { "description": "Vollständiger Monatsname" },
+  "monthMay": "Mai",
+  "@monthMay": { "description": "Vollständiger Monatsname" },
+  "monthJune": "Juni",
+  "@monthJune": { "description": "Vollständiger Monatsname" },
+  "monthJuly": "Juli",
+  "@monthJuly": { "description": "Vollständiger Monatsname" },
+  "monthAugust": "August",
+  "@monthAugust": { "description": "Vollständiger Monatsname" },
+  "monthSeptember": "September",
+  "@monthSeptember": { "description": "Vollständiger Monatsname" },
+  "monthOctober": "Oktober",
+  "@monthOctober": { "description": "Vollständiger Monatsname" },
+  "monthNovember": "November",
+  "@monthNovember": { "description": "Vollständiger Monatsname" },
+  "monthDecember": "Dezember",
+  "@monthDecember": { "description": "Vollständiger Monatsname" },
+
+  "monthAbbrJan": "Jan",
+  "@monthAbbrJan": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrFeb": "Feb",
+  "@monthAbbrFeb": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrMar": "Mär",
+  "@monthAbbrMar": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrApr": "Apr",
+  "@monthAbbrApr": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrMay": "Mai",
+  "@monthAbbrMay": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrJun": "Jun",
+  "@monthAbbrJun": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrJul": "Jul",
+  "@monthAbbrJul": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrAug": "Aug",
+  "@monthAbbrAug": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrSep": "Sep",
+  "@monthAbbrSep": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrOct": "Okt",
+  "@monthAbbrOct": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrNov": "Nov",
+  "@monthAbbrNov": { "description": "Abgekürzter Monatsname" },
+  "monthAbbrDec": "Dez",
+  "@monthAbbrDec": { "description": "Abgekürzter Monatsname" },
+
+  "categoryHousing": "Wohnen",
+  "@categoryHousing": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryGroceries": "Lebensmittel",
+  "@categoryGroceries": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryVacation": "Urlaub",
+  "@categoryVacation": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryTransport": "Transport",
+  "@categoryTransport": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryInsurance": "Versicherung",
+  "@categoryInsurance": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categorySubscriptions": "Abonnements",
+  "@categorySubscriptions": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryCommunication": "Kommunikation",
+  "@categoryCommunication": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryHealth": "Gesundheit",
+  "@categoryHealth": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryRestaurants": "Restaurants",
+  "@categoryRestaurants": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryEntertainment": "Unterhaltung",
+  "@categoryEntertainment": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryClothing": "Kleidung",
+  "@categoryClothing": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryEducation": "Bildung",
+  "@categoryEducation": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryInvestment": "Investition",
+  "@categoryInvestment": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryGifts": "Geschenke",
+  "@categoryGifts": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryTaxes": "Steuern",
+  "@categoryTaxes": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryMedications": "Medikamente",
+  "@categoryMedications": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryOther": "Sonstiges",
+  "@categoryOther": { "description": "Anzeigename der Ausgabenkategorie" },
+
+  "financialTypeAsset": "Vermögen",
+  "@financialTypeAsset": { "description": "Anzeigename des Finanztyps" },
+  "financialTypeConsumption": "Konsum",
+  "@financialTypeConsumption": { "description": "Anzeigename des Finanztyps" },
+  "financialTypeInsurance": "Versicherung",
+  "@financialTypeInsurance": { "description": "Anzeigename des Finanztyps" },
+
+  "addPlanItemTitle": "Plan-Eintrag hinzufügen",
+  "@addPlanItemTitle": { "description": "AppBar-Titel, wenn kein Typ vorausgewählt ist" },
+  "addMonthlyIncomeTitle": "Monatliche Einnahme hinzufügen",
+  "@addMonthlyIncomeTitle": { "description": "AppBar-Titel beim Hinzufügen einer monatlichen Einnahme" },
+  "addYearlyIncomeTitle": "Jährliche Einnahme hinzufügen",
+  "@addYearlyIncomeTitle": { "description": "AppBar-Titel beim Hinzufügen einer jährlichen Einnahme" },
+  "addOneTimeIncomeTitle": "Einmalige Einnahme hinzufügen",
+  "@addOneTimeIncomeTitle": { "description": "AppBar-Titel beim Hinzufügen einer einmaligen Einnahme" },
+  "addMonthlyFixedCostTitle": "Monatliche Fixkosten hinzufügen",
+  "@addMonthlyFixedCostTitle": { "description": "AppBar-Titel beim Hinzufügen monatlicher Fixkosten" },
+  "addYearlyFixedCostTitle": "Jährliche Fixkosten hinzufügen",
+  "@addYearlyFixedCostTitle": { "description": "AppBar-Titel beim Hinzufügen jährlicher Fixkosten" },
+  "editMonthlyIncomeTitle": "Monatliche Einnahme bearbeiten",
+  "@editMonthlyIncomeTitle": { "description": "AppBar-Titel beim Bearbeiten einer monatlichen Einnahme" },
+  "editYearlyIncomeTitle": "Jährliche Einnahme bearbeiten",
+  "@editYearlyIncomeTitle": { "description": "AppBar-Titel beim Bearbeiten einer jährlichen Einnahme" },
+  "editOneTimeIncomeTitle": "Einmalige Einnahme bearbeiten",
+  "@editOneTimeIncomeTitle": { "description": "AppBar-Titel beim Bearbeiten einer einmaligen Einnahme" },
+  "editMonthlyFixedCostTitle": "Monatliche Fixkosten bearbeiten",
+  "@editMonthlyFixedCostTitle": { "description": "AppBar-Titel beim Bearbeiten monatlicher Fixkosten" },
+  "editYearlyFixedCostTitle": "Jährliche Fixkosten bearbeiten",
+  "@editYearlyFixedCostTitle": { "description": "AppBar-Titel beim Bearbeiten jährlicher Fixkosten" },
+
+  "labelType": "Typ",
+  "@labelType": { "description": "Abschnittsbeschriftung für den Plan-Eintragstyp" },
+  "labelMonth": "Monat",
+  "@labelMonth": { "description": "Dropdown-Beschriftung im Monat-/Jahres-Auswahldialog" },
+  "labelYear": "Jahr",
+  "@labelYear": { "description": "Dropdown-Beschriftung im Monat-/Jahres-Auswahldialog" },
+  "labelDayOfMonth": "Tag des Monats",
+  "@labelDayOfMonth": { "description": "Dropdown-Beschriftung im GUARD-Fälligkeitstag-Dialog" },
+  "nameHintText": "z. B. Gehalt, Miete, Versicherung",
+  "@nameHintText": { "description": "Hinweistext im Namensfeld des Bildschirms zum Hinzufügen eines Plan-Eintrags" },
+  "validationEnterName": "Bitte einen Namen eingeben",
+  "@validationEnterName": { "description": "Validierungsfehler, wenn das Namensfeld leer ist" },
+
+  "selectMonthTitle": "Monat auswählen",
+  "@selectMonthTitle": { "description": "Dialogtitel für den Monat-/Jahres-Auswahldialog" },
+  "lastRenewalYearTitle": "Letztes Verlängerungsjahr",
+  "@lastRenewalYearTitle": { "description": "Dialogtitel für den jährlichen Endjahres-Auswahldialog" },
+  "lastMonthRenewal": "Letzte {monthName}-Verlängerung",
+  "@lastMonthRenewal": {
+    "description": "Dropdown-Beschriftung im jährlichen Endjahres-Auswahldialog",
+    "placeholders": { "monthName": { "type": "String" } }
+  },
+  "lastActiveMonthInfo": "Letzter aktiver Monat: {label}",
+  "@lastActiveMonthInfo": {
+    "description": "Informationstext im jährlichen Endjahres-Auswahldialog",
+    "placeholders": { "label": { "type": "String" } }
+  },
+  "setEndDate": "Enddatum festlegen",
+  "@setEndDate": { "description": "Schalter-Beschriftung zum Aktivieren eines optionalen Enddatums" },
+  "untilLabel": "Bis: {validToLabel}",
+  "@untilLabel": {
+    "description": "Schaltflächenbeschriftung, die das aktuelle Enddatum anzeigt",
+    "placeholders": { "validToLabel": { "type": "String" } }
+  },
+  "lastActiveMonthNote": "{label} ist der letzte aktive Monat.",
+  "@lastActiveMonthNote": {
+    "description": "Hinweistext unterhalb der Bis-Schaltfläche für jährliche Einträge",
+    "placeholders": { "label": { "type": "String" } }
+  },
+  "endMonthAfterStart": "Endmonat muss nach dem Startmonat liegen.",
+  "@endMonthAfterStart": { "description": "Inline-Fehler, wenn der Endmonat nicht nach dem Startmonat liegt" },
+  "fromFieldLabel": "Von",
+  "@fromFieldLabel": { "description": "Beschriftung des gesperrten Von-Felds beim Bearbeiten jährlicher Fixkosten" },
+  "renewedEachMonth": "Wird jährlich im {monthName} verlängert. Termine sind fest.",
+  "@renewedEachMonth": {
+    "description": "Hinweistext unterhalb des gesperrten Von-Felds für jährliche Fixkosten",
+    "placeholders": { "monthName": { "type": "String" } }
+  },
+  "untilFieldLabel": "Bis",
+  "@untilFieldLabel": { "description": "Beschriftung des gesperrten Bis-Felds beim Bearbeiten jährlicher Fixkosten" },
+  "lastActiveMonthParens": "{label} (letzter aktiver Monat)",
+  "@lastActiveMonthParens": {
+    "description": "Wert im gesperrten Bis-Feld für jährliche Einträge",
+    "placeholders": { "label": { "type": "String" } }
+  },
+  "openEnded": "Unbegrenzt",
+  "@openEnded": { "description": "Wert im gesperrten Bis-Feld, wenn kein Enddatum festgelegt ist" },
+  "fromDateLabel": "Von: {validFromLabel}",
+  "@fromDateLabel": {
+    "description": "Schaltflächenbeschriftung, die das aktuelle Startdatum anzeigt",
+    "placeholders": { "validFromLabel": { "type": "String" } }
+  },
+  "samePeriodInPlace": "Gleicher Monat wie das Original – wird direkt aktualisiert.",
+  "@samePeriodInPlace": { "description": "Hinweis, wenn der neue Startmonat mit dem Original übereinstimmt" },
+  "differentPeriodNewVersion": "Anderer Monat – erstellt eine neue Version.",
+  "@differentPeriodNewVersion": { "description": "Hinweis, wenn der neue Startmonat vom Original abweicht" },
+
+  "applyChangesToTitle": "Änderungen anwenden auf...",
+  "@applyChangesToTitle": { "description": "Dialogtitel für den Speicherauswahl-Dialog bei jährlichen Fixkosten" },
+  "applyToWholeSeries": "Gesamte Serie",
+  "@applyToWholeSeries": { "description": "Option im jährlichen Speicherdialog – Änderungen auf alle Zeiträume anwenden" },
+  "applyToWholeSeriesSubtitle": "Alle Zeiträume ab {seriesStartLabel}",
+  "@applyToWholeSeriesSubtitle": {
+    "description": "Untertitel für die Gesamtserien-Option im jährlichen Speicherdialog",
+    "placeholders": { "seriesStartLabel": { "type": "String" } }
+  },
+  "applyFromOnwards": "Ab {nextLabel}",
+  "@applyFromOnwards": {
+    "description": "Option im jährlichen Speicherdialog – ab einem zukünftigen Zeitraum aufteilen",
+    "placeholders": { "nextLabel": { "type": "String" } }
+  },
+  "applyFromSubtitle": "Ursprüngliche Serie endet {capLabel}.\nNeue Serie beginnt {nextLabel}.",
+  "@applyFromSubtitle": {
+    "description": "Untertitel für die Aufteilungsoption im jährlichen Speicherdialog",
+    "placeholders": {
+      "capLabel": { "type": "String" },
+      "nextLabel": { "type": "String" }
+    }
+  },
+  "applyFromUnavailable": "Kein zukünftiger Zeitraum in dieser Serie verfügbar.",
+  "@applyFromUnavailable": { "description": "Untertitel für die Aufteilungsoption, wenn kein zukünftiger Zeitraum existiert" },
+  "yearlyItemsOnlyAtRenewal": "Jährliche Einträge können nur am Verlängerungsmonat geändert werden.",
+  "@yearlyItemsOnlyAtRenewal": { "description": "Snackbar bei ungültiger Bearbeitung eines jährlichen Eintrags" },
+
+  "guardRemindMe": "Erinnere mich, diese Zahlung zu bestätigen",
+  "@guardRemindMe": { "description": "Untertitel unter dem GUARD-Schalter auf dem Bildschirm zum Hinzufügen eines Plan-Eintrags" },
+  "guardShorterMonths": "Kürzere Monate verwenden den letzten Tag.",
+  "@guardShorterMonths": { "description": "Hinweis, wenn der GUARD-Fälligkeitstag > 28 ist" },
+  "dueDayMonthly": "Fälligkeitstag (monatlich)",
+  "@dueDayMonthly": { "description": "Dialogtitel für den GUARD-Fälligkeitstag-Dialog bei monatlichen Einträgen" },
+  "dueDayYearly": "Fälligkeitstag (jährlich im {monthName})",
+  "@dueDayYearly": {
+    "description": "Dialogtitel für den GUARD-Fälligkeitstag-Dialog bei jährlichen Einträgen",
+    "placeholders": { "monthName": { "type": "String" } }
+  },
+  "dueDayMonthlyLabel": "Tag {day} jeden Monats",
+  "@dueDayMonthlyLabel": {
+    "description": "Schaltflächenbeschriftung für den ausgewählten Fälligkeitstag bei monatlichen Einträgen",
+    "placeholders": { "day": { "type": "int" } }
+  },
+  "dueDayYearlyLabel": "Tag {day} im {monthName} jedes Jahr",
+  "@dueDayYearlyLabel": {
+    "description": "Schaltflächenbeschriftung für den ausgewählten Fälligkeitstag bei jährlichen Einträgen",
+    "placeholders": {
+      "day": { "type": "int" },
+      "monthName": { "type": "String" }
+    }
+  },
+
+  "guardDailyReminder": "Tägliche Erinnerung",
+  "@guardDailyReminder": { "description": "Kacheltitel für die Benachrichtigungszeit auf dem GUARD-Bildschirm" },
+  "guardChangeNotifTime": "Tippe, um die Benachrichtigungszeit zu ändern",
+  "@guardChangeNotifTime": { "description": "Kacheluntertitel für die Benachrichtigungszeit auf dem GUARD-Bildschirm" },
+  "guardNoGuardedItemsHint": "Aktiviere GUARD für Fixkosten, um Zahlungen zu verfolgen.",
+  "@guardNoGuardedItemsHint": { "description": "Sekundärer Leertext auf dem GUARD-Bildschirm" },
+  "guardedItemsCount": "Überwachte Einträge · {count}",
+  "@guardedItemsCount": {
+    "description": "Abschnittsüberschrift mit der Anzahl der überwachten Einträge auf dem GUARD-Bildschirm",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "planItemTitle": "Plan-Eintrag",
+  "@planItemTitle": { "description": "AppBar-Titel des Detailbildschirms für Plan-Einträge" },
+  "activeFrom": "Aktiv ab",
+  "@activeFrom": { "description": "Detailzeilen-Beschriftung für den Startzeitraum des Plan-Eintrags" },
+  "activeUntil": "Aktiv bis",
+  "@activeUntil": { "description": "Detailzeilen-Beschriftung für den Endzeitraum des Plan-Eintrags" },
+  "perMonth": "/ Monat",
+  "@perMonth": { "description": "Betragsanhang für monatliche Plan-Einträge" },
+  "perYear": "/ Jahr",
+  "@perYear": { "description": "Betragsanhang für jährliche Plan-Einträge" },
+  "oneTimeSuffix": "(einmalig)",
+  "@oneTimeSuffix": { "description": "Betragsanhang für einmalige Plan-Einträge" },
+  "noEndDate": "Kein Enddatum",
+  "@noEndDate": { "description": "Wert im Aktiv-bis-Feld, wenn kein Enddatum für Fixkosten festgelegt ist" },
+  "guardNotEnabled": "Nicht aktiviert",
+  "@guardNotEnabled": { "description": "GUARD-Abschnittsuntertitel, wenn GUARD noch nicht eingerichtet ist" },
+
+  "removeIncomeEntirely": "\"{name}\" wird vollständig entfernt.",
+  "@removeIncomeEntirely": {
+    "description": "Beschreibung im Bestätigungsdialog beim vollständigen Entfernen einer Einnahme",
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "removeIncomeFromOnwards": "\"{name}\" wird ab {from} beendet. {prev} und früher bleibt weiterhin geplant.",
+  "@removeIncomeFromOnwards": {
+    "description": "Beschreibung im Bestätigungsdialog beim Entfernen einer Einnahme ab einem bestimmten Zeitraum",
+    "placeholders": {
+      "name": { "type": "String" },
+      "from": { "type": "String" },
+      "prev": { "type": "String" }
+    }
+  },
+  "actionRemoveAllCaps": "ENTFERNEN",
+  "@actionRemoveAllCaps": { "description": "Hervorgehobene Aktionsbeschriftung im Fixkosten-Löschen-Dialog" },
+  "removeFromOnwardsTitle": "Ab {label}",
+  "@removeFromOnwardsTitle": {
+    "description": "Optionstitel im Fixkosten-Löschen-Dialog – ab dem ausgewählten Zeitraum entfernen",
+    "placeholders": { "label": { "type": "String" } }
+  },
+  "removeCycleSubtitle": "Dieser Zyklus ({start} – {end}) und alle zukünftigen Zyklen werden entfernt.",
+  "@removeCycleSubtitle": {
+    "description": "Untertitel für die Ab-Zeitraum-Option beim Löschen jährlicher Fixkosten",
+    "placeholders": {
+      "start": { "type": "String" },
+      "end": { "type": "String" }
+    }
+  },
+  "removeHistoryKept": "Verlauf bis {prev} wird beibehalten.",
+  "@removeHistoryKept": {
+    "description": "Untertitel für die Ab-Zeitraum-Option beim Löschen monatlicher Fixkosten",
+    "placeholders": { "prev": { "type": "String" } }
+  },
+  "silenceReminderTitle": "Erinnerung stummschalten?",
+  "@silenceReminderTitle": { "description": "Dialogtitel beim Stummschalten einer GUARD-Erinnerung" },
+  "silenceReminderBody": "Die Zahlung für {periodLabel} wird weiterhin als unbestätigt angezeigt. Sie kann jederzeit als bezahlt markiert werden.",
+  "@silenceReminderBody": {
+    "description": "Dialogtext beim Stummschalten einer GUARD-Erinnerung",
+    "placeholders": { "periodLabel": { "type": "String" } }
+  },
+  "yesSilence": "Ja, stummschalten",
+  "@yesSilence": { "description": "Bestätigungs-Schaltfläche im Stummschalten-Dialog" },
+  "addPlanItemTooltip": "Plan-Eintrag hinzufügen",
+  "@addPlanItemTooltip": { "description": "FAB-Tooltip auf dem Plan-Bildschirm" },
+  "spendableThisMonth": "Verfügbar diesen Monat",
+  "@spendableThisMonth": { "description": "Beschriftung der verfügbaren Betrags-Karte in der Monatsansicht" },
+  "spendableThisYear": "Verfügbar dieses Jahr",
+  "@spendableThisYear": { "description": "Beschriftung der verfügbaren Betrags-Karte in der Jahresansicht" },
+  "noPlanItemsYet": "Noch keine Plan-Einträge.",
+  "@noPlanItemsYet": { "description": "Primärer Leertext auf dem Plan-Bildschirm" },
+  "tapPlusToAddPlanItems": "Tippe auf +, um Einnahmen oder Fixkosten hinzuzufügen.",
+  "@tapPlusToAddPlanItems": { "description": "Sekundärer Leertext auf dem Plan-Bildschirm" },
+  "removeWholeSeries": "Gesamte Serie",
+  "@removeWholeSeries": { "description": "Optionstitel im Fixkosten-Löschen-Dialog – gesamte Serie entfernen" },
+  "removeWholeSeriesSubtitle": "Alle Zeiträume ab {seriesStartLabel} werden entfernt.",
+  "@removeWholeSeriesSubtitle": {
+    "description": "Untertitel für die Gesamtserien-Option im Fixkosten-Löschen-Dialog",
+    "placeholders": { "seriesStartLabel": { "type": "String" } }
+  },
+
+  "clearAllDataAction": "LÖSCHEN",
+  "@clearAllDataAction": { "description": "Hervorgehobene Aktionsbeschriftung im Alles-löschen-Dialog" },
+  "clearAllDataDescription": "Ausgaben, Plan-Einträge, Budgets und GUARD-Zahlungen werden dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.",
+  "@clearAllDataDescription": { "description": "Beschreibungstext im Alles-löschen-Dialog" },
+  "clearAllDataPreservedNote": "Gespeicherte Stände und automatische Backups sind nicht betroffen.",
+  "@clearAllDataPreservedNote": { "description": "Hinweis im Alles-löschen-Dialog, was erhalten bleibt" },
+
+  "allCategoriesBudgeted": "Alle Kategorien haben bereits ein Budget für diesen Monat. Wähle einen anderen Monat, um ein weiteres hinzuzufügen.",
+  "@allCategoriesBudgeted": { "description": "Wird anstelle des Kategorie-Dropdowns angezeigt, wenn alle Kategorien bereits ein Budget haben" },
+  "selectCategoryHint": "Kategorie auswählen",
+  "@selectCategoryHint": { "description": "Dropdown-Hinweistext, wenn keine Kategorie ausgewählt ist" },
+  "validationSelectCategory": "Bitte eine Kategorie auswählen",
+  "@validationSelectCategory": { "description": "Validierungsfehler, wenn keine Kategorie im Budgetformular ausgewählt ist" },
+  "monthlyBudgetLabel": "Monatliches Budget",
+  "@monthlyBudgetLabel": { "description": "Textfeld-Beschriftung für den monatlichen Budgetbetrag" },
+  "effectiveFromLabel": "Gültig ab: {validFromLabel}",
+  "@effectiveFromLabel": {
+    "description": "Schaltflächenbeschriftung, die den aktuellen Startmonat anzeigt",
+    "placeholders": { "validFromLabel": { "type": "String" } }
+  },
+  "pastMonthBudgetCreateWarning": "Du erstellst ein Budget für einen vergangenen Monat. Es gilt rückwirkend ab {fromLabel}.",
+  "@pastMonthBudgetCreateWarning": {
+    "description": "Warnung beim Erstellen eines Budgets für einen vergangenen Monat",
+    "placeholders": { "fromLabel": { "type": "String" } }
+  },
+  "pastMonthBudgetEditWarning": "Dadurch wird das Budget für {catName} auf {fromLabel} zurückgesetzt. Die Monate {fromLabel}–{prevLabel} verwenden den neuen Betrag.",
+  "@pastMonthBudgetEditWarning": {
+    "description": "Warnung beim Bearbeiten eines Budgets ab einem vergangenen Monat",
+    "placeholders": {
+      "catName": { "type": "String" },
+      "fromLabel": { "type": "String" },
+      "prevLabel": { "type": "String" }
+    }
+  },
+
+  "noFixedCostsPlanned": "Keine Fixkosten geplant",
+  "@noFixedCostsPlanned": { "description": "Untertitel auf der Fixkosten-Zusammenfassungskachel, wenn keine Einträge vorhanden sind" },
+  "noIncomePlanned": "Keine Einnahmen geplant",
+  "@noIncomePlanned": { "description": "Untertitel auf der Einnahmen-Zusammenfassungskachel, wenn keine Einträge vorhanden sind" },
+
+  "saveSlotSubtitle": "{date} · {expenseCount} Ausgaben · {planItemCount} Plan-Einträge",
+  "@saveSlotSubtitle": {
+    "description": "Untertitel auf einer Speicherstand-Kachel mit Datum und Anzahlen",
+    "placeholders": {
+      "date": { "type": "String" },
+      "expenseCount": { "type": "int" },
+      "planItemCount": { "type": "int" }
+    }
+  },
+  "saveSlotDamagedSubtitle": "Datei ist beschädigt und kann nicht geladen werden",
+  "@saveSlotDamagedSubtitle": { "description": "Untertitel auf einer beschädigten Speicherstand-Kachel" },
+
+  "howGroupsWorkTitle": "Wie funktioniert's?",
+  "@howGroupsWorkTitle": { "description": "Kopftitel des Gruppen-Erklärungssheets" },
+  "howGroupsTitle": "Gruppen",
+  "@howGroupsTitle": { "description": "Schrittüberschrift des Gruppen-Erklärungssheets" },
+  "howGroupsSubtitle0": "Was eine Gruppe ist und wie sie funktioniert",
+  "@howGroupsSubtitle0": { "description": "Untertitel für die erste Seite des Gruppen-Erklärungssheets" },
+  "howGroupsSubtitle1": "Wie man sie nutzt",
+  "@howGroupsSubtitle1": { "description": "Untertitel für die zweite Seite des Gruppen-Erklärungssheets" },
+  "howGroupsSubtitle2": "Wo Gruppen in der App erscheinen",
+  "@howGroupsSubtitle2": { "description": "Untertitel für die dritte Seite des Gruppen-Erklärungssheets" },
+  "howGroupsLabel0": "Markieren",
+  "@howGroupsLabel0": { "description": "Schritt-Indikator-Beschriftung für Seite 1" },
+  "howGroupsLabel1": "Kreativ werden",
+  "@howGroupsLabel1": { "description": "Schritt-Indikator-Beschriftung für Seite 2" },
+  "howGroupsLabel2": "Auswerten",
+  "@howGroupsLabel2": { "description": "Schritt-Indikator-Beschriftung für Seite 3" },
+  "howGroupsRule1": "Eine Gruppe ist ein optionales Freitext-Label, das du jeder Ausgabe anheften kannst.",
+  "@howGroupsRule1": { "description": "Aufzählungspunkt auf der Markieren-Seite" },
+  "howGroupsRule2": "Du kannst beliebigen Text eingeben – es gibt keine feste Liste und keine Validierung.",
+  "@howGroupsRule2": { "description": "Aufzählungspunkt auf der Markieren-Seite" },
+  "howGroupsRule3": "Zwei Ausgaben gehören nur dann zur selben Gruppe, wenn ihre Labels genau übereinstimmen – Zeichen für Zeichen.",
+  "@howGroupsRule3": { "description": "Aufzählungspunkt auf der Markieren-Seite" },
+  "howGroupsRule4": "Groß-/Kleinschreibung wird berücksichtigt – \u201EReise\u201C und \u201Ereise\u201C gelten als zwei verschiedene Gruppen.",
+  "@howGroupsRule4": { "description": "Aufzählungspunkt auf der Markieren-Seite" },
+  "howGroupsRule5": "Das Feld ist optional. Lasse es leer, und die Ausgabe hat einfach keine Gruppe.",
+  "@howGroupsRule5": { "description": "Aufzählungspunkt auf der Markieren-Seite" },
+  "howGroupsHint": "Lege die Gruppe beim Erstellen oder Bearbeiten einer Ausgabe fest.",
+  "@howGroupsHint": { "description": "Hinweisbox am Ende der Markieren-Seite" },
+  "howGroupsUseIntro": "Nutze es immer, wenn du einen bestimmten Ausgabenbereich über mehrere Kategorien hinweg verfolgen möchtest.",
+  "@howGroupsUseIntro": { "description": "Einleitungstext auf der Kreativ-werden-Seite" },
+  "howGroupsExample1Label": "Barcelona {year}",
+  "@howGroupsExample1Label": {
+    "description": "Beispiel-Gruppen-Label auf der Kreativ-werden-Seite",
+    "placeholders": { "year": { "type": "int" } }
+  },
+  "howGroupsExample1Desc": "Füge es jeder Ausgabe auf einer Reise hinzu – Flüge, Hotels, Mahlzeiten, Tickets. Sieh die Gesamtkosten der gesamten Reise auf einen Blick.",
+  "@howGroupsExample1Desc": { "description": "Beschreibung für Beispiel 1 auf der Kreativ-werden-Seite" },
+  "howGroupsExample2Label": "McDonald''s {year}",
+  "@howGroupsExample2Label": {
+    "description": "Beispiel-Gruppen-Label auf der Kreativ-werden-Seite",
+    "placeholders": { "year": { "type": "int" } }
+  },
+  "howGroupsExample2Desc": "Verwende einen einheitlichen Namen das ganze Jahr über. Am Jahresende weißt du genau, was du an diesem Ort ausgegeben hast.",
+  "@howGroupsExample2Desc": { "description": "Beschreibung für Beispiel 2 auf der Kreativ-werden-Seite" },
+  "howGroupsExample3Label": "Hausrenovierung Q1",
+  "@howGroupsExample3Label": { "description": "Beispiel-Gruppen-Label auf der Kreativ-werden-Seite" },
+  "howGroupsExample3Desc": "Erstrecke dich über mehrere Monate mit demselben Label. Der Gruppen-Tab sammelt alles unter diesem Namen.",
+  "@howGroupsExample3Desc": { "description": "Beschreibung für Beispiel 3 auf der Kreativ-werden-Seite" },
+  "howGroupsPrecision": "Je genauer dein Label, desto nützlicher ist die Zusammenfassung.",
+  "@howGroupsPrecision": { "description": "Kursive Anmerkung am Ende der Kreativ-werden-Seite" },
+  "howGroupsRecord0Title": "Gruppen-Tab in Ausgaben",
+  "@howGroupsRecord0Title": { "description": "Titel der ersten Zeile auf der Auswerten-Seite" },
+  "howGroupsRecord0Body": "Jede Gruppe mit mindestens einer Ausgabe im aktuellen Monat erscheint hier als einzelne Zeile mit Anzahl und Gesamtbetrag. Tippe auf eine Gruppe, um alle einzelnen Ausgaben dahinter zu sehen.",
+  "@howGroupsRecord0Body": { "description": "Text der ersten Zeile auf der Auswerten-Seite" },
+  "howGroupsRecord1Title": "Monatsbericht in Berichte",
+  "@howGroupsRecord1Title": { "description": "Titel der zweiten Zeile auf der Auswerten-Seite" },
+  "howGroupsRecord1Body": "Wenn du einen monatlichen PDF-Bericht exportierst, erhalten Gruppen mit Ausgaben in diesem Monat eine eigene Seite \u201EAusgabengruppen\u201C \u2013 jede Gruppe mit ihren Ausgaben, Betr\u00E4gen und einem Gruppengesamt.",
+  "@howGroupsRecord1Body": { "description": "Text der zweiten Zeile auf der Auswerten-Seite" },
+  "howGroupsMonthlyNote": "Gruppen sind nicht im Jahresbericht enthalten – sie sind eine monatliche Perspektive.",
+  "@howGroupsMonthlyNote": { "description": "Hinweis am Ende der Auswerten-Seite" },
+
+  "loadingLabel": "Wird geladen…",
+  "@loadingLabel": {"description": "Generischer Ladeplatzhalter"},
+
+  "autoBackupTitle": "Automatisches Backup",
+  "@autoBackupTitle": {"description": "Abschnittsüberschrift für die Auto-Backup-Slots"},
+
+  "autoBackupNoBackupYet": "Noch kein Backup",
+  "@autoBackupNoBackupYet": {"description": "Wird angezeigt, wenn noch kein Auto-Backup existiert"},
+
+  "autoBackupSubtitleExpand": "Täglich aktualisiert · tippen zum Aufklappen",
+  "@autoBackupSubtitleExpand": {"description": "Auto-Backup-Untertitel wenn der Abschnitt eingeklappt ist"},
+
+  "autoBackupSubtitleCollapse": "Täglich aktualisiert · tippen zum Einklappen",
+  "@autoBackupSubtitleCollapse": {"description": "Auto-Backup-Untertitel wenn der Abschnitt ausgeklappt ist"},
+
+  "actionRestoreAllCaps": "WIEDERHERSTELLEN",
+  "@actionRestoreAllCaps": {"description": "Großgeschriebene Beschriftung der Wiederherstellungs-Aktion"},
+
+  "actionRestore": "Wiederherstellen",
+  "@actionRestore": {"description": "Beschriftung der Wiederherstellungs-Aktion"},
+
+  "autoBackupRestoreDescription": "Beim Wiederherstellen werden alle aktuellen Daten durch das Backup ersetzt.",
+  "@autoBackupRestoreDescription": {"description": "Beschreibungstext im Bestätigungsdialog für die Wiederherstellung"},
+
+  "autoBackupRestored": "Backup vom {date} wiederhergestellt.",
+  "@autoBackupRestored": {
+    "description": "Snackbar nach erfolgreicher Auto-Backup-Wiederherstellung",
+    "placeholders": {"date": {"type": "String"}}
+  },
+
+  "autoBackupRestoreFailed": "Backup konnte nicht wiederhergestellt werden.",
+  "@autoBackupRestoreFailed": {"description": "Snackbar wenn die Auto-Backup-Wiederherstellung fehlschlägt"},
+
+  "frequencyPickerFixed": "Wie oft wiederholt es sich?",
+  "@frequencyPickerFixed": {"description": "Titel des Häufigkeits-Pickers für Fixkosten"},
+
+  "frequencyMonthlyFixedSubtitle": "Miete, Abonnements, wiederkehrende Rechnungen",
+  "@frequencyMonthlyFixedSubtitle": {"description": "Untertitel für die Monatlich-Option im Fixkosten-Häufigkeitspicker"},
+
+  "frequencyYearlyFixedSubtitle": "Jahresabonnements, Versicherungen, Mitgliedschaften",
+  "@frequencyYearlyFixedSubtitle": {"description": "Untertitel für die Jährlich-Option im Fixkosten-Häufigkeitspicker"},
+
+  "frequencyPickerIncome": "Wie oft erhältst du es?",
+  "@frequencyPickerIncome": {"description": "Titel des Häufigkeits-Pickers für Einnahmen"},
+
+  "frequencyMonthlyIncomeSubtitle": "Gehalt, Rente, regelmäßige Überweisungen",
+  "@frequencyMonthlyIncomeSubtitle": {"description": "Untertitel für die Monatlich-Option im Einnahmen-Häufigkeitspicker"},
+
+  "frequencyYearlyIncomeSubtitle": "Jahresbonus, Steuererstattung, Dividenden",
+  "@frequencyYearlyIncomeSubtitle": {"description": "Untertitel für die Jährlich-Option im Einnahmen-Häufigkeitspicker"},
+
+  "frequencyOneTimeIncomeSubtitle": "Geschenk, unerwartete Einnahme, Einmalzahlung",
+  "@frequencyOneTimeIncomeSubtitle": {"description": "Untertitel für die Einmalig-Option im Einnahmen-Häufigkeitspicker"},
+
+  "typePickerTitle": "Was möchtest du hinzufügen?",
+  "@typePickerTitle": {"description": "Titel des Plan-Typen-Pickers"},
+
+  "typeIncomeSubtitle": "Gehalt, Bonus, Rente, Geschenke",
+  "@typeIncomeSubtitle": {"description": "Untertitel für die Einnahmen-Karte im Typenpicker"},
+
+  "typeFixedCostSubtitle": "Miete, Versicherungen, Abonnements",
+  "@typeFixedCostSubtitle": {"description": "Untertitel für die Fixkosten-Karte im Typenpicker"},
+
+  "currencyPickerTitle": "Währung",
+  "@currencyPickerTitle": {"description": "Titel des Währungspicker-Sheets"},
+
+  "currencyCustom": "Benutzerdefiniert",
+  "@currencyCustom": {"description": "Bezeichnung für die benutzerdefinierte Währungsoption"},
+
+  "currencyCustomSubtitle": "Eigenen Code und Symbol festlegen",
+  "@currencyCustomSubtitle": {"description": "Untertitel für die benutzerdefinierte Währungsoption"},
+
+  "currencyCustomTitle": "Benutzerdefinierte Währung",
+  "@currencyCustomTitle": {"description": "Titel des Eingabedialogs für benutzerdefinierte Währungen"},
+
+  "currencyCodeLabel": "Code",
+  "@currencyCodeLabel": {"description": "Bezeichnung des WährungsCode-Eingabefeldes"},
+
+  "currencyCodeHint": "z. B. USD",
+  "@currencyCodeHint": {"description": "Hinweis für das Währungscode-Eingabefeld"},
+
+  "currencySymbolLabel": "Symbol",
+  "@currencySymbolLabel": {"description": "Bezeichnung des Währungssymbol-Eingabefeldes"},
+
+  "currencySymbolHint": "z. B. $",
+  "@currencySymbolHint": {"description": "Hinweis für das Währungssymbol-Eingabefeld"},
+
+  "removeFromImport": "Aus Import entfernen",
+  "@removeFromImport": {"description": "Aktion zum Entfernen einer Zeile aus der Importvorschau"},
+
+  "exportExpensesTitle": "Ausgaben exportieren",
+  "@exportExpensesTitle": {"description": "Titel des Datumbereichs-Dialogs für den Export"},
+
+  "selectDateRangeHint": "Datumsbereich für den Export auswählen:",
+  "@selectDateRangeHint": {"description": "Anleitungstext im Export-Dialog"},
+
+  "startDateLabel": "Startdatum",
+  "@startDateLabel": {"description": "Bezeichnung des Startdatum-Pickers im Export-Dialog"},
+
+  "endDateLabel": "Enddatum",
+  "@endDateLabel": {"description": "Bezeichnung des Enddatum-Pickers im Export-Dialog"},
+
+  "tapToSelectDate": "Tippen zum Auswählen",
+  "@tapToSelectDate": {"description": "Platzhalter wenn noch kein Datum ausgewählt wurde"},
+
+  "endDateAfterStart": "Das Enddatum muss gleich oder nach dem Startdatum liegen.",
+  "@endDateAfterStart": {"description": "Validierungsfehler im Export-Dialog"},
+
+  "actionExport": "Exportieren",
+  "@actionExport": {"description": "Beschriftung der Exportieren-Schaltfläche"},
+
+  "overspendWarning": "Diesen {period} hast du {amount} mehr ausgegeben als eingenommen!",
+  "@overspendWarning": {
+    "description": "Warnung in der Finanztyp-Verteilungskarte wenn die Ausgaben die Einnahmen übersteigen",
+    "placeholders": {
+      "period": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+
+  "periodMonth": "Monat",
+  "@periodMonth": {"description": "Wort 'Monat' für overspendWarning"},
+
+  "periodYear": "Jahr",
+  "@periodYear": {"description": "Wort 'Jahr' für overspendWarning"},
+
+  "guardBannerCount": "{count, plural, =1{GUARD — 1 Zahlung nicht bestätigt} other{GUARD — {count} Zahlungen nicht bestätigt}}",
+  "@guardBannerCount": {
+    "description": "Banner-Text mit der Anzahl unbestätigter GUARD-Zahlungen",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "guardSilencedBadge": "stummgeschaltet",
+  "@guardSilencedBadge": {"description": "Abzeichen für ein stummgeschaltetes GUARD-Element im Banner"},
+
+  "guardExpenseStripPending": "{count, plural, =1{1 bewachte Zahlung ausstehend} other{{count} bewachte Zahlungen ausstehend}}",
+  "@guardExpenseStripPending": {
+    "description": "Streifen auf der Ausgabenliste bei ausstehenden GUARD-Zahlungen",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorRowLabel": "Zeile {row} — {field}",
+  "@importErrorRowLabel": {
+    "description": "Bezeichnung für eine Importfehlerzeile mit Zeilennummer und Feldname",
+    "placeholders": {
+      "row": {"type": "int"},
+      "field": {"type": "String"}
+    }
+  },
+
+  "earnedLabel": "Verdient: {amount}",
+  "@earnedLabel": {
+    "description": "Verdienter Betrag in der Übersichts-Monatszeile",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "fromDateShort": "ab {label}",
+  "@fromDateShort": {
+    "description": "Kurzes 'ab Datum'-Label in Plan-Untertiteln",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "untilDateShort": "bis {label}",
+  "@untilDateShort": {
+    "description": "Kurzes 'bis Datum'-Label in Plan-Untertiteln",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardEnableToggle": "GUARD aktivieren",
+  "@guardEnableToggle": {"description": "Bezeichnung für den GUARD-Aktivierungsschalter im Setup-Sheet"},
+
+  "guardEnableToggleSubtitle": "Zahlung verfolgen und Erinnerungen erhalten",
+  "@guardEnableToggleSubtitle": {"description": "Untertitel für den GUARD-Aktivierungsschalter"},
+
+  "actionOk": "OK",
+  "@actionOk": {"description": "Generische OK-Schaltflächenbeschriftung"},
+
+  "otherCategories": "Andere Kategorien",
+  "@otherCategories": {"description": "Bezeichnung für den zusammengefassten Bereich im Kreisdiagramm und in Aufschlüsselungslisten"},
+
+  "noCategoryExpenses": "Keine {category}-Ausgaben\nim {period}.",
+  "@noCategoryExpenses": {
+    "description": "Leerer Zustand im Kategorie-Ausgabenlistenbildschirm",
+    "placeholders": {
+      "category": {"type": "String"},
+      "period": {"type": "String"}
+    }
+  },
+
+  "guardDueDate": "Fällig am {day}. {monthName} {year}",
+  "@guardDueDate": {
+    "description": "Fälligkeitsdatum auf der GUARD-Statuskarte",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "day": {"type": "int"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "guardNotYetDue": "Noch nicht fällig",
+  "@guardNotYetDue": {"description": "Beschriftung auf der GUARD-Karte, wenn die Zahlung noch nicht fällig ist"},
+
+  "guardNextReminder": "Nächste: {label}",
+  "@guardNextReminder": {
+    "description": "Nächste Erinnerungsbeschriftung auf der GUARD-Karte",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardLastReminder": "Letzte: {label}",
+  "@guardLastReminder": {
+    "description": "Letzte Erinnerungsbeschriftung auf der GUARD-Karte",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardChangeDay": "Tag ändern",
+  "@guardChangeDay": {"description": "Aktionsschaltfläche auf der GUARD-Karte zum Ändern des Fälligkeitstages"},
+
+  "guardRemoveAction": "GUARD entfernen",
+  "@guardRemoveAction": {"description": "Aktionsschaltfläche auf der GUARD-Karte zum Entfernen der GUARD-Überwachung"},
+
+  "guardMarkUnpaidTitle": "Als unbezahlt markieren?",
+  "@guardMarkUnpaidTitle": {"description": "Dialogtitel beim Widerrufen einer Zahlungsbestätigung"},
+
+  "guardMarkUnpaidBody": "Dadurch wird die Zahlungsbestätigung für {monthName} {year} entfernt.",
+  "@guardMarkUnpaidBody": {
+    "description": "Dialogtext beim Widerrufen einer Zahlungsbestätigung",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "guardMarkUnpaidAction": "Als unbezahlt markieren",
+  "@guardMarkUnpaidAction": {"description": "Bestätigungs-Schaltfläche im Als-unbezahlt-markieren-Dialog"},
+
+  "guardMarkAsPaid": "Als bezahlt markieren",
+  "@guardMarkAsPaid": {"description": "Primäre Aktionsschaltfläche auf der GUARD-Karte"},
+
+  "guardRemoveTitle": "GUARD entfernen?",
+  "@guardRemoveTitle": {"description": "Dialogtitel beim Entfernen von GUARD von einem Plan-Eintrag"},
+
+  "guardRemoveBody": "GUARD wird für \"{name}\" deaktiviert. Vorhandene Zahlungsnachweise bleiben erhalten, aber es werden keine neuen Erinnerungen ausgelöst.",
+  "@guardRemoveBody": {
+    "description": "Dialogtext beim Entfernen von GUARD",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "guardRemoveConfirm": "Entfernen",
+  "@guardRemoveConfirm": {"description": "Bestätigungs-Schaltfläche im GUARD-entfernen-Dialog"},
+
+  "guardSelectPaidDate": "Zahlungsdatum auswählen",
+  "@guardSelectPaidDate": {"description": "Hilfetext für den Datumsauswähler beim Bearbeiten eines Zahlungsdatums"},
+
+  "guardPaidOn": "Bezahlt am {date}",
+  "@guardPaidOn": {
+    "description": "Beschriftung auf der GUARD-Karte, die das bestätigte Zahlungsdatum anzeigt",
+    "placeholders": {"date": {"type": "String"}}
+  },
+
+  "howItWorksStep": "SCHRITT {n}",
+  "@howItWorksStep": {
+    "description": "Schrittnummernbeschriftung über jedem Tab im Wie-es-funktioniert-Sheet",
+    "placeholders": {"n": {"type": "int"}}
+  },
+
+  "planSubtitle0": "Dein Gehalt und feste monatliche Rechnungen",
+  "@planSubtitle0": {"description": "Untertitel für Plan-Unterseite 0 (Cashflow)"},
+
+  "planSubtitle1": "Wie deine Fixkosten klassifiziert werden",
+  "@planSubtitle1": {"description": "Untertitel für Plan-Unterseite 1 (Klassifizierung)"},
+
+  "planSubtitle2": "Wie viel deines Einkommens jeder Typ verbraucht",
+  "@planSubtitle2": {"description": "Untertitel für Plan-Unterseite 2 (Verteilung)"},
+
+  "planSubStep0": "Cashflow",
+  "@planSubStep0": {"description": "Unterschritt-Beschriftung für Plan-Seite 0"},
+
+  "planSubStep1": "Klassifizierung",
+  "@planSubStep1": {"description": "Unterschritt-Beschriftung für Plan-Seite 1"},
+
+  "planSubStep2": "Verteilung",
+  "@planSubStep2": {"description": "Unterschritt-Beschriftung für Plan-Seite 2"},
+
+  "howItWorksPlanIncomeBody": "Trage dein Gehalt und feste monatliche Rechnungen ein – Miete, Versicherung, Abonnements. Das sind echte, bekannte Zahlen, keine Schätzungen oder Ziele.",
+  "@howItWorksPlanIncomeBody": {"description": "Bodytext auf der Plan > Cashflow-Seite"},
+
+  "howItWorksTypeConsumptionDesc": "Alltägliche Ausgaben – Lebensmittel, Miete, Essen gehen, Transport",
+  "@howItWorksTypeConsumptionDesc": {"description": "Beschreibung des Konsum-Finanztyps auf der Klassifizierungsseite"},
+
+  "howItWorksTypeAssetDesc": "Investitionen und Ersparnisse, die dein Vermögen langfristig vermehren",
+  "@howItWorksTypeAssetDesc": {"description": "Beschreibung des Vermögen-Finanztyps auf der Klassifizierungsseite"},
+
+  "howItWorksTypeInsuranceDesc": "Schutzkosten – Auto-, Kranken- und Lebensversicherung",
+  "@howItWorksTypeInsuranceDesc": {"description": "Beschreibung des Versicherungs-Finanztyps auf der Klassifizierungsseite"},
+
+  "howItWorksFinancialTypesBody": "Jede Fixkostposition wird mit einem Finanztyp gekennzeichnet. So kann die App zeigen, wie dein Einkommen auf Ausgaben, Ersparnisse und Absicherung aufgeteilt ist.",
+  "@howItWorksFinancialTypesBody": {"description": "Bodytext auf der Plan > Klassifizierungsseite"},
+
+  "howItWorksSpendingVsIncomeTitle": "Ausgaben vs. Einnahmen",
+  "@howItWorksSpendingVsIncomeTitle": {"description": "Kartentitel auf der Plan > Verteilungsseite"},
+
+  "howItWorksSpendingVsIncomeBody": "Der Plan-Tab zeigt, wie viel deines Einkommens in jeden Finanztyp fließt – so siehst du auf einen Blick, ob du den richtigen Anteil deines Verdienstes ausgibst, sparst oder absicherst.",
+  "@howItWorksSpendingVsIncomeBody": {"description": "Bodytext auf der Plan > Verteilungsseite"},
+
+  "expSubtitle0": "Dein verfügbares Budget, berechnet aus dem Plan",
+  "@expSubtitle0": {"description": "Untertitel für Ausgaben-Unterseite 0 (Budget)"},
+
+  "expSubtitle1": "Tägliche Ausgaben, die du erfasst",
+  "@expSubtitle1": {"description": "Untertitel für Ausgaben-Unterseite 1 (Ausgaben)"},
+
+  "expSubtitle2": "Bist du im Budget geblieben?",
+  "@expSubtitle2": {"description": "Untertitel für Ausgaben-Unterseite 2 (Ergebnis)"},
+
+  "subStepBudget": "Budget",
+  "@subStepBudget": {"description": "Unterschritt-Beschriftung für die Budget-Seite in Ausgaben"},
+
+  "subStepSpending": "Ausgaben",
+  "@subStepSpending": {"description": "Unterschritt-Beschriftung für die Ausgaben-Seite"},
+
+  "subStepResult": "Ergebnis",
+  "@subStepResult": {"description": "Unterschritt-Beschriftung für die Ergebnis-Seite"},
+
+  "howItWorksBudgetBody": "Die App subtrahiert deine Fixkosten vom Einkommen und zeigt das Ergebnis hier an. Du legst diese Zahl nicht fest – sie kommt aus deinem Plan.",
+  "@howItWorksBudgetBody": {"description": "Bodytext auf der Ausgaben > Budget-Seite"},
+
+  "howItWorksSpendingBody": "Trage Lebensmittel, Mahlzeiten, Einkäufe und andere variable Ausgaben ein. Feste monatliche Rechnungen wie Miete gehören in den Plan, nicht hierher.",
+  "@howItWorksSpendingBody": {"description": "Bodytext auf der Ausgaben > Ausgaben-Seite"},
+
+  "howItWorksResultBody": "Am Ende des Monats zeigt der Ausgaben-Tab, welches Ergebnis du erzielt hast.",
+  "@howItWorksResultBody": {"description": "Bodytext auf der Ausgaben > Ergebnis-Seite"},
+
+  "repSubtitle0": "Wohin ist dein Geld geflossen?",
+  "@repSubtitle0": {"description": "Untertitel für Berichte-Unterseite 0 (Aufschlüsselung)"},
+
+  "repSubtitle1": "Deine Finanzen auf Papier",
+  "@repSubtitle1": {"description": "Untertitel für Berichte-Unterseite 1 (Export)"},
+
+  "repSubtitle2": "Das große Bild, Monat für Monat",
+  "@repSubtitle2": {"description": "Untertitel für Berichte-Unterseite 2 (Übersicht)"},
+
+  "repSubStep0": "Aufschlüsselung",
+  "@repSubStep0": {"description": "Unterschritt-Beschriftung für die Aufschlüsselungsseite in Berichte"},
+
+  "repSubStep1": "Export",
+  "@repSubStep1": {"description": "Unterschritt-Beschriftung für die Export-Seite in Berichte"},
+
+  "repSubStep2": "Übersicht",
+  "@repSubStep2": {"description": "Unterschritt-Beschriftung für die Übersichtsseite in Berichte"},
+
+  "howItWorksBreakdownBody": "Die Aufschlüsselung zeigt deine Ausgaben nach Kategorie für einen Monat oder ein Jahr. Tippe auf einen Bereich oder eine Kategoriezeile, um die einzelnen Ausgaben und Fixkosten dahinter zu sehen.",
+  "@howItWorksBreakdownBody": {"description": "Bodytext auf der Berichte > Aufschlüsselungsseite"},
+
+  "pdfFeatureCategoryTotals": "Kategorie-Summen",
+  "@pdfFeatureCategoryTotals": {"description": "Feature-Aufzählungspunkt in der Monatliches-PDF-Karte"},
+
+  "pdfFeatureBudgetVsActual": "Budget vs. Ist",
+  "@pdfFeatureBudgetVsActual": {"description": "Feature-Aufzählungspunkt in der Monatliches-PDF-Karte"},
+
+  "pdfFeatureTypeSplit": "Finanztyp-Aufteilung",
+  "@pdfFeatureTypeSplit": {"description": "Feature-Aufzählungspunkt in der Monatliches-PDF-Karte"},
+
+  "pdfFeatureAllExpenses": "Alle Ausgaben aufgelistet",
+  "@pdfFeatureAllExpenses": {"description": "Feature-Aufzählungspunkt in der Monatliches-PDF-Karte"},
+
+  "pdfFeatureCategoryBudgets": "Kategorie-Budgets",
+  "@pdfFeatureCategoryBudgets": {"description": "Feature-Aufzählungspunkt in der Monatliches-PDF-Karte"},
+
+  "pdfFeatureGroupSummaries": "Gruppen-Zusammenfassungen",
+  "@pdfFeatureGroupSummaries": {"description": "Feature-Aufzählungspunkt in der Monatliches-PDF-Karte"},
+
+  "pdfFeature12MonthOverview": "12-Monats-Übersicht",
+  "@pdfFeature12MonthOverview": {"description": "Feature-Aufzählungspunkt in der Jährliches-PDF-Karte"},
+
+  "pdfFeatureAnnualTotals": "Jahressummen",
+  "@pdfFeatureAnnualTotals": {"description": "Feature-Aufzählungspunkt in der Jährliches-PDF-Karte"},
+
+  "pdfFeatureMonthlyBreakdown": "Monatliche Aufschlüsselung",
+  "@pdfFeatureMonthlyBreakdown": {"description": "Feature-Aufzählungspunkt in der Jährliches-PDF-Karte"},
+
+  "pdfFeaturePlanVsActual": "Plan vs. Ist",
+  "@pdfFeaturePlanVsActual": {"description": "Feature-Aufzählungspunkt in der Jährliches-PDF-Karte"},
+
+  "pdfFeatureTypeRatios": "Typverhältnisse",
+  "@pdfFeatureTypeRatios": {"description": "Feature-Aufzählungspunkt in der Jährliches-PDF-Karte"},
+
+  "pdfFeatureActivePlanItems": "Aktive Plan-Einträge",
+  "@pdfFeatureActivePlanItems": {"description": "Feature-Aufzählungspunkt in der Jährliches-PDF-Karte"},
+
+  "howItWorksExportBody": "Nutze die PDF-Schaltfläche in der Aufschlüsselung zum Exportieren. Berichte können über jede App auf deinem Gerät geteilt werden.",
+  "@howItWorksExportBody": {"description": "Bodytext auf der Berichte > Export-Seite"},
+
+  "howItWorksMoreMonths": "\u00B7 \u00B7 \u00B7 9 weitere Monate",
+  "@howItWorksMoreMonths": {"description": "Auslassungszeile in der Übersichts-Musterkarte"},
+
+  "howItWorksOverviewBody": "Die Übersicht zeigt alle 12 Monate nebeneinander – wie viel du verdient hast, was in Vermögenswerte geflossen ist und was verbraucht wurde. Tippe auf einen Monat, um zu diesem Zeitraum im Plan zu springen.",
+  "@howItWorksOverviewBody": {"description": "Bodytext auf der Berichte > Übersichtsseite"},
+
+  "overBudgetBy": "Um {amount} über dem Budget",
+  "@overBudgetBy": {
+    "description": "Ergebnis-Zusammenfassungsbeschriftung, wenn die Ausgaben das Budget überschreiten",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "savedAmount": "{amount} gespart",
+  "@savedAmount": {
+    "description": "Ergebnis-Zusammenfassungsbeschriftung, wenn die Ausgaben unter dem Budget liegen",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "labelTotal": "Gesamt",
+  "@labelTotal": {"description": "Gesamtzeilen-Beschriftung in der Berichtskategorienliste"},
+
+  "categoryBudgetsTitle": "Kategorie-Budgets",
+  "@categoryBudgetsTitle": {"description": "AppBar-Titel für den Budgetverwaltungsbildschirm (kategoriespezifisch)"},
+
+  "noCategoryBudgetsSet": "Keine Kategorie-Budgets festgelegt.",
+  "@noCategoryBudgetsSet": {"description": "Leerer-Zustand-Primärtext auf dem Budgetverwaltungsbildschirm"},
+
+  "removeBudgetDialogTitle": "Budget für {category} entfernen",
+  "@removeBudgetDialogTitle": {
+    "description": "Titel des Budget-Löschen-Bestätigungsdialogs",
+    "placeholders": {"category": {"type": "String"}}
+  },
+
+  "endBudgetFromTitle": "Beenden ab {from}",
+  "@endBudgetFromTitle": {
+    "description": "Optionstitel im Budget-Löschen-Dialog – Budget ab dem gewählten Monat beenden",
+    "placeholders": {"from": {"type": "String"}}
+  },
+
+  "endBudgetFromDescription": "Beendet das Budget ab {from}. Frühere Monate behalten ihr historisches Budget.",
+  "@endBudgetFromDescription": {
+    "description": "Untertitel für die Ab-Monat-beenden-Option im Budget-Löschen-Dialog",
+    "placeholders": {"from": {"type": "String"}}
+  },
+
+  "deleteBudgetSeriesTitle": "Gesamte Serie löschen",
+  "@deleteBudgetSeriesTitle": {"description": "Optionstitel im Budget-Löschen-Dialog – alle Budget-Einträge dieser Serie löschen"},
+
+  "deleteBudgetSeriesConfirm": "Serie löschen",
+  "@deleteBudgetSeriesConfirm": {"description": "Bestätigungsschaltfläche im Budget-Löschen-Dialog"},
+
+  "deleteBudgetSeriesDescription": "Entfernt dauerhaft alle Einträge ({range}). Für keinen Monat dieser Serie erscheint ein Budget. Dies kann nicht rückgängig gemacht werden.",
+  "@deleteBudgetSeriesDescription": {
+    "description": "Untertitel für die Alles-löschen-Option im Budget-Löschen-Dialog",
+    "placeholders": {"range": {"type": "String"}}
+  },
+
+  "budgetRangePresent": "{start} – heute",
+  "@budgetRangePresent": {
+    "description": "Datumsbereichs-Beschriftung im Budget-Löschen-Dialog, wenn das Budget kein Enddatum hat",
+    "placeholders": {"start": {"type": "String"}}
+  },
+
+  "pdfMonthlyReport": "Monatsbericht",
+  "@pdfMonthlyReport": {"description": "PDF-Wiederholungstitel für Monatsberichte"},
+
+  "pdfYearlyReport": "Jahresbericht",
+  "@pdfYearlyReport": {"description": "PDF-Wiederholungstitel für Jahresberichte"},
+
+  "pdfMonthlyReportHeader": "MONATSBERICHT FÜR {month} {year}",
+  "@pdfMonthlyReportHeader": {
+    "description": "PDF-Erste-Seite-Banner-Titel für Monatsberichte",
+    "placeholders": {
+      "month": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "pdfYearlyReportHeader": "JAHRESBERICHT FÜR {year}",
+  "@pdfYearlyReportHeader": {
+    "description": "PDF-Erste-Seite-Banner-Titel für Jahresberichte",
+    "placeholders": {"year": {"type": "int"}}
+  },
+
+  "pdfPartialYear": "(Teiljahr)",
+  "@pdfPartialYear": {"description": "PDF-Untertitelzusatz für Jahresberichte, die nur einen Teil des Jahres abdecken"},
+
+  "pdfSectionSpendingVsIncome": "AUSGABEN VS. EINNAHMEN",
+  "@pdfSectionSpendingVsIncome": {"description": "PDF-Abschnittstitel für das Ausgaben-vs.-Einnahmen-Widget"},
+
+  "pdfSectionCategorySummary": "KATEGORIE-ZUSAMMENFASSUNG",
+  "@pdfSectionCategorySummary": {"description": "PDF-Abschnittstitel für die Kategorie-Zusammenfassungstabelle"},
+
+  "pdfSectionCashFlowSummary": "CASHFLOW-ZUSAMMENFASSUNG",
+  "@pdfSectionCashFlowSummary": {"description": "PDF-Abschnittstitel für die Cashflow-Zusammenfassung"},
+
+  "pdfSectionExpenseGroups": "AUSGABENGRUPPEN",
+  "@pdfSectionExpenseGroups": {"description": "PDF-Abschnittstitel für die Ausgabengruppen-Seite"},
+
+  "pdfSectionExpenseDetails": "AUSGABENDETAILS",
+  "@pdfSectionExpenseDetails": {"description": "PDF-Abschnittstitel für die Ausgabendetail-Tabelle"},
+
+  "pdfSectionYearlyOverview": "JAHRESÜBERSICHT",
+  "@pdfSectionYearlyOverview": {"description": "PDF-Abschnittstitel für die Jahresübersichtstabelle"},
+
+  "pdfSectionSpendingByCategory": "AUSGABEN NACH KATEGORIE UND MONAT",
+  "@pdfSectionSpendingByCategory": {"description": "PDF-Abschnittstitel für die Querformat-Kategorie-nach-Monat-Tabelle"},
+
+  "pdfIncomeHeader": "EINNAHMEN",
+  "@pdfIncomeHeader": {"description": "PDF-Einnahmen-Kartenkopf-Beschriftung in der Cashflow-Zusammenfassung"},
+
+  "pdfFixedCostsHeader": "FIXKOSTEN",
+  "@pdfFixedCostsHeader": {"description": "PDF-Fixkosten-Kartenkopf-Beschriftung in der Cashflow-Zusammenfassung"},
+
+  "pdfTotal": "GESAMT",
+  "@pdfTotal": {"description": "PDF-GESAMT-Zeilenbeschriftung in Kategorie- und Ausgabentabellen"},
+
+  "pdfColTotal": "Gesamt",
+  "@pdfColTotal": {"description": "PDF-Spaltenüberschrift 'Gesamt' in der Querformat-Kategorie-nach-Monat-Tabelle"},
+
+  "pdfEarnedThisMonth": "Diesen Monat verdient",
+  "@pdfEarnedThisMonth": {"description": "PDF-Beschriftung für die Einkommenszeile im monatlichen Ausgaben-vs.-Einnahmen-Widget"},
+
+  "pdfEarnedThisYear": "Dieses Jahr verdient",
+  "@pdfEarnedThisYear": {"description": "PDF-Beschriftung für die Einkommenszeile im jährlichen Ausgaben-vs.-Einnahmen-Widget"},
+
+  "pdfGroupTotal": "Gruppengesamt (diesen Monat)",
+  "@pdfGroupTotal": {"description": "PDF-Zwischensummenzeilen-Beschriftung im Ausgabengruppen-Abschnitt"},
+
+  "pdfAllPeriodsTotal": "Gesamtbetrag aller Zeiträume",
+  "@pdfAllPeriodsTotal": {"description": "PDF-Gesamtzeilen-Beschriftung für alle Zeiträume im Ausgabengruppen-Abschnitt"},
+
+  "pdfItemsThisMonth": "{count, plural, =1{1 Eintrag diesen Monat} other{{count} Einträge diesen Monat}}",
+  "@pdfItemsThisMonth": {
+    "description": "PDF-Gruppen-Kopfanzahl-Beschriftung mit der Anzahl der Ausgaben in der Gruppe im aktuellen Monat",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "pdfNormalized": " (normalisiert)",
+  "@pdfNormalized": {"description": "PDF-Suffix für jährliche Plan-Einträge in einer monatlichen Cashflow-Zusammenfassung"},
+
+  "pdfAnnualized": " (annualisiert)",
+  "@pdfAnnualized": {"description": "PDF-Suffix für monatliche Plan-Einträge in einer jährlichen Cashflow-Zusammenfassung"},
+
+  "pdfPartialYearNote": "Teiljahr – Monate ohne Daten werden als null angezeigt. Nur Jahres-bis-dato-Summen.",
+  "@pdfPartialYearNote": {"description": "PDF-Hinweis oben in einem Teiljahresbericht"},
+
+  "pdfPage": "Seite {page} von {total}",
+  "@pdfPage": {
+    "description": "PDF-Fußzeilen-Seitenzahl-Beschriftung",
+    "placeholders": {
+      "page": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+
+  "pdfNoData": "Keine Daten.",
+  "@pdfNoData": {"description": "PDF-Platzhalter für Tabellen oder Abschnitte ohne Daten"},
+
+  "howItWorksExampleSalary": "Gehalt",
+  "@howItWorksExampleSalary": {"description": "Beispiel-Einnahme in der Wie-es-funktioniert-Erklärung"},
+
+  "howItWorksExampleBonus": "Bonus",
+  "@howItWorksExampleBonus": {"description": "Beispiel-Einnahme in der Wie-es-funktioniert-Erklärung"},
+
+  "howItWorksExampleRent": "Miete",
+  "@howItWorksExampleRent": {"description": "Beispiel-Fixkosten in der Wie-es-funktioniert-Erklärung"},
+
+  "howItWorksExampleInsurance": "Versicherung",
+  "@howItWorksExampleInsurance": {"description": "Beispiel-Fixkosten in der Wie-es-funktioniert-Erklärung"},
+
+  "howItWorksExampleEtfFonds": "ETF-Fonds",
+  "@howItWorksExampleEtfFonds": {"description": "Beispiel-Fixkosten in der Wie-es-funktioniert-Erklärung"},
+
+  "addBudgetTooltip": "Budget hinzufügen",
+  "@addBudgetTooltip": {"description": "FAB-Tooltip auf dem Kategoriebudgets-Bildschirm"}
+}

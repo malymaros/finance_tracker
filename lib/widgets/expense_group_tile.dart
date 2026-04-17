@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/expense.dart';
 import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
@@ -28,7 +29,7 @@ class ExpenseGroupTile extends StatelessWidget {
       leading: const Icon(Icons.folder_outlined, color: AppColors.gold, size: 22),
       title: Text(groupName),
       subtitle: Text(
-        '$count ${count == 1 ? 'item' : 'items'}',
+        context.l10n.itemCount(count),
         style: const TextStyle(fontSize: 12),
       ),
       trailing: Text(

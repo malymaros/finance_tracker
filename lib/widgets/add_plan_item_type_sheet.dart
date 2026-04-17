@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 
 /// Shared card used by the plan-item selection bottom sheets
@@ -100,6 +101,7 @@ class AddPlanItemTypeSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
@@ -108,7 +110,7 @@ class AddPlanItemTypeSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'What are you adding?',
+              l10n.typePickerTitle,
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
@@ -118,8 +120,8 @@ class AddPlanItemTypeSheet extends StatelessWidget {
             PlanItemSelectionCard(
               icon: Icons.savings,
               color: AppColors.income,
-              title: 'Income',
-              subtitle: 'Salary, freelance, recurring income',
+              title: l10n.typeIncome,
+              subtitle: l10n.typeIncomeSubtitle,
               onTap: () {
                 Navigator.of(context).pop();
                 onIncomeSelected();
@@ -129,8 +131,8 @@ class AddPlanItemTypeSheet extends StatelessWidget {
             PlanItemSelectionCard(
               icon: Icons.lock_outline,
               color: AppColors.textMuted,
-              title: 'Fixed Cost',
-              subtitle: 'Rent, subscriptions, recurring bills',
+              title: l10n.typeFixedCost,
+              subtitle: l10n.typeFixedCostSubtitle,
               onTap: () {
                 Navigator.of(context).pop();
                 onFixedCostSelected();

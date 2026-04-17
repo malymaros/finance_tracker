@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 import 'add_plan_item_type_sheet.dart';
 
@@ -18,6 +19,7 @@ class AddFixedCostFrequencySheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
@@ -26,7 +28,7 @@ class AddFixedCostFrequencySheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'How often does it recur?',
+              l10n.frequencyPickerFixed,
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
@@ -36,8 +38,8 @@ class AddFixedCostFrequencySheet extends StatelessWidget {
             PlanItemSelectionCard(
               icon: Icons.repeat,
               color: AppColors.navy,
-              title: 'Monthly',
-              subtitle: 'Rent, subscriptions, recurring bills',
+              title: l10n.frequencyMonthly,
+              subtitle: l10n.frequencyMonthlyFixedSubtitle,
               onTap: () {
                 Navigator.of(context).pop();
                 onMonthlySelected();
@@ -47,8 +49,8 @@ class AddFixedCostFrequencySheet extends StatelessWidget {
             PlanItemSelectionCard(
               icon: Icons.event_repeat,
               color: AppColors.navy,
-              title: 'Yearly',
-              subtitle: 'Annual subscriptions, insurance, memberships',
+              title: l10n.frequencyYearly,
+              subtitle: l10n.frequencyYearlyFixedSubtitle,
               onTap: () {
                 Navigator.of(context).pop();
                 onYearlySelected();

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+import '../../l10n/l10n.dart';
+import '../../l10n/l10n_extensions.dart';
 import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/plan_item.dart';
@@ -66,32 +69,32 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   bool get _frequencyIsLocked =>
       widget.existing != null || widget.initialFrequency != null;
 
-  String get _screenTitle {
+  String _computeScreenTitle(AppLocalizations l10n) {
     if (widget.existing != null) {
       if (_type == PlanItemType.income) {
         return switch (_frequency) {
-          PlanFrequency.yearly  => 'Edit Yearly Income',
-          PlanFrequency.oneTime => 'Edit One-time Income',
-          _                     => 'Edit Monthly Income',
+          PlanFrequency.yearly  => l10n.editYearlyIncomeTitle,
+          PlanFrequency.oneTime => l10n.editOneTimeIncomeTitle,
+          _                     => l10n.editMonthlyIncomeTitle,
         };
       }
       return _frequency == PlanFrequency.yearly
-          ? 'Edit Yearly Fixed Cost'
-          : 'Edit Monthly Fixed Cost';
+          ? l10n.editYearlyFixedCostTitle
+          : l10n.editMonthlyFixedCostTitle;
     }
     if (widget.initialType != null) {
       if (_type == PlanItemType.income) {
         return switch (_frequency) {
-          PlanFrequency.yearly  => 'Add Yearly Income',
-          PlanFrequency.oneTime => 'Add One-time Income',
-          _                     => 'Add Monthly Income',
+          PlanFrequency.yearly  => l10n.addYearlyIncomeTitle,
+          PlanFrequency.oneTime => l10n.addOneTimeIncomeTitle,
+          _                     => l10n.addMonthlyIncomeTitle,
         };
       }
       return _frequency == PlanFrequency.yearly
-          ? 'Add Yearly Fixed Cost'
-          : 'Add Monthly Fixed Cost';
+          ? l10n.addYearlyFixedCostTitle
+          : l10n.addMonthlyFixedCostTitle;
     }
-    return 'Add Plan Item';
+    return l10n.addPlanItemTitle;
   }
 
   bool get _canShowGuard =>
@@ -177,22 +180,22 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
         var selectedYear = initial.year.clamp(firstYear, lastYear);
         return StatefulBuilder(
           builder: (ctx, setInner) => AlertDialog(
-            title: const Text('Select month'),
+            title: Text(ctx.l10n.selectMonthTitle),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 DropdownButtonFormField<int>(
                   initialValue: selectedMonth,
-                  decoration: const InputDecoration(
-                    labelText: 'Month',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: ctx.l10n.labelMonth,
+                    border: const OutlineInputBorder(),
                     isDense: true,
                   ),
                   items: List.generate(12, (i) {
                     final m = i + 1;
                     return DropdownMenuItem(
                       value: m,
-                      child: Text(YearMonth.monthNames[m]),
+                      child: Text(ctx.l10n.monthName(m)),
                     );
                   }),
                   onChanged: (v) {
@@ -202,9 +205,9 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                 const SizedBox(height: 12),
                 DropdownButtonFormField<int>(
                   initialValue: selectedYear,
-                  decoration: const InputDecoration(
-                    labelText: 'Year',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: ctx.l10n.labelYear,
+                    border: const OutlineInputBorder(),
                     isDense: true,
                   ),
                   items: List.generate(
@@ -223,7 +226,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(ctx).pop(null),
-                child: const Text('Cancel'),
+                child: Text(ctx.l10n.actionCancel),
               ),
               FilledButton(
                 onPressed: () =>
@@ -304,16 +307,16 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
           builder: (ctx, setInner) {
             final endDate =
                 YearMonth(selected + 1, anchorMonth).addMonths(-1);
+            final l10n = ctx.l10n;
             return AlertDialog(
-              title: const Text('Last renewal year'),
+              title: Text(l10n.lastRenewalYearTitle),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   DropdownButtonFormField<int>(
                     initialValue: selected,
                     decoration: InputDecoration(
-                      labelText:
-                          'Last ${YearMonth.monthNames[anchorMonth]} renewal',
+                      labelText: l10n.lastMonthRenewal(l10n.monthName(anchorMonth)),
                       border: const OutlineInputBorder(),
                       isDense: true,
                     ),
@@ -321,8 +324,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                       final y = _validFrom.year + i;
                       return DropdownMenuItem(
                         value: y,
-                        child: Text(
-                            '${YearMonth.monthNames[anchorMonth]} $y'),
+                        child: Text('${l10n.monthName(anchorMonth)} $y'),
                       );
                     }),
                     onChanged: (v) {
@@ -331,7 +333,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Last active month: ${endDate.label}',
+                    l10n.lastActiveMonthInfo(endDate.label),
                     style: const TextStyle(
                         fontSize: 12, color: AppColors.textMuted),
                   ),
@@ -340,7 +342,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(ctx).pop(null),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.actionCancel),
                 ),
                 FilledButton(
                   onPressed: () => Navigator.of(ctx).pop(selected),
@@ -377,47 +379,50 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
 
     return showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Apply changes to...'),
-        contentPadding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Option 1 — whole series
-            ListTile(
-              leading: const Icon(Icons.history, color: AppColors.navy),
-              title: const Text('Whole series',
-                  style: TextStyle(fontWeight: FontWeight.w600)),
-              subtitle: Text('All periods from $seriesStartLabel onwards'),
-              onTap: () => Navigator.of(ctx).pop(true),
-            ),
-            const Divider(height: 1),
-            // Option 2 — split from next period
-            ListTile(
-              enabled: canSplit,
-              leading: Icon(Icons.call_split,
-                  color: canSplit ? AppColors.navy : AppColors.border),
-              title: Text('From $nextLabel onwards',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: canSplit ? null : AppColors.textMuted,
-                  )),
-              subtitle: Text(
-                canSplit
-                    ? 'Original series ends $capLabel.\nNew series starts $nextLabel.'
-                    : 'No future period available in this series.',
+      builder: (ctx) {
+        final l10n = ctx.l10n;
+        return AlertDialog(
+          title: Text(l10n.applyChangesToTitle),
+          contentPadding: const EdgeInsets.fromLTRB(8, 16, 8, 0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Option 1 — whole series
+              ListTile(
+                leading: const Icon(Icons.history, color: AppColors.navy),
+                title: Text(l10n.applyToWholeSeries,
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
+                subtitle: Text(l10n.applyToWholeSeriesSubtitle(seriesStartLabel)),
+                onTap: () => Navigator.of(ctx).pop(true),
               ),
-              onTap: canSplit ? () => Navigator.of(ctx).pop(false) : null,
+              const Divider(height: 1),
+              // Option 2 — split from next period
+              ListTile(
+                enabled: canSplit,
+                leading: Icon(Icons.call_split,
+                    color: canSplit ? AppColors.navy : AppColors.border),
+                title: Text(l10n.applyFromOnwards(nextLabel),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: canSplit ? null : AppColors.textMuted,
+                    )),
+                subtitle: Text(
+                  canSplit
+                      ? l10n.applyFromSubtitle(capLabel, nextLabel)
+                      : l10n.applyFromUnavailable,
+                ),
+                onTap: canSplit ? () => Navigator.of(ctx).pop(false) : null,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(null),
+              child: Text(l10n.actionCancel),
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(null),
-            child: const Text('Cancel'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -509,9 +514,8 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       if (result == PlanItemEditResult.invalidYearlyCycleBoundary) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  'Yearly items can only be changed at their renewal month.'),
+            SnackBar(
+              content: Text(context.l10n.yearlyItemsOnlyAtRenewal),
             ),
           );
         }
@@ -581,36 +585,48 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               }),
             ),
             const SizedBox(width: 8),
-            const Text('Set end date', style: TextStyle(fontSize: 14)),
+            Builder(
+              builder: (context) => Text(
+                context.l10n.setEndDate,
+                style: const TextStyle(fontSize: 14),
+              ),
+            ),
           ],
         ),
         if (hasEndDate) ...[
           const SizedBox(height: 8),
-          OutlinedButton.icon(
-            onPressed: _pickValidTo,
-            icon: const Icon(Icons.event_busy, size: 18),
-            label: Text('Until: $validToLabel'),
-            style: OutlinedButton.styleFrom(
-              alignment: Alignment.centerLeft,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          Builder(
+            builder: (context) => OutlinedButton.icon(
+              onPressed: _pickValidTo,
+              icon: const Icon(Icons.event_busy, size: 18),
+              label: Text(context.l10n.untilLabel(validToLabel!)),
+              style: OutlinedButton.styleFrom(
+                alignment: Alignment.centerLeft,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+              ),
             ),
           ),
           if (isYearly && hasEndDate)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: Text(
-                '${_validTo!.label} is the last active month.',
-                style: const TextStyle(
-                    fontSize: 12, color: AppColors.textMuted),
+            Builder(
+              builder: (context) => Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(
+                  context.l10n.lastActiveMonthNote(_validTo!.label),
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.textMuted),
+                ),
               ),
             ),
           if (isInvalid)
-            const Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: Text(
-                'End month must be after start month.',
-                style: TextStyle(fontSize: 12, color: AppColors.expense),
+            Builder(
+              builder: (context) => Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(
+                  context.l10n.endMonthAfterStart,
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.expense),
+                ),
               ),
             ),
         ],
@@ -627,9 +643,10 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     final safeDay = _guardDueDay.clamp(1, daysInMonth);
 
     int selected = safeDay;
+    final l10n = context.l10n;
     final title = _frequency == PlanFrequency.monthly
-        ? 'Due day (repeats monthly)'
-        : 'Due day (repeats every ${YearMonth.monthNames[anchorMonth]})';
+        ? l10n.dueDayMonthly
+        : l10n.dueDayYearly(l10n.monthName(anchorMonth));
 
     final picked = await showDialog<int>(
       context: context,
@@ -638,9 +655,9 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
           title: Text(title),
           content: DropdownButtonFormField<int>(
             initialValue: selected,
-            decoration: const InputDecoration(
-              labelText: 'Day of month',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: ctx.l10n.labelDayOfMonth,
+              border: const OutlineInputBorder(),
               isDense: true,
             ),
             items: List.generate(daysInMonth, (i) {
@@ -654,7 +671,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(null),
-              child: const Text('Cancel'),
+              child: Text(ctx.l10n.actionCancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(ctx).pop(selected),
@@ -668,82 +685,88 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   }
 
   Widget _buildGuardSection() {
-    final anchorMonth = _validFrom.month;
-    final dueDayLabel = _frequency == PlanFrequency.monthly
-        ? 'Day $_guardDueDay of each month'
-        : 'Day $_guardDueDay of ${YearMonth.monthNames[anchorMonth]} each year';
+    return Builder(builder: (context) {
+      final l10n = context.l10n;
+      final anchorMonth = _validFrom.month;
+      final dueDayLabel = _frequency == PlanFrequency.monthly
+          ? l10n.dueDayMonthlyLabel(_guardDueDay)
+          : l10n.dueDayYearlyLabel(_guardDueDay, l10n.monthName(anchorMonth));
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            const Icon(Icons.pets, color: AppColors.gold, size: 18),
-            const SizedBox(width: 8),
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'GUARD',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.gold,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.pets, color: AppColors.gold, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'GUARD',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.gold,
+                      ),
                     ),
-                  ),
-                  Text(
-                    'Remind me to confirm this payment',
-                    style: TextStyle(fontSize: 12, color: AppColors.textMuted),
-                  ),
-                ],
+                    Text(
+                      l10n.guardRemindMe,
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.textMuted),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Switch(
-              value: _isGuarded,
-              activeThumbColor: AppColors.gold,
-              activeTrackColor: AppColors.gold.withAlpha(80),
-              onChanged: (on) => setState(() => _isGuarded = on),
-            ),
-          ],
-        ),
-        if (_isGuarded) ...[
-          const SizedBox(height: 12),
-          // ── Due day picker ─────────────────────────────────────────────
-          OutlinedButton.icon(
-            onPressed: _pickGuardDueDay,
-            icon: const Icon(Icons.event, size: 18),
-            label: Text(dueDayLabel),
-            style: OutlinedButton.styleFrom(
-              alignment: Alignment.centerLeft,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-              side: const BorderSide(color: AppColors.gold),
-              foregroundColor: AppColors.gold,
-            ),
+              Switch(
+                value: _isGuarded,
+                activeThumbColor: AppColors.gold,
+                activeTrackColor: AppColors.gold.withAlpha(80),
+                onChanged: (on) => setState(() => _isGuarded = on),
+              ),
+            ],
           ),
-          if (_guardDueDay > 28)
-            const Padding(
-              padding: EdgeInsets.only(top: 6),
-              child: Text(
-                'Shorter months will use their last day.',
-                style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+          if (_isGuarded) ...[
+            const SizedBox(height: 12),
+            // ── Due day picker ─────────────────────────────────────────────
+            OutlinedButton.icon(
+              onPressed: _pickGuardDueDay,
+              icon: const Icon(Icons.event, size: 18),
+              label: Text(dueDayLabel),
+              style: OutlinedButton.styleFrom(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 14),
+                side: const BorderSide(color: AppColors.gold),
+                foregroundColor: AppColors.gold,
               ),
             ),
+            if (_guardDueDay > 28)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(
+                  l10n.guardShorterMonths,
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.textMuted),
+                ),
+              ),
+          ],
+          const Divider(height: 24),
         ],
-        const Divider(height: 24),
-      ],
-    );
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isEditing = widget.existing != null;
     final validFromLabel = _validFrom.label;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_screenTitle),
+        title: Text(_computeScreenTitle(l10n)),
       ),
       body: Form(
         key: _formKey,
@@ -752,20 +775,21 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
           children: [
             // ── Type (only shown when not locked by navigation or edit) ─────
             if (!_typeIsLocked) ...[
-              const Text('Type',
-                  style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+              Text(l10n.labelType,
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.textMuted)),
               const SizedBox(height: 8),
               SegmentedButton<PlanItemType>(
-                segments: const [
+                segments: [
                   ButtonSegment(
                     value: PlanItemType.income,
-                    label: Text('Income'),
-                    icon: Icon(Icons.savings),
+                    label: Text(l10n.typeIncome),
+                    icon: const Icon(Icons.savings),
                   ),
                   ButtonSegment(
                     value: PlanItemType.fixedCost,
-                    label: Text('Fixed Cost'),
-                    icon: Icon(Icons.lock_outline),
+                    label: Text(l10n.typeFixedCost),
+                    icon: const Icon(Icons.lock_outline),
                   ),
                 ],
                 selected: {_type},
@@ -792,14 +816,14 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             // ── Name ────────────────────────────────────────────────────────
             TextFormField(
               controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                hintText: 'e.g. Salary, Rent, Insurance',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.labelName,
+                hintText: l10n.nameHintText,
+                border: const OutlineInputBorder(),
               ),
               autofocus: true,
               validator: (v) =>
-                  (v == null || v.trim().isEmpty) ? 'Enter a name' : null,
+                  (v == null || v.trim().isEmpty) ? l10n.validationEnterName : null,
             ),
             const SizedBox(height: 16),
 
@@ -807,17 +831,19 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             TextFormField(
               controller: _amountController,
               decoration: InputDecoration(
-                labelText: 'Amount',
+                labelText: l10n.labelAmount,
                 suffixText: ' ${CurrencyFormatter.currencySymbol}',
                 border: const OutlineInputBorder(),
               ),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Enter an amount';
+                if (v == null || v.trim().isEmpty) {
+                  return l10n.validationAmountEmpty;
+                }
                 final parsed = double.tryParse(v.trim());
                 if (parsed == null || parsed <= 0) {
-                  return 'Enter a valid positive number';
+                  return l10n.validationAmountInvalid;
                 }
                 return null;
               },
@@ -825,31 +851,28 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             const SizedBox(height: 16),
 
             // ── Frequency ───────────────────────────────────────────────────
-            // Hidden when locked — the screen title ("Add Monthly Fixed Cost"
-            // etc.) already communicates the frequency. Editable segmented
-            // button is shown only when type is also unlocked (rare path
-            // where no initialType/initialFrequency was passed).
             if (!_frequencyIsLocked) ...[
-              const Text('Frequency',
-                  style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+              Text(l10n.labelFrequency,
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.textMuted)),
               const SizedBox(height: 8),
               SegmentedButton<PlanFrequency>(
                 segments: [
-                  const ButtonSegment(
+                  ButtonSegment(
                     value: PlanFrequency.monthly,
-                    label: Text('Monthly'),
-                    icon: Icon(Icons.repeat),
+                    label: Text(l10n.frequencyMonthly),
+                    icon: const Icon(Icons.repeat),
                   ),
-                  const ButtonSegment(
+                  ButtonSegment(
                     value: PlanFrequency.yearly,
-                    label: Text('Yearly'),
-                    icon: Icon(Icons.event_repeat),
+                    label: Text(l10n.frequencyYearly),
+                    icon: const Icon(Icons.event_repeat),
                   ),
                   if (_type == PlanItemType.income)
-                    const ButtonSegment(
+                    ButtonSegment(
                       value: PlanFrequency.oneTime,
-                      label: Text('One-time'),
-                      icon: Icon(Icons.looks_one_outlined),
+                      label: Text(l10n.frequencyOneTime),
+                      icon: const Icon(Icons.looks_one_outlined),
                     ),
                 ],
                 selected: {_frequency},
@@ -865,9 +888,9 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             if (_type == PlanItemType.fixedCost) ...[
               DropdownButtonFormField<ExpenseCategory>(
                 initialValue: _selectedCategory,
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.labelCategory,
+                  border: const OutlineInputBorder(),
                 ),
                 items: (ExpenseCategory.values.toList()
                       ..sort((a, b) {
@@ -882,7 +905,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                       children: [
                         Icon(cat.icon, size: 20, color: cat.color),
                         const SizedBox(width: 8),
-                        Text(cat.displayName),
+                        Text(l10n.categoryName(cat)),
                       ],
                     ),
                   );
@@ -897,14 +920,15 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              const Text('Financial type',
-                  style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+              Text(l10n.labelFinancialType,
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.textMuted)),
               const SizedBox(height: 8),
               SegmentedButton<FinancialType>(
                 segments: FinancialType.values
                     .map((t) => ButtonSegment(
                           value: t,
-                          label: Text(t.displayName),
+                          label: Text(l10n.financialTypeName(t)),
                           icon: Icon(t.icon),
                         ))
                     .toList(),
@@ -917,28 +941,24 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
 
             // ── Valid from / Until ──────────────────────────────────────────
             if (_isEditingYearlyFixedCost) ...[
-              // Dates are locked for yearly fixed cost edits. Changes apply
-              // to the existing cycle boundaries via the save dialog.
               _buildLockedDateRow(
-                label: 'From',
+                label: l10n.fromFieldLabel,
                 value: validFromLabel,
-                hint:
-                    'Renewed each ${YearMonth.monthNames[_validFrom.month]}. '
-                    'Dates are fixed.',
+                hint: l10n.renewedEachMonth(l10n.monthName(_validFrom.month)),
               ),
               const SizedBox(height: 12),
               _buildLockedDateRow(
-                label: 'Until',
+                label: l10n.untilFieldLabel,
                 value: _validTo != null
-                    ? '${_validTo!.label} (last active month)'
-                    : 'Open-ended',
+                    ? l10n.lastActiveMonthParens(_validTo!.label)
+                    : l10n.openEnded,
               ),
               const SizedBox(height: 16),
             ] else ...[
               OutlinedButton.icon(
                 onPressed: _pickValidFrom,
                 icon: const Icon(Icons.calendar_month, size: 18),
-                label: Text('From: $validFromLabel'),
+                label: Text(l10n.fromDateLabel(validFromLabel)),
                 style: OutlinedButton.styleFrom(
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.symmetric(
@@ -952,8 +972,8 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                   padding: const EdgeInsets.only(top: 6),
                   child: Text(
                     _validFrom == widget.existing!.validFrom
-                        ? 'Same month as original — will update in place.'
-                        : 'Different month — will create a new version.',
+                        ? l10n.samePeriodInPlace
+                        : l10n.differentPeriodNewVersion,
                     style: TextStyle(
                       fontSize: 12,
                       color: _validFrom == widget.existing!.validFrom
@@ -974,16 +994,16 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
             // ── Note ────────────────────────────────────────────────────────
             TextFormField(
               controller: _noteController,
-              decoration: const InputDecoration(
-                labelText: 'Note (optional)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.labelNoteOptional,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 24),
 
             FilledButton(
               onPressed: _submit,
-              child: const Text('Save'),
+              child: Text(l10n.actionSave),
             ),
           ],
         ),

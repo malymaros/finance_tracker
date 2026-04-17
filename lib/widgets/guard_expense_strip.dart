@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 
 /// A compact link strip shown in the Expense tab when unpaid active guarded
@@ -19,9 +20,7 @@ class GuardExpenseStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = unpaidCount == 1
-        ? '1 guarded payment pending'
-        : '$unpaidCount guarded payments pending';
+    final label = context.l10n.guardExpenseStripPending(unpaidCount);
 
     return InkWell(
       onTap: onTap,

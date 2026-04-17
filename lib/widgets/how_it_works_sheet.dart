@@ -2,6 +2,9 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
 import '../models/monthly_overview_summary.dart';
@@ -124,7 +127,7 @@ class _HowItWorksSheetState extends State<HowItWorksSheet> {
         child: Column(
           children: [
             _buildHandle(),
-            _buildHeader(),
+            _buildHeader(context),
             Expanded(
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 250),
@@ -137,11 +140,11 @@ class _HowItWorksSheetState extends State<HowItWorksSheet> {
                 ),
                 child: KeyedSubtree(
                   key: ValueKey(_outerPage),
-                  child: _buildOuterPage(),
+                  child: _buildOuterPage(context),
                 ),
               ),
             ),
-            _buildTabStrip(),
+            _buildTabStrip(context),
           ],
         ),
       ),
@@ -164,14 +167,14 @@ class _HowItWorksSheetState extends State<HowItWorksSheet> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 8, 4),
       child: Row(
         children: [
-          const Text(
-            'How it works?',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Text(
+            context.l10n.howItWorksQuestion,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const Spacer(),
           IconButton(
@@ -183,7 +186,7 @@ class _HowItWorksSheetState extends State<HowItWorksSheet> {
     );
   }
 
-  Widget _buildOuterPage() {
+  Widget _buildOuterPage(BuildContext context) {
     switch (_outerPage) {
       case 0:
         return _PlanScreen(
@@ -211,16 +214,13 @@ class _HowItWorksSheetState extends State<HowItWorksSheet> {
 
   // ── Tab strip (reflects outer page) ───────────────────────────────────────
 
-  // Visual column order: [Plan(step1)] [arrow-slot] [Expenses(step2)] [arrow-slot] [Reports(step3)]
-  // Arrow slots are always the same fixed width — red arrow visible only when that
-  // transition is the current "next step"; otherwise an invisible placeholder keeps
-  // the layout stable so nothing shifts.
+  Widget _buildTabStrip(BuildContext context) {
+    final l10n = context.l10n;
 
-  Widget _buildTabStrip() {
     _TabState stateFor(int outerIdx) {
       if (_outerPage == outerIdx) return _TabState.active;
-      if (_outerPage == 0 && outerIdx == 1) return _TabState.next; // Plan→Expenses
-      if (_outerPage == 1 && outerIdx == 2) return _TabState.next; // Expenses→Reports
+      if (_outerPage == 0 && outerIdx == 1) return _TabState.next;
+      if (_outerPage == 1 && outerIdx == 2) return _TabState.next;
       return _TabState.plain;
     }
 
@@ -235,9 +235,9 @@ class _HowItWorksSheetState extends State<HowItWorksSheet> {
       );
     }
 
-    final plan     = Expanded(child: _TabItem(icon: Icons.account_balance_outlined, label: 'Plan',     stepNumber: 1, state: stateFor(0), onTap: () => _goOuterTo(0)));
-    final expenses = Expanded(child: _TabItem(icon: Icons.receipt_long_outlined,    label: 'Expenses', stepNumber: 2, state: stateFor(1), onTap: () => _goOuterTo(1)));
-    final reports  = Expanded(child: _TabItem(icon: Icons.pie_chart_outline,        label: 'Reports',  stepNumber: 3, state: stateFor(2), onTap: () => _goOuterTo(2)));
+    final plan     = Expanded(child: _TabItem(icon: Icons.account_balance_outlined, label: l10n.tabPlan,     stepNumber: 1, state: stateFor(0), onTap: () => _goOuterTo(0)));
+    final expenses = Expanded(child: _TabItem(icon: Icons.receipt_long_outlined,    label: l10n.tabExpenses, stepNumber: 2, state: stateFor(1), onTap: () => _goOuterTo(1)));
+    final reports  = Expanded(child: _TabItem(icon: Icons.pie_chart_outline,        label: l10n.tabReports,  stepNumber: 3, state: stateFor(2), onTap: () => _goOuterTo(2)));
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
@@ -251,9 +251,9 @@ class _HowItWorksSheetState extends State<HowItWorksSheet> {
         child: Row(
           children: [
             plan,
-            arrowSlot(_outerPage == 0), // Plan → Expenses
+            arrowSlot(_outerPage == 0),
             expenses,
-            arrowSlot(_outerPage == 1), // Expenses → Reports
+            arrowSlot(_outerPage == 1),
             reports,
           ],
         ),
@@ -278,24 +278,30 @@ class _ExpensesScreen extends StatelessWidget {
     required this.onPageChanged,
   });
 
-  static const _subtitles = [
-    'Your available budget, calculated from Plan',
-    'Day-to-day spending you record',
-    'Did you stay within budget?',
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final subtitles = [
+      l10n.expSubtitle0,
+      l10n.expSubtitle1,
+      l10n.expSubtitle2,
+    ];
+    final subStepLabels = [
+      l10n.subStepBudget,
+      l10n.subStepSpending,
+      l10n.subStepResult,
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
           child: _StepHeader(
-
-            name: 'Expenses',
-            subtitle: _subtitles[innerPage],
+            name: l10n.tabExpenses,
+            subtitle: subtitles[innerPage],
             subStep: innerPage,
+            subStepLabels: subStepLabels,
             onSubStepTap: onSubStepTap,
           ),
         ),
@@ -351,7 +357,7 @@ class _TabItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
-            'STEP $stepNumber',
+            context.l10n.howItWorksStep(stepNumber),
             style: TextStyle(
               fontSize: 9,
               fontWeight: FontWeight.w700,
@@ -452,26 +458,30 @@ class _PlanScreen extends StatelessWidget {
     required this.onPageChanged,
   });
 
-  static const _subtitles = [
-    'Your salary and committed monthly bills',
-    'How your fixed costs are classified',
-    'How much of your income each type consumes',
-  ];
-
-  static const _subStepLabels = ['Cashflow', 'Classification', 'Allocation'];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final subtitles = [
+      l10n.planSubtitle0,
+      l10n.planSubtitle1,
+      l10n.planSubtitle2,
+    ];
+    final subStepLabels = [
+      l10n.planSubStep0,
+      l10n.planSubStep1,
+      l10n.planSubStep2,
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
           child: _StepHeader(
-            name: 'Plan',
-            subtitle: _subtitles[planPage],
+            name: l10n.tabPlan,
+            subtitle: subtitles[planPage],
             subStep: planPage,
-            subStepLabels: _subStepLabels,
+            subStepLabels: subStepLabels,
             onSubStepTap: onSubStepTap,
           ),
         ),
@@ -501,6 +511,7 @@ class _PlanIncomeContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
@@ -510,23 +521,20 @@ class _PlanIncomeContent extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(child: _buildIncomeCard()),
+                Expanded(child: _buildIncomeCard(l10n)),
                 const SizedBox(width: 8),
-                Expanded(child: _buildFixedCostsCard()),
+                Expanded(child: _buildFixedCostsCard(l10n)),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          const _Body(
-            'Enter your salary and committed monthly bills — rent, insurance, '
-            'subscriptions. These are real, known numbers, not estimates or goals.',
-          ),
+          _Body(l10n.howItWorksPlanIncomeBody),
         ],
       ),
     );
   }
 
-  Widget _buildIncomeCard() {
+  Widget _buildIncomeCard(AppLocalizations l10n) {
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
@@ -537,7 +545,7 @@ class _PlanIncomeContent extends StatelessWidget {
             _CompactCardHeader(
               icon: Icons.savings,
               iconColor: _incomeColor,
-              title: 'Income',
+              title: l10n.sectionIncome,
               total: '+2 700 ${CurrencyFormatter.currencySymbol}',
               totalColor: _incomeColor,
             ),
@@ -545,7 +553,7 @@ class _PlanIncomeContent extends StatelessWidget {
             _CompactCardItem(
               icon: Icons.savings,
               iconColor: _incomeColor,
-              name: 'Salary',
+              name: l10n.howItWorksExampleSalary,
               amount: '+2 500 ${CurrencyFormatter.currencySymbol}',
               amountColor: _incomeColor,
             ),
@@ -553,7 +561,7 @@ class _PlanIncomeContent extends StatelessWidget {
             _CompactCardItem(
               icon: Icons.savings,
               iconColor: _incomeColor,
-              name: 'Bonus',
+              name: l10n.howItWorksExampleBonus,
               amount: '+200 ${CurrencyFormatter.currencySymbol}',
               amountColor: _incomeColor,
             ),
@@ -563,7 +571,7 @@ class _PlanIncomeContent extends StatelessWidget {
     );
   }
 
-  Widget _buildFixedCostsCard() {
+  Widget _buildFixedCostsCard(AppLocalizations l10n) {
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
@@ -574,7 +582,7 @@ class _PlanIncomeContent extends StatelessWidget {
             _CompactCardHeader(
               icon: Icons.lock_outline,
               iconColor: AppColors.textMuted,
-              title: 'Fixed Costs',
+              title: l10n.sectionFixedCosts,
               total: '-1 120 ${CurrencyFormatter.currencySymbol}',
               totalColor: AppColors.expense,
             ),
@@ -582,7 +590,7 @@ class _PlanIncomeContent extends StatelessWidget {
             _CompactCardItem(
               icon: ExpenseCategory.housing.icon,
               iconColor: ExpenseCategory.housing.color,
-              name: 'Rent',
+              name: l10n.howItWorksExampleRent,
               amount: '-800 ${CurrencyFormatter.currencySymbol}',
               amountColor: AppColors.expense,
               leftBorderColor: AppColors.expense,
@@ -591,7 +599,7 @@ class _PlanIncomeContent extends StatelessWidget {
             _CompactCardItem(
               icon: ExpenseCategory.insurance.icon,
               iconColor: ExpenseCategory.insurance.color,
-              name: 'Insurance',
+              name: l10n.howItWorksExampleInsurance,
               amount: '-120 ${CurrencyFormatter.currencySymbol}',
               amountColor: FinancialType.insurance.color,
               leftBorderColor: FinancialType.insurance.color,
@@ -600,7 +608,7 @@ class _PlanIncomeContent extends StatelessWidget {
             _CompactCardItem(
               icon: Icons.trending_up,
               iconColor: FinancialType.asset.color,
-              name: 'ETF fonds',
+              name: l10n.howItWorksExampleEtfFonds,
               amount: '-200 ${CurrencyFormatter.currencySymbol}',
               amountColor: FinancialType.asset.color,
               leftBorderColor: FinancialType.asset.color,
@@ -617,29 +625,30 @@ class _PlanIncomeContent extends StatelessWidget {
 class _PlanFinancialTypesContent extends StatelessWidget {
   const _PlanFinancialTypesContent();
 
-  static final _types = [
-    (
-      icon: FinancialType.consumption.icon,
-      color: FinancialType.consumption.color,
-      name: FinancialType.consumption.displayName,
-      description: 'Day-to-day spending — groceries, rent, dining, transport',
-    ),
-    (
-      icon: FinancialType.asset.icon,
-      color: FinancialType.asset.color,
-      name: FinancialType.asset.displayName,
-      description: 'Investments and savings that grow your wealth over time',
-    ),
-    (
-      icon: FinancialType.insurance.icon,
-      color: FinancialType.insurance.color,
-      name: FinancialType.insurance.displayName,
-      description: 'Protection costs — car, health, and life insurance',
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final types = [
+      (
+        icon: FinancialType.consumption.icon,
+        color: FinancialType.consumption.color,
+        name: l10n.financialTypeName(FinancialType.consumption),
+        description: l10n.howItWorksTypeConsumptionDesc,
+      ),
+      (
+        icon: FinancialType.asset.icon,
+        color: FinancialType.asset.color,
+        name: l10n.financialTypeName(FinancialType.asset),
+        description: l10n.howItWorksTypeAssetDesc,
+      ),
+      (
+        icon: FinancialType.insurance.icon,
+        color: FinancialType.insurance.color,
+        name: l10n.financialTypeName(FinancialType.insurance),
+        description: l10n.howItWorksTypeInsuranceDesc,
+      ),
+    ];
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
@@ -649,15 +658,15 @@ class _PlanFinancialTypesContent extends StatelessWidget {
             margin: EdgeInsets.zero,
             child: Column(
               children: [
-                for (int i = 0; i < _types.length; i++) ...[
+                for (int i = 0; i < types.length; i++) ...[
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
                     child: Row(
                       children: [
                         CircleAvatar(
-                          backgroundColor: _types[i].color.withAlpha(30),
-                          child: Icon(_types[i].icon,
-                              color: _types[i].color, size: 20),
+                          backgroundColor: types[i].color.withAlpha(30),
+                          child: Icon(types[i].icon,
+                              color: types[i].color, size: 20),
                         ),
                         const SizedBox(width: 14),
                         Expanded(
@@ -665,7 +674,7 @@ class _PlanFinancialTypesContent extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                _types[i].name,
+                                types[i].name,
                                 style: const TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -673,7 +682,7 @@ class _PlanFinancialTypesContent extends StatelessWidget {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                _types[i].description,
+                                types[i].description,
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: AppColors.textMuted,
@@ -685,17 +694,13 @@ class _PlanFinancialTypesContent extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (i < _types.length - 1) const Divider(height: 1),
+                  if (i < types.length - 1) const Divider(height: 1),
                 ],
               ],
             ),
           ),
           const SizedBox(height: 16),
-          const _Body(
-            'Each fixed cost is tagged with a financial type. '
-            'This lets the app show how your income is distributed across '
-            'spending, savings, and protection.',
-          ),
+          _Body(l10n.howItWorksFinancialTypesBody),
         ],
       ),
     );
@@ -713,14 +718,10 @@ class _PlanSpendingVsIncomeContent extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          _MockSpendingVsIncomeCard(),
-          SizedBox(height: 16),
-          _Body(
-            'The Plan tab shows how much of your income goes to each financial '
-            'type — so you can see at a glance whether you spend, save, or '
-            'protect the right share of what you earn.',
-          ),
+        children: [
+          const _MockSpendingVsIncomeCard(),
+          const SizedBox(height: 16),
+          _Body(context.l10n.howItWorksSpendingVsIncomeBody),
         ],
       ),
     );
@@ -734,6 +735,7 @@ class _MockSpendingVsIncomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
@@ -741,9 +743,9 @@ class _MockSpendingVsIncomeCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Spending vs Income',
-              style: TextStyle(
+            Text(
+              l10n.howItWorksSpendingVsIncomeTitle,
+              style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
@@ -753,21 +755,21 @@ class _MockSpendingVsIncomeCard extends StatelessWidget {
             _MockRatioRow(
               icon: FinancialType.consumption.icon,
               color: FinancialType.consumption.color,
-              name: FinancialType.consumption.displayName,
+              name: l10n.financialTypeName(FinancialType.consumption),
               amount: '800.00 ${CurrencyFormatter.currencySymbol}',
               pct: 32,
             ),
             _MockRatioRow(
               icon: FinancialType.asset.icon,
               color: FinancialType.asset.color,
-              name: FinancialType.asset.displayName,
+              name: l10n.financialTypeName(FinancialType.asset),
               amount: '200.00 ${CurrencyFormatter.currencySymbol}',
               pct: 8,
             ),
             _MockRatioRow(
               icon: FinancialType.insurance.icon,
               color: FinancialType.insurance.color,
-              name: FinancialType.insurance.displayName,
+              name: l10n.financialTypeName(FinancialType.insurance),
               amount: '120.00 ${CurrencyFormatter.currencySymbol}',
               pct: 5,
             ),
@@ -857,13 +859,10 @@ class _BudgetContent extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          _MockBudgetProgressBar(),
-          SizedBox(height: 16),
-          _Body(
-            "The app subtracts your fixed costs from your income and shows the "
-            "result here. You don't set this number — it comes from your Plan.",
-          ),
+        children: [
+          const _MockBudgetProgressBar(),
+          const SizedBox(height: 16),
+          _Body(context.l10n.howItWorksBudgetBody),
         ],
       ),
     );
@@ -879,13 +878,10 @@ class _SpendingContent extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          _ExpensesBox(),
-          SizedBox(height: 16),
-          _Body(
-            'Log groceries, meals, shopping and other variable spending. '
-            'Fixed monthly bills like rent belong in Plan, not here.',
-          ),
+        children: [
+          const _ExpensesBox(),
+          const SizedBox(height: 16),
+          _Body(context.l10n.howItWorksSpendingBody),
         ],
       ),
     );
@@ -901,14 +897,12 @@ class _ResultContent extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          _MockMonthBudgetSummary(isOver: false),
-          SizedBox(height: 10),
-          _MockMonthBudgetSummary(isOver: true),
-          SizedBox(height: 16),
-          _Body(
-            'At the end of the month the Expenses tab shows which outcome you had.',
-          ),
+        children: [
+          const _MockMonthBudgetSummary(isOver: false),
+          const SizedBox(height: 10),
+          const _MockMonthBudgetSummary(isOver: true),
+          const SizedBox(height: 16),
+          _Body(context.l10n.howItWorksResultBody),
         ],
       ),
     );
@@ -930,26 +924,30 @@ class _ReportsScreen extends StatelessWidget {
     required this.onPageChanged,
   });
 
-  static const _subtitles = [
-    'Where did your money go?',
-    'Your finances on paper',
-    'The big picture, month by month',
-  ];
-
-  static const _subStepLabels = ['Breakdown', 'Export', 'Overview'];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final subtitles = [
+      l10n.repSubtitle0,
+      l10n.repSubtitle1,
+      l10n.repSubtitle2,
+    ];
+    final subStepLabels = [
+      l10n.repSubStep0,
+      l10n.repSubStep1,
+      l10n.repSubStep2,
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
           child: _StepHeader(
-            name: 'Reports',
-            subtitle: _subtitles[repPage],
+            name: l10n.tabReports,
+            subtitle: subtitles[repPage],
             subStep: repPage,
-            subStepLabels: _subStepLabels,
+            subStepLabels: subStepLabels,
             onSubStepTap: onSubStepTap,
           ),
         ),
@@ -981,14 +979,10 @@ class _ReportsBreakdownContent extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          _PieChartBox(),
-          SizedBox(height: 16),
-          _Body(
-            'Breakdown shows your spending by category for any month or year. '
-            'Tap a slice or category row to drill into the individual expenses '
-            'and fixed costs behind it.',
-          ),
+        children: [
+          const _PieChartBox(),
+          const SizedBox(height: 16),
+          _Body(context.l10n.howItWorksBreakdownBody),
         ],
       ),
     );
@@ -1002,52 +996,50 @@ class _ReportsExportContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           IntrinsicHeight(
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Expanded(
                   child: _MockPdfCard(
-                    title: 'Monthly',
+                    title: l10n.reportModeMonthly,
                     icon: Icons.calendar_view_month,
                     features: [
-                      'Category totals',
-                      'Budget vs actual',
-                      'Financial type split',
-                      'All expenses listed',
-                      'Category budgets',
-                      'Group summaries',
+                      l10n.pdfFeatureCategoryTotals,
+                      l10n.pdfFeatureBudgetVsActual,
+                      l10n.pdfFeatureTypeSplit,
+                      l10n.pdfFeatureAllExpenses,
+                      l10n.pdfFeatureCategoryBudgets,
+                      l10n.pdfFeatureGroupSummaries,
                     ],
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Expanded(
                   child: _MockPdfCard(
-                    title: 'Yearly',
+                    title: l10n.reportModeYearly,
                     icon: Icons.calendar_today,
                     features: [
-                      '12-month overview',
-                      'Annual totals',
-                      'Monthly breakdown',
-                      'Plan vs actual',
-                      'Type ratios',
-                      'Active plan items',
+                      l10n.pdfFeature12MonthOverview,
+                      l10n.pdfFeatureAnnualTotals,
+                      l10n.pdfFeatureMonthlyBreakdown,
+                      l10n.pdfFeaturePlanVsActual,
+                      l10n.pdfFeatureTypeRatios,
+                      l10n.pdfFeatureActivePlanItems,
                     ],
                   ),
                 ),
               ],
             ),
           ),
-          SizedBox(height: 16),
-          _Body(
-            'Use the PDF button in Breakdown to export. '
-            'Reports are shareable via any app on your device.',
-          ),
+          const SizedBox(height: 16),
+          _Body(l10n.howItWorksExportBody),
         ],
       ),
     );
@@ -1085,23 +1077,20 @@ class _ReportsOverviewContent extends StatelessWidget {
                   onTap: () {},
                 ),
                 const Divider(height: 1),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Text(
-                    '· · · 9 more months',
+                    context.l10n.howItWorksMoreMonths,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColors.textMuted),
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          const _Body(
-            'Overview shows all 12 months side by side — how much you earned, '
-            'what went into assets, and what was consumed. '
-            'Tap any month to jump to that period in the Plan.',
-          ),
+          _Body(context.l10n.howItWorksOverviewBody),
         ],
       ),
     );
@@ -1121,6 +1110,7 @@ class _MockBudgetProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
@@ -1131,9 +1121,10 @@ class _MockBudgetProgressBar extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "This month's budget",
-                  style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+                Text(
+                  l10n.thisMonthsBudget,
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.textMuted),
                 ),
                 Text(
                   '${CurrencyFormatter.format(_remaining)} left',
@@ -1161,12 +1152,12 @@ class _MockBudgetProgressBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Spent: ${CurrencyFormatter.format(_spent)}',
+                  l10n.spentLabel(CurrencyFormatter.format(_spent)),
                   style: const TextStyle(
                       fontSize: 12, color: AppColors.textMuted),
                 ),
                 Text(
-                  'Budget: ${CurrencyFormatter.format(_budget)}',
+                  l10n.budgetLabel(CurrencyFormatter.format(_budget)),
                   style: const TextStyle(
                       fontSize: 12, color: AppColors.textMuted),
                 ),
@@ -1192,6 +1183,7 @@ class _MockMonthBudgetSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final double spent = isOver ? _spentOver : _spentSaved;
     final double diff = (spent - _budget).abs();
     final Color statusColor =
@@ -1216,8 +1208,8 @@ class _MockMonthBudgetSummary extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   isOver
-                      ? 'Over budget by ${CurrencyFormatter.format(diff)}'
-                      : 'Saved ${CurrencyFormatter.format(diff)}',
+                      ? l10n.overBudgetBy(CurrencyFormatter.format(diff))
+                      : l10n.savedAmount(CurrencyFormatter.format(diff)),
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -1231,12 +1223,12 @@ class _MockMonthBudgetSummary extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Spent: ${CurrencyFormatter.format(spent)}',
+                  l10n.spentLabel(CurrencyFormatter.format(spent)),
                   style: const TextStyle(
                       fontSize: 12, color: AppColors.textMuted),
                 ),
                 Text(
-                  'Budget: ${CurrencyFormatter.format(_budget)}',
+                  l10n.budgetLabel(CurrencyFormatter.format(_budget)),
                   style: const TextStyle(
                       fontSize: 12, color: AppColors.textMuted),
                 ),
@@ -1358,6 +1350,7 @@ class _ExpensesBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final now = DateTime.now();
     final y = now.year;
     final mo = now.month;
@@ -1366,21 +1359,21 @@ class _ExpensesBox extends StatelessWidget {
       (
         icon: ExpenseCategory.groceries.icon,
         iconColor: ExpenseCategory.groceries.color,
-        label: ExpenseCategory.groceries.displayName,
+        label: l10n.categoryName(ExpenseCategory.groceries),
         subtitle: 'supermarket · ${_date(y, mo, 8)}',
         amount: '47.30 ${CurrencyFormatter.currencySymbol}',
       ),
       (
         icon: ExpenseCategory.restaurants.icon,
         iconColor: ExpenseCategory.restaurants.color,
-        label: ExpenseCategory.restaurants.displayName,
+        label: l10n.categoryName(ExpenseCategory.restaurants),
         subtitle: _date(y, mo, 7),
         amount: '32.00 ${CurrencyFormatter.currencySymbol}',
       ),
       (
         icon: ExpenseCategory.clothing.icon,
         iconColor: ExpenseCategory.clothing.color,
-        label: ExpenseCategory.clothing.displayName,
+        label: l10n.categoryName(ExpenseCategory.clothing),
         subtitle: 'outlet · ${_date(y, mo, 5)}',
         amount: '65.90 ${CurrencyFormatter.currencySymbol}',
       ),
@@ -1494,17 +1487,17 @@ class _MockPdfCard extends StatelessWidget {
 class _PieChartBox extends StatelessWidget {
   const _PieChartBox();
 
-  // Mock data — colors and icons sourced from ExpenseCategory extensions.
-  static final _items = [
-    (label: ExpenseCategory.groceries.displayName,   icon: ExpenseCategory.groceries.icon,   color: ExpenseCategory.groceries.color,   pct: 30, amount: '450'),
-    (label: ExpenseCategory.housing.displayName,     icon: ExpenseCategory.housing.icon,     color: ExpenseCategory.housing.color,     pct: 22, amount: '330'),
-    (label: ExpenseCategory.transport.displayName,   icon: ExpenseCategory.transport.icon,   color: ExpenseCategory.transport.color,   pct: 18, amount: '270'),
-    (label: ExpenseCategory.restaurants.displayName, icon: ExpenseCategory.restaurants.icon, color: ExpenseCategory.restaurants.color, pct: 15, amount: '225'),
-    (label: 'Other categories', icon: Icons.more_horiz, color: const Color(0xFFE0E0E0),      pct: 15, amount: '225'),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final items = [
+      (label: l10n.categoryName(ExpenseCategory.groceries),   icon: ExpenseCategory.groceries.icon,   color: ExpenseCategory.groceries.color,   pct: 30, amount: '450'),
+      (label: l10n.categoryName(ExpenseCategory.housing),     icon: ExpenseCategory.housing.icon,     color: ExpenseCategory.housing.color,     pct: 22, amount: '330'),
+      (label: l10n.categoryName(ExpenseCategory.transport),   icon: ExpenseCategory.transport.icon,   color: ExpenseCategory.transport.color,   pct: 18, amount: '270'),
+      (label: l10n.categoryName(ExpenseCategory.restaurants), icon: ExpenseCategory.restaurants.icon, color: ExpenseCategory.restaurants.color, pct: 15, amount: '225'),
+      (label: l10n.otherCategories, icon: Icons.more_horiz, color: const Color(0xFFE0E0E0), pct: 15, amount: '225'),
+    ];
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -1520,7 +1513,7 @@ class _PieChartBox extends StatelessWidget {
             height: 100,
             child: CustomPaint(
               painter: _PieChartPainter(
-                segments: _items
+                segments: items
                     .map((i) => (sweep: i.pct / 100.0, color: i.color))
                     .toList(),
               ),
@@ -1530,7 +1523,7 @@ class _PieChartBox extends StatelessWidget {
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: _items.map((item) => _MockBreakdownRow(
+              children: items.map((item) => _MockBreakdownRow(
                 label: item.label,
                 icon: item.icon,
                 color: item.color,

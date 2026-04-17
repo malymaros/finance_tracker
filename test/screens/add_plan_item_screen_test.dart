@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/plan_item.dart';
@@ -7,7 +8,11 @@ import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/plan/add_plan_item_screen.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
 
-Widget _wrap(Widget child) => MaterialApp(home: child);
+Widget _wrap(Widget child) => MaterialApp(
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: child,
+);
 
 PlanRepository _repo() => PlanRepository(persist: false);
 

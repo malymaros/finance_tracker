@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/guard_state.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
@@ -52,20 +54,22 @@ class GuardItemStatusCard extends StatelessWidget {
 
   // ── Labels ────────────────────────────────────────────────────────────────
 
-  String get _amountLabel {
+  String _amountLabel(BuildContext context) {
+    final l10n = context.l10n;
     final suffix = switch (item.frequency) {
-      PlanFrequency.monthly => '/ month',
-      PlanFrequency.yearly => '/ year',
+      PlanFrequency.monthly => ' ${l10n.perMonth}',
+      PlanFrequency.yearly => ' ${l10n.perYear}',
       PlanFrequency.oneTime => '',
     };
-    return '${CurrencyFormatter.format(item.amount)} $suffix'.trim();
+    return '${CurrencyFormatter.format(item.amount)}$suffix'.trim();
   }
 
-  String get _dueDateLabel {
+  String _dueDateLabel(BuildContext context) {
+    final l10n = context.l10n;
     final rawDueDay = item.guardDueDay ?? 1;
     final daysInMonth = DateTime(period.year, period.month + 1, 0).day;
     final effectiveDueDay = rawDueDay.clamp(1, daysInMonth);
-    return 'Due ${YearMonth.monthNames[period.month]} '
+    return 'Due ${l10n.monthName(period.month)} '
         '$effectiveDueDay, ${period.year}';
   }
 
@@ -77,8 +81,10 @@ class GuardItemStatusCard extends StatelessWidget {
       .firstOrNull
       ?.paidAt;
 
-  static String _formatDate(DateTime dt) =>
-      '${dt.day} ${YearMonth.monthNames[dt.month]} ${dt.year}';
+  String _formatDate(DateTime dt, BuildContext context) {
+    final l10n = context.l10n;
+    return '${dt.day} ${l10n.monthName(dt.month)} ${dt.year}';
+  }
 
   // ── Actions ───────────────────────────────────────────────────────────────
 
@@ -87,23 +93,22 @@ class GuardItemStatusCard extends StatelessWidget {
   }
 
   Future<void> _confirmAndSilence(BuildContext context) async {
+    final l10n = context.l10n;
+    final periodLabel =
+        '${l10n.monthName(period.month)} ${period.year}';
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Silence this reminder?'),
-        content: Text(
-          'The ${YearMonth.monthNames[period.month]} ${period.year} payment '
-          'will still be shown as unconfirmed. '
-          'You can mark it as paid at any time.',
-        ),
+        title: Text(l10n.silenceReminderTitle),
+        content: Text(l10n.silenceReminderBody(periodLabel)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.actionCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Yes, Silence'),
+            child: Text(l10n.yesSilence),
           ),
         ],
       ),
@@ -114,22 +119,21 @@ class GuardItemStatusCard extends StatelessWidget {
   }
 
   Future<void> _confirmAndRevoke(BuildContext context) async {
+    final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Mark as unpaid?'),
+        title: Text(l10n.guardMarkUnpaidTitle),
         content: Text(
-          'This will remove the payment confirmation for '
-          '${YearMonth.monthNames[period.month]} ${period.year}.',
-        ),
+            l10n.guardMarkUnpaidBody(l10n.monthName(period.month), period.year)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.actionCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Mark as Unpaid'),
+            child: Text(l10n.guardMarkUnpaidAction),
           ),
         ],
       ),
@@ -140,23 +144,21 @@ class GuardItemStatusCard extends StatelessWidget {
   }
 
   Future<void> _confirmAndDeleteGuard(BuildContext context) async {
+    final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Remove GUARD?'),
-        content: Text(
-          'GUARD will be disabled for "${item.name}". '
-          'Existing payment records are kept but no new reminders will fire.',
-        ),
+        title: Text(l10n.guardRemoveTitle),
+        content: Text(l10n.guardRemoveBody(item.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.actionCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: FilledButton.styleFrom(backgroundColor: AppColors.expense),
-            child: const Text('Remove'),
+            child: Text(l10n.guardRemoveConfirm),
           ),
         ],
       ),
@@ -192,7 +194,7 @@ class GuardItemStatusCard extends StatelessWidget {
       initialDate: safeInitial,
       firstDate: firstDate,
       lastDate: lastDate,
-      helpText: 'Select paid date',
+      helpText: context.l10n.guardSelectPaidDate,
     );
     if (picked != null && context.mounted) {
       await guardRepository.updatePaidDate(item.seriesId, period, picked);
@@ -208,6 +210,8 @@ class GuardItemStatusCard extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final l10n = context.l10n;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -215,13 +219,13 @@ class GuardItemStatusCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Identity chip ────────────────────────────────────────────
-            const Row(
+            Row(
               children: [
-                Icon(Icons.pets, color: AppColors.gold, size: 14),
-                SizedBox(width: 6),
+                const Icon(Icons.pets, color: AppColors.gold, size: 14),
+                const SizedBox(width: 6),
                 Text(
-                  'GUARD',
-                  style: TextStyle(
+                  l10n.guardSectionLabel,
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: AppColors.gold,
@@ -234,7 +238,7 @@ class GuardItemStatusCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: _buildLeftColumn()),
+                Expanded(child: _buildLeftColumn(context)),
                 const SizedBox(width: 12),
                 _buildRightColumn(context),
               ],
@@ -244,13 +248,13 @@ class GuardItemStatusCard extends StatelessWidget {
               const SizedBox(height: 8),
               if (nextReminderLabel != null)
                 Text(
-                  'Next: $nextReminderLabel',
+                  l10n.guardNextReminder(nextReminderLabel!),
                   style: const TextStyle(
                       fontSize: 11, color: AppColors.textMuted),
                 ),
               if (lastReminderLabel != null)
                 Text(
-                  'Last: $lastReminderLabel',
+                  l10n.guardLastReminder(lastReminderLabel!),
                   style: const TextStyle(
                       fontSize: 11, color: AppColors.textMuted),
                 ),
@@ -265,7 +269,7 @@ class GuardItemStatusCard extends StatelessWidget {
                     TextButton.icon(
                       onPressed: onChangeDueDay,
                       icon: const Icon(Icons.event, size: 16),
-                      label: const Text('Change day'),
+                      label: Text(l10n.guardChangeDay),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.gold,
                         visualDensity: VisualDensity.compact,
@@ -276,7 +280,7 @@ class GuardItemStatusCard extends StatelessWidget {
                     TextButton.icon(
                       onPressed: () => _confirmAndDeleteGuard(context),
                       icon: const Icon(Icons.remove_circle_outline, size: 16),
-                      label: const Text('Remove GUARD'),
+                      label: Text(l10n.guardRemoveAction),
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.expense,
                         visualDensity: VisualDensity.compact,
@@ -294,7 +298,8 @@ class GuardItemStatusCard extends StatelessWidget {
 
   // ── Column builders ───────────────────────────────────────────────────────
 
-  Widget _buildLeftColumn() {
+  Widget _buildLeftColumn(BuildContext context) {
+    final l10n = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -308,21 +313,22 @@ class GuardItemStatusCard extends StatelessWidget {
         ),
         const SizedBox(height: 2),
         Text(
-          _amountLabel,
+          _amountLabel(context),
           style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
         ),
         if (state != GuardState.paid) ...[
           const SizedBox(height: 2),
           Text(
-            _dueDateLabel,
+            _dueDateLabel(context),
             style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
           ),
         ],
         if (state == GuardState.scheduled) ...[
           const SizedBox(height: 2),
-          const Text(
-            'Not yet due',
-            style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+          Text(
+            l10n.guardNotYetDue,
+            style:
+                const TextStyle(fontSize: 12, color: AppColors.textMuted),
           ),
         ],
       ],
@@ -330,6 +336,7 @@ class GuardItemStatusCard extends StatelessWidget {
   }
 
   Widget _buildRightColumn(BuildContext context) {
+    final l10n = context.l10n;
     switch (state) {
       case GuardState.unpaidActive:
         return Column(
@@ -344,7 +351,8 @@ class GuardItemStatusCard extends StatelessWidget {
                 visualDensity: VisualDensity.compact,
                 padding: EdgeInsets.zero,
               ),
-              child: const Text('Silence', style: TextStyle(fontSize: 12)),
+              child: Text(l10n.guardSilence,
+                  style: const TextStyle(fontSize: 12)),
             ),
           ],
         );
@@ -356,16 +364,16 @@ class GuardItemStatusCard extends StatelessWidget {
           children: [
             _markAsPaidButton(context),
             const SizedBox(height: 4),
-            const Row(
+            Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.notifications_off,
+                const Icon(Icons.notifications_off,
                     size: 12, color: AppColors.textMuted),
-                SizedBox(width: 4),
+                const SizedBox(width: 4),
                 Text(
-                  'Silenced',
-                  style:
-                      TextStyle(fontSize: 11, color: AppColors.textMuted),
+                  l10n.guardStatusSilenced,
+                  style: const TextStyle(
+                      fontSize: 11, color: AppColors.textMuted),
                 ),
               ],
             ),
@@ -391,8 +399,8 @@ class GuardItemStatusCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       paidDate != null
-                          ? 'Paid ${_formatDate(paidDate)}'
-                          : 'Paid',
+                          ? l10n.guardPaidOn(_formatDate(paidDate, context))
+                          : l10n.guardStatusPaid,
                       style: const TextStyle(
                           fontSize: 12, color: AppColors.income),
                     ),
@@ -409,16 +417,16 @@ class GuardItemStatusCard extends StatelessWidget {
                 visualDensity: VisualDensity.compact,
                 padding: EdgeInsets.zero,
               ),
-              child: const Text('Mark as Unpaid',
-                  style: TextStyle(fontSize: 12)),
+              child: Text(l10n.guardMarkUnpaidAction,
+                  style: const TextStyle(fontSize: 12)),
             ),
           ],
         );
 
       case GuardState.scheduled:
-        return const Text(
-          'Scheduled',
-          style: TextStyle(
+        return Text(
+          l10n.guardStatusScheduled,
+          style: const TextStyle(
             fontSize: 12,
             color: AppColors.textMuted,
             fontStyle: FontStyle.italic,
@@ -434,7 +442,7 @@ class GuardItemStatusCard extends StatelessWidget {
     return FilledButton.icon(
       onPressed: () => _confirmAndMarkPaid(context),
       icon: const Icon(Icons.check, size: 14),
-      label: const Text('Mark as Paid'),
+      label: Text(context.l10n.guardMarkAsPaid),
       style: FilledButton.styleFrom(
         backgroundColor: AppColors.gold,
         visualDensity: VisualDensity.compact,

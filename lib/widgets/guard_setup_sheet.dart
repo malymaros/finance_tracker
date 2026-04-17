@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/plan_item.dart';
-import '../models/year_month.dart';
 import '../services/plan_repository.dart';
 import '../theme/app_theme.dart';
 
@@ -60,22 +61,25 @@ class _GuardSetupSheetState extends State<GuardSetupSheet> {
     return DateTime(DateTime.now().year, m + 1, 0).day;
   }
 
-  String get _dueDayLabel {
+  String _dueDayLabel(BuildContext context) {
+    final l10n = context.l10n;
     return widget.item.frequency == PlanFrequency.monthly
-        ? 'Day $_dueDay of each month'
-        : 'Day $_dueDay of ${YearMonth.monthNames[widget.item.validFrom.month]}'
-            ' each year';
+        ? l10n.dueDayMonthlyLabel(_dueDay)
+        : l10n.dueDayYearlyLabel(
+            _dueDay,
+            l10n.monthName(widget.item.validFrom.month),
+          );
   }
 
-  Future<void> _pickDueDay() async {
+  Future<void> _pickDueDay(BuildContext context) async {
+    final l10n = context.l10n;
     final daysInMonth = _daysInAnchorMonth;
     final safe = _dueDay.clamp(1, daysInMonth);
     int selected = safe;
 
     final title = widget.item.frequency == PlanFrequency.monthly
-        ? 'Due day (repeats monthly)'
-        : 'Due day (repeats every '
-            '${YearMonth.monthNames[widget.item.validFrom.month]})';
+        ? l10n.dueDayMonthly
+        : l10n.dueDayYearly(l10n.monthName(widget.item.validFrom.month));
 
     final picked = await showDialog<int>(
       context: context,
@@ -84,9 +88,9 @@ class _GuardSetupSheetState extends State<GuardSetupSheet> {
           title: Text(title),
           content: DropdownButtonFormField<int>(
             initialValue: selected,
-            decoration: const InputDecoration(
-              labelText: 'Day of month',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: l10n.labelDayOfMonth,
+              border: const OutlineInputBorder(),
               isDense: true,
             ),
             items: List.generate(daysInMonth, (i) {
@@ -100,11 +104,11 @@ class _GuardSetupSheetState extends State<GuardSetupSheet> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(null),
-              child: const Text('Cancel'),
+              child: Text(l10n.actionCancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(ctx).pop(selected),
-              child: const Text('OK'),
+              child: Text(l10n.actionOk),
             ),
           ],
         ),
@@ -113,44 +117,43 @@ class _GuardSetupSheetState extends State<GuardSetupSheet> {
     if (picked != null && mounted) setState(() => _dueDay = picked);
   }
 
-  Future<void> _save() async {
+  Future<void> _save(BuildContext context) async {
+    final l10n = context.l10n;
+    final navigator = Navigator.of(context);
     if (!_enabled && widget.item.isGuarded) {
       // Disabling an active guard — confirm first.
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Remove GUARD?'),
-          content: Text(
-            'GUARD will be disabled for "${widget.item.name}". '
-            'Existing payment records are kept but no new reminders will fire.',
-          ),
+          title: Text(l10n.guardRemoveTitle),
+          content: Text(l10n.guardRemoveBody(widget.item.name)),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancel'),
+              child: Text(l10n.actionCancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(ctx).pop(true),
-              style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.expense),
-              child: const Text('Remove'),
+              style:
+                  FilledButton.styleFrom(backgroundColor: AppColors.expense),
+              child: Text(l10n.guardRemoveConfirm),
             ),
           ],
         ),
       );
       if (confirmed != true || !mounted) return;
-      await widget.planRepository.disableGuardForSeries(
-          widget.item.seriesId);
+      await widget.planRepository
+          .disableGuardForSeries(widget.item.seriesId);
     } else if (_enabled) {
-      await widget.planRepository.enableGuardForItem(
-          widget.item.id,
-          dueDay: _dueDay);
+      await widget.planRepository
+          .enableGuardForItem(widget.item.id, dueDay: _dueDay);
     }
-    if (mounted) Navigator.of(context).pop();
+    if (mounted) navigator.pop();
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -171,13 +174,13 @@ class _GuardSetupSheetState extends State<GuardSetupSheet> {
               ),
             ),
             // Header
-            const Row(
+            Row(
               children: [
-                Icon(Icons.pets, color: AppColors.gold, size: 18),
-                SizedBox(width: 8),
+                const Icon(Icons.pets, color: AppColors.gold, size: 18),
+                const SizedBox(width: 8),
                 Text(
-                  'GUARD',
-                  style: TextStyle(
+                  l10n.guardSectionLabel,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: AppColors.gold,
@@ -195,19 +198,19 @@ class _GuardSetupSheetState extends State<GuardSetupSheet> {
             // Enable / disable toggle
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Enable GUARD',
-                        style: TextStyle(
+                        l10n.guardEnableToggle,
+                        style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w500),
                       ),
-                      SizedBox(height: 2),
+                      const SizedBox(height: 2),
                       Text(
-                        'Track payment and receive reminders',
-                        style: TextStyle(
+                        l10n.guardEnableToggleSubtitle,
+                        style: const TextStyle(
                             fontSize: 12, color: AppColors.textMuted),
                       ),
                     ],
@@ -224,9 +227,9 @@ class _GuardSetupSheetState extends State<GuardSetupSheet> {
             if (_enabled) ...[
               const SizedBox(height: 12),
               OutlinedButton.icon(
-                onPressed: _pickDueDay,
+                onPressed: () => _pickDueDay(context),
                 icon: const Icon(Icons.event_outlined, size: 16),
-                label: Text(_dueDayLabel),
+                label: Text(_dueDayLabel(context)),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.gold,
                   side: const BorderSide(color: AppColors.gold),
@@ -234,21 +237,21 @@ class _GuardSetupSheetState extends State<GuardSetupSheet> {
                 ),
               ),
               if (_dueDay > 28)
-                const Padding(
-                  padding: EdgeInsets.only(top: 6),
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
                   child: Text(
-                    'Days 29–31 are clamped to the last day in shorter months.',
-                    style: TextStyle(
+                    l10n.guardShorterMonths,
+                    style: const TextStyle(
                         fontSize: 11, color: AppColors.textMuted),
                   ),
                 ),
             ],
             const SizedBox(height: 20),
             FilledButton(
-              onPressed: _save,
-              style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.gold),
-              child: const Text('Save'),
+              onPressed: () => _save(context),
+              style:
+                  FilledButton.styleFrom(backgroundColor: AppColors.gold),
+              child: Text(l10n.actionSave),
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/widgets/period_navigator.dart';
 
@@ -13,6 +14,8 @@ Widget _navigator({
   void Function(YearMonth)? onChanged,
 }) {
   return MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
     home: Scaffold(
       body: PeriodNavigator(
         selected: selected,

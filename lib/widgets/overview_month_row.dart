@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/financial_type.dart';
 import '../models/monthly_overview_summary.dart';
-import '../models/year_month.dart';
 import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
@@ -40,7 +41,7 @@ class OverviewMonthRow extends StatelessWidget {
             SizedBox(
               width: 36,
               child: Text(
-                YearMonth.monthAbbreviations[summary.period.month],
+                context.l10n.monthAbbr(summary.period.month),
                 style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
@@ -54,7 +55,7 @@ class OverviewMonthRow extends StatelessWidget {
                 children: [
                   if (summary.earned > 0) _buildBar(),
                   const SizedBox(height: 4),
-                  _buildNumbers(),
+                  _buildNumbers(context),
                 ],
               ),
             ),
@@ -129,7 +130,7 @@ class OverviewMonthRow extends StatelessWidget {
     );
   }
 
-  Widget _buildNumbers() {
+  Widget _buildNumbers(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -158,7 +159,8 @@ class OverviewMonthRow extends StatelessWidget {
           ],
         ),
         Text(
-          'Earned: ${summary.earned.toStringAsFixed(0)} ${CurrencyFormatter.currencySymbol}',
+          context.l10n.earnedLabel(
+              '${summary.earned.toStringAsFixed(0)} ${CurrencyFormatter.currencySymbol}'),
           style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
         ),
       ],

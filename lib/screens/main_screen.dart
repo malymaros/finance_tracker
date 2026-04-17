@@ -11,6 +11,7 @@ import 'plan/plan_screen.dart';
 import 'reports/report_screen.dart';
 import 'saves_screen.dart';
 import '../widgets/save_action_dialog.dart';
+import '../l10n/l10n.dart';
 
 class MainScreen extends StatefulWidget {
   final AppRepositories repositories;
@@ -131,15 +132,15 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _clearAllData(BuildContext context) async {
+    final l10n = context.l10n;
     final confirmed = await SaveActionDialog.show(
       context,
       icon: Icons.delete_outline,
       iconColor: AppColors.expense,
-      actionLabel: 'DELETE',
-      description:
-          'Expenses, plan items, budgets and guard payments will be permanently deleted. This cannot be undone.',
-      preservedNote: 'Saved snapshots and auto-backups are not affected.',
-      confirmLabel: 'Delete all',
+      actionLabel: l10n.clearAllDataAction,
+      description: l10n.clearAllDataDescription,
+      preservedNote: l10n.clearAllDataPreservedNote,
+      confirmLabel: l10n.deleteAllDataConfirm,
     );
     if (confirmed && context.mounted) {
       await Future.wait([
@@ -158,6 +159,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final unpaidCount = _unpaidActiveCount;
+    final l10n = context.l10n;
 
     return Scaffold(
       body: PageView(
@@ -184,17 +186,17 @@ class _MainScreenState extends State<MainScreen> {
                 label: Text('$unpaidCount'),
                 child: const Icon(Icons.account_balance),
               ),
-              label: 'Plan',
+              label: l10n.tabPlan,
             ),
-            const NavigationDestination(
-              icon: Icon(Icons.receipt_long_outlined),
-              selectedIcon: Icon(Icons.receipt_long),
-              label: 'Expenses',
+            NavigationDestination(
+              icon: const Icon(Icons.receipt_long_outlined),
+              selectedIcon: const Icon(Icons.receipt_long),
+              label: l10n.tabExpenses,
             ),
-            const NavigationDestination(
-              icon: Icon(Icons.pie_chart_outline),
-              selectedIcon: Icon(Icons.pie_chart),
-              label: 'Reports',
+            NavigationDestination(
+              icon: const Icon(Icons.pie_chart_outline),
+              selectedIcon: const Icon(Icons.pie_chart),
+              label: l10n.tabReports,
             ),
           ],
         ),

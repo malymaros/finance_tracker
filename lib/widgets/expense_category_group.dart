@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../services/currency_formatter.dart';
@@ -36,9 +38,9 @@ class ExpenseCategoryGroup extends StatelessWidget {
         backgroundColor: category.color.withAlpha(30),
         child: Icon(category.icon, size: 20, color: category.color),
       ),
-      title: Text(category.displayName),
+      title: Text(context.l10n.categoryName(category)),
       subtitle: Text(
-        '$count ${count == 1 ? 'item' : 'items'}',
+        context.l10n.itemCount(count),
         style: const TextStyle(fontSize: 12),
       ),
       trailing: Text(

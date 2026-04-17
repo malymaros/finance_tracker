@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/save_slot.dart';
 import '../models/year_month.dart';
 import '../theme/app_theme.dart';
@@ -38,8 +39,12 @@ class SaveSlotTile extends StatelessWidget {
 
   Widget _buildNormalTile(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
-    final subtitle =
-        '${_formatDate(slot.createdAt)} · ${slot.expenseCount} expenses · ${slot.planItemCount} plan items';
+    final l10n = context.l10n;
+    final subtitle = l10n.saveSlotSubtitle(
+      _formatDate(slot.createdAt),
+      slot.expenseCount,
+      slot.planItemCount,
+    );
     return ListTile(
       onTap: onTap,
       leading: CircleAvatar(
@@ -54,29 +59,31 @@ class SaveSlotTile extends StatelessWidget {
       ),
       trailing: TextButton(
         onPressed: onLoad,
-        child: const Text('Load'),
+        child: Text(l10n.actionLoad),
       ),
     );
   }
 
   Widget _buildDamagedTile() {
-    return ListTile(
-      onTap: onTap,
-      leading: CircleAvatar(
-        backgroundColor: AppColors.warning.withAlpha(25),
-        child: const Icon(Icons.warning_amber_outlined,
-            color: AppColors.warning),
-      ),
-      title: Text(
-        slot.name,
-        style: const TextStyle(
-          color: AppColors.textMuted,
-          fontStyle: FontStyle.italic,
+    return Builder(
+      builder: (context) => ListTile(
+        onTap: onTap,
+        leading: CircleAvatar(
+          backgroundColor: AppColors.warning.withAlpha(25),
+          child: const Icon(Icons.warning_amber_outlined,
+              color: AppColors.warning),
         ),
-      ),
-      subtitle: const Text(
-        'File is damaged and cannot be loaded',
-        style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+        title: Text(
+          slot.name,
+          style: const TextStyle(
+            color: AppColors.textMuted,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+        subtitle: Text(
+          context.l10n.saveSlotDamagedSubtitle,
+          style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+        ),
       ),
     );
   }

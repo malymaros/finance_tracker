@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/financial_type.dart';
 import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
@@ -48,8 +50,8 @@ class PlanFinancialTypeTile extends StatelessWidget {
           backgroundColor: type.color.withAlpha(30),
           child: Icon(type.icon, color: type.color, size: 20),
         ),
-        title: Text(type.displayName),
-        subtitle: Text('$count ${count == 1 ? 'item' : 'items'}'),
+        title: Text(context.l10n.financialTypeName(type)),
+        subtitle: Text(context.l10n.itemCount(count)),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

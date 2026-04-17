@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
 import '../models/imported_expense.dart';
@@ -84,16 +86,17 @@ class _EditImportRowSheetState extends State<EditImportRowSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final formattedDate =
         '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Expense'),
+        title: Text(l10n.editExpenseTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline),
-            tooltip: 'Remove from import',
+            tooltip: l10n.removeFromImport,
             onPressed: () =>
                 Navigator.of(context).pop(EditImportRowSheet.deleted),
           ),
@@ -108,7 +111,7 @@ class _EditImportRowSheetState extends State<EditImportRowSheet> {
             TextFormField(
               controller: _amountController,
               decoration: InputDecoration(
-                labelText: 'Amount',
+                labelText: l10n.labelAmount,
                 suffixText: ' ${CurrencyFormatter.currencySymbol}',
                 border: const OutlineInputBorder(),
               ),
@@ -116,10 +119,12 @@ class _EditImportRowSheetState extends State<EditImportRowSheet> {
                   const TextInputType.numberWithOptions(decimal: true),
               autofocus: true,
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Enter an amount';
+                if (v == null || v.trim().isEmpty) {
+                  return l10n.validationAmountEmpty;
+                }
                 final parsed = double.tryParse(v.trim());
                 if (parsed == null || parsed <= 0) {
-                  return 'Enter a valid positive number';
+                  return l10n.validationAmountInvalid;
                 }
                 return null;
               },
@@ -129,15 +134,17 @@ class _EditImportRowSheetState extends State<EditImportRowSheet> {
             // ── Category ────────────────────────────────────────────────────
             DropdownButtonFormField<ExpenseCategory>(
               initialValue: _selectedCategory,
-              decoration: const InputDecoration(
-                labelText: 'Category',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.labelCategory,
+                border: const OutlineInputBorder(),
               ),
               items: (ExpenseCategory.values.toList()
                     ..sort((a, b) {
                       if (a == ExpenseCategory.other) return 1;
                       if (b == ExpenseCategory.other) return -1;
-                      return a.displayName.compareTo(b.displayName);
+                      return l10n
+                          .categoryName(a)
+                          .compareTo(l10n.categoryName(b));
                     }))
                   .map((cat) => DropdownMenuItem(
                         value: cat,
@@ -145,7 +152,7 @@ class _EditImportRowSheetState extends State<EditImportRowSheet> {
                           children: [
                             Icon(cat.icon, size: 20, color: cat.color),
                             const SizedBox(width: 8),
-                            Text(cat.displayName),
+                            Text(l10n.categoryName(cat)),
                           ],
                         ),
                       ))
@@ -157,14 +164,15 @@ class _EditImportRowSheetState extends State<EditImportRowSheet> {
             const SizedBox(height: 16),
 
             // ── Financial type ───────────────────────────────────────────────
-            const Text('Financial type',
-                style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+            Text(l10n.labelFinancialType,
+                style: const TextStyle(
+                    fontSize: 12, color: AppColors.textMuted)),
             const SizedBox(height: 8),
             SegmentedButton<FinancialType>(
               segments: FinancialType.values
                   .map((t) => ButtonSegment(
                         value: t,
-                        label: Text(t.displayName),
+                        label: Text(l10n.financialTypeName(t)),
                         icon: Icon(t.icon),
                       ))
                   .toList(),
@@ -190,9 +198,9 @@ class _EditImportRowSheetState extends State<EditImportRowSheet> {
             // ── Note ────────────────────────────────────────────────────────
             TextFormField(
               controller: _noteController,
-              decoration: const InputDecoration(
-                labelText: 'Note (optional)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.labelNoteOptional,
+                border: const OutlineInputBorder(),
               ),
               maxLines: 2,
             ),
@@ -201,17 +209,17 @@ class _EditImportRowSheetState extends State<EditImportRowSheet> {
             // ── Group ────────────────────────────────────────────────────────
             TextFormField(
               controller: _groupController,
-              decoration: const InputDecoration(
-                labelText: 'Group (optional)',
-                hintText: 'e.g. Vacation, Birthday',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l10n.labelGroupOptional,
+                hintText: l10n.groupHintText,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 24),
 
             FilledButton(
               onPressed: _save,
-              child: const Text('Save'),
+              child: Text(l10n.actionSave),
             ),
           ],
         ),

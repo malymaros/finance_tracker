@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/plan_item.dart';
 import '../models/year_month.dart';
 import '../services/guard_calculator.dart';
@@ -67,9 +68,7 @@ class GuardBanner extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              count == 1
-                  ? 'GUARD — 1 payment not confirmed'
-                  : 'GUARD — $count payments not confirmed',
+              context.l10n.guardBannerCount(count),
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -170,9 +169,9 @@ class _GuardRow extends StatelessWidget {
                         color: AppColors.textMuted,
                       ),
                       const SizedBox(width: 2),
-                      const Text(
-                        'silenced',
-                        style: TextStyle(
+                      Text(
+                        context.l10n.guardSilencedBadge,
+                        style: const TextStyle(
                           fontSize: 11,
                           color: AppColors.textMuted,
                         ),
@@ -192,7 +191,8 @@ class _GuardRow extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               ),
-              child: const Text('Silence', style: TextStyle(fontSize: 12)),
+              child: Text(context.l10n.guardSilence,
+                  style: const TextStyle(fontSize: 12)),
             ),
           FilledButton(
             onPressed: onMarkPaid,
@@ -207,7 +207,7 @@ class _GuardRow extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            child: const Text('Paid'),
+            child: Text(context.l10n.guardStatusPaid),
           ),
         ],
       ),

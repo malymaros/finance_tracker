@@ -11,6 +11,7 @@ import '../services/save_load_service.dart';
 import '../services/share_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/auto_backup_tile.dart';
+import '../l10n/l10n.dart';
 import '../widgets/save_action_dialog.dart';
 import '../widgets/save_slot_tile.dart';
 
@@ -55,7 +56,7 @@ class _SavesScreenState extends State<SavesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Saves'),
+        title: Text(context.l10n.savesTitle),
         scrolledUnderElevation: 0,
       ),
       body: _loading
@@ -76,7 +77,7 @@ class _SavesScreenState extends State<SavesScreen> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Export failed: $e')),
+        SnackBar(content: Text(context.l10n.exportFailed(e))),
       );
     }
   }
@@ -93,7 +94,7 @@ class _SavesScreenState extends State<SavesScreen> {
     if (bytes == null) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not read the selected file.')),
+        SnackBar(content: Text(context.l10n.couldNotReadSelectedFile)),
       );
       return;
     }
@@ -101,22 +102,20 @@ class _SavesScreenState extends State<SavesScreen> {
     final jsonString = utf8.decode(bytes);
 
     if (!mounted) return;
+    final l10n = context.l10n;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Import data?'),
-        content: const Text(
-          'This will replace ALL current expenses and plan items with the '
-          'contents of the file. This cannot be undone.',
-        ),
+        title: Text(ctx.l10n.importDataDialogTitle),
+        content: Text(ctx.l10n.importDataDialogContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(ctx.l10n.actionCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Import'),
+            child: Text(ctx.l10n.actionImport),
           ),
         ],
       ),
@@ -132,12 +131,12 @@ class _SavesScreenState extends State<SavesScreen> {
       );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Data imported successfully.')),
+        SnackBar(content: Text(l10n.importDataSuccess)),
       );
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Invalid file: $e')),
+        SnackBar(content: Text(l10n.importFailedInvalid(e))),
       );
     }
   }
@@ -156,14 +155,14 @@ class _SavesScreenState extends State<SavesScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionHeader('AUTO BACKUP'),
+          _buildSectionHeader(context.l10n.sectionAutoBackup),
           const SizedBox(height: 10),
           AutoBackupTile(
             repositories: widget.repositories,
             onRestored: _loadList,
           ),
           const SizedBox(height: 24),
-          _buildSectionHeader('SAVES'),
+          _buildSectionHeader(context.l10n.sectionSaves),
           const SizedBox(height: 10),
           // Existing saves (could be more than SaveLoadService.maxSaves if user had more before cap reduction)
           for (final slot in _saves) ...[
@@ -176,25 +175,25 @@ class _SavesScreenState extends State<SavesScreen> {
             if (i < SaveLoadService.maxSaves - 1) const SizedBox(height: 10),
           ],
           const SizedBox(height: 24),
-          _buildSectionHeader('DATA TRANSFER'),
+          _buildSectionHeader(context.l10n.sectionDataTransfer),
           const SizedBox(height: 10),
           _buildActionButton(
             icon: Icons.upload_outlined,
-            label: 'Export all data',
+            label: context.l10n.exportAllData,
             onTap: _exportData,
           ),
           const SizedBox(height: 10),
           _buildActionButton(
             icon: Icons.download_outlined,
-            label: 'Import all data',
+            label: context.l10n.importAllData,
             onTap: _importData,
           ),
           const SizedBox(height: 24),
-          _buildSectionHeader('DATA DELETION'),
+          _buildSectionHeader(context.l10n.sectionDataDeletion),
           const SizedBox(height: 10),
           _buildActionButton(
             icon: Icons.delete_outline,
-            label: 'Delete all data',
+            label: context.l10n.deleteAllData,
             onTap: widget.onClearAll,
             isDestructive: true,
           ),
@@ -287,7 +286,7 @@ class _SavesScreenState extends State<SavesScreen> {
       await _loadList();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("'$name' saved.")),
+          SnackBar(content: Text(context.l10n.savedConfirmation(name))),
         );
       }
     }
@@ -304,21 +303,22 @@ class _SavesScreenState extends State<SavesScreen> {
       await _loadList();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("'$name' saved.")),
+          SnackBar(content: Text(context.l10n.savedConfirmation(name))),
         );
       }
     }
   }
 
   Future<void> _confirmLoad(SaveSlot slot) async {
+    final l10n = context.l10n;
     final confirmed = await SaveActionDialog.show(
       context,
       icon: Icons.download_outlined,
       iconColor: AppColors.navy,
-      actionLabel: 'LOAD',
+      actionLabel: l10n.actionLoad.toUpperCase(),
       targetName: slot.name,
-      description: 'All current data will be replaced with this saved snapshot.',
-      confirmLabel: 'Load',
+      description: l10n.loadDialogDescription,
+      confirmLabel: l10n.actionLoad,
     );
 
     if (!confirmed) return;
@@ -326,6 +326,7 @@ class _SavesScreenState extends State<SavesScreen> {
 
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final navigator = Navigator.of(context);
+    final loadedMsg = context.l10n.loadedConfirmation(slot.name);
 
     final success = await SaveLoadService.loadSave(
       slot.id,
@@ -335,20 +336,21 @@ class _SavesScreenState extends State<SavesScreen> {
     if (success) {
       navigator.pop();
       scaffoldMessenger.showSnackBar(
-        SnackBar(content: Text("'${slot.name}' loaded.")),
+        SnackBar(content: Text(loadedMsg)),
       );
     }
   }
 
   Future<void> _confirmDelete(SaveSlot slot) async {
+    final l10n = context.l10n;
     final confirmed = await SaveActionDialog.show(
       context,
       icon: slot.isDamaged ? Icons.warning_amber_outlined : Icons.delete_outline,
       iconColor: AppColors.expense,
-      actionLabel: 'DELETE',
-      targetName: slot.isDamaged ? 'Damaged save file' : slot.name,
-      description: 'This saved snapshot will be permanently deleted.',
-      confirmLabel: 'Delete',
+      actionLabel: l10n.actionDelete.toUpperCase(),
+      targetName: slot.isDamaged ? l10n.damagedSaveFile : slot.name,
+      description: l10n.deleteDialogDescription,
+      confirmLabel: l10n.actionDelete,
     );
 
     if (confirmed) {
@@ -371,16 +373,16 @@ class _EmptySlotCard extends StatelessWidget {
       onTap: onTap,
       child: CustomPaint(
         painter: _DashedBorderPainter(),
-        child: const SizedBox(
+        child: SizedBox(
           height: 76,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.add, color: AppColors.textMuted, size: 20),
-              SizedBox(width: 8),
+              const Icon(Icons.add, color: AppColors.textMuted, size: 20),
+              const SizedBox(width: 8),
               Text(
-                'Empty slot',
-                style: TextStyle(color: AppColors.textMuted, fontSize: 14),
+                context.l10n.emptySlot,
+                style: const TextStyle(color: AppColors.textMuted, fontSize: 14),
               ),
             ],
           ),
@@ -465,11 +467,12 @@ class _SaveNameDialogState extends State<_SaveNameDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isOverwrite = widget.isOverwrite;
     final iconColor = isOverwrite ? AppColors.warning : AppColors.income;
     final iconData = isOverwrite ? Icons.swap_horiz : Icons.save_outlined;
-    final actionLabel = isOverwrite ? 'OVERWRITE' : 'SAVE';
-    final confirmLabel = isOverwrite ? 'Overwrite' : 'Save';
+    final actionLabel = isOverwrite ? l10n.actionOverwrite.toUpperCase() : l10n.actionSave.toUpperCase();
+    final confirmLabel = isOverwrite ? l10n.actionOverwrite : l10n.actionSave;
     final confirmForeground =
         isOverwrite ? const Color(0xFF1A1A1A) : Colors.white;
 
@@ -507,7 +510,7 @@ class _SaveNameDialogState extends State<_SaveNameDialog> {
             if (isOverwrite && widget.replacingName != null) ...[
               const SizedBox(height: 6),
               Text(
-                'Replacing: ${widget.replacingName}',
+                l10n.replacingLabel(widget.replacingName!),
                 style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
                 textAlign: TextAlign.center,
               ),
@@ -520,8 +523,8 @@ class _SaveNameDialogState extends State<_SaveNameDialog> {
               maxLength: 50,
               autofocus: true,
               decoration: InputDecoration(
-                labelText: 'Save name',
-                errorText: _showError ? 'Name cannot be empty' : null,
+                labelText: l10n.saveName,
+                errorText: _showError ? l10n.saveNameCannotBeEmpty : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -535,7 +538,7 @@ class _SaveNameDialogState extends State<_SaveNameDialog> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
+                    child: Text(l10n.actionCancel),
                   ),
                 ),
                 const SizedBox(width: 12),

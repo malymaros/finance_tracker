@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense_category.dart';
 import '../models/imported_expense.dart';
 import '../services/currency_formatter.dart';
@@ -31,7 +33,7 @@ class ImportRowTile extends StatelessWidget {
         child: Icon(expense.category.icon,
             size: 20, color: expense.category.color.withAlpha(180)),
       ),
-      title: Text(expense.category.displayName),
+      title: Text(context.l10n.categoryName(expense.category)),
       subtitle: Text(
         subtitle,
         style: const TextStyle(fontSize: 12, color: AppColors.textMuted),

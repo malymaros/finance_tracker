@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+import '../../l10n/l10n.dart';
+import '../../l10n/l10n_extensions.dart';
 import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/plan_item.dart';
@@ -41,10 +44,11 @@ class PlanItemDetailScreen extends StatelessWidget {
     this.guardRepository,
   });
 
-  static String _frequencyLabel(PlanFrequency freq) => switch (freq) {
-        PlanFrequency.monthly => 'Monthly',
-        PlanFrequency.yearly => 'Yearly',
-        PlanFrequency.oneTime => 'One-time',
+  String _frequencyLabel(AppLocalizations l10n, PlanFrequency freq) =>
+      switch (freq) {
+        PlanFrequency.monthly => l10n.frequencyMonthly,
+        PlanFrequency.yearly => l10n.frequencyYearly,
+        PlanFrequency.oneTime => l10n.frequencyOneTime,
       };
 
   @override
@@ -55,19 +59,19 @@ class PlanItemDetailScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Plan Item'),
+        title: Text(context.l10n.planItemTitle),
         scrolledUnderElevation: 0,
         actions: [
           if (onEdit != null)
             IconButton(
               icon: const Icon(Icons.edit_outlined),
-              tooltip: 'Edit',
+              tooltip: context.l10n.actionEdit,
               onPressed: onEdit,
             ),
           if (onDelete != null)
             IconButton(
               icon: const Icon(Icons.delete_outline),
-              tooltip: 'Delete',
+              tooltip: context.l10n.actionDelete,
               color: AppColors.expense,
               onPressed: onDelete,
             ),
@@ -78,7 +82,7 @@ class PlanItemDetailScreen extends StatelessWidget {
         children: [
           _buildHeaderCard(context, isIncome),
           const SizedBox(height: 16),
-          _buildDetailsCard(isIncome),
+          _buildDetailsCard(context, isIncome),
           if (showGuardSection) ...[
             const SizedBox(height: 16),
             _buildGuardSection(context),
@@ -127,7 +131,7 @@ class PlanItemDetailScreen extends StatelessWidget {
                 color: AppColors.gold,
               ),
             ),
-            subtitle: const Text('Not enabled'),
+            subtitle: Text(context.l10n.guardNotEnabled),
             trailing: const Icon(Icons.chevron_right,
                 color: AppColors.textMuted, size: 20),
             onTap: () => GuardSetupSheet.show(
@@ -148,9 +152,10 @@ class PlanItemDetailScreen extends StatelessWidget {
     final currentDay = (current.guardDueDay ?? 1).clamp(1, daysInMonth);
     int selected = currentDay;
 
+    final l10n = context.l10n;
     final title = current.frequency == PlanFrequency.monthly
-        ? 'Due day (repeats monthly)'
-        : 'Due day (repeats every ${YearMonth.monthNames[anchorMonth]})';
+        ? l10n.dueDayMonthly
+        : l10n.dueDayYearly(l10n.monthName(anchorMonth));
 
     final picked = await showDialog<int>(
       context: context,
@@ -159,9 +164,9 @@ class PlanItemDetailScreen extends StatelessWidget {
           title: Text(title),
           content: DropdownButtonFormField<int>(
             initialValue: selected,
-            decoration: const InputDecoration(
-              labelText: 'Day of month',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: ctx.l10n.labelDayOfMonth,
+              border: const OutlineInputBorder(),
               isDense: true,
             ),
             items: List.generate(daysInMonth, (i) {
@@ -175,7 +180,7 @@ class PlanItemDetailScreen extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(null),
-              child: const Text('Cancel'),
+              child: Text(ctx.l10n.actionCancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(ctx).pop(selected),
@@ -192,6 +197,7 @@ class PlanItemDetailScreen extends StatelessWidget {
   }
 
   Widget _buildHeaderCard(BuildContext context, bool isIncome) {
+    final l10n = context.l10n;
     final typeColor = isIncome ? AppColors.income : AppColors.expense;
     return Card(
       color: typeColor.withAlpha(10),
@@ -217,7 +223,7 @@ class PlanItemDetailScreen extends StatelessWidget {
                 border: Border.all(color: typeColor.withAlpha(60)),
               ),
               child: Text(
-                isIncome ? 'Income' : 'Fixed Cost',
+                isIncome ? l10n.typeIncome : l10n.typeFixedCost,
                 style: TextStyle(
                   color: typeColor,
                   fontWeight: FontWeight.w600,
@@ -231,12 +237,13 @@ class PlanItemDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailsCard(bool isIncome) {
+  Widget _buildDetailsCard(BuildContext context, bool isIncome) {
+    final l10n = context.l10n;
     final typeColor = isIncome ? AppColors.income : AppColors.expense;
     final amountSuffix = switch (item.frequency) {
-      PlanFrequency.monthly => '/ month',
-      PlanFrequency.yearly => '/ year',
-      PlanFrequency.oneTime => '(one-time)',
+      PlanFrequency.monthly => l10n.perMonth,
+      PlanFrequency.yearly => l10n.perYear,
+      PlanFrequency.oneTime => l10n.oneTimeSuffix,
     };
 
     return Card(
@@ -245,23 +252,23 @@ class PlanItemDetailScreen extends StatelessWidget {
           _buildDetailRow(
             icon: Icons.euro_outlined,
             iconColor: typeColor,
-            label: 'Amount',
+            label: l10n.labelAmount,
             value: '${CurrencyFormatter.format(item.amount)} $amountSuffix'.trim(),
           ),
           const Divider(height: 1, indent: 56),
           _buildDetailRow(
             icon: Icons.repeat_outlined,
             iconColor: AppColors.textMuted,
-            label: 'Frequency',
-            value: _frequencyLabel(item.frequency),
+            label: l10n.labelFrequency,
+            value: _frequencyLabel(l10n, item.frequency),
           ),
           if (item.category != null) ...[
             const Divider(height: 1, indent: 56),
             _buildDetailRow(
               icon: item.category!.icon,
               iconColor: item.category!.color,
-              label: 'Category',
-              value: item.category!.displayName,
+              label: l10n.labelCategory,
+              value: l10n.categoryName(item.category!),
             ),
           ],
           if (item.financialType != null) ...[
@@ -269,15 +276,15 @@ class PlanItemDetailScreen extends StatelessWidget {
             _buildDetailRow(
               icon: item.financialType!.icon,
               iconColor: item.financialType!.color,
-              label: 'Financial type',
-              value: item.financialType!.displayName,
+              label: l10n.labelFinancialType,
+              value: l10n.financialTypeName(item.financialType!),
             ),
           ],
           const Divider(height: 1, indent: 56),
           _buildDetailRow(
             icon: Icons.calendar_today_outlined,
             iconColor: AppColors.textMuted,
-            label: 'Active from',
+            label: l10n.activeFrom,
             value: item.validFrom.label,
           ),
           if (item.frequency != PlanFrequency.oneTime) ...[
@@ -285,12 +292,12 @@ class PlanItemDetailScreen extends StatelessWidget {
             _buildDetailRow(
               icon: Icons.event_outlined,
               iconColor: AppColors.textMuted,
-              label: 'Active until',
+              label: l10n.activeUntil,
               value: item.validTo != null
                   ? item.validTo!.label
                   : isIncome
-                      ? 'Ongoing'
-                      : 'No end date',
+                      ? l10n.ongoing
+                      : l10n.noEndDate,
             ),
           ],
           if (item.note != null) ...[
@@ -298,7 +305,7 @@ class PlanItemDetailScreen extends StatelessWidget {
             _buildDetailRow(
               icon: Icons.notes_outlined,
               iconColor: AppColors.textMuted,
-              label: 'Note',
+              label: l10n.labelNote,
               value: item.note!,
             ),
           ],

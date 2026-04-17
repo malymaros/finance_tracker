@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/l10n.dart';
+import '../../l10n/l10n_extensions.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
@@ -49,7 +51,7 @@ class _GuardScreenState extends State<GuardScreen> {
     final picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: _notifyHour, minute: _notifyMinute),
-      helpText: 'Daily GUARD reminder time',
+      helpText: context.l10n.guardTimePicker,
     );
     if (picked == null || !mounted) return;
 
@@ -75,9 +77,10 @@ class _GuardScreenState extends State<GuardScreen> {
     final currentDay = GuardCalculator.clampDueDay(item.guardDueDay, anchorPeriod);
 
     int selected = currentDay;
+    final l10n = context.l10n;
     final title = item.frequency == PlanFrequency.monthly
-        ? 'Due day (repeats monthly)'
-        : 'Due day (repeats every ${YearMonth.monthNames[anchorMonth]})';
+        ? l10n.dueDayMonthly
+        : l10n.dueDayYearly(l10n.monthName(anchorMonth));
 
     final picked = await showDialog<int>(
       context: context,
@@ -86,9 +89,9 @@ class _GuardScreenState extends State<GuardScreen> {
           title: Text(title),
           content: DropdownButtonFormField<int>(
             initialValue: selected,
-            decoration: const InputDecoration(
-              labelText: 'Day of month',
-              border: OutlineInputBorder(),
+            decoration: InputDecoration(
+              labelText: ctx.l10n.labelDayOfMonth,
+              border: const OutlineInputBorder(),
               isDense: true,
             ),
             items: List.generate(daysInMonth, (i) {
@@ -102,7 +105,7 @@ class _GuardScreenState extends State<GuardScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(null),
-              child: const Text('Cancel'),
+              child: Text(ctx.l10n.actionCancel),
             ),
             FilledButton(
               onPressed: () => Navigator.of(ctx).pop(selected),
@@ -162,12 +165,12 @@ class _GuardScreenState extends State<GuardScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
+        title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.pets, color: AppColors.gold, size: 20),
-            SizedBox(width: 8),
-            Text('GUARD'),
+            const Icon(Icons.pets, color: AppColors.gold, size: 20),
+            const SizedBox(width: 8),
+            Text(context.l10n.guardScreenTitle),
           ],
         ),
         scrolledUnderElevation: 0,
@@ -180,8 +183,8 @@ class _GuardScreenState extends State<GuardScreen> {
             child: ListTile(
               leading: const Icon(Icons.notifications_outlined,
                   color: AppColors.gold),
-              title: const Text('Daily reminder'),
-              subtitle: const Text('Tap to change the notification time'),
+              title: Text(context.l10n.guardDailyReminder),
+              subtitle: Text(context.l10n.guardChangeNotifTime),
               trailing: Text(
                 timeLabel,
                 style: const TextStyle(
@@ -197,22 +200,22 @@ class _GuardScreenState extends State<GuardScreen> {
 
           // ── Guarded items ──────────────────────────────────────────────
           if (guardedItems.isEmpty)
-            const Center(
+            Center(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 32),
+                padding: const EdgeInsets.symmetric(vertical: 32),
                 child: Column(
                   children: [
-                    Icon(Icons.pets, size: 48, color: AppColors.border),
-                    SizedBox(height: 12),
+                    const Icon(Icons.pets, size: 48, color: AppColors.border),
+                    const SizedBox(height: 12),
                     Text(
-                      'No guarded items',
-                      style: TextStyle(
+                      context.l10n.noGuardedItems,
+                      style: const TextStyle(
                           fontSize: 16, color: AppColors.textMuted),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      'Enable GUARD on a fixed cost to track payments.',
-                      style: TextStyle(
+                      context.l10n.guardNoGuardedItemsHint,
+                      style: const TextStyle(
                           fontSize: 13, color: AppColors.textMuted),
                       textAlign: TextAlign.center,
                     ),
@@ -221,7 +224,7 @@ class _GuardScreenState extends State<GuardScreen> {
               ),
             )
           else ...[
-            _buildSectionHeader('Guarded items', guardedItems.length),
+            _buildSectionHeader(context, guardedItems.length),
             const SizedBox(height: 6),
             ...guardedItems.values.map((item) {
               final period = _effectivePeriod(item, now);
@@ -255,11 +258,11 @@ class _GuardScreenState extends State<GuardScreen> {
   String _formatReminderPeriod(PlanItem item, YearMonth period) =>
       GuardCalculator.formatReminderPeriod(item.guardDueDay, period);
 
-  Widget _buildSectionHeader(String title, int count) {
+  Widget _buildSectionHeader(BuildContext context, int count) {
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 2),
       child: Text(
-        '$title ($count)',
+        context.l10n.guardedItemsCount(count),
         style: const TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,

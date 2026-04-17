@@ -12,6 +12,7 @@ import 'services/currency_service.dart';
 import 'services/finance_repository.dart';
 import 'services/guard_notification_service.dart';
 import 'services/guard_repository.dart';
+import 'services/language_service.dart';
 import 'services/plan_repository.dart';
 import 'services/save_load_service.dart';
 import 'theme/app_theme.dart';
@@ -43,6 +44,9 @@ void main() async {
   CurrencyService.instance = CurrencyService();
   await CurrencyService.instance.load();
 
+  LanguageService.instance = LanguageService();
+  await LanguageService.instance.load();
+
   // Initialise notifications and schedule the daily GUARD reminder.
   // Wrapped in try-catch: exact-alarm permission may not be granted yet on
   // first launch (Android 12+ requires manual grant in Settings), which would
@@ -72,22 +76,26 @@ class FinanceTrackerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Finance Tracker',
-      debugShowCheckedModeBanner: false,
-      theme: buildAppTheme(),
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [
-        Locale('en'),
-      ],
-      home: WelcomeScreen(
-        mainScreenBuilder: () => MainScreen(repositories: repositories),
-      ),
+    return ListenableBuilder(
+      listenable: LanguageService.instance,
+      builder: (context, _) {
+        return MaterialApp(
+          title: 'Finance Tracker',
+          debugShowCheckedModeBanner: false,
+          theme: buildAppTheme(),
+          locale: LanguageService.instance.current,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: LanguageService.supportedLocales,
+          home: WelcomeScreen(
+            mainScreenBuilder: () => MainScreen(repositories: repositories),
+          ),
+        );
+      },
     );
   }
 }

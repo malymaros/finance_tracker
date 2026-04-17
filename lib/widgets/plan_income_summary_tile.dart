@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 
@@ -36,9 +37,9 @@ class PlanIncomeSummaryTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'Income',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.sectionIncome,
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
@@ -46,8 +47,8 @@ class PlanIncomeSummaryTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     hasItems
-                        ? '$count ${count == 1 ? 'item' : 'items'}'
-                        : 'No income planned',
+                        ? context.l10n.itemCount(count)
+                        : context.l10n.noIncomePlanned,
                     style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.textMuted,

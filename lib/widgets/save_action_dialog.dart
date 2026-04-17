@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 
 /// Premium confirmation dialog used for important save/data actions
@@ -170,7 +171,7 @@ class SaveActionDialog extends StatelessWidget {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text('Cancel'),
+                    child: Text(context.l10n.actionCancel),
                   ),
                 ),
                 const SizedBox(width: 12),

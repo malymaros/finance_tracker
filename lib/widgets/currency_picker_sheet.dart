@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/currency_choice.dart';
 import '../services/currency_service.dart';
 import '../theme/app_theme.dart';
@@ -57,9 +58,9 @@ class CurrencyPickerDialog extends StatelessWidget {
                     const Icon(Icons.currency_exchange,
                         color: AppColors.gold, size: 18),
                     const SizedBox(width: 10),
-                    const Text(
-                      'Currency',
-                      style: TextStyle(
+                    Text(
+                      context.l10n.currencyPickerTitle,
+                      style: const TextStyle(
                         color: AppColors.gold,
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
@@ -180,6 +181,7 @@ class _CustomRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final isSelected = current is CustomCurrency;
     final symbol = isSelected ? (current as CustomCurrency).symbol : '?';
+    final l10n = context.l10n;
 
     return InkWell(
       onTap: onTap,
@@ -195,7 +197,7 @@ class _CustomRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Custom',
+                    l10n.currencyCustom,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight:
@@ -206,7 +208,7 @@ class _CustomRow extends StatelessWidget {
                   Text(
                     isSelected
                         ? '${(current as CustomCurrency).code} · ${(current as CustomCurrency).symbol}'
-                        : 'Define your own code and symbol',
+                        : l10n.currencyCustomSubtitle,
                     style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.textMuted,
@@ -327,9 +329,9 @@ class _CustomCurrencySheetState extends State<_CustomCurrencySheet> {
             children: [
               const Icon(Icons.edit_outlined, color: AppColors.gold, size: 18),
               const SizedBox(width: 10),
-              const Text(
-                'Custom Currency',
-                style: TextStyle(
+              Text(
+                context.l10n.currencyCustomTitle,
+                style: const TextStyle(
                   color: AppColors.gold,
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
@@ -358,10 +360,10 @@ class _CustomCurrencySheetState extends State<_CustomCurrencySheet> {
               TextField(
                 controller: _codeController,
                 textCapitalization: TextCapitalization.characters,
-                decoration: const InputDecoration(
-                  labelText: 'Code',
-                  hintText: 'e.g. CHF · 1–8 letters / digits',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: context.l10n.currencyCodeLabel,
+                  hintText: context.l10n.currencyCodeHint,
+                  border: const OutlineInputBorder(),
                 ),
                 maxLength: 8,
                 onChanged: (_) => setState(() => _error = null),
@@ -369,10 +371,10 @@ class _CustomCurrencySheetState extends State<_CustomCurrencySheet> {
               const SizedBox(height: 12),
               TextField(
                 controller: _symbolController,
-                decoration: const InputDecoration(
-                  labelText: 'Symbol',
-                  hintText: 'e.g. Fr. · 1–5 characters',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: context.l10n.currencySymbolLabel,
+                  hintText: context.l10n.currencySymbolHint,
+                  border: const OutlineInputBorder(),
                 ),
                 maxLength: 5,
                 onChanged: (_) => setState(() => _error = null),
@@ -391,14 +393,14 @@ class _CustomCurrencySheetState extends State<_CustomCurrencySheet> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Cancel'),
+                    child: Text(context.l10n.actionCancel),
                   ),
                   const SizedBox(width: 8),
                   FilledButton(
                     onPressed: _save,
                     style: FilledButton.styleFrom(
                         backgroundColor: AppColors.navy),
-                    child: const Text('Save'),
+                    child: Text(context.l10n.actionSave),
                   ),
                 ],
               ),

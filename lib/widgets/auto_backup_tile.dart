@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/save_slot.dart';
-import '../models/year_month.dart';
 import '../services/app_repositories.dart';
 import '../services/save_load_service.dart';
 import '../theme/app_theme.dart';
@@ -42,10 +43,13 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
     });
   }
 
-  String _subtitle() {
-    if (_loading) return 'Loading…';
-    if (_slots.isEmpty) return 'No backup yet';
-    return 'Updated daily · tap to ${_expanded ? 'collapse' : 'expand'}';
+  String _subtitle(BuildContext context) {
+    final l10n = context.l10n;
+    if (_loading) return l10n.loadingLabel;
+    if (_slots.isEmpty) return l10n.autoBackupNoBackupYet;
+    return _expanded
+        ? l10n.autoBackupSubtitleCollapse
+        : l10n.autoBackupSubtitleExpand;
   }
 
   @override
@@ -60,7 +64,7 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildHeader(),
+          _buildHeader(context),
           if (_expanded) ...[
             const Divider(height: 1, color: AppColors.border),
             _buildSlots(),
@@ -70,9 +74,11 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return InkWell(
-      onTap: _slots.isNotEmpty ? () => setState(() => _expanded = !_expanded) : null,
+      onTap: _slots.isNotEmpty
+          ? () => setState(() => _expanded = !_expanded)
+          : null,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
@@ -84,21 +90,23 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
                 color: AppColors.gold.withAlpha(20),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.shield_outlined, color: AppColors.gold, size: 20),
+              child: const Icon(Icons.shield_outlined,
+                  color: AppColors.gold, size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Auto Backup',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                  Text(
+                    context.l10n.autoBackupTitle,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    _subtitle(),
-                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+                    _subtitle(context),
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -137,15 +145,16 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
 
   Future<void> _confirmRestore(SaveSlot slot) async {
     if (!mounted) return;
-    final date = _formatDate(slot.createdAt);
+    final l10n = context.l10n;
+    final date = _formatDate(slot.createdAt, context);
     final confirmed = await SaveActionDialog.show(
       context,
       icon: Icons.history,
       iconColor: AppColors.gold,
-      actionLabel: 'RESTORE',
+      actionLabel: l10n.actionRestoreAllCaps,
       targetName: '${slot.name} · $date',
-      description: 'All current data will be replaced with this auto-backup snapshot.',
-      confirmLabel: 'Restore',
+      description: l10n.autoBackupRestoreDescription,
+      confirmLabel: l10n.actionRestore,
       confirmForeground: const Color(0xFF1A1A1A),
     );
 
@@ -153,6 +162,8 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
 
     final navigator = Navigator.of(context);
     final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final restoredMsg = l10n.autoBackupRestored(date);
+    final failedMsg = l10n.autoBackupRestoreFailed;
 
     final success = await SaveLoadService.loadAutoSave(
       slot.id,
@@ -162,19 +173,15 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
     if (success) {
       widget.onRestored();
       navigator.pop();
-      scaffoldMessenger.showSnackBar(
-        SnackBar(content: Text('Restored auto backup from $date.')),
-      );
+      scaffoldMessenger.showSnackBar(SnackBar(content: Text(restoredMsg)));
     } else {
-      scaffoldMessenger.showSnackBar(
-        const SnackBar(content: Text('Restore failed — backup file may be damaged.')),
-      );
+      scaffoldMessenger.showSnackBar(SnackBar(content: Text(failedMsg)));
     }
   }
 
-  String _formatDate(DateTime dt) {
+  String _formatDate(DateTime dt, BuildContext context) {
     final day = dt.day.toString().padLeft(2, '0');
-    final month = YearMonth.monthAbbreviations[dt.month];
+    final month = context.l10n.monthAbbr(dt.month);
     return '$day $month ${dt.year}';
   }
 }

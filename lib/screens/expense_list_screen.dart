@@ -17,6 +17,7 @@ import '../widgets/expense_category_group.dart';
 import '../widgets/expense_group_tile.dart';
 import '../widgets/expense_list_tile.dart';
 import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../widgets/how_groups_work_sheet.dart';
 import '../widgets/how_it_works_sheet.dart';
 import '../widgets/month_budget_summary.dart';
@@ -366,7 +367,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           const Icon(Icons.receipt_long, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
-            context.l10n.noExpensesInMonth(YearMonth.monthNames[_month], _year),
+            context.l10n.noExpensesInMonth(context.l10n.monthName(_month), _year),
             style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
           const SizedBox(height: 8),

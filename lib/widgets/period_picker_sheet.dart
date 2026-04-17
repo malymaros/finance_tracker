@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/year_month.dart';
 import '../theme/app_theme.dart';
 
@@ -120,7 +122,7 @@ class _PeriodPickerSheetState extends State<_PeriodPickerSheet> {
                     padding: EdgeInsets.zero,
                     foregroundColor: disabled ? AppColors.textMuted : null,
                   ),
-                  child: Text(YearMonth.monthAbbreviations[monthIndex]),
+                  child: Text(context.l10n.monthAbbr(monthIndex)),
                 );
               }),
             ),

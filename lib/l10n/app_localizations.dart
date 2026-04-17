@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
+    Locale('en'),
+  ];
 
   /// The application title
   ///
@@ -463,13 +467,13 @@ abstract class AppLocalizations {
   /// Section header in the Plan screen
   ///
   /// In en, this message translates to:
-  /// **'INCOME'**
+  /// **'Income'**
   String get sectionIncome;
 
   /// Section header in the Plan screen
   ///
   /// In en, this message translates to:
-  /// **'FIXED COSTS'**
+  /// **'Fixed Costs'**
   String get sectionFixedCosts;
 
   /// Empty state inside the income accordion
@@ -1137,6 +1141,1894 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Delete all'**
   String get deleteAllDataConfirm;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'January'**
+  String get monthJanuary;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'February'**
+  String get monthFebruary;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'March'**
+  String get monthMarch;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'April'**
+  String get monthApril;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get monthMay;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'June'**
+  String get monthJune;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'July'**
+  String get monthJuly;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'August'**
+  String get monthAugust;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'September'**
+  String get monthSeptember;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'October'**
+  String get monthOctober;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'November'**
+  String get monthNovember;
+
+  /// Full month name
+  ///
+  /// In en, this message translates to:
+  /// **'December'**
+  String get monthDecember;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Jan'**
+  String get monthAbbrJan;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Feb'**
+  String get monthAbbrFeb;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Mar'**
+  String get monthAbbrMar;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Apr'**
+  String get monthAbbrApr;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get monthAbbrMay;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Jun'**
+  String get monthAbbrJun;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Jul'**
+  String get monthAbbrJul;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Aug'**
+  String get monthAbbrAug;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Sep'**
+  String get monthAbbrSep;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Oct'**
+  String get monthAbbrOct;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Nov'**
+  String get monthAbbrNov;
+
+  /// Abbreviated month name
+  ///
+  /// In en, this message translates to:
+  /// **'Dec'**
+  String get monthAbbrDec;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Housing'**
+  String get categoryHousing;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Groceries'**
+  String get categoryGroceries;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Vacation'**
+  String get categoryVacation;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get categoryTransport;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get categoryInsurance;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions'**
+  String get categorySubscriptions;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get categoryCommunication;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Health'**
+  String get categoryHealth;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Restaurants'**
+  String get categoryRestaurants;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Entertainment'**
+  String get categoryEntertainment;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Clothing'**
+  String get categoryClothing;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Education'**
+  String get categoryEducation;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Investment'**
+  String get categoryInvestment;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Gifts'**
+  String get categoryGifts;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Taxes'**
+  String get categoryTaxes;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Medications'**
+  String get categoryMedications;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get categoryOther;
+
+  /// Financial type display name
+  ///
+  /// In en, this message translates to:
+  /// **'Asset'**
+  String get financialTypeAsset;
+
+  /// Financial type display name
+  ///
+  /// In en, this message translates to:
+  /// **'Consumption'**
+  String get financialTypeConsumption;
+
+  /// Financial type display name
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get financialTypeInsurance;
+
+  /// AppBar title for the add plan item screen when no type is pre-selected
+  ///
+  /// In en, this message translates to:
+  /// **'Add Plan Item'**
+  String get addPlanItemTitle;
+
+  /// AppBar title for adding a monthly income item
+  ///
+  /// In en, this message translates to:
+  /// **'Add Monthly Income'**
+  String get addMonthlyIncomeTitle;
+
+  /// AppBar title for adding a yearly income item
+  ///
+  /// In en, this message translates to:
+  /// **'Add Yearly Income'**
+  String get addYearlyIncomeTitle;
+
+  /// AppBar title for adding a one-time income item
+  ///
+  /// In en, this message translates to:
+  /// **'Add One-time Income'**
+  String get addOneTimeIncomeTitle;
+
+  /// AppBar title for adding a monthly fixed cost item
+  ///
+  /// In en, this message translates to:
+  /// **'Add Monthly Fixed Cost'**
+  String get addMonthlyFixedCostTitle;
+
+  /// AppBar title for adding a yearly fixed cost item
+  ///
+  /// In en, this message translates to:
+  /// **'Add Yearly Fixed Cost'**
+  String get addYearlyFixedCostTitle;
+
+  /// AppBar title for editing a monthly income item
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Monthly Income'**
+  String get editMonthlyIncomeTitle;
+
+  /// AppBar title for editing a yearly income item
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Yearly Income'**
+  String get editYearlyIncomeTitle;
+
+  /// AppBar title for editing a one-time income item
+  ///
+  /// In en, this message translates to:
+  /// **'Edit One-time Income'**
+  String get editOneTimeIncomeTitle;
+
+  /// AppBar title for editing a monthly fixed cost item
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Monthly Fixed Cost'**
+  String get editMonthlyFixedCostTitle;
+
+  /// AppBar title for editing a yearly fixed cost item
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Yearly Fixed Cost'**
+  String get editYearlyFixedCostTitle;
+
+  /// Form section label for plan item type (Income / Fixed Cost)
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get labelType;
+
+  /// Dropdown label in the month/year picker dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get labelMonth;
+
+  /// Dropdown label in the month/year picker dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get labelYear;
+
+  /// Dropdown label in the GUARD due-day picker dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Day of month'**
+  String get labelDayOfMonth;
+
+  /// Hint text inside the name text field on the add plan item screen
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Salary, Rent, Insurance'**
+  String get nameHintText;
+
+  /// Validation error when the name field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name'**
+  String get validationEnterName;
+
+  /// Dialog title for the month/year picker
+  ///
+  /// In en, this message translates to:
+  /// **'Select month'**
+  String get selectMonthTitle;
+
+  /// Dialog title for the yearly end-year picker
+  ///
+  /// In en, this message translates to:
+  /// **'Last renewal year'**
+  String get lastRenewalYearTitle;
+
+  /// Dropdown label in the yearly end-year picker showing the anchor month
+  ///
+  /// In en, this message translates to:
+  /// **'Last {monthName} renewal'**
+  String lastMonthRenewal(String monthName);
+
+  /// Informational text in the yearly end-year picker dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Last active month: {label}'**
+  String lastActiveMonthInfo(String label);
+
+  /// Switch label for enabling an optional end date on a plan item
+  ///
+  /// In en, this message translates to:
+  /// **'Set end date'**
+  String get setEndDate;
+
+  /// Button label showing the current end date
+  ///
+  /// In en, this message translates to:
+  /// **'Until: {validToLabel}'**
+  String untilLabel(String validToLabel);
+
+  /// Hint text below the Until button for yearly items
+  ///
+  /// In en, this message translates to:
+  /// **'{label} is the last active month.'**
+  String lastActiveMonthNote(String label);
+
+  /// Inline error when the end month is not after the start month
+  ///
+  /// In en, this message translates to:
+  /// **'End month must be after start month.'**
+  String get endMonthAfterStart;
+
+  /// Label for the locked From field when editing a yearly fixed cost
+  ///
+  /// In en, this message translates to:
+  /// **'From'**
+  String get fromFieldLabel;
+
+  /// Hint text below the locked From field for yearly fixed costs
+  ///
+  /// In en, this message translates to:
+  /// **'Renewed each {monthName}. Dates are fixed.'**
+  String renewedEachMonth(String monthName);
+
+  /// Label for the locked Until field when editing a yearly fixed cost
+  ///
+  /// In en, this message translates to:
+  /// **'Until'**
+  String get untilFieldLabel;
+
+  /// Value shown in the locked Until field for yearly items
+  ///
+  /// In en, this message translates to:
+  /// **'{label} (last active month)'**
+  String lastActiveMonthParens(String label);
+
+  /// Value shown in the locked Until field when no end date is set
+  ///
+  /// In en, this message translates to:
+  /// **'Open-ended'**
+  String get openEnded;
+
+  /// Button label showing the current start date
+  ///
+  /// In en, this message translates to:
+  /// **'From: {validFromLabel}'**
+  String fromDateLabel(String validFromLabel);
+
+  /// Hint shown when the new start month matches the existing item's start month
+  ///
+  /// In en, this message translates to:
+  /// **'Same month as original — will update in place.'**
+  String get samePeriodInPlace;
+
+  /// Hint shown when the new start month differs from the existing item's start month
+  ///
+  /// In en, this message translates to:
+  /// **'Different month — will create a new version.'**
+  String get differentPeriodNewVersion;
+
+  /// Dialog title for the yearly fixed cost save-choice dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Apply changes to...'**
+  String get applyChangesToTitle;
+
+  /// Option title in the yearly save dialog — apply changes to all periods
+  ///
+  /// In en, this message translates to:
+  /// **'Whole series'**
+  String get applyToWholeSeries;
+
+  /// Subtitle for the whole-series option in the yearly save dialog
+  ///
+  /// In en, this message translates to:
+  /// **'All periods from {seriesStartLabel} onwards'**
+  String applyToWholeSeriesSubtitle(String seriesStartLabel);
+
+  /// Option title in the yearly save dialog — split from a future period
+  ///
+  /// In en, this message translates to:
+  /// **'From {nextLabel} onwards'**
+  String applyFromOnwards(String nextLabel);
+
+  /// Subtitle for the split option in the yearly save dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Original series ends {capLabel}.\nNew series starts {nextLabel}.'**
+  String applyFromSubtitle(String capLabel, String nextLabel);
+
+  /// Subtitle for the split option when no future period exists
+  ///
+  /// In en, this message translates to:
+  /// **'No future period available in this series.'**
+  String get applyFromUnavailable;
+
+  /// Snackbar shown when a yearly item edit is rejected due to invalid boundary
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly items can only be changed at their renewal month.'**
+  String get yearlyItemsOnlyAtRenewal;
+
+  /// Subtitle under the GUARD toggle on the add plan item screen
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me to confirm this payment'**
+  String get guardRemindMe;
+
+  /// Hint shown when the GUARD due day is > 28
+  ///
+  /// In en, this message translates to:
+  /// **'Shorter months will use their last day.'**
+  String get guardShorterMonths;
+
+  /// Dialog title for the GUARD due-day picker for monthly items
+  ///
+  /// In en, this message translates to:
+  /// **'Due day (repeats monthly)'**
+  String get dueDayMonthly;
+
+  /// Dialog title for the GUARD due-day picker for yearly items
+  ///
+  /// In en, this message translates to:
+  /// **'Due day (repeats every {monthName})'**
+  String dueDayYearly(String monthName);
+
+  /// Button label showing the selected due day for a monthly item
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of each month'**
+  String dueDayMonthlyLabel(int day);
+
+  /// Button label showing the selected due day for a yearly item
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of {monthName} each year'**
+  String dueDayYearlyLabel(int day, String monthName);
+
+  /// Tile title for the notification time setting on the GUARD screen
+  ///
+  /// In en, this message translates to:
+  /// **'Daily reminder'**
+  String get guardDailyReminder;
+
+  /// Tile subtitle for the notification time setting on the GUARD screen
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change the notification time'**
+  String get guardChangeNotifTime;
+
+  /// Secondary empty-state text on the GUARD screen
+  ///
+  /// In en, this message translates to:
+  /// **'Enable GUARD on a fixed cost to track payments.'**
+  String get guardNoGuardedItemsHint;
+
+  /// Section header showing the number of guarded items on the GUARD screen
+  ///
+  /// In en, this message translates to:
+  /// **'Guarded items · {count}'**
+  String guardedItemsCount(int count);
+
+  /// AppBar title for the plan item detail screen
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Item'**
+  String get planItemTitle;
+
+  /// Detail row label for the plan item start period
+  ///
+  /// In en, this message translates to:
+  /// **'Active from'**
+  String get activeFrom;
+
+  /// Detail row label for the plan item end period
+  ///
+  /// In en, this message translates to:
+  /// **'Active until'**
+  String get activeUntil;
+
+  /// Amount suffix for monthly plan items
+  ///
+  /// In en, this message translates to:
+  /// **'/ month'**
+  String get perMonth;
+
+  /// Amount suffix for yearly plan items
+  ///
+  /// In en, this message translates to:
+  /// **'/ year'**
+  String get perYear;
+
+  /// Amount suffix for one-time plan items
+  ///
+  /// In en, this message translates to:
+  /// **'(one-time)'**
+  String get oneTimeSuffix;
+
+  /// Value shown for the active-until field when a fixed cost has no end date
+  ///
+  /// In en, this message translates to:
+  /// **'No end date'**
+  String get noEndDate;
+
+  /// GUARD section subtitle when GUARD is not yet set up for an item
+  ///
+  /// In en, this message translates to:
+  /// **'Not enabled'**
+  String get guardNotEnabled;
+
+  /// Confirmation dialog description when removing an income item that starts at the selected period
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" will be removed entirely.'**
+  String removeIncomeEntirely(String name);
+
+  /// Confirmation dialog description when removing an income item from a mid-series period
+  ///
+  /// In en, this message translates to:
+  /// **'\"{name}\" will stop from {from} onwards. {prev} and earlier will remain planned.'**
+  String removeIncomeFromOnwards(String name, String from, String prev);
+
+  /// All-caps action label shown prominently in the fixed cost delete dialog
+  ///
+  /// In en, this message translates to:
+  /// **'REMOVE'**
+  String get actionRemoveAllCaps;
+
+  /// Option title in the fixed cost delete dialog — remove from the selected period
+  ///
+  /// In en, this message translates to:
+  /// **'From {label} onwards'**
+  String removeFromOnwardsTitle(String label);
+
+  /// Subtitle for the from-period option when deleting a yearly fixed cost
+  ///
+  /// In en, this message translates to:
+  /// **'This cycle ({start} – {end}) and all future cycles are removed.'**
+  String removeCycleSubtitle(String start, String end);
+
+  /// Subtitle for the from-period option when deleting a monthly fixed cost
+  ///
+  /// In en, this message translates to:
+  /// **'History up to {prev} is kept.'**
+  String removeHistoryKept(String prev);
+
+  /// Dialog title when the user silences a GUARD reminder from the Plan screen
+  ///
+  /// In en, this message translates to:
+  /// **'Silence this reminder?'**
+  String get silenceReminderTitle;
+
+  /// Dialog body when the user silences a GUARD reminder
+  ///
+  /// In en, this message translates to:
+  /// **'The {periodLabel} payment will still be shown as unconfirmed. You can mark it as paid at any time.'**
+  String silenceReminderBody(String periodLabel);
+
+  /// Confirm button label in the silence-reminder dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Silence'**
+  String get yesSilence;
+
+  /// FAB tooltip on the Plan screen
+  ///
+  /// In en, this message translates to:
+  /// **'Add Plan Item'**
+  String get addPlanItemTooltip;
+
+  /// Label for the spendable amount card in monthly plan view
+  ///
+  /// In en, this message translates to:
+  /// **'Spendable this month'**
+  String get spendableThisMonth;
+
+  /// Label for the spendable amount card in yearly plan view
+  ///
+  /// In en, this message translates to:
+  /// **'Spendable this year'**
+  String get spendableThisYear;
+
+  /// Empty-state primary text on the Plan screen
+  ///
+  /// In en, this message translates to:
+  /// **'No plan items yet.'**
+  String get noPlanItemsYet;
+
+  /// Empty-state secondary text on the Plan screen
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + to add income or fixed costs.'**
+  String get tapPlusToAddPlanItems;
+
+  /// Option title in the fixed cost delete dialog — remove the entire series
+  ///
+  /// In en, this message translates to:
+  /// **'Whole series'**
+  String get removeWholeSeries;
+
+  /// Subtitle for the whole-series option in the fixed cost delete dialog
+  ///
+  /// In en, this message translates to:
+  /// **'All periods from {seriesStartLabel} are removed.'**
+  String removeWholeSeriesSubtitle(String seriesStartLabel);
+
+  /// All-caps action label shown prominently in the delete-all confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'DELETE'**
+  String get clearAllDataAction;
+
+  /// Body text in the delete-all confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses, plan items, budgets and guard payments will be permanently deleted. This cannot be undone.'**
+  String get clearAllDataDescription;
+
+  /// Note in the delete-all confirmation dialog clarifying what is preserved
+  ///
+  /// In en, this message translates to:
+  /// **'Saved snapshots and auto-backups are not affected.'**
+  String get clearAllDataPreservedNote;
+
+  /// Shown instead of the category dropdown when all categories are already budgeted
+  ///
+  /// In en, this message translates to:
+  /// **'All categories already have a budget for this month. Select a different month to add another.'**
+  String get allCategoriesBudgeted;
+
+  /// Dropdown hint text when no category is selected
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category'**
+  String get selectCategoryHint;
+
+  /// Validation error when no category is selected in the budget form
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category'**
+  String get validationSelectCategory;
+
+  /// Text field label for the monthly budget amount
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly budget'**
+  String get monthlyBudgetLabel;
+
+  /// Button label showing the current effective-from month
+  ///
+  /// In en, this message translates to:
+  /// **'Effective from: {validFromLabel}'**
+  String effectiveFromLabel(String validFromLabel);
+
+  /// Warning shown when creating a budget for a past month
+  ///
+  /// In en, this message translates to:
+  /// **'You are creating a budget for a past month. It will apply retroactively from {fromLabel}.'**
+  String pastMonthBudgetCreateWarning(String fromLabel);
+
+  /// Warning shown when editing a budget starting in a past month
+  ///
+  /// In en, this message translates to:
+  /// **'This will change the {catName} budget back to {fromLabel}. Months {fromLabel}–{prevLabel} will use the new amount.'**
+  String pastMonthBudgetEditWarning(
+    String catName,
+    String fromLabel,
+    String prevLabel,
+  );
+
+  /// Subtitle on the fixed costs summary tile when no items exist
+  ///
+  /// In en, this message translates to:
+  /// **'No fixed costs planned'**
+  String get noFixedCostsPlanned;
+
+  /// Subtitle on the income summary tile when no items exist
+  ///
+  /// In en, this message translates to:
+  /// **'No income planned'**
+  String get noIncomePlanned;
+
+  /// Subtitle text on a save slot tile showing the date and counts
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · {expenseCount} expenses · {planItemCount} plan items'**
+  String saveSlotSubtitle(String date, int expenseCount, int planItemCount);
+
+  /// Subtitle on a damaged save slot tile
+  ///
+  /// In en, this message translates to:
+  /// **'File is damaged and cannot be loaded'**
+  String get saveSlotDamagedSubtitle;
+
+  /// Top header title of the How Groups Work bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'How it works?'**
+  String get howGroupsWorkTitle;
+
+  /// Step header title of the How Groups Work bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get howGroupsTitle;
+
+  /// Per-page subtitle for the first page of the How Groups Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'What a group is and how it works'**
+  String get howGroupsSubtitle0;
+
+  /// Per-page subtitle for the second page of the How Groups Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'How to take advantage of it'**
+  String get howGroupsSubtitle1;
+
+  /// Per-page subtitle for the third page of the How Groups Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Where groups surface in the app'**
+  String get howGroupsSubtitle2;
+
+  /// Sub-step indicator label for page 1 of the How Groups Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Tag'**
+  String get howGroupsLabel0;
+
+  /// Sub-step indicator label for page 2 of the How Groups Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Be creative'**
+  String get howGroupsLabel1;
+
+  /// Sub-step indicator label for page 3 of the How Groups Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Record'**
+  String get howGroupsLabel2;
+
+  /// Bullet rule on the Tag page of the How Groups Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'A group is an optional free-text label you attach to any expense.'**
+  String get howGroupsRule1;
+
+  /// Bullet rule on the Tag page
+  ///
+  /// In en, this message translates to:
+  /// **'You type any string — there is no fixed list and no validation.'**
+  String get howGroupsRule2;
+
+  /// Bullet rule on the Tag page
+  ///
+  /// In en, this message translates to:
+  /// **'Two expenses belong to the same group only when their labels match exactly, character for character.'**
+  String get howGroupsRule3;
+
+  /// Bullet rule on the Tag page
+  ///
+  /// In en, this message translates to:
+  /// **'Case is preserved — \"Trip\" and \"trip\" are treated as two different groups.'**
+  String get howGroupsRule4;
+
+  /// Bullet rule on the Tag page
+  ///
+  /// In en, this message translates to:
+  /// **'The field is optional. Leave it blank and the expense simply has no group.'**
+  String get howGroupsRule5;
+
+  /// Hint box at the bottom of the Tag page
+  ///
+  /// In en, this message translates to:
+  /// **'Set the group when creating or editing any expense.'**
+  String get howGroupsHint;
+
+  /// Intro text on the Be Creative page
+  ///
+  /// In en, this message translates to:
+  /// **'Use it whenever you want to track a slice of spending that cuts across categories.'**
+  String get howGroupsUseIntro;
+
+  /// Example group label on the Be Creative page (trip example)
+  ///
+  /// In en, this message translates to:
+  /// **'Barcelona {year}'**
+  String howGroupsExample1Label(int year);
+
+  /// Description for example 1 on the Be Creative page
+  ///
+  /// In en, this message translates to:
+  /// **'Attach to every expense on a trip — flights, hotels, meals, tickets. See the total cost of the whole trip in one tap.'**
+  String get howGroupsExample1Desc;
+
+  /// Example group label on the Be Creative page (restaurant example)
+  ///
+  /// In en, this message translates to:
+  /// **'McDonald\'\'s {year}'**
+  String howGroupsExample2Label(int year);
+
+  /// Description for example 2 on the Be Creative page
+  ///
+  /// In en, this message translates to:
+  /// **'Use a consistent name all year. At year-end you know exactly what you spent at that one place.'**
+  String get howGroupsExample2Desc;
+
+  /// Example group label on the Be Creative page (renovation example)
+  ///
+  /// In en, this message translates to:
+  /// **'Home renovation Q1'**
+  String get howGroupsExample3Label;
+
+  /// Description for example 3 on the Be Creative page
+  ///
+  /// In en, this message translates to:
+  /// **'Span multiple months with the same label. The Groups tab collects everything under that name.'**
+  String get howGroupsExample3Desc;
+
+  /// Italic note at the bottom of the Be Creative page
+  ///
+  /// In en, this message translates to:
+  /// **'The more precise your label, the more useful the summary.'**
+  String get howGroupsPrecision;
+
+  /// Title of the first record row on the Record page
+  ///
+  /// In en, this message translates to:
+  /// **'Groups tab in Expenses'**
+  String get howGroupsRecord0Title;
+
+  /// Body of the first record row on the Record page
+  ///
+  /// In en, this message translates to:
+  /// **'Every group that has at least one expense in the current month appears here as a single row showing the item count and total. Tap a group to drill down and see each individual expense behind it.'**
+  String get howGroupsRecord0Body;
+
+  /// Title of the second record row on the Record page
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Report in Reports'**
+  String get howGroupsRecord1Title;
+
+  /// Body of the second record row on the Record page
+  ///
+  /// In en, this message translates to:
+  /// **'When you export a monthly PDF from the Reports screen, groups with expenses in that month get a dedicated \"Expense Groups\" page — each group listed with its expenses, amounts, and a group total.'**
+  String get howGroupsRecord1Body;
+
+  /// Note at the bottom of the Record page
+  ///
+  /// In en, this message translates to:
+  /// **'Groups are not included in the yearly report — they are a monthly lens.'**
+  String get howGroupsMonthlyNote;
+
+  /// Label for the collapsed 'other' segment in pie charts and breakdown lists
+  ///
+  /// In en, this message translates to:
+  /// **'Other categories'**
+  String get otherCategories;
+
+  /// Empty state in CategoryExpenseListScreen
+  ///
+  /// In en, this message translates to:
+  /// **'No {category} expenses\nin {period}.'**
+  String noCategoryExpenses(String category, String period);
+
+  /// Due date label on the GUARD status card
+  ///
+  /// In en, this message translates to:
+  /// **'Due {monthName} {day}, {year}'**
+  String guardDueDate(String monthName, int day, int year);
+
+  /// Label on GUARD card when payment is not yet due
+  ///
+  /// In en, this message translates to:
+  /// **'Not yet due'**
+  String get guardNotYetDue;
+
+  /// Next reminder label on GUARD card
+  ///
+  /// In en, this message translates to:
+  /// **'Next: {label}'**
+  String guardNextReminder(String label);
+
+  /// Last reminder label on GUARD card
+  ///
+  /// In en, this message translates to:
+  /// **'Last: {label}'**
+  String guardLastReminder(String label);
+
+  /// Action button on GUARD card to change the due day
+  ///
+  /// In en, this message translates to:
+  /// **'Change day'**
+  String get guardChangeDay;
+
+  /// Action button on GUARD card to remove guard tracking
+  ///
+  /// In en, this message translates to:
+  /// **'Remove GUARD'**
+  String get guardRemoveAction;
+
+  /// Dialog title when revoking a payment confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as unpaid?'**
+  String get guardMarkUnpaidTitle;
+
+  /// Dialog body when revoking a payment confirmation
+  ///
+  /// In en, this message translates to:
+  /// **'This will remove the payment confirmation for {monthName} {year}.'**
+  String guardMarkUnpaidBody(String monthName, int year);
+
+  /// Confirm button in the mark-as-unpaid dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Unpaid'**
+  String get guardMarkUnpaidAction;
+
+  /// Primary action button on GUARD card
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Paid'**
+  String get guardMarkAsPaid;
+
+  /// Dialog title when removing GUARD from a plan item
+  ///
+  /// In en, this message translates to:
+  /// **'Remove GUARD?'**
+  String get guardRemoveTitle;
+
+  /// Dialog body when removing GUARD
+  ///
+  /// In en, this message translates to:
+  /// **'GUARD will be disabled for \"{name}\". Existing payment records are kept but no new reminders will fire.'**
+  String guardRemoveBody(String name);
+
+  /// Confirm button in the remove-GUARD dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get guardRemoveConfirm;
+
+  /// Help text for the date picker when editing a paid date
+  ///
+  /// In en, this message translates to:
+  /// **'Select paid date'**
+  String get guardSelectPaidDate;
+
+  /// Label on GUARD card showing the confirmed paid date
+  ///
+  /// In en, this message translates to:
+  /// **'Paid {date}'**
+  String guardPaidOn(String date);
+
+  /// Step number label above each tab in the How It Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'STEP {n}'**
+  String howItWorksStep(int n);
+
+  /// Subtitle for Plan sub-page 0 (Cashflow)
+  ///
+  /// In en, this message translates to:
+  /// **'Your salary and committed monthly bills'**
+  String get planSubtitle0;
+
+  /// Subtitle for Plan sub-page 1 (Classification)
+  ///
+  /// In en, this message translates to:
+  /// **'How your fixed costs are classified'**
+  String get planSubtitle1;
+
+  /// Subtitle for Plan sub-page 2 (Allocation)
+  ///
+  /// In en, this message translates to:
+  /// **'How much of your income each type consumes'**
+  String get planSubtitle2;
+
+  /// Sub-step label for Plan page 0
+  ///
+  /// In en, this message translates to:
+  /// **'Cashflow'**
+  String get planSubStep0;
+
+  /// Sub-step label for Plan page 1
+  ///
+  /// In en, this message translates to:
+  /// **'Classification'**
+  String get planSubStep1;
+
+  /// Sub-step label for Plan page 2
+  ///
+  /// In en, this message translates to:
+  /// **'Allocation'**
+  String get planSubStep2;
+
+  /// Body text on the Plan > Cashflow page
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your salary and committed monthly bills — rent, insurance, subscriptions. These are real, known numbers, not estimates or goals.'**
+  String get howItWorksPlanIncomeBody;
+
+  /// Description for the Consumption financial type on the Classification page
+  ///
+  /// In en, this message translates to:
+  /// **'Day-to-day spending — groceries, rent, dining, transport'**
+  String get howItWorksTypeConsumptionDesc;
+
+  /// Description for the Asset financial type on the Classification page
+  ///
+  /// In en, this message translates to:
+  /// **'Investments and savings that grow your wealth over time'**
+  String get howItWorksTypeAssetDesc;
+
+  /// Description for the Insurance financial type on the Classification page
+  ///
+  /// In en, this message translates to:
+  /// **'Protection costs — car, health, and life insurance'**
+  String get howItWorksTypeInsuranceDesc;
+
+  /// Body text on the Plan > Classification page
+  ///
+  /// In en, this message translates to:
+  /// **'Each fixed cost is tagged with a financial type. This lets the app show how your income is distributed across spending, savings, and protection.'**
+  String get howItWorksFinancialTypesBody;
+
+  /// Card title on the Plan > Allocation page
+  ///
+  /// In en, this message translates to:
+  /// **'Spending vs Income'**
+  String get howItWorksSpendingVsIncomeTitle;
+
+  /// Body text on the Plan > Allocation page
+  ///
+  /// In en, this message translates to:
+  /// **'The Plan tab shows how much of your income goes to each financial type — so you can see at a glance whether you spend, save, or protect the right share of what you earn.'**
+  String get howItWorksSpendingVsIncomeBody;
+
+  /// Subtitle for Expenses sub-page 0 (Budget)
+  ///
+  /// In en, this message translates to:
+  /// **'Your available budget, calculated from Plan'**
+  String get expSubtitle0;
+
+  /// Subtitle for Expenses sub-page 1 (Spending)
+  ///
+  /// In en, this message translates to:
+  /// **'Day-to-day spending you record'**
+  String get expSubtitle1;
+
+  /// Subtitle for Expenses sub-page 2 (Result)
+  ///
+  /// In en, this message translates to:
+  /// **'Did you stay within budget?'**
+  String get expSubtitle2;
+
+  /// Sub-step label for the Budget page in Expenses
+  ///
+  /// In en, this message translates to:
+  /// **'Budget'**
+  String get subStepBudget;
+
+  /// Sub-step label for the Spending page in Expenses
+  ///
+  /// In en, this message translates to:
+  /// **'Spending'**
+  String get subStepSpending;
+
+  /// Sub-step label for the Result page in Expenses
+  ///
+  /// In en, this message translates to:
+  /// **'Result'**
+  String get subStepResult;
+
+  /// Body text on the Expenses > Budget page
+  ///
+  /// In en, this message translates to:
+  /// **'The app subtracts your fixed costs from your income and shows the result here. You don\'\'t set this number — it comes from your Plan.'**
+  String get howItWorksBudgetBody;
+
+  /// Body text on the Expenses > Spending page
+  ///
+  /// In en, this message translates to:
+  /// **'Log groceries, meals, shopping and other variable spending. Fixed monthly bills like rent belong in Plan, not here.'**
+  String get howItWorksSpendingBody;
+
+  /// Body text on the Expenses > Result page
+  ///
+  /// In en, this message translates to:
+  /// **'At the end of the month the Expenses tab shows which outcome you had.'**
+  String get howItWorksResultBody;
+
+  /// Subtitle for Reports sub-page 0 (Breakdown)
+  ///
+  /// In en, this message translates to:
+  /// **'Where did your money go?'**
+  String get repSubtitle0;
+
+  /// Subtitle for Reports sub-page 1 (Export)
+  ///
+  /// In en, this message translates to:
+  /// **'Your finances on paper'**
+  String get repSubtitle1;
+
+  /// Subtitle for Reports sub-page 2 (Overview)
+  ///
+  /// In en, this message translates to:
+  /// **'The big picture, month by month'**
+  String get repSubtitle2;
+
+  /// Sub-step label for the Breakdown page in Reports
+  ///
+  /// In en, this message translates to:
+  /// **'Breakdown'**
+  String get repSubStep0;
+
+  /// Sub-step label for the Export page in Reports
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get repSubStep1;
+
+  /// Sub-step label for the Overview page in Reports
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get repSubStep2;
+
+  /// Body text on the Reports > Breakdown page
+  ///
+  /// In en, this message translates to:
+  /// **'Breakdown shows your spending by category for any month or year. Tap a slice or category row to drill into the individual expenses and fixed costs behind it.'**
+  String get howItWorksBreakdownBody;
+
+  /// Feature bullet in the Monthly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'Category totals'**
+  String get pdfFeatureCategoryTotals;
+
+  /// Feature bullet in the Monthly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'Budget vs actual'**
+  String get pdfFeatureBudgetVsActual;
+
+  /// Feature bullet in the Monthly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'Financial type split'**
+  String get pdfFeatureTypeSplit;
+
+  /// Feature bullet in the Monthly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'All expenses listed'**
+  String get pdfFeatureAllExpenses;
+
+  /// Feature bullet in the Monthly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'Category budgets'**
+  String get pdfFeatureCategoryBudgets;
+
+  /// Feature bullet in the Monthly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'Group summaries'**
+  String get pdfFeatureGroupSummaries;
+
+  /// Feature bullet in the Yearly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'12-month overview'**
+  String get pdfFeature12MonthOverview;
+
+  /// Feature bullet in the Yearly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'Annual totals'**
+  String get pdfFeatureAnnualTotals;
+
+  /// Feature bullet in the Yearly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly breakdown'**
+  String get pdfFeatureMonthlyBreakdown;
+
+  /// Feature bullet in the Yearly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'Plan vs actual'**
+  String get pdfFeaturePlanVsActual;
+
+  /// Feature bullet in the Yearly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'Type ratios'**
+  String get pdfFeatureTypeRatios;
+
+  /// Feature bullet in the Yearly PDF card
+  ///
+  /// In en, this message translates to:
+  /// **'Active plan items'**
+  String get pdfFeatureActivePlanItems;
+
+  /// Body text on the Reports > Export page
+  ///
+  /// In en, this message translates to:
+  /// **'Use the PDF button in Breakdown to export. Reports are shareable via any app on your device.'**
+  String get howItWorksExportBody;
+
+  /// Ellipsis row in the Overview mock card
+  ///
+  /// In en, this message translates to:
+  /// **'· · · 9 more months'**
+  String get howItWorksMoreMonths;
+
+  /// Body text on the Reports > Overview page
+  ///
+  /// In en, this message translates to:
+  /// **'Overview shows all 12 months side by side — how much you earned, what went into assets, and what was consumed. Tap any month to jump to that period in the Plan.'**
+  String get howItWorksOverviewBody;
+
+  /// Result summary label when spending exceeds budget
+  ///
+  /// In en, this message translates to:
+  /// **'Over budget by {amount}'**
+  String overBudgetBy(String amount);
+
+  /// Result summary label when spending is under budget
+  ///
+  /// In en, this message translates to:
+  /// **'Saved {amount}'**
+  String savedAmount(String amount);
+
+  /// Generic loading placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Loading…'**
+  String get loadingLabel;
+
+  /// Section header for the auto-backup slots
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Backup'**
+  String get autoBackupTitle;
+
+  /// Shown when no auto-backup exists
+  ///
+  /// In en, this message translates to:
+  /// **'No backup yet'**
+  String get autoBackupNoBackupYet;
+
+  /// Auto-backup subtitle when the section is collapsed
+  ///
+  /// In en, this message translates to:
+  /// **'Updated daily · tap to expand'**
+  String get autoBackupSubtitleExpand;
+
+  /// Auto-backup subtitle when the section is expanded
+  ///
+  /// In en, this message translates to:
+  /// **'Updated daily · tap to collapse'**
+  String get autoBackupSubtitleCollapse;
+
+  /// All-caps restore action label
+  ///
+  /// In en, this message translates to:
+  /// **'RESTORE'**
+  String get actionRestoreAllCaps;
+
+  /// Restore action label
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get actionRestore;
+
+  /// Body text in the restore confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring will replace all current data with the backup.'**
+  String get autoBackupRestoreDescription;
+
+  /// Snackbar shown after a successful auto-backup restore
+  ///
+  /// In en, this message translates to:
+  /// **'Backup from {date} restored.'**
+  String autoBackupRestored(String date);
+
+  /// Snackbar shown when an auto-backup restore fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to restore backup.'**
+  String get autoBackupRestoreFailed;
+
+  /// Title for the frequency picker bottom sheet for fixed costs
+  ///
+  /// In en, this message translates to:
+  /// **'How often does it recur?'**
+  String get frequencyPickerFixed;
+
+  /// Subtitle for the Monthly option in the fixed-cost frequency picker
+  ///
+  /// In en, this message translates to:
+  /// **'Rent, subscriptions, recurring bills'**
+  String get frequencyMonthlyFixedSubtitle;
+
+  /// Subtitle for the Yearly option in the fixed-cost frequency picker
+  ///
+  /// In en, this message translates to:
+  /// **'Annual subscriptions, insurance, memberships'**
+  String get frequencyYearlyFixedSubtitle;
+
+  /// Title for the frequency picker bottom sheet for income
+  ///
+  /// In en, this message translates to:
+  /// **'How often do you receive it?'**
+  String get frequencyPickerIncome;
+
+  /// Subtitle for the Monthly option in the income frequency picker
+  ///
+  /// In en, this message translates to:
+  /// **'Salary, pension, regular transfers'**
+  String get frequencyMonthlyIncomeSubtitle;
+
+  /// Subtitle for the Yearly option in the income frequency picker
+  ///
+  /// In en, this message translates to:
+  /// **'Annual bonus, tax refund, dividends'**
+  String get frequencyYearlyIncomeSubtitle;
+
+  /// Subtitle for the One-time option in the income frequency picker
+  ///
+  /// In en, this message translates to:
+  /// **'Gift, windfall, one-off payment'**
+  String get frequencyOneTimeIncomeSubtitle;
+
+  /// Title for the plan item type picker bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'What are you adding?'**
+  String get typePickerTitle;
+
+  /// Subtitle for the Income card in the type picker
+  ///
+  /// In en, this message translates to:
+  /// **'Salary, bonus, pension, gifts'**
+  String get typeIncomeSubtitle;
+
+  /// Subtitle for the Fixed Cost card in the type picker
+  ///
+  /// In en, this message translates to:
+  /// **'Rent, insurance, subscriptions'**
+  String get typeFixedCostSubtitle;
+
+  /// Title for the currency picker sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currencyPickerTitle;
+
+  /// Label for the custom currency option
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get currencyCustom;
+
+  /// Subtitle for the custom currency option
+  ///
+  /// In en, this message translates to:
+  /// **'Define your own code and symbol'**
+  String get currencyCustomSubtitle;
+
+  /// Title of the custom currency input dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Currency'**
+  String get currencyCustomTitle;
+
+  /// Label for the currency code input field
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get currencyCodeLabel;
+
+  /// Hint for the currency code input field
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. USD'**
+  String get currencyCodeHint;
+
+  /// Label for the currency symbol input field
+  ///
+  /// In en, this message translates to:
+  /// **'Symbol'**
+  String get currencySymbolLabel;
+
+  /// Hint for the currency symbol input field
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. \$'**
+  String get currencySymbolHint;
+
+  /// Tooltip/action to remove a row from the import preview
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from import'**
+  String get removeFromImport;
+
+  /// Title of the export date-range dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Export Expenses'**
+  String get exportExpensesTitle;
+
+  /// Instruction text in the export date-range dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Select the date range to export:'**
+  String get selectDateRangeHint;
+
+  /// Label for the start date picker in the export dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get startDateLabel;
+
+  /// Label for the end date picker in the export dialog
+  ///
+  /// In en, this message translates to:
+  /// **'End Date'**
+  String get endDateLabel;
+
+  /// Placeholder shown when no date has been selected
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to select'**
+  String get tapToSelectDate;
+
+  /// Validation error shown in the export dialog
+  ///
+  /// In en, this message translates to:
+  /// **'End date must be on or after start date.'**
+  String get endDateAfterStart;
+
+  /// Export action button label
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get actionExport;
+
+  /// Warning shown in the financial-type distribution card when spending exceeds income
+  ///
+  /// In en, this message translates to:
+  /// **'This {period} you spent {amount} more than you earned!'**
+  String overspendWarning(String period, String amount);
+
+  /// Word 'month' used in overspendWarning
+  ///
+  /// In en, this message translates to:
+  /// **'month'**
+  String get periodMonth;
+
+  /// Word 'year' used in overspendWarning
+  ///
+  /// In en, this message translates to:
+  /// **'year'**
+  String get periodYear;
+
+  /// Banner text showing how many GUARD payments are unconfirmed
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{GUARD — 1 payment not confirmed} other{GUARD — {count} payments not confirmed}}'**
+  String guardBannerCount(int count);
+
+  /// Badge shown on a silenced GUARD item in the banner
+  ///
+  /// In en, this message translates to:
+  /// **'silenced'**
+  String get guardSilencedBadge;
+
+  /// Strip shown on the expense list when there are pending GUARD payments
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 guarded payment pending} other{{count} guarded payments pending}}'**
+  String guardExpenseStripPending(int count);
+
+  /// Label for an import error row showing the row number and field name
+  ///
+  /// In en, this message translates to:
+  /// **'Row {row} — {field}'**
+  String importErrorRowLabel(int row, String field);
+
+  /// Earned amount label in the overview month row
+  ///
+  /// In en, this message translates to:
+  /// **'Earned: {amount}'**
+  String earnedLabel(String amount);
+
+  /// Short 'from date' label used in plan item subtitles
+  ///
+  /// In en, this message translates to:
+  /// **'from {label}'**
+  String fromDateShort(String label);
+
+  /// Short 'until date' label used in plan item subtitles
+  ///
+  /// In en, this message translates to:
+  /// **'until {label}'**
+  String untilDateShort(String label);
+
+  /// Label for the GUARD enable toggle in the setup sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Enable GUARD'**
+  String get guardEnableToggle;
+
+  /// Subtitle for the GUARD enable toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Track payment and receive reminders'**
+  String get guardEnableToggleSubtitle;
+
+  /// Generic OK button label
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get actionOk;
+
+  /// Total row label in the report screen category list
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get labelTotal;
+
+  /// AppBar title for the manage budgets screen (category-budget specific)
+  ///
+  /// In en, this message translates to:
+  /// **'Category Budgets'**
+  String get categoryBudgetsTitle;
+
+  /// Empty state primary text on the manage budgets screen
+  ///
+  /// In en, this message translates to:
+  /// **'No category budgets set.'**
+  String get noCategoryBudgetsSet;
+
+  /// Title of the delete-budget confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {category} budget'**
+  String removeBudgetDialogTitle(String category);
+
+  /// Option title in the delete-budget dialog — end the budget series from the selected month
+  ///
+  /// In en, this message translates to:
+  /// **'End from {from}'**
+  String endBudgetFromTitle(String from);
+
+  /// Subtitle for the end-from option in the delete-budget dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Stops the budget from {from} onwards. Earlier months keep their historical budget.'**
+  String endBudgetFromDescription(String from);
+
+  /// Option title in the delete-budget dialog — delete all budget records for this series
+  ///
+  /// In en, this message translates to:
+  /// **'Delete entire series'**
+  String get deleteBudgetSeriesTitle;
+
+  /// Confirm button label in the delete-budget dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete series'**
+  String get deleteBudgetSeriesConfirm;
+
+  /// Subtitle for the delete-all option in the delete-budget dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently removes all records ({range}). No budget will appear for any month in this series. This cannot be undone.'**
+  String deleteBudgetSeriesDescription(String range);
+
+  /// Date range label used in the delete-budget dialog when the budget has no end date
+  ///
+  /// In en, this message translates to:
+  /// **'{start} – present'**
+  String budgetRangePresent(String start);
+
+  /// PDF recurring header title for monthly reports
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Report'**
+  String get pdfMonthlyReport;
+
+  /// PDF recurring header title for yearly reports
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly Report'**
+  String get pdfYearlyReport;
+
+  /// PDF first-page banner title for monthly reports
+  ///
+  /// In en, this message translates to:
+  /// **'MONTHLY REPORT FOR {month} {year}'**
+  String pdfMonthlyReportHeader(String month, int year);
+
+  /// PDF first-page banner title for yearly reports
+  ///
+  /// In en, this message translates to:
+  /// **'YEARLY REPORT FOR {year}'**
+  String pdfYearlyReportHeader(int year);
+
+  /// PDF subtitle suffix appended to the year when a yearly report covers only part of the year
+  ///
+  /// In en, this message translates to:
+  /// **'(partial year)'**
+  String get pdfPartialYear;
+
+  /// PDF section title for the spending-vs-income widget
+  ///
+  /// In en, this message translates to:
+  /// **'SPENDING VS INCOME'**
+  String get pdfSectionSpendingVsIncome;
+
+  /// PDF section title for the category summary table
+  ///
+  /// In en, this message translates to:
+  /// **'CATEGORY SUMMARY'**
+  String get pdfSectionCategorySummary;
+
+  /// PDF section title for the cash flow summary
+  ///
+  /// In en, this message translates to:
+  /// **'CASH FLOW SUMMARY'**
+  String get pdfSectionCashFlowSummary;
+
+  /// PDF section title for the expense groups page
+  ///
+  /// In en, this message translates to:
+  /// **'EXPENSE GROUPS'**
+  String get pdfSectionExpenseGroups;
+
+  /// PDF section title for the expense details table
+  ///
+  /// In en, this message translates to:
+  /// **'EXPENSE DETAILS'**
+  String get pdfSectionExpenseDetails;
+
+  /// PDF section title for the yearly overview table
+  ///
+  /// In en, this message translates to:
+  /// **'YEARLY OVERVIEW'**
+  String get pdfSectionYearlyOverview;
+
+  /// PDF section title for the landscape category-by-month table
+  ///
+  /// In en, this message translates to:
+  /// **'SPENDING BY CATEGORY AND MONTH'**
+  String get pdfSectionSpendingByCategory;
+
+  /// PDF income card header label in the cash flow summary
+  ///
+  /// In en, this message translates to:
+  /// **'INCOME'**
+  String get pdfIncomeHeader;
+
+  /// PDF fixed costs card header label in the cash flow summary
+  ///
+  /// In en, this message translates to:
+  /// **'FIXED COSTS'**
+  String get pdfFixedCostsHeader;
+
+  /// PDF all-caps TOTAL row label in category and expense tables
+  ///
+  /// In en, this message translates to:
+  /// **'TOTAL'**
+  String get pdfTotal;
+
+  /// PDF column header 'Total' in the landscape category-by-month table
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get pdfColTotal;
+
+  /// PDF label for the income row in the monthly spending-vs-income widget
+  ///
+  /// In en, this message translates to:
+  /// **'Earned this month'**
+  String get pdfEarnedThisMonth;
+
+  /// PDF label for the income row in the yearly spending-vs-income widget
+  ///
+  /// In en, this message translates to:
+  /// **'Earned this year'**
+  String get pdfEarnedThisYear;
+
+  /// PDF subtotal row label in the expense groups section
+  ///
+  /// In en, this message translates to:
+  /// **'Group total (this month)'**
+  String get pdfGroupTotal;
+
+  /// PDF all-time total row label in the expense groups section
+  ///
+  /// In en, this message translates to:
+  /// **'All periods total'**
+  String get pdfAllPeriodsTotal;
+
+  /// PDF group header count label showing how many expenses belong to the group in the current month
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 item this month} other{{count} items this month}}'**
+  String pdfItemsThisMonth(int count);
+
+  /// PDF suffix appended to yearly plan items shown in a monthly cash flow summary
+  ///
+  /// In en, this message translates to:
+  /// **' (normalized)'**
+  String get pdfNormalized;
+
+  /// PDF suffix appended to monthly plan items shown in a yearly cash flow summary
+  ///
+  /// In en, this message translates to:
+  /// **' (annualized)'**
+  String get pdfAnnualized;
+
+  /// PDF note shown at the top of a partial-year report
+  ///
+  /// In en, this message translates to:
+  /// **'Partial year - months without data show zeros. Year-to-date totals only.'**
+  String get pdfPartialYearNote;
+
+  /// PDF footer page number label
+  ///
+  /// In en, this message translates to:
+  /// **'Page {page} of {total}'**
+  String pdfPage(int page, int total);
+
+  /// PDF placeholder shown when a table or section has no data to display
+  ///
+  /// In en, this message translates to:
+  /// **'No data.'**
+  String get pdfNoData;
+
+  /// Example income item name in the How It Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Salary'**
+  String get howItWorksExampleSalary;
+
+  /// Example income item name in the How It Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus'**
+  String get howItWorksExampleBonus;
+
+  /// Example fixed cost name in the How It Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Rent'**
+  String get howItWorksExampleRent;
+
+  /// Example fixed cost name in the How It Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Insurance'**
+  String get howItWorksExampleInsurance;
+
+  /// Example fixed cost name in the How It Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'ETF fonds'**
+  String get howItWorksExampleEtfFonds;
+
+  /// FAB tooltip on the Category Budgets screen
+  ///
+  /// In en, this message translates to:
+  /// **'Add budget'**
+  String get addBudgetTooltip;
 }
 
 class _AppLocalizationsDelegate
@@ -1150,7 +3042,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['en'].contains(locale.languageCode);
+      <String>['de', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -1159,6 +3051,8 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
   }

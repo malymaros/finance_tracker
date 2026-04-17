@@ -205,10 +205,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get toggleYearly => 'Yearly';
 
   @override
-  String get sectionIncome => 'INCOME';
+  String get sectionIncome => 'Income';
 
   @override
-  String get sectionFixedCosts => 'FIXED COSTS';
+  String get sectionFixedCosts => 'Fixed Costs';
 
   @override
   String get noIncomeItems => 'No income items.';
@@ -636,4 +636,1117 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteAllDataConfirm => 'Delete all';
+
+  @override
+  String get monthJanuary => 'January';
+
+  @override
+  String get monthFebruary => 'February';
+
+  @override
+  String get monthMarch => 'March';
+
+  @override
+  String get monthApril => 'April';
+
+  @override
+  String get monthMay => 'May';
+
+  @override
+  String get monthJune => 'June';
+
+  @override
+  String get monthJuly => 'July';
+
+  @override
+  String get monthAugust => 'August';
+
+  @override
+  String get monthSeptember => 'September';
+
+  @override
+  String get monthOctober => 'October';
+
+  @override
+  String get monthNovember => 'November';
+
+  @override
+  String get monthDecember => 'December';
+
+  @override
+  String get monthAbbrJan => 'Jan';
+
+  @override
+  String get monthAbbrFeb => 'Feb';
+
+  @override
+  String get monthAbbrMar => 'Mar';
+
+  @override
+  String get monthAbbrApr => 'Apr';
+
+  @override
+  String get monthAbbrMay => 'May';
+
+  @override
+  String get monthAbbrJun => 'Jun';
+
+  @override
+  String get monthAbbrJul => 'Jul';
+
+  @override
+  String get monthAbbrAug => 'Aug';
+
+  @override
+  String get monthAbbrSep => 'Sep';
+
+  @override
+  String get monthAbbrOct => 'Oct';
+
+  @override
+  String get monthAbbrNov => 'Nov';
+
+  @override
+  String get monthAbbrDec => 'Dec';
+
+  @override
+  String get categoryHousing => 'Housing';
+
+  @override
+  String get categoryGroceries => 'Groceries';
+
+  @override
+  String get categoryVacation => 'Vacation';
+
+  @override
+  String get categoryTransport => 'Transport';
+
+  @override
+  String get categoryInsurance => 'Insurance';
+
+  @override
+  String get categorySubscriptions => 'Subscriptions';
+
+  @override
+  String get categoryCommunication => 'Communication';
+
+  @override
+  String get categoryHealth => 'Health';
+
+  @override
+  String get categoryRestaurants => 'Restaurants';
+
+  @override
+  String get categoryEntertainment => 'Entertainment';
+
+  @override
+  String get categoryClothing => 'Clothing';
+
+  @override
+  String get categoryEducation => 'Education';
+
+  @override
+  String get categoryInvestment => 'Investment';
+
+  @override
+  String get categoryGifts => 'Gifts';
+
+  @override
+  String get categoryTaxes => 'Taxes';
+
+  @override
+  String get categoryMedications => 'Medications';
+
+  @override
+  String get categoryOther => 'Other';
+
+  @override
+  String get financialTypeAsset => 'Asset';
+
+  @override
+  String get financialTypeConsumption => 'Consumption';
+
+  @override
+  String get financialTypeInsurance => 'Insurance';
+
+  @override
+  String get addPlanItemTitle => 'Add Plan Item';
+
+  @override
+  String get addMonthlyIncomeTitle => 'Add Monthly Income';
+
+  @override
+  String get addYearlyIncomeTitle => 'Add Yearly Income';
+
+  @override
+  String get addOneTimeIncomeTitle => 'Add One-time Income';
+
+  @override
+  String get addMonthlyFixedCostTitle => 'Add Monthly Fixed Cost';
+
+  @override
+  String get addYearlyFixedCostTitle => 'Add Yearly Fixed Cost';
+
+  @override
+  String get editMonthlyIncomeTitle => 'Edit Monthly Income';
+
+  @override
+  String get editYearlyIncomeTitle => 'Edit Yearly Income';
+
+  @override
+  String get editOneTimeIncomeTitle => 'Edit One-time Income';
+
+  @override
+  String get editMonthlyFixedCostTitle => 'Edit Monthly Fixed Cost';
+
+  @override
+  String get editYearlyFixedCostTitle => 'Edit Yearly Fixed Cost';
+
+  @override
+  String get labelType => 'Type';
+
+  @override
+  String get labelMonth => 'Month';
+
+  @override
+  String get labelYear => 'Year';
+
+  @override
+  String get labelDayOfMonth => 'Day of month';
+
+  @override
+  String get nameHintText => 'e.g. Salary, Rent, Insurance';
+
+  @override
+  String get validationEnterName => 'Enter a name';
+
+  @override
+  String get selectMonthTitle => 'Select month';
+
+  @override
+  String get lastRenewalYearTitle => 'Last renewal year';
+
+  @override
+  String lastMonthRenewal(String monthName) {
+    return 'Last $monthName renewal';
+  }
+
+  @override
+  String lastActiveMonthInfo(String label) {
+    return 'Last active month: $label';
+  }
+
+  @override
+  String get setEndDate => 'Set end date';
+
+  @override
+  String untilLabel(String validToLabel) {
+    return 'Until: $validToLabel';
+  }
+
+  @override
+  String lastActiveMonthNote(String label) {
+    return '$label is the last active month.';
+  }
+
+  @override
+  String get endMonthAfterStart => 'End month must be after start month.';
+
+  @override
+  String get fromFieldLabel => 'From';
+
+  @override
+  String renewedEachMonth(String monthName) {
+    return 'Renewed each $monthName. Dates are fixed.';
+  }
+
+  @override
+  String get untilFieldLabel => 'Until';
+
+  @override
+  String lastActiveMonthParens(String label) {
+    return '$label (last active month)';
+  }
+
+  @override
+  String get openEnded => 'Open-ended';
+
+  @override
+  String fromDateLabel(String validFromLabel) {
+    return 'From: $validFromLabel';
+  }
+
+  @override
+  String get samePeriodInPlace =>
+      'Same month as original — will update in place.';
+
+  @override
+  String get differentPeriodNewVersion =>
+      'Different month — will create a new version.';
+
+  @override
+  String get applyChangesToTitle => 'Apply changes to...';
+
+  @override
+  String get applyToWholeSeries => 'Whole series';
+
+  @override
+  String applyToWholeSeriesSubtitle(String seriesStartLabel) {
+    return 'All periods from $seriesStartLabel onwards';
+  }
+
+  @override
+  String applyFromOnwards(String nextLabel) {
+    return 'From $nextLabel onwards';
+  }
+
+  @override
+  String applyFromSubtitle(String capLabel, String nextLabel) {
+    return 'Original series ends $capLabel.\nNew series starts $nextLabel.';
+  }
+
+  @override
+  String get applyFromUnavailable =>
+      'No future period available in this series.';
+
+  @override
+  String get yearlyItemsOnlyAtRenewal =>
+      'Yearly items can only be changed at their renewal month.';
+
+  @override
+  String get guardRemindMe => 'Remind me to confirm this payment';
+
+  @override
+  String get guardShorterMonths => 'Shorter months will use their last day.';
+
+  @override
+  String get dueDayMonthly => 'Due day (repeats monthly)';
+
+  @override
+  String dueDayYearly(String monthName) {
+    return 'Due day (repeats every $monthName)';
+  }
+
+  @override
+  String dueDayMonthlyLabel(int day) {
+    return 'Day $day of each month';
+  }
+
+  @override
+  String dueDayYearlyLabel(int day, String monthName) {
+    return 'Day $day of $monthName each year';
+  }
+
+  @override
+  String get guardDailyReminder => 'Daily reminder';
+
+  @override
+  String get guardChangeNotifTime => 'Tap to change the notification time';
+
+  @override
+  String get guardNoGuardedItemsHint =>
+      'Enable GUARD on a fixed cost to track payments.';
+
+  @override
+  String guardedItemsCount(int count) {
+    return 'Guarded items · $count';
+  }
+
+  @override
+  String get planItemTitle => 'Plan Item';
+
+  @override
+  String get activeFrom => 'Active from';
+
+  @override
+  String get activeUntil => 'Active until';
+
+  @override
+  String get perMonth => '/ month';
+
+  @override
+  String get perYear => '/ year';
+
+  @override
+  String get oneTimeSuffix => '(one-time)';
+
+  @override
+  String get noEndDate => 'No end date';
+
+  @override
+  String get guardNotEnabled => 'Not enabled';
+
+  @override
+  String removeIncomeEntirely(String name) {
+    return '\"$name\" will be removed entirely.';
+  }
+
+  @override
+  String removeIncomeFromOnwards(String name, String from, String prev) {
+    return '\"$name\" will stop from $from onwards. $prev and earlier will remain planned.';
+  }
+
+  @override
+  String get actionRemoveAllCaps => 'REMOVE';
+
+  @override
+  String removeFromOnwardsTitle(String label) {
+    return 'From $label onwards';
+  }
+
+  @override
+  String removeCycleSubtitle(String start, String end) {
+    return 'This cycle ($start – $end) and all future cycles are removed.';
+  }
+
+  @override
+  String removeHistoryKept(String prev) {
+    return 'History up to $prev is kept.';
+  }
+
+  @override
+  String get silenceReminderTitle => 'Silence this reminder?';
+
+  @override
+  String silenceReminderBody(String periodLabel) {
+    return 'The $periodLabel payment will still be shown as unconfirmed. You can mark it as paid at any time.';
+  }
+
+  @override
+  String get yesSilence => 'Yes, Silence';
+
+  @override
+  String get addPlanItemTooltip => 'Add Plan Item';
+
+  @override
+  String get spendableThisMonth => 'Spendable this month';
+
+  @override
+  String get spendableThisYear => 'Spendable this year';
+
+  @override
+  String get noPlanItemsYet => 'No plan items yet.';
+
+  @override
+  String get tapPlusToAddPlanItems => 'Tap + to add income or fixed costs.';
+
+  @override
+  String get removeWholeSeries => 'Whole series';
+
+  @override
+  String removeWholeSeriesSubtitle(String seriesStartLabel) {
+    return 'All periods from $seriesStartLabel are removed.';
+  }
+
+  @override
+  String get clearAllDataAction => 'DELETE';
+
+  @override
+  String get clearAllDataDescription =>
+      'Expenses, plan items, budgets and guard payments will be permanently deleted. This cannot be undone.';
+
+  @override
+  String get clearAllDataPreservedNote =>
+      'Saved snapshots and auto-backups are not affected.';
+
+  @override
+  String get allCategoriesBudgeted =>
+      'All categories already have a budget for this month. Select a different month to add another.';
+
+  @override
+  String get selectCategoryHint => 'Select a category';
+
+  @override
+  String get validationSelectCategory => 'Select a category';
+
+  @override
+  String get monthlyBudgetLabel => 'Monthly budget';
+
+  @override
+  String effectiveFromLabel(String validFromLabel) {
+    return 'Effective from: $validFromLabel';
+  }
+
+  @override
+  String pastMonthBudgetCreateWarning(String fromLabel) {
+    return 'You are creating a budget for a past month. It will apply retroactively from $fromLabel.';
+  }
+
+  @override
+  String pastMonthBudgetEditWarning(
+    String catName,
+    String fromLabel,
+    String prevLabel,
+  ) {
+    return 'This will change the $catName budget back to $fromLabel. Months $fromLabel–$prevLabel will use the new amount.';
+  }
+
+  @override
+  String get noFixedCostsPlanned => 'No fixed costs planned';
+
+  @override
+  String get noIncomePlanned => 'No income planned';
+
+  @override
+  String saveSlotSubtitle(String date, int expenseCount, int planItemCount) {
+    return '$date · $expenseCount expenses · $planItemCount plan items';
+  }
+
+  @override
+  String get saveSlotDamagedSubtitle => 'File is damaged and cannot be loaded';
+
+  @override
+  String get howGroupsWorkTitle => 'How it works?';
+
+  @override
+  String get howGroupsTitle => 'Groups';
+
+  @override
+  String get howGroupsSubtitle0 => 'What a group is and how it works';
+
+  @override
+  String get howGroupsSubtitle1 => 'How to take advantage of it';
+
+  @override
+  String get howGroupsSubtitle2 => 'Where groups surface in the app';
+
+  @override
+  String get howGroupsLabel0 => 'Tag';
+
+  @override
+  String get howGroupsLabel1 => 'Be creative';
+
+  @override
+  String get howGroupsLabel2 => 'Record';
+
+  @override
+  String get howGroupsRule1 =>
+      'A group is an optional free-text label you attach to any expense.';
+
+  @override
+  String get howGroupsRule2 =>
+      'You type any string — there is no fixed list and no validation.';
+
+  @override
+  String get howGroupsRule3 =>
+      'Two expenses belong to the same group only when their labels match exactly, character for character.';
+
+  @override
+  String get howGroupsRule4 =>
+      'Case is preserved — \"Trip\" and \"trip\" are treated as two different groups.';
+
+  @override
+  String get howGroupsRule5 =>
+      'The field is optional. Leave it blank and the expense simply has no group.';
+
+  @override
+  String get howGroupsHint =>
+      'Set the group when creating or editing any expense.';
+
+  @override
+  String get howGroupsUseIntro =>
+      'Use it whenever you want to track a slice of spending that cuts across categories.';
+
+  @override
+  String howGroupsExample1Label(int year) {
+    return 'Barcelona $year';
+  }
+
+  @override
+  String get howGroupsExample1Desc =>
+      'Attach to every expense on a trip — flights, hotels, meals, tickets. See the total cost of the whole trip in one tap.';
+
+  @override
+  String howGroupsExample2Label(int year) {
+    return 'McDonald\'\'s $year';
+  }
+
+  @override
+  String get howGroupsExample2Desc =>
+      'Use a consistent name all year. At year-end you know exactly what you spent at that one place.';
+
+  @override
+  String get howGroupsExample3Label => 'Home renovation Q1';
+
+  @override
+  String get howGroupsExample3Desc =>
+      'Span multiple months with the same label. The Groups tab collects everything under that name.';
+
+  @override
+  String get howGroupsPrecision =>
+      'The more precise your label, the more useful the summary.';
+
+  @override
+  String get howGroupsRecord0Title => 'Groups tab in Expenses';
+
+  @override
+  String get howGroupsRecord0Body =>
+      'Every group that has at least one expense in the current month appears here as a single row showing the item count and total. Tap a group to drill down and see each individual expense behind it.';
+
+  @override
+  String get howGroupsRecord1Title => 'Monthly Report in Reports';
+
+  @override
+  String get howGroupsRecord1Body =>
+      'When you export a monthly PDF from the Reports screen, groups with expenses in that month get a dedicated \"Expense Groups\" page — each group listed with its expenses, amounts, and a group total.';
+
+  @override
+  String get howGroupsMonthlyNote =>
+      'Groups are not included in the yearly report — they are a monthly lens.';
+
+  @override
+  String get otherCategories => 'Other categories';
+
+  @override
+  String noCategoryExpenses(String category, String period) {
+    return 'No $category expenses\nin $period.';
+  }
+
+  @override
+  String guardDueDate(String monthName, int day, int year) {
+    return 'Due $monthName $day, $year';
+  }
+
+  @override
+  String get guardNotYetDue => 'Not yet due';
+
+  @override
+  String guardNextReminder(String label) {
+    return 'Next: $label';
+  }
+
+  @override
+  String guardLastReminder(String label) {
+    return 'Last: $label';
+  }
+
+  @override
+  String get guardChangeDay => 'Change day';
+
+  @override
+  String get guardRemoveAction => 'Remove GUARD';
+
+  @override
+  String get guardMarkUnpaidTitle => 'Mark as unpaid?';
+
+  @override
+  String guardMarkUnpaidBody(String monthName, int year) {
+    return 'This will remove the payment confirmation for $monthName $year.';
+  }
+
+  @override
+  String get guardMarkUnpaidAction => 'Mark as Unpaid';
+
+  @override
+  String get guardMarkAsPaid => 'Mark as Paid';
+
+  @override
+  String get guardRemoveTitle => 'Remove GUARD?';
+
+  @override
+  String guardRemoveBody(String name) {
+    return 'GUARD will be disabled for \"$name\". Existing payment records are kept but no new reminders will fire.';
+  }
+
+  @override
+  String get guardRemoveConfirm => 'Remove';
+
+  @override
+  String get guardSelectPaidDate => 'Select paid date';
+
+  @override
+  String guardPaidOn(String date) {
+    return 'Paid $date';
+  }
+
+  @override
+  String howItWorksStep(int n) {
+    return 'STEP $n';
+  }
+
+  @override
+  String get planSubtitle0 => 'Your salary and committed monthly bills';
+
+  @override
+  String get planSubtitle1 => 'How your fixed costs are classified';
+
+  @override
+  String get planSubtitle2 => 'How much of your income each type consumes';
+
+  @override
+  String get planSubStep0 => 'Cashflow';
+
+  @override
+  String get planSubStep1 => 'Classification';
+
+  @override
+  String get planSubStep2 => 'Allocation';
+
+  @override
+  String get howItWorksPlanIncomeBody =>
+      'Enter your salary and committed monthly bills — rent, insurance, subscriptions. These are real, known numbers, not estimates or goals.';
+
+  @override
+  String get howItWorksTypeConsumptionDesc =>
+      'Day-to-day spending — groceries, rent, dining, transport';
+
+  @override
+  String get howItWorksTypeAssetDesc =>
+      'Investments and savings that grow your wealth over time';
+
+  @override
+  String get howItWorksTypeInsuranceDesc =>
+      'Protection costs — car, health, and life insurance';
+
+  @override
+  String get howItWorksFinancialTypesBody =>
+      'Each fixed cost is tagged with a financial type. This lets the app show how your income is distributed across spending, savings, and protection.';
+
+  @override
+  String get howItWorksSpendingVsIncomeTitle => 'Spending vs Income';
+
+  @override
+  String get howItWorksSpendingVsIncomeBody =>
+      'The Plan tab shows how much of your income goes to each financial type — so you can see at a glance whether you spend, save, or protect the right share of what you earn.';
+
+  @override
+  String get expSubtitle0 => 'Your available budget, calculated from Plan';
+
+  @override
+  String get expSubtitle1 => 'Day-to-day spending you record';
+
+  @override
+  String get expSubtitle2 => 'Did you stay within budget?';
+
+  @override
+  String get subStepBudget => 'Budget';
+
+  @override
+  String get subStepSpending => 'Spending';
+
+  @override
+  String get subStepResult => 'Result';
+
+  @override
+  String get howItWorksBudgetBody =>
+      'The app subtracts your fixed costs from your income and shows the result here. You don\'\'t set this number — it comes from your Plan.';
+
+  @override
+  String get howItWorksSpendingBody =>
+      'Log groceries, meals, shopping and other variable spending. Fixed monthly bills like rent belong in Plan, not here.';
+
+  @override
+  String get howItWorksResultBody =>
+      'At the end of the month the Expenses tab shows which outcome you had.';
+
+  @override
+  String get repSubtitle0 => 'Where did your money go?';
+
+  @override
+  String get repSubtitle1 => 'Your finances on paper';
+
+  @override
+  String get repSubtitle2 => 'The big picture, month by month';
+
+  @override
+  String get repSubStep0 => 'Breakdown';
+
+  @override
+  String get repSubStep1 => 'Export';
+
+  @override
+  String get repSubStep2 => 'Overview';
+
+  @override
+  String get howItWorksBreakdownBody =>
+      'Breakdown shows your spending by category for any month or year. Tap a slice or category row to drill into the individual expenses and fixed costs behind it.';
+
+  @override
+  String get pdfFeatureCategoryTotals => 'Category totals';
+
+  @override
+  String get pdfFeatureBudgetVsActual => 'Budget vs actual';
+
+  @override
+  String get pdfFeatureTypeSplit => 'Financial type split';
+
+  @override
+  String get pdfFeatureAllExpenses => 'All expenses listed';
+
+  @override
+  String get pdfFeatureCategoryBudgets => 'Category budgets';
+
+  @override
+  String get pdfFeatureGroupSummaries => 'Group summaries';
+
+  @override
+  String get pdfFeature12MonthOverview => '12-month overview';
+
+  @override
+  String get pdfFeatureAnnualTotals => 'Annual totals';
+
+  @override
+  String get pdfFeatureMonthlyBreakdown => 'Monthly breakdown';
+
+  @override
+  String get pdfFeaturePlanVsActual => 'Plan vs actual';
+
+  @override
+  String get pdfFeatureTypeRatios => 'Type ratios';
+
+  @override
+  String get pdfFeatureActivePlanItems => 'Active plan items';
+
+  @override
+  String get howItWorksExportBody =>
+      'Use the PDF button in Breakdown to export. Reports are shareable via any app on your device.';
+
+  @override
+  String get howItWorksMoreMonths => '· · · 9 more months';
+
+  @override
+  String get howItWorksOverviewBody =>
+      'Overview shows all 12 months side by side — how much you earned, what went into assets, and what was consumed. Tap any month to jump to that period in the Plan.';
+
+  @override
+  String overBudgetBy(String amount) {
+    return 'Over budget by $amount';
+  }
+
+  @override
+  String savedAmount(String amount) {
+    return 'Saved $amount';
+  }
+
+  @override
+  String get loadingLabel => 'Loading…';
+
+  @override
+  String get autoBackupTitle => 'Auto Backup';
+
+  @override
+  String get autoBackupNoBackupYet => 'No backup yet';
+
+  @override
+  String get autoBackupSubtitleExpand => 'Updated daily · tap to expand';
+
+  @override
+  String get autoBackupSubtitleCollapse => 'Updated daily · tap to collapse';
+
+  @override
+  String get actionRestoreAllCaps => 'RESTORE';
+
+  @override
+  String get actionRestore => 'Restore';
+
+  @override
+  String get autoBackupRestoreDescription =>
+      'Restoring will replace all current data with the backup.';
+
+  @override
+  String autoBackupRestored(String date) {
+    return 'Backup from $date restored.';
+  }
+
+  @override
+  String get autoBackupRestoreFailed => 'Failed to restore backup.';
+
+  @override
+  String get frequencyPickerFixed => 'How often does it recur?';
+
+  @override
+  String get frequencyMonthlyFixedSubtitle =>
+      'Rent, subscriptions, recurring bills';
+
+  @override
+  String get frequencyYearlyFixedSubtitle =>
+      'Annual subscriptions, insurance, memberships';
+
+  @override
+  String get frequencyPickerIncome => 'How often do you receive it?';
+
+  @override
+  String get frequencyMonthlyIncomeSubtitle =>
+      'Salary, pension, regular transfers';
+
+  @override
+  String get frequencyYearlyIncomeSubtitle =>
+      'Annual bonus, tax refund, dividends';
+
+  @override
+  String get frequencyOneTimeIncomeSubtitle =>
+      'Gift, windfall, one-off payment';
+
+  @override
+  String get typePickerTitle => 'What are you adding?';
+
+  @override
+  String get typeIncomeSubtitle => 'Salary, bonus, pension, gifts';
+
+  @override
+  String get typeFixedCostSubtitle => 'Rent, insurance, subscriptions';
+
+  @override
+  String get currencyPickerTitle => 'Currency';
+
+  @override
+  String get currencyCustom => 'Custom';
+
+  @override
+  String get currencyCustomSubtitle => 'Define your own code and symbol';
+
+  @override
+  String get currencyCustomTitle => 'Custom Currency';
+
+  @override
+  String get currencyCodeLabel => 'Code';
+
+  @override
+  String get currencyCodeHint => 'e.g. USD';
+
+  @override
+  String get currencySymbolLabel => 'Symbol';
+
+  @override
+  String get currencySymbolHint => 'e.g. \$';
+
+  @override
+  String get removeFromImport => 'Remove from import';
+
+  @override
+  String get exportExpensesTitle => 'Export Expenses';
+
+  @override
+  String get selectDateRangeHint => 'Select the date range to export:';
+
+  @override
+  String get startDateLabel => 'Start Date';
+
+  @override
+  String get endDateLabel => 'End Date';
+
+  @override
+  String get tapToSelectDate => 'Tap to select';
+
+  @override
+  String get endDateAfterStart => 'End date must be on or after start date.';
+
+  @override
+  String get actionExport => 'Export';
+
+  @override
+  String overspendWarning(String period, String amount) {
+    return 'This $period you spent $amount more than you earned!';
+  }
+
+  @override
+  String get periodMonth => 'month';
+
+  @override
+  String get periodYear => 'year';
+
+  @override
+  String guardBannerCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'GUARD — $count payments not confirmed',
+      one: 'GUARD — 1 payment not confirmed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get guardSilencedBadge => 'silenced';
+
+  @override
+  String guardExpenseStripPending(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count guarded payments pending',
+      one: '1 guarded payment pending',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String importErrorRowLabel(int row, String field) {
+    return 'Row $row — $field';
+  }
+
+  @override
+  String earnedLabel(String amount) {
+    return 'Earned: $amount';
+  }
+
+  @override
+  String fromDateShort(String label) {
+    return 'from $label';
+  }
+
+  @override
+  String untilDateShort(String label) {
+    return 'until $label';
+  }
+
+  @override
+  String get guardEnableToggle => 'Enable GUARD';
+
+  @override
+  String get guardEnableToggleSubtitle => 'Track payment and receive reminders';
+
+  @override
+  String get actionOk => 'OK';
+
+  @override
+  String get labelTotal => 'Total';
+
+  @override
+  String get categoryBudgetsTitle => 'Category Budgets';
+
+  @override
+  String get noCategoryBudgetsSet => 'No category budgets set.';
+
+  @override
+  String removeBudgetDialogTitle(String category) {
+    return 'Remove $category budget';
+  }
+
+  @override
+  String endBudgetFromTitle(String from) {
+    return 'End from $from';
+  }
+
+  @override
+  String endBudgetFromDescription(String from) {
+    return 'Stops the budget from $from onwards. Earlier months keep their historical budget.';
+  }
+
+  @override
+  String get deleteBudgetSeriesTitle => 'Delete entire series';
+
+  @override
+  String get deleteBudgetSeriesConfirm => 'Delete series';
+
+  @override
+  String deleteBudgetSeriesDescription(String range) {
+    return 'Permanently removes all records ($range). No budget will appear for any month in this series. This cannot be undone.';
+  }
+
+  @override
+  String budgetRangePresent(String start) {
+    return '$start – present';
+  }
+
+  @override
+  String get pdfMonthlyReport => 'Monthly Report';
+
+  @override
+  String get pdfYearlyReport => 'Yearly Report';
+
+  @override
+  String pdfMonthlyReportHeader(String month, int year) {
+    return 'MONTHLY REPORT FOR $month $year';
+  }
+
+  @override
+  String pdfYearlyReportHeader(int year) {
+    return 'YEARLY REPORT FOR $year';
+  }
+
+  @override
+  String get pdfPartialYear => '(partial year)';
+
+  @override
+  String get pdfSectionSpendingVsIncome => 'SPENDING VS INCOME';
+
+  @override
+  String get pdfSectionCategorySummary => 'CATEGORY SUMMARY';
+
+  @override
+  String get pdfSectionCashFlowSummary => 'CASH FLOW SUMMARY';
+
+  @override
+  String get pdfSectionExpenseGroups => 'EXPENSE GROUPS';
+
+  @override
+  String get pdfSectionExpenseDetails => 'EXPENSE DETAILS';
+
+  @override
+  String get pdfSectionYearlyOverview => 'YEARLY OVERVIEW';
+
+  @override
+  String get pdfSectionSpendingByCategory => 'SPENDING BY CATEGORY AND MONTH';
+
+  @override
+  String get pdfIncomeHeader => 'INCOME';
+
+  @override
+  String get pdfFixedCostsHeader => 'FIXED COSTS';
+
+  @override
+  String get pdfTotal => 'TOTAL';
+
+  @override
+  String get pdfColTotal => 'Total';
+
+  @override
+  String get pdfEarnedThisMonth => 'Earned this month';
+
+  @override
+  String get pdfEarnedThisYear => 'Earned this year';
+
+  @override
+  String get pdfGroupTotal => 'Group total (this month)';
+
+  @override
+  String get pdfAllPeriodsTotal => 'All periods total';
+
+  @override
+  String pdfItemsThisMonth(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items this month',
+      one: '1 item this month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pdfNormalized => ' (normalized)';
+
+  @override
+  String get pdfAnnualized => ' (annualized)';
+
+  @override
+  String get pdfPartialYearNote =>
+      'Partial year - months without data show zeros. Year-to-date totals only.';
+
+  @override
+  String pdfPage(int page, int total) {
+    return 'Page $page of $total';
+  }
+
+  @override
+  String get pdfNoData => 'No data.';
+
+  @override
+  String get howItWorksExampleSalary => 'Salary';
+
+  @override
+  String get howItWorksExampleBonus => 'Bonus';
+
+  @override
+  String get howItWorksExampleRent => 'Rent';
+
+  @override
+  String get howItWorksExampleInsurance => 'Insurance';
+
+  @override
+  String get howItWorksExampleEtfFonds => 'ETF fonds';
+
+  @override
+  String get addBudgetTooltip => 'Add budget';
 }

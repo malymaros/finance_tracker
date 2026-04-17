@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/l10n.dart';
 import '../models/financial_type.dart';
 import '../models/financial_type_income_ratio.dart';
 import '../services/currency_formatter.dart';
@@ -17,8 +18,9 @@ class FinancialTypeDistributionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final overspend = ratio.overspendAmount;
-    final periodLabel = isMonthly ? 'month' : 'year';
+    final periodLabel = isMonthly ? l10n.periodMonth : l10n.periodYear;
 
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 8, 12, 0),
@@ -27,9 +29,9 @@ class FinancialTypeDistributionCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Spending vs Income',
-              style: TextStyle(
+            Text(
+              l10n.howItWorksSpendingVsIncomeTitle,
+              style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
@@ -47,20 +49,14 @@ class FinancialTypeDistributionCard extends StatelessWidget {
                       color: AppColors.warning, size: 18),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.warning,
-                        ),
-                        children: [
-                          TextSpan(text: 'This $periodLabel you spent '),
-                          TextSpan(
-                            text: CurrencyFormatter.format(overspend),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          const TextSpan(text: ' more than you earned!'),
-                        ],
+                    child: Text(
+                      l10n.overspendWarning(
+                        periodLabel,
+                        CurrencyFormatter.format(overspend),
+                      ),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.warning,
                       ),
                     ),
                   ),

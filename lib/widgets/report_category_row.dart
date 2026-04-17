@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/category_total.dart';
 import '../models/expense_category.dart';
 import '../services/currency_formatter.dart';
@@ -39,14 +41,14 @@ class ReportCategoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final row = _buildRow();
+    final row = _buildRow(context);
     if (!isInteractive) {
       return Opacity(opacity: 0.45, child: row);
     }
     return row;
   }
 
-  Widget _buildRow() {
+  Widget _buildRow(BuildContext context) {
     return Container(
       decoration: isSelected
           ? BoxDecoration(
@@ -72,7 +74,9 @@ class ReportCategoryRow extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  isOther ? 'Other categories' : ct.category.displayName,
+                  isOther
+                      ? context.l10n.otherCategories
+                      : context.l10n.categoryName(ct.category),
                   style: const TextStyle(fontSize: 15),
                 ),
               ),

@@ -11,21 +11,15 @@ import '../models/financial_type_income_ratio.dart';
 import '../models/monthly_overview_summary.dart';
 import '../models/monthly_pdf_data.dart';
 import '../models/plan_item.dart';
-import '../models/year_month.dart';
 import '../models/yearly_pdf_data.dart';
 import '../services/budget_calculator.dart';
 import '../services/currency_formatter.dart';
+import '../services/pdf_strings.dart';
 
 /// Pure static service that builds PDF documents from pre-assembled data.
 /// Produces a [Uint8List] suitable for writing to disk and sharing via OS.
 class PdfReportService {
   PdfReportService._();
-
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
 
   // ── Brand colors ──────────────────────────────────────────────────────────
 
@@ -34,14 +28,14 @@ class PdfReportService {
   static final _lightGrey    = _color(0xFFF8F9FA);
   static final _borderGrey   = _color(0xFFE8EAF0);
   static final _textMuted    = _color(0xFF8E97A8);
-  static final _green        = _color(0xFF1DB954); // income green
-  static final _red          = _color(0xFFE53935); // consumption / error red
-  static final _assetGreen   = _color(0xFF43A047); // asset green
-  static final _insuranceBlue = _color(0xFF1565C0); // insurance blue
-  static final _amber        = _color(0xFFF59E0B); // warning amber
-  static final _amberLight   = _color(0xFFFFF8E1); // amber card background
-  static final _groupHeader  = _color(0xFF37474F); // dark slate for group bars
-  static final _slateLight   = _color(0xFFB0BEC5); // light slate for secondary text
+  static final _green        = _color(0xFF1DB954);
+  static final _red          = _color(0xFFE53935);
+  static final _assetGreen   = _color(0xFF43A047);
+  static final _insuranceBlue = _color(0xFF1565C0);
+  static final _amber        = _color(0xFFF59E0B);
+  static final _amberLight   = _color(0xFFFFF8E1);
+  static final _groupHeader  = _color(0xFF37474F);
+  static final _slateLight   = _color(0xFFB0BEC5);
 
   static PdfColor _color(int argb) {
     final r = ((argb >> 16) & 0xFF) / 255.0;
@@ -79,14 +73,13 @@ class PdfReportService {
     'ü': 'u', 'Ü': 'U', 'ů': 'u', 'Ů': 'U', 'ű': 'u', 'Ű': 'U',
     'ý': 'y', 'Ý': 'Y', 'ÿ': 'y', 'Ÿ': 'Y',
     'ź': 'z', 'Ź': 'Z', 'ż': 'z', 'Ż': 'Z', 'ž': 'z', 'Ž': 'Z',
-    // Common punctuation outside WinAnsi
-    '\u2014': '-',   // em dash
-    '\u2013': '-',   // en dash
-    '\u2018': '\'',  // left single quote
-    '\u2019': '\'',  // right single quote
-    '\u201C': '"',   // left double quote
-    '\u201D': '"',   // right double quote
-    '\u2026': '...', // ellipsis
+    '\u2014': '-',
+    '\u2013': '-',
+    '\u2018': '\'',
+    '\u2019': '\'',
+    '\u201C': '"',
+    '\u201D': '"',
+    '\u2026': '...',
   };
 
   static String _n(String text) {
@@ -97,13 +90,14 @@ class PdfReportService {
 
   // ── Public API ────────────────────────────────────────────────────────────
 
-  static Future<Uint8List> generateMonthlyReport(MonthlyPdfData data) async {
-    final doc = pw.Document(
-      title: 'Monthly Report ${_monthNames[data.month]} ${data.year}',
-    );
+  static Future<Uint8List> generateMonthlyReport(
+      MonthlyPdfData data, PdfStrings strings) async {
+    final monthLabel = strings.monthNames[data.month];
+    final yearLabel  = data.year;
 
-    final monthLabel = _monthNames[data.month];
-    final yearLabel = data.year;
+    final doc = pw.Document(
+      title: '${strings.monthlyReport} $monthLabel $yearLabel',
+    );
 
     doc.addPage(
       pw.MultiPage(
@@ -111,50 +105,49 @@ class PdfReportService {
         margin: const pw.EdgeInsets.all(40),
         header: (ctx) => ctx.pageNumber == 1
             ? _buildFirstPageHeader(
-                'MONTHLY REPORT FOR ${monthLabel.toUpperCase()} $yearLabel')
-            : _buildHeader('Monthly Report', '$monthLabel $yearLabel'),
-        footer: _buildFooter,
-        build: (ctx) => _buildMonthlyContent(data),
+                strings.monthlyReportHeader(monthLabel, yearLabel))
+            : _buildHeader(strings.monthlyReport, '$monthLabel $yearLabel'),
+        footer: (ctx) => _buildFooter(ctx, strings),
+        build: (ctx) => _buildMonthlyContent(data, strings),
       ),
     );
 
     return doc.save();
   }
 
-  static Future<Uint8List> generateYearlyReport(YearlyPdfData data) async {
-    final yearStr = data.year.toString();
-    final subtitleStr =
-        data.isPartialYear ? '$yearStr (partial year)' : yearStr;
+  static Future<Uint8List> generateYearlyReport(
+      YearlyPdfData data, PdfStrings strings) async {
+    final yearStr    = data.year.toString();
+    final subtitleStr = data.isPartialYear
+        ? '$yearStr ${strings.partialYear}'
+        : yearStr;
 
-    final doc = pw.Document(title: 'Yearly Report $yearStr');
+    final doc = pw.Document(title: '${strings.yearlyReport} $yearStr');
 
-    // Main portrait pages (Spending vs Income, Category Summary,
-    // Cash Flow Summary, Yearly Overview).
     doc.addPage(
       pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(40),
         header: (ctx) => ctx.pageNumber == 1
-            ? _buildFirstPageHeader('YEARLY REPORT FOR $yearStr')
-            : _buildHeader('Yearly Report', subtitleStr),
-        footer: _buildFooter,
-        build: (ctx) => _buildYearlyContent(data),
+            ? _buildFirstPageHeader(strings.yearlyReportHeader(data.year))
+            : _buildHeader(strings.yearlyReport, subtitleStr),
+        footer: (ctx) => _buildFooter(ctx, strings),
+        build: (ctx) => _buildYearlyContent(data, strings),
       ),
     );
 
-    // Landscape page for Spending by Category and Month.
     if (data.categoryMonthlyAmounts.isNotEmpty) {
       doc.addPage(
         pw.MultiPage(
           pageFormat: PdfPageFormat.a4.landscape,
           margin: const pw.EdgeInsets.all(40),
-          header: (ctx) => _buildHeader('Yearly Report', subtitleStr),
-          footer: _buildFooter,
+          header: (ctx) => _buildHeader(strings.yearlyReport, subtitleStr),
+          footer: (ctx) => _buildFooter(ctx, strings),
           build: (ctx) => [
             pw.SizedBox(height: 12),
-            _sectionTitle('SPENDING BY CATEGORY AND MONTH'),
+            _sectionTitle(strings.sectionSpendingByCategory),
             pw.SizedBox(height: 8),
-            _buildCategoryMonthTable(data),
+            _buildCategoryMonthTable(data, strings),
           ],
         ),
       );
@@ -165,88 +158,84 @@ class PdfReportService {
 
   // ── Monthly content ───────────────────────────────────────────────────────
 
-  static List<pw.Widget> _buildMonthlyContent(MonthlyPdfData data) {
+  static List<pw.Widget> _buildMonthlyContent(
+      MonthlyPdfData data, PdfStrings strings) {
     final hasPlanData = data.activePlanItems.isNotEmpty;
 
     return [
       pw.SizedBox(height: 16),
-      // Page 1: Spending vs Income (if any) + Category Summary — flow naturally.
       if (hasPlanData) ...[
-        _sectionTitle('SPENDING VS INCOME'),
+        _sectionTitle(strings.sectionSpendingVsIncome),
         pw.SizedBox(height: 8),
-        _buildSpendingVsIncomeWidget(data.typeRatio!, 'month'),
+        _buildSpendingVsIncomeWidget(data.typeRatio!, false, strings),
         pw.SizedBox(height: 20),
       ],
-      _sectionTitle('CATEGORY SUMMARY'),
+      _sectionTitle(strings.sectionCategorySummary),
       pw.SizedBox(height: 8),
-      _buildCategorySummarySection(data),
-      // Page 2: Cash Flow Summary — always forced new page.
+      _buildCategorySummarySection(data, strings),
       if (hasPlanData) ...[
         pw.NewPage(),
         pw.SizedBox(height: 12),
-        _sectionTitle('CASH FLOW SUMMARY'),
+        _sectionTitle(strings.sectionCashFlowSummary),
         pw.SizedBox(height: 8),
-        _buildCashFlowSummarySection(data),
+        _buildCashFlowSummarySection(data, strings),
         pw.SizedBox(height: 20),
       ],
       if (data.groupSummaries.isNotEmpty) ...[
         pw.NewPage(),
         pw.SizedBox(height: 12),
-        _sectionTitle('EXPENSE GROUPS'),
+        _sectionTitle(strings.sectionExpenseGroups),
         pw.SizedBox(height: 8),
-        _buildGroupsSection(data),
+        _buildGroupsSection(data, strings),
       ],
       if (data.expenses.isNotEmpty) ...[
         pw.NewPage(),
         pw.SizedBox(height: 12),
-        _sectionTitle('EXPENSE DETAILS'),
+        _sectionTitle(strings.sectionExpenseDetails),
         pw.SizedBox(height: 8),
-        _buildExpenseTable(data.expenses, data.grandTotal),
+        _buildExpenseTable(data.expenses, data.grandTotal, strings),
       ],
     ];
   }
 
   // ── Yearly content ────────────────────────────────────────────────────────
 
-  static List<pw.Widget> _buildYearlyContent(YearlyPdfData data) {
+  static List<pw.Widget> _buildYearlyContent(
+      YearlyPdfData data, PdfStrings strings) {
     final hasPlanData = data.activePlanItems.isNotEmpty;
     final hasOverview = data.overviewSummaries.any((s) => s.hasData);
 
     return [
       pw.SizedBox(height: 16),
       if (data.isPartialYear) ...[
-        _buildPartialYearNote(),
+        _buildPartialYearNote(strings),
         pw.SizedBox(height: 12),
       ],
-      // Page 1: Spending vs Income (if any) + Category Summary — flow naturally.
       if (hasPlanData) ...[
-        _sectionTitle('SPENDING VS INCOME'),
+        _sectionTitle(strings.sectionSpendingVsIncome),
         pw.SizedBox(height: 8),
-        _buildSpendingVsIncomeWidget(data.typeRatio!, 'year'),
+        _buildSpendingVsIncomeWidget(data.typeRatio!, true, strings),
         pw.SizedBox(height: 20),
       ],
-      _sectionTitle('CATEGORY SUMMARY'),
+      _sectionTitle(strings.sectionCategorySummary),
       pw.SizedBox(height: 8),
-      _buildCategoryTable(data.categoryTotals, data.grandTotal),
-      // Page 2: Cash Flow Summary — always forced new page.
+      _buildCategoryTable(data.categoryTotals, data.grandTotal,
+          strings: strings),
       if (hasPlanData) ...[
         pw.NewPage(),
         pw.SizedBox(height: 12),
-        _sectionTitle('CASH FLOW SUMMARY'),
+        _sectionTitle(strings.sectionCashFlowSummary),
         pw.SizedBox(height: 8),
-        _buildYearlyCashFlowSection(data),
+        _buildYearlyCashFlowSection(data, strings),
         pw.SizedBox(height: 20),
       ],
-      // Page 3: Yearly Overview.
       if (hasOverview) ...[
         pw.NewPage(),
         pw.SizedBox(height: 12),
-        _sectionTitle('YEARLY OVERVIEW'),
+        _sectionTitle(strings.sectionYearlyOverview),
         pw.SizedBox(height: 8),
-        _buildYearlyOverviewSection(data.overviewSummaries),
+        _buildYearlyOverviewSection(data.overviewSummaries, strings),
       ],
-      // Spending by Category and Month is rendered on a separate landscape
-      // page added by generateYearlyReport.
     ];
   }
 
@@ -326,7 +315,7 @@ class PdfReportService {
     );
   }
 
-  static pw.Widget _buildFooter(pw.Context ctx) {
+  static pw.Widget _buildFooter(pw.Context ctx, PdfStrings strings) {
     return pw.Container(
       decoration: pw.BoxDecoration(
         border: pw.Border(
@@ -342,7 +331,7 @@ class PdfReportService {
             style: pw.TextStyle(color: _textMuted, fontSize: 9),
           ),
           pw.Text(
-            'Page ${ctx.pageNumber} of ${ctx.pagesCount}',
+            strings.pageOf(ctx.pageNumber, ctx.pagesCount),
             style: pw.TextStyle(color: _textMuted, fontSize: 9),
           ),
         ],
@@ -364,13 +353,13 @@ class PdfReportService {
     );
   }
 
-  // ── Spending vs Income widget (FinancialTypeDistributionCard style) ─────────
+  // ── Spending vs Income widget ─────────────────────────────────────────────
 
-  /// [periodLabel] is either 'month' or 'year' — used in the earned label and
-  /// overspend warning text.
   static pw.Widget _buildSpendingVsIncomeWidget(
-      FinancialTypeIncomeRatio ratio, String periodLabel) {
-    final overspend = ratio.overspendAmount;
+      FinancialTypeIncomeRatio ratio, bool isYearly, PdfStrings strings) {
+    final overspend   = ratio.overspendAmount;
+    final earnedLabel = isYearly ? strings.earnedThisYear : strings.earnedThisMonth;
+    final periodWord  = isYearly ? strings.periodYear : strings.periodMonth;
 
     return pw.Container(
       decoration: pw.BoxDecoration(
@@ -382,12 +371,11 @@ class PdfReportService {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          // Earned this month row
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
-                'Earned this $periodLabel',
+                earnedLabel,
                 style: pw.TextStyle(fontSize: 9, color: _textMuted),
               ),
               pw.Text(
@@ -405,13 +393,14 @@ class PdfReportService {
           pw.SizedBox(height: 4),
           if (ratio.consumptionAmount > 0)
             _buildTypeRatioRow(FinancialType.consumption,
-                ratio.consumptionAmount, ratio.consumptionPct, _red),
+                ratio.consumptionAmount, ratio.consumptionPct, _red, strings),
           if (ratio.assetAmount > 0)
-            _buildTypeRatioRow(
-                FinancialType.asset, ratio.assetAmount, ratio.assetPct, _assetGreen),
+            _buildTypeRatioRow(FinancialType.asset,
+                ratio.assetAmount, ratio.assetPct, _assetGreen, strings),
           if (ratio.insuranceAmount > 0)
             _buildTypeRatioRow(FinancialType.insurance,
-                ratio.insuranceAmount, ratio.insurancePct, _insuranceBlue),
+                ratio.insuranceAmount, ratio.insurancePct, _insuranceBlue,
+                strings),
           if (overspend != null) ...[
             pw.SizedBox(height: 10),
             pw.Container(
@@ -435,7 +424,9 @@ class PdfReportService {
                   ),
                   pw.Expanded(
                     child: pw.Text(
-                      'This $periodLabel you spent ${CurrencyFormatter.formatForPdf(overspend)} more than you earned!',
+                      strings.overspendWarning(
+                          periodWord,
+                          CurrencyFormatter.formatForPdf(overspend)),
                       style: pw.TextStyle(fontSize: 9, color: _amber),
                     ),
                   ),
@@ -448,12 +439,12 @@ class PdfReportService {
     );
   }
 
-  // Horizontal fill bar row: [dot] [name 70px] [bar expanded] [pct 34px] [EUR 85px]
   static pw.Widget _buildTypeRatioRow(
     FinancialType type,
     double amount,
     double? pct,
     PdfColor typeColor,
+    PdfStrings strings,
   ) {
     final barFraction = pct != null ? (pct / 100).clamp(0.0, 1.0) : 0.0;
     final pctLabel = pct == null ? '-' : '${pct.toStringAsFixed(0)}%';
@@ -474,7 +465,7 @@ class PdfReportService {
           pw.SizedBox(
             width: 80,
             child: pw.Text(
-              type.displayName,
+              strings.financialTypeName(type),
               style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
             ),
           ),
@@ -515,13 +506,14 @@ class PdfReportService {
 
   // ── Cash Flow Summary section ─────────────────────────────────────────────
 
-  static pw.Widget _buildCashFlowSummarySection(MonthlyPdfData data) {
+  static pw.Widget _buildCashFlowSummarySection(
+      MonthlyPdfData data, PdfStrings strings) {
     double amountFn(PlanItem item) =>
         BudgetCalculator.itemMonthlyContribution(item, data.year, data.month);
     String suffixFn(PlanItem item) {
-      if (item.frequency == PlanFrequency.yearly) return ' (normalized)';
+      if (item.frequency == PlanFrequency.yearly) return strings.normalized;
       if (item.frequency == PlanFrequency.oneTime) {
-        return ' (${_monthNames[item.validFrom.month]})';
+        return ' (${strings.monthNames[item.validFrom.month]})';
       }
       return '';
     }
@@ -537,22 +529,24 @@ class PdfReportService {
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         if (incomeItems.isNotEmpty) ...[
-          _buildIncomeCard(incomeItems, amountFn, suffixFn),
+          _buildIncomeCard(incomeItems, amountFn, suffixFn, strings),
           pw.SizedBox(height: 12),
         ],
         if (fixedCostItems.isNotEmpty)
-          _buildFixedCostsCard(fixedCostItems, amountFn, suffixFn),
+          _buildFixedCostsCard(fixedCostItems, amountFn, suffixFn, strings),
       ],
     );
   }
 
-  static pw.Widget _buildYearlyCashFlowSection(YearlyPdfData data) {
+  static pw.Widget _buildYearlyCashFlowSection(
+      YearlyPdfData data, PdfStrings strings) {
     double amountFn(PlanItem item) =>
-        BudgetCalculator.itemYearlyContribution(item, data.allPlanItems, data.year);
+        BudgetCalculator.itemYearlyContribution(
+            item, data.allPlanItems, data.year);
     String suffixFn(PlanItem item) {
-      if (item.frequency == PlanFrequency.monthly) return ' (annualized)';
+      if (item.frequency == PlanFrequency.monthly) return strings.annualized;
       if (item.frequency == PlanFrequency.oneTime) {
-        return ' (${_monthNames[item.validFrom.month]})';
+        return ' (${strings.monthNames[item.validFrom.month]})';
       }
       return '';
     }
@@ -568,11 +562,11 @@ class PdfReportService {
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         if (incomeItems.isNotEmpty) ...[
-          _buildIncomeCard(incomeItems, amountFn, suffixFn),
+          _buildIncomeCard(incomeItems, amountFn, suffixFn, strings),
           pw.SizedBox(height: 12),
         ],
         if (fixedCostItems.isNotEmpty)
-          _buildFixedCostsCard(fixedCostItems, amountFn, suffixFn),
+          _buildFixedCostsCard(fixedCostItems, amountFn, suffixFn, strings),
       ],
     );
   }
@@ -580,7 +574,8 @@ class PdfReportService {
   static pw.Widget _buildIncomeCard(
       List<PlanItem> items,
       double Function(PlanItem) amountFn,
-      String Function(PlanItem) suffixFn) {
+      String Function(PlanItem) suffixFn,
+      PdfStrings strings) {
     final total = items.fold(0.0, (s, i) => s + amountFn(i));
 
     return pw.Container(
@@ -593,12 +588,11 @@ class PdfReportService {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          // Header row
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
-                'INCOME',
+                strings.incomeHeader,
                 style: pw.TextStyle(
                   fontSize: 9,
                   fontWeight: pw.FontWeight.bold,
@@ -617,7 +611,6 @@ class PdfReportService {
             ],
           ),
           pw.SizedBox(height: 8),
-          // Item rows
           ...items.map((item) {
             final amount = amountFn(item);
             final suffix = suffixFn(item);
@@ -647,10 +640,10 @@ class PdfReportService {
   static pw.Widget _buildFixedCostsCard(
       List<PlanItem> items,
       double Function(PlanItem) amountFn,
-      String Function(PlanItem) suffixFn) {
+      String Function(PlanItem) suffixFn,
+      PdfStrings strings) {
     final grandTotal = items.fold(0.0, (s, i) => s + amountFn(i));
 
-    // Group by financial type in display order
     const typeOrder = [
       FinancialType.consumption,
       FinancialType.asset,
@@ -673,12 +666,11 @@ class PdfReportService {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          // Top header row
           pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
-                'FIXED COSTS',
+                strings.fixedCostsHeader,
                 style: pw.TextStyle(
                   fontSize: 9,
                   fontWeight: pw.FontWeight.bold,
@@ -697,11 +689,10 @@ class PdfReportService {
             ],
           ),
           pw.SizedBox(height: 10),
-          // Financial type groups
           ...typeOrder
               .where((t) => byType.containsKey(t))
               .map((type) => _buildFinancialTypeGroup(
-                    type, byType[type]!, amountFn, suffixFn)),
+                    type, byType[type]!, amountFn, suffixFn, strings)),
         ],
       ),
     );
@@ -711,7 +702,8 @@ class PdfReportService {
       FinancialType type,
       List<PlanItem> items,
       double Function(PlanItem) amountFn,
-      String Function(PlanItem) suffixFn) {
+      String Function(PlanItem) suffixFn,
+      PdfStrings strings) {
     final typeTotal = items.fold(0.0, (s, i) => s + amountFn(i));
     final typeColor = type == FinancialType.consumption
         ? _red
@@ -722,14 +714,13 @@ class PdfReportService {
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        // Financial type header row
         pw.Padding(
           padding: const pw.EdgeInsets.only(top: 6, bottom: 4),
           child: pw.Row(
             mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
             children: [
               pw.Text(
-                type.displayName,
+                strings.financialTypeName(type),
                 style: pw.TextStyle(
                   fontSize: 10,
                   fontWeight: pw.FontWeight.bold,
@@ -748,28 +739,25 @@ class PdfReportService {
           ),
         ),
         if (type == FinancialType.consumption)
-          _buildConsumptionItems(items, amountFn, suffixFn)
+          _buildConsumptionItems(items, amountFn, suffixFn, strings)
         else
           _buildFlatItems(items, amountFn, suffixFn),
       ],
     );
   }
 
-  /// Consumption items grouped by category, then individual items under each.
   static pw.Widget _buildConsumptionItems(
       List<PlanItem> items,
       double Function(PlanItem) amountFn,
-      String Function(PlanItem) suffixFn) {
-    // Group items by category
+      String Function(PlanItem) suffixFn,
+      PdfStrings strings) {
     final byCategory = <ExpenseCategory, List<PlanItem>>{};
     for (final item in items) {
       final cat = item.category ?? ExpenseCategory.other;
       byCategory.putIfAbsent(cat, () => []).add(item);
     }
-    // Pre-compute contributions once to avoid redundant calls in sort + catTotal.
     final contributions = {for (final item in items) item: amountFn(item)};
 
-    // Sort categories by total descending
     final sortedCategories = byCategory.entries.toList()
       ..sort((a, b) {
         final ta = a.value.fold(0.0, (s, i) => s + contributions[i]!);
@@ -786,14 +774,13 @@ class PdfReportService {
         return pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Category sub-header (8px indent) — bold + dark to stand out from items
             pw.Padding(
               padding: const pw.EdgeInsets.only(left: 8, top: 3, bottom: 1),
               child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(
-                    cat.displayName,
+                    strings.categoryName(cat),
                     style: pw.TextStyle(
                         fontSize: 9, fontWeight: pw.FontWeight.bold),
                   ),
@@ -805,7 +792,6 @@ class PdfReportService {
                 ],
               ),
             ),
-            // Items (16px indent)
             ...catItems.map((item) {
               final amount = contributions[item]!;
               final suffix = suffixFn(item);
@@ -833,7 +819,6 @@ class PdfReportService {
     );
   }
 
-  /// Asset and Insurance: flat item list with 8px indent.
   static pw.Widget _buildFlatItems(
       List<PlanItem> items,
       double Function(PlanItem) amountFn,
@@ -866,8 +851,8 @@ class PdfReportService {
 
   // ── Category summary section ──────────────────────────────────────────────
 
-  static pw.Widget _buildCategorySummarySection(MonthlyPdfData data) {
-    // Collect over-budget categories sorted by overage descending.
+  static pw.Widget _buildCategorySummarySection(
+      MonthlyPdfData data, PdfStrings strings) {
     final overages = <({ExpenseCategory category, double overage})>[];
     for (final ct in data.categoryTotals) {
       final budget = data.categoryBudgets[ct.category];
@@ -881,7 +866,7 @@ class PdfReportService {
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
         _buildCategoryTable(data.categoryTotals, data.grandTotal,
-            budgets: data.categoryBudgets),
+            budgets: data.categoryBudgets, strings: strings),
         if (overages.isNotEmpty) ...[
           pw.SizedBox(height: 10),
           pw.Container(
@@ -909,7 +894,10 @@ class PdfReportService {
                         ),
                         pw.Expanded(
                           child: pw.Text(
-                            '${o.category.displayName} budget: over by ${CurrencyFormatter.formatForPdf(o.overage)}',
+                            strings.budgetOverBy(
+                              strings.categoryName(o.category),
+                              CurrencyFormatter.formatForPdf(o.overage),
+                            ),
                             style: pw.TextStyle(fontSize: 9, color: _amber),
                           ),
                         ),
@@ -924,20 +912,15 @@ class PdfReportService {
   }
 
   // ── Category table ────────────────────────────────────────────────────────
-  //
-  // Unified for both the no-budget and with-budget cases.
-  // When [budgets] is non-empty, extra columns are shown:
-  //   % (42) | gap (8) | budget (70) | gap (8) | spent (80) | gap (4) | status (16)
-  // The TOTAL row grand total aligns under the "spent" column.
-  // When [budgets] is empty, only % (42) + amount (80) are shown on the right.
 
   static pw.Widget _buildCategoryTable(
     List<CategoryTotal> totals,
     double grandTotal, {
     Map<ExpenseCategory, double> budgets = const {},
+    required PdfStrings strings,
   }) {
     if (totals.isEmpty) {
-      return pw.Text('No data.', style: pw.TextStyle(color: _textMuted));
+      return pw.Text(strings.noData, style: pw.TextStyle(color: _textMuted));
     }
 
     final hasBudgets = budgets.isNotEmpty;
@@ -971,13 +954,12 @@ class PdfReportService {
                 pw.SizedBox(
                   width: 100,
                   child: pw.Text(
-                    ct.category.displayName,
+                    strings.categoryName(ct.category),
                     style: const pw.TextStyle(fontSize: 10),
                   ),
                 ),
                 pw.Expanded(child: _buildBar(barFraction, catColor)),
                 pw.SizedBox(width: 8),
-                // % column
                 pw.SizedBox(
                   width: 42,
                   child: pw.Text(
@@ -988,18 +970,18 @@ class PdfReportService {
                 ),
                 pw.SizedBox(width: 8),
                 if (hasBudgets) ...[
-                  // Budget column (left of spent)
                   pw.SizedBox(
                     width: 70,
                     child: pw.Text(
-                      budget != null ? CurrencyFormatter.formatForPdf(budget) : '',
+                      budget != null
+                          ? CurrencyFormatter.formatForPdf(budget)
+                          : '',
                       style: pw.TextStyle(fontSize: 9, color: _textMuted),
                       textAlign: pw.TextAlign.right,
                     ),
                   ),
                   pw.SizedBox(width: 8),
                 ],
-                // Amount / spent column
                 pw.SizedBox(
                   width: 80,
                   child: pw.Text(
@@ -1014,7 +996,6 @@ class PdfReportService {
                 ),
                 if (hasBudgets) ...[
                   pw.SizedBox(width: 4),
-                  // Status marker — only shown when over budget
                   pw.SizedBox(
                     width: 16,
                     child: pw.Text(
@@ -1032,7 +1013,6 @@ class PdfReportService {
             ),
           );
         }),
-        // TOTAL row
         pw.Container(
           decoration: pw.BoxDecoration(
             border: pw.Border(top: pw.BorderSide(color: _borderGrey)),
@@ -1042,7 +1022,7 @@ class PdfReportService {
             children: [
               pw.Expanded(
                 child: pw.Text(
-                  'TOTAL',
+                  strings.total,
                   style: pw.TextStyle(
                     fontSize: 10,
                     fontWeight: pw.FontWeight.bold,
@@ -1050,8 +1030,6 @@ class PdfReportService {
                 ),
               ),
               if (hasBudgets)
-                // Skip gap(8) + %(42) + gap(8) + budget(70) + gap(8) to align
-                // grand total under the "spent" column
                 pw.SizedBox(width: 8 + 42 + 8 + 70 + 8),
               pw.SizedBox(
                 width: 80,
@@ -1065,7 +1043,7 @@ class PdfReportService {
                 ),
               ),
               if (hasBudgets)
-                pw.SizedBox(width: 4 + 16), // skip status column
+                pw.SizedBox(width: 4 + 16),
             ],
           ),
         ),
@@ -1073,19 +1051,16 @@ class PdfReportService {
     );
   }
 
-  // ── Groups section with per-expense breakdown ─────────────────────────────
+  // ── Groups section ────────────────────────────────────────────────────────
 
-  /// Renders one block per group: a header row followed by a table of every
-  /// expense that belongs to this group in the current month, then a subtotal
-  /// and an all-time total.
-  static pw.Widget _buildGroupsSection(MonthlyPdfData data) {
+  static pw.Widget _buildGroupsSection(
+      MonthlyPdfData data, PdfStrings strings) {
     final sections = <pw.Widget>[];
 
     for (var gi = 0; gi < data.groupSummaries.length; gi++) {
-      final groupName = data.groupSummaries[gi].key;
+      final groupName      = data.groupSummaries[gi].key;
       final allGroupExpenses = data.groupSummaries[gi].value;
 
-      // Split into this-month and other-period expenses.
       final monthExpenses = allGroupExpenses
           .where((e) =>
               e.date.year == data.year && e.date.month == data.month)
@@ -1098,12 +1073,11 @@ class PdfReportService {
           .toList()
         ..sort((a, b) => b.date.compareTo(a.date));
 
-      final monthTotal = monthExpenses.fold(0.0, (s, e) => s + e.amount);
+      final monthTotal   = monthExpenses.fold(0.0, (s, e) => s + e.amount);
       final allTimeTotal = allGroupExpenses.fold(0.0, (s, e) => s + e.amount);
 
       if (gi > 0) sections.add(pw.SizedBox(height: 8));
 
-      // Group header bar.
       sections.add(
         pw.Container(
           decoration: pw.BoxDecoration(color: _groupHeader),
@@ -1121,7 +1095,7 @@ class PdfReportService {
                 ),
               ),
               pw.Text(
-                '${monthExpenses.length} item${monthExpenses.length == 1 ? '' : 's'} this month',
+                strings.itemsThisMonth(monthExpenses.length),
                 style: pw.TextStyle(color: _slateLight, fontSize: 9),
               ),
             ],
@@ -1129,12 +1103,11 @@ class PdfReportService {
         ),
       );
 
-      // This-month expense rows (normal).
       for (var i = 0; i < monthExpenses.length; i++) {
-        final e = monthExpenses[i];
+        final e      = monthExpenses[i];
         final dayStr = e.date.day.toString().padLeft(2, '0');
-        final monthStr = e.date.month.toString().padLeft(2, '0');
-        final note = e.note?.isNotEmpty == true ? _n(e.note!) : '-';
+        final monStr = e.date.month.toString().padLeft(2, '0');
+        final note   = e.note?.isNotEmpty == true ? _n(e.note!) : '-';
 
         sections.add(
           pw.Container(
@@ -1146,20 +1119,17 @@ class PdfReportService {
                 pw.SizedBox(
                   width: 36,
                   child: pw.Text(
-                    '$dayStr.$monthStr',
+                    '$dayStr.$monStr',
                     style: const pw.TextStyle(fontSize: 9),
                   ),
                 ),
                 pw.Expanded(
-                  child: pw.Text(
-                    note,
-                    style: const pw.TextStyle(fontSize: 9),
-                  ),
+                  child: pw.Text(note, style: const pw.TextStyle(fontSize: 9)),
                 ),
                 pw.SizedBox(
                   width: 90,
                   child: pw.Text(
-                    e.category.displayName,
+                    strings.categoryName(e.category),
                     style: pw.TextStyle(fontSize: 9, color: _textMuted),
                   ),
                 ),
@@ -1178,14 +1148,13 @@ class PdfReportService {
         );
       }
 
-      // Other-period expense rows (muted, full date dd.mm.yyyy, no label).
       if (otherExpenses.isNotEmpty) {
         for (var i = 0; i < otherExpenses.length; i++) {
-          final e = otherExpenses[i];
+          final e      = otherExpenses[i];
           final dayStr = e.date.day.toString().padLeft(2, '0');
-          final monthStr = e.date.month.toString().padLeft(2, '0');
-          final yearStr = e.date.year.toString();
-          final note = e.note?.isNotEmpty == true ? _n(e.note!) : '-';
+          final monStr = e.date.month.toString().padLeft(2, '0');
+          final yrStr  = e.date.year.toString();
+          final note   = e.note?.isNotEmpty == true ? _n(e.note!) : '-';
 
           sections.add(
             pw.Container(
@@ -1197,7 +1166,7 @@ class PdfReportService {
                   pw.SizedBox(
                     width: 52,
                     child: pw.Text(
-                      '$dayStr.$monthStr.$yearStr',
+                      '$dayStr.$monStr.$yrStr',
                       style: pw.TextStyle(fontSize: 8, color: _textMuted),
                     ),
                   ),
@@ -1210,7 +1179,7 @@ class PdfReportService {
                   pw.SizedBox(
                     width: 90,
                     child: pw.Text(
-                      e.category.displayName,
+                      strings.categoryName(e.category),
                       style: pw.TextStyle(fontSize: 8, color: _textMuted),
                     ),
                   ),
@@ -1229,7 +1198,6 @@ class PdfReportService {
         }
       }
 
-      // Period subtotal row.
       sections.add(
         pw.Container(
           decoration: pw.BoxDecoration(
@@ -1241,7 +1209,7 @@ class PdfReportService {
             children: [
               pw.Expanded(
                 child: pw.Text(
-                  'Group total (this month)',
+                  strings.groupTotal,
                   style: pw.TextStyle(
                     fontSize: 9,
                     color: _textMuted,
@@ -1259,7 +1227,6 @@ class PdfReportService {
         ),
       );
 
-      // All-time total row (muted, smaller).
       sections.add(
         pw.Container(
           color: _lightGrey,
@@ -1268,7 +1235,7 @@ class PdfReportService {
             children: [
               pw.Expanded(
                 child: pw.Text(
-                  'All periods total',
+                  strings.allPeriodsTotal,
                   style: pw.TextStyle(fontSize: 8, color: _textMuted),
                 ),
               ),
@@ -1288,7 +1255,7 @@ class PdfReportService {
   // ── Expense detail table ──────────────────────────────────────────────────
 
   static pw.Widget _buildExpenseTable(
-      List<Expense> expenses, double grandTotal) {
+      List<Expense> expenses, double grandTotal, PdfStrings strings) {
     return pw.Table(
       border: pw.TableBorder.all(color: _borderGrey, width: 0.5),
       columnWidths: const {
@@ -1301,27 +1268,26 @@ class PdfReportService {
         pw.TableRow(
           decoration: pw.BoxDecoration(color: _navy),
           children: [
-            _tableHeader('Date'),
-            _tableHeader('Note'),
-            _tableHeader('Category'),
-            _tableHeader('Amount', align: pw.TextAlign.right),
+            _tableHeader(strings.dateLabel),
+            _tableHeader(strings.noteLabel),
+            _tableHeader(strings.categoryLabel),
+            _tableHeader(strings.amountLabel, align: pw.TextAlign.right),
           ],
         ),
         ...expenses.asMap().entries.map((entry) {
-          final i = entry.key;
-          final e = entry.value;
-          final day = e.date.day.toString().padLeft(2, '0');
-          final month = e.date.month.toString().padLeft(2, '0');
-          final note =
-              e.note?.isNotEmpty == true ? _n(e.note!) : '-';
+          final i    = entry.key;
+          final e    = entry.value;
+          final day  = e.date.day.toString().padLeft(2, '0');
+          final mon  = e.date.month.toString().padLeft(2, '0');
+          final note = e.note?.isNotEmpty == true ? _n(e.note!) : '-';
           return pw.TableRow(
             decoration: pw.BoxDecoration(
               color: i.isEven ? PdfColors.white : _lightGrey,
             ),
             children: [
-              _tableCell('$day.$month'),
+              _tableCell('$day.$mon'),
               _tableCell(note),
-              _tableCell(e.category.displayName),
+              _tableCell(strings.categoryName(e.category)),
               _tableCell(
                 CurrencyFormatter.formatForPdf(e.amount),
                 align: pw.TextAlign.right,
@@ -1334,7 +1300,7 @@ class PdfReportService {
           children: [
             _tableHeader(''),
             _tableHeader(''),
-            _tableHeader('TOTAL', align: pw.TextAlign.right),
+            _tableHeader(strings.total, align: pw.TextAlign.right),
             _tableHeader(
               CurrencyFormatter.formatForPdf(grandTotal),
               align: pw.TextAlign.right,
@@ -1347,12 +1313,9 @@ class PdfReportService {
 
   // ── Yearly Overview section ───────────────────────────────────────────────
 
-  /// Mirrors the app's OverviewMonthRow for all 12 months.
-  /// Each row: month name | bar + numbers | result
   static pw.Widget _buildYearlyOverviewSection(
-      List<MonthlyOverviewSummary> summaries) {
+      List<MonthlyOverviewSummary> summaries, PdfStrings strings) {
     final rows = <pw.Widget>[
-      // Legend
       pw.Padding(
         padding: const pw.EdgeInsets.only(left: 8, bottom: 6),
         child: pw.Row(
@@ -1364,8 +1327,10 @@ class PdfReportService {
                   pw.BoxDecoration(color: _assetGreen, shape: pw.BoxShape.circle),
             ),
             pw.SizedBox(width: 4),
-            pw.Text('Asset',
-                style: pw.TextStyle(fontSize: 8, color: _textMuted)),
+            pw.Text(
+              strings.financialTypeName(FinancialType.asset),
+              style: pw.TextStyle(fontSize: 8, color: _textMuted),
+            ),
             pw.SizedBox(width: 14),
             pw.Container(
               width: 8,
@@ -1374,19 +1339,20 @@ class PdfReportService {
                   pw.BoxDecoration(color: _red, shape: pw.BoxShape.circle),
             ),
             pw.SizedBox(width: 4),
-            pw.Text('Consumption',
-                style: pw.TextStyle(fontSize: 8, color: _textMuted)),
+            pw.Text(
+              strings.financialTypeName(FinancialType.consumption),
+              style: pw.TextStyle(fontSize: 8, color: _textMuted),
+            ),
           ],
         ),
       ),
     ];
 
     for (var i = 0; i < summaries.length; i++) {
-      final s = summaries[i];
-      final monthName =
-          YearMonth.monthAbbreviations[s.period.month]; // e.g. "Jan"
-      final diff = s.result;
-      final diffText = diff >= 0
+      final s         = summaries[i];
+      final monthName = strings.monthAbbreviations[s.period.month];
+      final diff      = s.result;
+      final diffText  = diff >= 0
           ? '+${diff.toStringAsFixed(0)} ${CurrencyFormatter.currencyCode}'
           : '${diff.toStringAsFixed(0)} ${CurrencyFormatter.currencyCode}';
       final diffColor = diff >= 0 ? _green : _red;
@@ -1398,7 +1364,6 @@ class PdfReportService {
           child: pw.Row(
             crossAxisAlignment: pw.CrossAxisAlignment.center,
             children: [
-              // Month label
               pw.SizedBox(
                 width: 32,
                 child: pw.Text(
@@ -1411,19 +1376,17 @@ class PdfReportService {
                 ),
               ),
               pw.SizedBox(width: 8),
-              // Bar + numbers stacked
               pw.Expanded(
                 child: pw.Column(
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     if (s.earned > 0) _buildOverviewBar(s),
                     pw.SizedBox(height: 4),
-                    _buildOverviewNumbers(s),
+                    _buildOverviewNumbers(s, strings),
                   ],
                 ),
               ),
               pw.SizedBox(width: 12),
-              // Result
               pw.SizedBox(
                 width: 72,
                 child: s.hasData
@@ -1451,13 +1414,11 @@ class PdfReportService {
     return pw.Column(children: rows);
   }
 
-  /// Background track = full width (grey). Foreground = allocated fraction,
-  /// split into asset (green, left) and consumption (red, right) segments.
   static pw.Widget _buildOverviewBar(MonthlyOverviewSummary s) {
-    final fraction = (s.allocated / s.earned).clamp(0.0, 1.0);
-    final assetFlex = (s.assetPct * fraction).clamp(0.0, 100.0);
-    final consumptionFlex = (s.consumptionPct * fraction).clamp(0.0, 100.0);
-    final emptyFlex = (100.0 - assetFlex - consumptionFlex).clamp(0.0, 100.0);
+    final fraction      = (s.allocated / s.earned).clamp(0.0, 1.0);
+    final assetFlex     = (s.assetPct * fraction).clamp(0.0, 100.0);
+    final consumFlex    = (s.consumptionPct * fraction).clamp(0.0, 100.0);
+    final emptyFlex     = (100.0 - assetFlex - consumFlex).clamp(0.0, 100.0);
 
     return pw.Container(
       height: 7,
@@ -1477,13 +1438,10 @@ class PdfReportService {
                 ),
               ),
             ),
-          if (consumptionFlex > 0)
+          if (consumFlex > 0)
             pw.Expanded(
-              flex: consumptionFlex.round().clamp(1, 100),
-              child: pw.Container(
-                height: 7,
-                color: _red,
-              ),
+              flex: consumFlex.round().clamp(1, 100),
+              child: pw.Container(height: 7, color: _red),
             ),
           if (emptyFlex > 0)
             pw.Expanded(
@@ -1504,11 +1462,11 @@ class PdfReportService {
     );
   }
 
-  static pw.Widget _buildOverviewNumbers(MonthlyOverviewSummary s) {
+  static pw.Widget _buildOverviewNumbers(
+      MonthlyOverviewSummary s, PdfStrings strings) {
     return pw.Row(
       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
       children: [
-        // Assets (green dot + amount)
         pw.Row(
           children: [
             pw.Container(
@@ -1524,7 +1482,6 @@ class PdfReportService {
             ),
           ],
         ),
-        // Consumption (red dot + amount)
         pw.Row(
           children: [
             pw.Container(
@@ -1540,9 +1497,9 @@ class PdfReportService {
             ),
           ],
         ),
-        // Earned
         pw.Text(
-          'Earned: ${s.earned.toStringAsFixed(0)} ${CurrencyFormatter.currencyCode}',
+          strings.earnedLabel(
+              '${s.earned.toStringAsFixed(0)} ${CurrencyFormatter.currencyCode}'),
           style: pw.TextStyle(fontSize: 9, color: _textMuted),
         ),
       ],
@@ -1551,13 +1508,13 @@ class PdfReportService {
 
   // ── Category × month cross-tab (yearly report) ────────────────────────────
 
-  static pw.Widget _buildCategoryMonthTable(YearlyPdfData data) {
+  static pw.Widget _buildCategoryMonthTable(
+      YearlyPdfData data, PdfStrings strings) {
     final amounts = data.categoryMonthlyAmounts;
     if (amounts.isEmpty) {
-      return pw.Text('No data.', style: pw.TextStyle(color: _textMuted));
+      return pw.Text(strings.noData, style: pw.TextStyle(color: _textMuted));
     }
 
-    // Only show months that have any spending.
     final activeMonths = <int>[];
     for (var m = 1; m <= 12; m++) {
       if (amounts.values.any((list) => list[m - 1] > 0)) {
@@ -1565,13 +1522,11 @@ class PdfReportService {
       }
     }
     if (activeMonths.isEmpty) {
-      return pw.Text('No data.', style: pw.TextStyle(color: _textMuted));
+      return pw.Text(strings.noData, style: pw.TextStyle(color: _textMuted));
     }
 
     final categories = amounts.keys.toList();
 
-    // Landscape A4 content width ≈ 762pt. Use FlexColumnWidth(1) for months —
-    // with landscape there is ample room for full month names and 4-digit amounts.
     final colWidths = <int, pw.TableColumnWidth>{
       0: const pw.FixedColumnWidth(100),
     };
@@ -1587,26 +1542,26 @@ class PdfReportService {
         pw.TableRow(
           decoration: pw.BoxDecoration(color: _navy),
           children: [
-            _tableHeader('Category'),
+            _tableHeader(strings.categoryLabel),
             ...activeMonths.map(
-              (m) => _tableHeader(YearMonth.monthAbbreviations[m],
+              (m) => _tableHeader(strings.monthAbbreviations[m],
                   align: pw.TextAlign.right),
             ),
-            _tableHeader('Total', align: pw.TextAlign.right),
+            _tableHeader(strings.colTotal, align: pw.TextAlign.right),
           ],
         ),
         ...categories.asMap().entries.map((entry) {
-          final i = entry.key;
-          final cat = entry.value;
+          final i           = entry.key;
+          final cat         = entry.value;
           final monthAmounts = amounts[cat]!;
-          final total = monthAmounts.fold(0.0, (s, a) => s + a);
+          final total        = monthAmounts.fold(0.0, (s, a) => s + a);
 
           return pw.TableRow(
             decoration: pw.BoxDecoration(
               color: i.isEven ? PdfColors.white : _lightGrey,
             ),
             children: [
-              _tableCell(cat.displayName),
+              _tableCell(strings.categoryName(cat)),
               ...activeMonths.map((m) {
                 final v = monthAmounts[m - 1];
                 return _tableCell(
@@ -1627,7 +1582,7 @@ class PdfReportService {
 
   // ── Partial year note ─────────────────────────────────────────────────────
 
-  static pw.Widget _buildPartialYearNote() {
+  static pw.Widget _buildPartialYearNote(PdfStrings strings) {
     return pw.Container(
       padding: const pw.EdgeInsets.all(8),
       decoration: pw.BoxDecoration(
@@ -1636,8 +1591,7 @@ class PdfReportService {
         borderRadius: const pw.BorderRadius.all(pw.Radius.circular(4)),
       ),
       child: pw.Text(
-        'Partial year - months without data show zeros. '
-        'Year-to-date totals only.',
+        strings.partialYearNote,
         style: pw.TextStyle(
           fontSize: 9,
           color: _color(0xFF795548),
@@ -1654,7 +1608,7 @@ class PdfReportService {
     double height = 6,
   }) {
     final filled = (fraction * 100).clamp(0.0, 100.0);
-    final empty = 100.0 - filled;
+    final empty  = 100.0 - filled;
 
     return pw.Row(
       children: [

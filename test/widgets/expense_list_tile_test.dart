@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/widgets/expense_list_tile.dart';
 
-Widget wrapInMaterial(Widget child) => MaterialApp(home: Scaffold(body: child));
+Widget wrapInMaterial(Widget child) => MaterialApp(
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: Scaffold(body: child),
+);
 
 void main() {
   final date = DateTime(2024, 3, 5);

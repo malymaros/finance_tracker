@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/budget_status.dart';
 import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
@@ -13,6 +14,7 @@ class MonthBudgetSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isOver = status.isOverBudget;
     final diff = status.remaining.abs();
     final statusColor = isOver ? AppColors.expense : AppColors.income;
@@ -36,8 +38,8 @@ class MonthBudgetSummary extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   isOver
-                      ? 'Over budget by ${CurrencyFormatter.format(diff)}'
-                      : 'Saved ${CurrencyFormatter.format(diff)}',
+                      ? l10n.overBudgetBy(CurrencyFormatter.format(diff))
+                      : l10n.savedAmount(CurrencyFormatter.format(diff)),
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -51,14 +53,15 @@ class MonthBudgetSummary extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Spent: ${CurrencyFormatter.format(status.actualSpent)}',
+                  l10n.spentLabel(CurrencyFormatter.format(status.actualSpent)),
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,
                   ),
                 ),
                 Text(
-                  'Budget: ${CurrencyFormatter.format(status.spendableBudget)}',
+                  l10n.budgetLabel(
+                      CurrencyFormatter.format(status.spendableBudget)),
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.textMuted,

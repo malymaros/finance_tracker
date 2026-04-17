@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
 import 'sub_step_indicator.dart';
@@ -31,14 +32,6 @@ class _HowGroupsWorkSheetState extends State<HowGroupsWorkSheet> {
   late final PageController _controller;
   int _page = 0;
 
-  static const _subtitles = [
-    'What a group is and how it works',
-    'How to take advantage of it',
-    'Where groups surface in the app',
-  ];
-
-  static const _labels = ['Tag', 'Be creative', 'Record'];
-
   @override
   void initState() {
     super.initState();
@@ -61,6 +54,18 @@ class _HowGroupsWorkSheetState extends State<HowGroupsWorkSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final subtitles = [
+      l10n.howGroupsSubtitle0,
+      l10n.howGroupsSubtitle1,
+      l10n.howGroupsSubtitle2,
+    ];
+    final labels = [
+      l10n.howGroupsLabel0,
+      l10n.howGroupsLabel1,
+      l10n.howGroupsLabel2,
+    ];
+
     return DraggableScrollableSheet(
       initialChildSize: 0.82,
       minChildSize: 0.5,
@@ -74,8 +79,8 @@ class _HowGroupsWorkSheetState extends State<HowGroupsWorkSheet> {
         child: Column(
           children: [
             _buildHandle(),
-            _buildTopHeader(),
-            _buildStepHeader(),
+            _buildTopHeader(context),
+            _buildStepHeader(context, subtitles, labels),
             const Divider(height: 1),
             Expanded(
               child: PageView(
@@ -110,15 +115,14 @@ class _HowGroupsWorkSheetState extends State<HowGroupsWorkSheet> {
     );
   }
 
-  /// Identical to HowItWorksSheet._buildHeader — "How it works?" + close.
-  Widget _buildTopHeader() {
+  Widget _buildTopHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 8, 4),
       child: Row(
         children: [
-          const Text(
-            'How it works?',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          Text(
+            context.l10n.howGroupsWorkTitle,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const Spacer(),
           IconButton(
@@ -130,17 +134,19 @@ class _HowGroupsWorkSheetState extends State<HowGroupsWorkSheet> {
     );
   }
 
-  /// Step header: "Groups" title, per-page subtitle, full-width sub-step
-  /// indicator — mirrors _StepHeader + _SubStepIndicator in HowItWorksSheet.
-  Widget _buildStepHeader() {
+  Widget _buildStepHeader(
+    BuildContext context,
+    List<String> subtitles,
+    List<String> labels,
+  ) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Groups',
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          Text(
+            context.l10n.howGroupsTitle,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 2),
           AnimatedSwitcher(
@@ -150,7 +156,7 @@ class _HowGroupsWorkSheetState extends State<HowGroupsWorkSheet> {
               children: [...previous, ?current],
             ),
             child: Text(
-              _subtitles[_page],
+              subtitles[_page],
               key: ValueKey(_page),
               style: const TextStyle(fontSize: 14, color: AppColors.textMuted),
             ),
@@ -158,7 +164,7 @@ class _HowGroupsWorkSheetState extends State<HowGroupsWorkSheet> {
           const SizedBox(height: 10),
           SubStepIndicator(
             activeSubStep: _page,
-            labels: _labels,
+            labels: labels,
             onTap: _goTo,
           ),
         ],
@@ -175,6 +181,7 @@ class _TagPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
@@ -200,26 +207,19 @@ class _TagPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          _rule('A group is an optional free-text label you attach to any expense.'),
+          _rule(l10n.howGroupsRule1),
           const SizedBox(height: 10),
-          _rule('You type any string — there is no fixed list and no validation.'),
+          _rule(l10n.howGroupsRule2),
           const SizedBox(height: 10),
-          _rule(
-            'Two expenses belong to the same group only when their labels match '
-            'exactly, character for character.',
-          ),
+          _rule(l10n.howGroupsRule3),
           const SizedBox(height: 10),
-          _rule(
-            'Case is preserved — "Trip" and "trip" are treated as two different groups.',
-          ),
+          _rule(l10n.howGroupsRule4),
           const SizedBox(height: 10),
-          _rule(
-            'The field is optional. Leave it blank and the expense simply has no group.',
-          ),
+          _rule(l10n.howGroupsRule5),
           const SizedBox(height: 20),
           _hint(
             icon: Icons.edit_outlined,
-            text: 'Set the group when creating or editing any expense.',
+            text: l10n.howGroupsHint,
           ),
         ],
       ),
@@ -280,41 +280,36 @@ class _BeCreativePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final year = DateTime.now().year;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Use it whenever you want to track a slice of spending that cuts across categories.',
-            style: TextStyle(fontSize: 14, height: 1.6, color: Colors.black87),
+          Text(
+            l10n.howGroupsUseIntro,
+            style: const TextStyle(fontSize: 14, height: 1.6, color: Colors.black87),
           ),
           const SizedBox(height: 16),
           _ExampleCard(
-            label: 'Barcelona ${year - 1}',
-            description:
-                'Attach to every expense on a trip — flights, hotels, meals, tickets. '
-                'See the total cost of the whole trip in one tap.',
+            label: l10n.howGroupsExample1Label(year),
+            description: l10n.howGroupsExample1Desc,
           ),
           const SizedBox(height: 10),
           _ExampleCard(
-            label: "McDonald's $year",
-            description:
-                'Use a consistent name all year. '
-                'At year-end you know exactly what you spent at that one place.',
+            label: l10n.howGroupsExample2Label(year),
+            description: l10n.howGroupsExample2Desc,
           ),
           const SizedBox(height: 10),
           _ExampleCard(
-            label: 'Home renovation Q1',
-            description:
-                'Span multiple months with the same label. '
-                'The Groups tab collects everything under that name.',
+            label: l10n.howGroupsExample3Label,
+            description: l10n.howGroupsExample3Desc,
           ),
           const SizedBox(height: 16),
-          const Text(
-            'The more precise your label, the more useful the summary.',
-            style: TextStyle(
+          Text(
+            l10n.howGroupsPrecision,
+            style: const TextStyle(
               fontSize: 13,
               color: AppColors.textMuted,
               fontStyle: FontStyle.italic,
@@ -381,6 +376,7 @@ class _RecordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
       child: Column(
@@ -388,20 +384,14 @@ class _RecordPage extends StatelessWidget {
         children: [
           _RecordRow(
             icon: Icons.folder_outlined,
-            title: 'Groups tab in Expenses',
-            body:
-                'Every group that has at least one expense in the current month '
-                'appears here as a single row showing the item count and total. '
-                'Tap a group to drill down and see each individual expense behind it.',
+            title: l10n.howGroupsRecord0Title,
+            body: l10n.howGroupsRecord0Body,
           ),
           const SizedBox(height: 12),
           _RecordRow(
             icon: Icons.picture_as_pdf_outlined,
-            title: 'Monthly Report in Reports',
-            body:
-                'When you export a monthly PDF from the Reports screen, groups '
-                'with expenses in that month get a dedicated "Expense Groups" page — '
-                'each group listed with its expenses, amounts, and a group total.',
+            title: l10n.howGroupsRecord1Title,
+            body: l10n.howGroupsRecord1Body,
           ),
           const SizedBox(height: 20),
           Container(
@@ -411,14 +401,14 @@ class _RecordPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppColors.border),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Icon(Icons.info_outline, size: 15, color: AppColors.textMuted),
-                SizedBox(width: 10),
+                const Icon(Icons.info_outline, size: 15, color: AppColors.textMuted),
+                const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Groups are not included in the yearly report — they are a monthly lens.',
-                    style: TextStyle(fontSize: 13, color: AppColors.textMuted),
+                    l10n.howGroupsMonthlyNote,
+                    style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
                   ),
                 ),
               ],

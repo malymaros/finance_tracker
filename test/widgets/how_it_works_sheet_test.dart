@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/widgets/how_it_works_sheet.dart';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-Widget _wrap(Widget child) => MaterialApp(home: Scaffold(body: child));
+Widget _wrap(Widget child) => MaterialApp(
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: Scaffold(body: child),
+);
 
 Future<void> _openSheet(WidgetTester tester, {int initialPage = 0}) async {
   await tester.pumpWidget(_wrap(Builder(

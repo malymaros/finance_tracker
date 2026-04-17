@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../models/import_row_error.dart';
 import '../theme/app_theme.dart';
 
@@ -18,7 +19,7 @@ class ImportErrorTile extends StatelessWidget {
         size: 20,
       ),
       title: Text(
-        'Row ${error.rowNumber} — ${error.field}',
+        context.l10n.importErrorRowLabel(error.rowNumber, error.field),
         style: const TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w500,

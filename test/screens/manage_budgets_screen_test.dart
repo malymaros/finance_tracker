@@ -109,7 +109,7 @@ void main() {
       );
       await tester.pumpWidget(_wrap(repo));
 
-      expect(find.text('350.00 €/month'), findsOneWidget);
+      expect(find.text('350.00 € / month'), findsOneWidget);
     });
 
     testWidgets('empty state is absent when budgets exist', (tester) async {

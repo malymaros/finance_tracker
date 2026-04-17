@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 import 'add_plan_item_type_sheet.dart';
 
@@ -21,6 +22,7 @@ class AddIncomeFrequencySheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
@@ -29,7 +31,7 @@ class AddIncomeFrequencySheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'How often do you receive it?',
+              l10n.frequencyPickerIncome,
               style: Theme.of(context)
                   .textTheme
                   .titleMedium
@@ -39,8 +41,8 @@ class AddIncomeFrequencySheet extends StatelessWidget {
             PlanItemSelectionCard(
               icon: Icons.repeat,
               color: AppColors.navy,
-              title: 'Monthly',
-              subtitle: 'Salary, regular monthly income',
+              title: l10n.frequencyMonthly,
+              subtitle: l10n.frequencyMonthlyIncomeSubtitle,
               onTap: () {
                 Navigator.of(context).pop();
                 onMonthlySelected();
@@ -50,8 +52,8 @@ class AddIncomeFrequencySheet extends StatelessWidget {
             PlanItemSelectionCard(
               icon: Icons.event_repeat,
               color: AppColors.navy,
-              title: 'Yearly',
-              subtitle: 'Annual bonus, yearly income',
+              title: l10n.frequencyYearly,
+              subtitle: l10n.frequencyYearlyIncomeSubtitle,
               onTap: () {
                 Navigator.of(context).pop();
                 onYearlySelected();
@@ -61,8 +63,8 @@ class AddIncomeFrequencySheet extends StatelessWidget {
             PlanItemSelectionCard(
               icon: Icons.looks_one_outlined,
               color: AppColors.navy,
-              title: 'One-time',
-              subtitle: 'Single payment, one-off income',
+              title: l10n.frequencyOneTime,
+              subtitle: l10n.frequencyOneTimeIncomeSubtitle,
               onTap: () {
                 Navigator.of(context).pop();
                 onOneTimeSelected();

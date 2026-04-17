@@ -216,18 +216,19 @@ class _PlanScreenState extends State<PlanScreen> {
     } else {
       final from = widget.selectedPeriod.value;
       final isFullDelete = item.validFrom == from;
+      final l10n = context.l10n;
       final description = isFullDelete
-          ? '"${item.name}" will be removed entirely.'
-          : '"${item.name}" will stop from ${from.label} onwards. '
-              '${from.addMonths(-1).label} and earlier will remain planned.';
+          ? l10n.removeIncomeEntirely(item.name)
+          : l10n.removeIncomeFromOnwards(
+              item.name, from.label, from.addMonths(-1).label);
       final confirmed = await SaveActionDialog.show(
         context,
         icon: Icons.remove_circle_outline,
         iconColor: AppColors.expense,
-        actionLabel: 'REMOVE',
+        actionLabel: l10n.actionRemoveAllCaps,
         targetName: item.name,
         description: description,
-        confirmLabel: 'Remove',
+        confirmLabel: l10n.actionDelete,
       );
       if (confirmed && context.mounted) {
         widget.repositories.plan.removePlanItemFrom(item.id, from);
@@ -243,6 +244,7 @@ class _PlanScreenState extends State<PlanScreen> {
     final String fromTitle;
     final String fromSubtitle;
 
+    final l10n = context.l10n;
     if (item.frequency == PlanFrequency.yearly) {
       final anchor = item.validFrom.month;
       final cycleStartYear = selectedPeriod.month >= anchor
@@ -251,15 +253,13 @@ class _PlanScreenState extends State<PlanScreen> {
       final cycleStart = YearMonth(cycleStartYear, anchor);
       final cycleEnd = YearMonth(cycleStartYear + 1, anchor).addMonths(-1);
       deleteFrom = cycleStart;
-      fromTitle = 'From ${cycleStart.label} onwards';
-      fromSubtitle =
-          'This cycle (${cycleStart.label} – ${cycleEnd.label}) '
-          'and all future cycles are removed.';
+      fromTitle = l10n.removeFromOnwardsTitle(cycleStart.label);
+      fromSubtitle = l10n.removeCycleSubtitle(cycleStart.label, cycleEnd.label);
     } else {
       deleteFrom = selectedPeriod;
       final prev = selectedPeriod.addMonths(-1);
-      fromTitle = 'From ${selectedPeriod.label} onwards';
-      fromSubtitle = 'History up to ${prev.label} is kept.';
+      fromTitle = l10n.removeFromOnwardsTitle(selectedPeriod.label);
+      fromSubtitle = l10n.removeHistoryKept(prev.label);
     }
 
     final allVersions = widget.repositories.plan.items
@@ -292,19 +292,16 @@ class _PlanScreenState extends State<PlanScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Silence this reminder?'),
-        content: Text(
-          'The $periodLabel payment will still be shown as unconfirmed. '
-          'You can mark it as paid at any time.',
-        ),
+        title: Text(ctx.l10n.silenceReminderTitle),
+        content: Text(ctx.l10n.silenceReminderBody(periodLabel)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(context.l10n.actionCancel),
+            child: Text(ctx.l10n.actionCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Yes, Silence'),
+            child: Text(ctx.l10n.yesSilence),
           ),
         ],
       ),
@@ -439,7 +436,7 @@ class _PlanScreenState extends State<PlanScreen> {
         opacity: 0.6,
         child: FloatingActionButton(
           onPressed: () => _showTypeSheet(context),
-          tooltip: 'Add Plan Item',
+          tooltip: context.l10n.addPlanItemTooltip,
           child: const Icon(Icons.add),
         ),
       ),
@@ -505,7 +502,8 @@ class _PlanScreenState extends State<PlanScreen> {
   Widget _buildSummaryCard(double spendable) {
     final isPositive = spendable >= 0;
     final spendableColor = isPositive ? AppColors.income : AppColors.expense;
-    final periodLabel = _isMonthly ? 'this month' : 'this year';
+    final l10n = context.l10n;
+    final periodLabel = _isMonthly ? l10n.spendableThisMonth : l10n.spendableThisYear;
 
     return Card(
       margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
@@ -515,7 +513,7 @@ class _PlanScreenState extends State<PlanScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Spendable $periodLabel',
+              periodLabel,
               style: const TextStyle(
                 fontSize: 13,
                 color: AppColors.textMuted,
@@ -543,11 +541,11 @@ class _PlanScreenState extends State<PlanScreen> {
           const Icon(Icons.account_balance_outlined,
               size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
-          const Text('No plan items yet.',
-              style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
+          Text(context.l10n.noPlanItemsYet,
+              style: const TextStyle(color: AppColors.textMuted, fontSize: 16)),
           const SizedBox(height: 8),
-          const Text('Tap + to add income or fixed costs.',
-              style: TextStyle(color: AppColors.textMuted)),
+          Text(context.l10n.tapPlusToAddPlanItems,
+              style: const TextStyle(color: AppColors.textMuted)),
           const SizedBox(height: 16),
           TextButton.icon(
             onPressed: () => HowItWorksSheet.show(context, initialPage: HowItWorksSheet.pageIndexPlan),
@@ -731,9 +729,9 @@ class _FixedCostDeleteDialog extends StatelessWidget {
             const SizedBox(height: 18),
 
             // ── Action label ──────────────────────────────────────────────────
-            const Text(
-              'REMOVE',
-              style: TextStyle(
+            Text(
+              context.l10n.actionRemoveAllCaps,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
                 color: AppColors.navy,
@@ -753,8 +751,8 @@ class _FixedCostDeleteDialog extends StatelessWidget {
             // ── Whole series option ───────────────────────────────────────────
             _OptionCard(
               icon: Icons.delete_sweep_outlined,
-              title: 'Whole series',
-              subtitle: 'All periods from $seriesStartLabel are removed.',
+              title: context.l10n.removeWholeSeries,
+              subtitle: context.l10n.removeWholeSeriesSubtitle(seriesStartLabel),
               onTap: () =>
                   Navigator.of(context).pop(_DeleteChoice.wholeSeries),
             ),

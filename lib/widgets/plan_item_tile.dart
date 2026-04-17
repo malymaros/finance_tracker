@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
 import '../models/guard_state.dart';
@@ -44,12 +47,14 @@ class PlanItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final isIncome = item.type == PlanItemType.income;
     final sign = isIncome ? '+' : '-';
 
     // For fixed cost items use the category colour/icon; fall back to
     // ExpenseCategory.other when the field is not set (legacy data).
-    final category = isIncome ? null : (item.category ?? ExpenseCategory.other);
+    final category =
+        isIncome ? null : (item.category ?? ExpenseCategory.other);
     final leadingColor = isIncome ? AppColors.income : category!.color;
     final leadingIcon = isIncome ? Icons.savings : category!.icon;
     final financialType = isIncome ? null : item.financialType;
@@ -60,10 +65,11 @@ class PlanItemTile extends StatelessWidget {
             : financialType?.color ?? AppColors.expense);
 
     final subtitleParts = [
-      _frequencyLabel(item.frequency),
-      if (category != null) category.displayName,
-      'from ${_formatYearMonth(item.validFrom)}',
-      if (item.validTo != null) 'until ${_formatYearMonth(item.validTo!)}',
+      _frequencyLabel(l10n, item.frequency),
+      if (category != null) l10n.categoryName(category),
+      l10n.fromDateShort(_formatYearMonth(item.validFrom)),
+      if (item.validTo != null)
+        l10n.untilDateShort(_formatYearMonth(item.validTo!)),
     ];
 
     return SwipeableTile(
@@ -117,10 +123,11 @@ class PlanItemTile extends StatelessWidget {
     );
   }
 
-  static String _frequencyLabel(PlanFrequency freq) => switch (freq) {
-        PlanFrequency.monthly => 'Monthly',
-        PlanFrequency.yearly => 'Yearly',
-        PlanFrequency.oneTime => 'One-time',
+  static String _frequencyLabel(AppLocalizations l10n, PlanFrequency freq) =>
+      switch (freq) {
+        PlanFrequency.monthly => l10n.frequencyMonthly,
+        PlanFrequency.yearly => l10n.frequencyYearly,
+        PlanFrequency.oneTime => l10n.frequencyOneTime,
       };
 
   static String _formatYearMonth(YearMonth ym) =>

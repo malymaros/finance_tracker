@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
+import '../../l10n/l10n.dart';
+import '../../l10n/l10n_extensions.dart';
 import '../../models/category_budget.dart';
 import '../../models/expense_category.dart';
 import '../../models/year_month.dart';
@@ -113,19 +116,19 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
     }
   }
 
-  String _pastMonthWarningText() {
+  String _pastMonthWarningText(AppLocalizations l10n) {
     final fromLabel =
-        '${YearMonth.monthNames[_validFrom.month]} ${_validFrom.year}';
+        '${l10n.monthName(_validFrom.month)} ${_validFrom.year}';
     if (_isEditing) {
       final prevMonth = YearMonth.now().addMonths(-1);
       final prevLabel =
-          '${YearMonth.monthNames[prevMonth.month]} ${prevMonth.year}';
-      final catName = _selectedCategory?.displayName ?? 'this category';
-      return 'This will change the $catName budget back to $fromLabel. '
-          'Months $fromLabel\u2013$prevLabel will use the new amount.';
+          '${l10n.monthName(prevMonth.month)} ${prevMonth.year}';
+      final catName = _selectedCategory != null
+          ? l10n.categoryName(_selectedCategory!)
+          : 'this category';
+      return l10n.pastMonthBudgetEditWarning(catName, fromLabel, prevLabel);
     }
-    return 'You are creating a budget for a past month. '
-        'It will apply retroactively from $fromLabel.';
+    return l10n.pastMonthBudgetCreateWarning(fromLabel);
   }
 
   Future<void> _submit() async {
@@ -157,12 +160,13 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final validFromLabel =
-        '${YearMonth.monthNames[_validFrom.month]} ${_validFrom.year}';
+        '${l10n.monthName(_validFrom.month)} ${_validFrom.year}';
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Budget' : 'Add Budget'),
+        title: Text(_isEditing ? l10n.editBudgetTitle : l10n.addBudgetTitle),
       ),
       body: Form(
         key: _formKey,
@@ -171,9 +175,9 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
           children: [
             // ── Category ────────────────────────────────────────────────────
             if (_categoryLocked) ...[
-              const Text(
-                'Category',
-                style: TextStyle(fontSize: 12, color: AppColors.textMuted),
+              Text(
+                l10n.labelCategory,
+                style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
               ),
               const SizedBox(height: 8),
               Container(
@@ -192,7 +196,7 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
                       color: widget.initialCategory!.color,
                     ),
                     const SizedBox(width: 8),
-                    Text(widget.initialCategory!.displayName),
+                    Text(l10n.categoryName(widget.initialCategory!)),
                   ],
                 ),
               ),
@@ -208,16 +212,15 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
                       borderRadius: BorderRadius.circular(8),
                       color: AppColors.surface,
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.info_outline,
+                        const Icon(Icons.info_outline,
                             size: 18, color: AppColors.textMuted),
-                        SizedBox(width: 8),
+                        const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'All categories already have a budget for this month. '
-                            'Select a different month to add another.',
-                            style: TextStyle(
+                            l10n.allCategoriesBudgeted,
+                            style: const TextStyle(
                                 fontSize: 13, color: AppColors.textMuted),
                           ),
                         ),
@@ -227,11 +230,11 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
                 }
                 return DropdownButtonFormField<ExpenseCategory>(
                   initialValue: _selectedCategory,
-                  decoration: const InputDecoration(
-                    labelText: 'Category',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.labelCategory,
+                    border: const OutlineInputBorder(),
                   ),
-                  hint: const Text('Select a category'),
+                  hint: Text(l10n.selectCategoryHint),
                   items: available.map((cat) {
                     return DropdownMenuItem(
                       value: cat,
@@ -239,13 +242,14 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
                         children: [
                           Icon(cat.icon, size: 20, color: cat.color),
                           const SizedBox(width: 8),
-                          Text(cat.displayName),
+                          Text(l10n.categoryName(cat)),
                         ],
                       ),
                     );
                   }).toList(),
                   onChanged: (v) => setState(() => _selectedCategory = v),
-                  validator: (v) => v == null ? 'Select a category' : null,
+                  validator: (v) =>
+                      v == null ? l10n.validationSelectCategory : null,
                 );
               }),
             ],
@@ -255,7 +259,7 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
             TextFormField(
               controller: _amountController,
               decoration: InputDecoration(
-                labelText: 'Monthly budget',
+                labelText: l10n.monthlyBudgetLabel,
                 suffixText: ' ${CurrencyFormatter.currencySymbol}',
                 border: const OutlineInputBorder(),
               ),
@@ -263,10 +267,12 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
                   const TextInputType.numberWithOptions(decimal: true),
               autofocus: _categoryLocked,
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Enter an amount';
+                if (v == null || v.trim().isEmpty) {
+                  return l10n.validationAmountEmpty;
+                }
                 final parsed = double.tryParse(v.trim());
                 if (parsed == null || parsed <= 0) {
-                  return 'Enter a valid positive number';
+                  return l10n.validationAmountInvalid;
                 }
                 return null;
               },
@@ -277,7 +283,7 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
             OutlinedButton.icon(
               onPressed: widget.validFromLocked ? null : _pickValidFrom,
               icon: const Icon(Icons.calendar_month, size: 18),
-              label: Text('Effective from: $validFromLabel'),
+              label: Text(l10n.effectiveFromLabel(validFromLabel)),
               style: OutlinedButton.styleFrom(
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsets.symmetric(
@@ -307,7 +313,7 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        _pastMonthWarningText(),
+                        _pastMonthWarningText(l10n),
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.warning,
@@ -322,7 +328,7 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
 
             FilledButton(
               onPressed: _submit,
-              child: const Text('Save'),
+              child: Text(l10n.actionSave),
             ),
           ],
         ),
@@ -342,11 +348,6 @@ class _MonthPickerDialog extends StatefulWidget {
 }
 
 class _MonthPickerDialogState extends State<_MonthPickerDialog> {
-  static const _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-  ];
-
   late int _year;
   late int _selectedMonth;
 
@@ -366,6 +367,7 @@ class _MonthPickerDialogState extends State<_MonthPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
     final canGoBack = widget.min == null || _year > widget.min!.year;
     final canGoForward = widget.max == null || _year < widget.max!.year;
@@ -418,7 +420,7 @@ class _MonthPickerDialogState extends State<_MonthPickerDialog> {
                   ),
                 ),
                 child: Text(
-                  _months[i],
+                  l10n.monthAbbr(month),
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: disabled
@@ -436,7 +438,7 @@ class _MonthPickerDialogState extends State<_MonthPickerDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.actionCancel),
         ),
       ],
     );

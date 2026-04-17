@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
@@ -35,7 +37,7 @@ class ExpenseListTile extends StatelessWidget {
           child: Icon(expense.category.icon,
               size: 20, color: expense.category.color.withAlpha(180)),
         ),
-        title: Text(expense.category.displayName),
+        title: Text(context.l10n.categoryName(expense.category)),
         subtitle: Text(
           [
             if (expense.note != null) expense.note!,

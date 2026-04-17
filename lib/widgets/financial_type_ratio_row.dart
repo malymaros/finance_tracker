@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/financial_type.dart';
 import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
@@ -33,7 +35,7 @@ class FinancialTypeRatioRow extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  type.displayName,
+                  context.l10n.financialTypeName(type),
                   style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 ),
                 Text(

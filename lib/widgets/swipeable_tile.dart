@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 
 /// Wraps a list tile so that a long press reveals an action sheet with
@@ -55,9 +56,9 @@ class SwipeableTile extends StatelessWidget {
             if (onGuard != null)
               ListTile(
                 leading: const Icon(Icons.pets, color: AppColors.gold),
-                title: const Text(
-                  'GUARD',
-                  style: TextStyle(color: AppColors.gold),
+                title: Text(
+                  sheetContext.l10n.menuGuard,
+                  style: const TextStyle(color: AppColors.gold),
                 ),
                 onTap: () {
                   Navigator.pop(sheetContext);
@@ -67,7 +68,7 @@ class SwipeableTile extends StatelessWidget {
             if (onEdit != null)
               ListTile(
                 leading: const Icon(Icons.edit_outlined),
-                title: const Text('Edit'),
+                title: Text(sheetContext.l10n.actionEdit),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   onEdit!();
@@ -76,9 +77,9 @@ class SwipeableTile extends StatelessWidget {
             ListTile(
               leading:
                   const Icon(Icons.delete_outline, color: AppColors.expense),
-              title: const Text(
-                'Delete',
-                style: TextStyle(color: AppColors.expense),
+              title: Text(
+                sheetContext.l10n.actionDelete,
+                style: const TextStyle(color: AppColors.expense),
               ),
               onTap: () {
                 Navigator.pop(sheetContext);

@@ -16,6 +16,7 @@ import '../../services/category_budget_repository.dart';
 import '../../services/currency_formatter.dart';
 import '../../services/finance_repository.dart';
 import '../../services/pdf_report_service.dart';
+import '../../services/pdf_strings.dart';
 import '../../services/plan_repository.dart';
 import '../../services/report_aggregator.dart';
 import '../../services/share_service.dart';
@@ -262,7 +263,8 @@ class _ReportScreenState extends State<ReportScreen> {
       typeRatio: typeRatio,
     );
 
-    final bytes = await PdfReportService.generateMonthlyReport(pdfData);
+    final strings = PdfStrings.fromL10n(context.l10n);
+    final bytes = await PdfReportService.generateMonthlyReport(pdfData, strings);
     final filename =
         'finance_${YearMonth.monthNames[_month].toLowerCase()}_$_year.pdf';
     await ShareService.sharePdf(bytes, filename);
@@ -312,7 +314,8 @@ class _ReportScreenState extends State<ReportScreen> {
       overviewSummaries: overviewSummaries,
     );
 
-    final bytes = await PdfReportService.generateYearlyReport(pdfData);
+    final strings = PdfStrings.fromL10n(context.l10n);
+    final bytes = await PdfReportService.generateYearlyReport(pdfData, strings);
     final filename = 'finance_yearly_$_year.pdf';
     await ShareService.sharePdf(bytes, filename);
   }

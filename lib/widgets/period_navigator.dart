@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/year_month.dart';
 import '../theme/app_theme.dart';
 import 'period_picker_sheet.dart';
-
-const _monthNames = [
-  '',
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
 
 class PeriodNavigator extends StatelessWidget {
   final YearMonth selected;
@@ -53,9 +49,9 @@ class PeriodNavigator extends StatelessWidget {
     return YearMonth(selected.year, selected.month + 1);
   }
 
-  String get _label {
+  String _label(BuildContext context) {
     if (yearOnly) return '${selected.year}';
-    return '${_monthNames[selected.month]} ${selected.year}';
+    return '${context.l10n.monthName(selected.month)} ${selected.year}';
   }
 
   static const _buttonShape = RoundedRectangleBorder(
@@ -70,6 +66,7 @@ class PeriodNavigator extends StatelessWidget {
       shape: _buttonShape,
     );
 
+    final labelText = _label(context);
     Widget label = Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
@@ -79,7 +76,7 @@ class PeriodNavigator extends StatelessWidget {
       ),
       child: yearOnly
           ? Text(
-              _label,
+              labelText,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 16,
@@ -91,7 +88,7 @@ class PeriodNavigator extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  _label,
+                  labelText,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,

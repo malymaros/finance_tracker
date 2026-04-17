@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 
 /// Dialog that collects a start and end date for an expense export.
@@ -64,37 +65,40 @@ class _ExportDateRangeDialogState extends State<ExportDateRangeDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final endBeforeStart = _start != null && _end.isBefore(_start!);
 
     return AlertDialog(
-      title: const Text('Export Expenses'),
+      title: Text(l10n.exportExpensesTitle),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Select the date range to export:',
-            style: TextStyle(fontSize: 13, color: AppColors.textMuted),
+          Text(
+            l10n.selectDateRangeHint,
+            style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
           ),
           const SizedBox(height: 16),
           _DateField(
-            label: 'Start Date',
+            label: l10n.startDateLabel,
             value: _start,
             formatted: _start != null ? _formatDate(_start!) : null,
+            placeholder: l10n.tapToSelectDate,
             onTap: _pickStart,
           ),
           const SizedBox(height: 10),
           _DateField(
-            label: 'End Date',
+            label: l10n.endDateLabel,
             value: _end,
             formatted: _formatDate(_end),
+            placeholder: l10n.tapToSelectDate,
             onTap: _pickEnd,
           ),
           if (endBeforeStart) ...[
             const SizedBox(height: 8),
-            const Text(
-              'End date must be on or after start date.',
-              style: TextStyle(color: AppColors.expense, fontSize: 12),
+            Text(
+              l10n.endDateAfterStart,
+              style: const TextStyle(color: AppColors.expense, fontSize: 12),
             ),
           ],
         ],
@@ -102,13 +106,13 @@ class _ExportDateRangeDialogState extends State<ExportDateRangeDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
+          child: Text(l10n.actionCancel),
         ),
         FilledButton(
           onPressed: _canConfirm
               ? () => Navigator.of(context).pop((start: _start!, end: _end))
               : null,
-          child: const Text('Export'),
+          child: Text(l10n.actionExport),
         ),
       ],
     );
@@ -121,12 +125,14 @@ class _DateField extends StatelessWidget {
   final String label;
   final DateTime? value;
   final String? formatted;
+  final String placeholder;
   final VoidCallback onTap;
 
   const _DateField({
     required this.label,
     required this.value,
     required this.formatted,
+    required this.placeholder,
     required this.onTap,
   });
 
@@ -157,7 +163,7 @@ class _DateField extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    formatted ?? 'Tap to select',
+                    formatted ?? placeholder,
                     style: TextStyle(
                       fontSize: 14,
                       color: formatted != null ? null : AppColors.textMuted,

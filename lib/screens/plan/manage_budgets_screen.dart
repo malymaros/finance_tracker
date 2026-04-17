@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
+import '../../l10n/l10n_extensions.dart';
 import '../../models/expense_category.dart';
 import '../../models/year_month.dart';
 import '../../services/category_budget_repository.dart';
@@ -78,15 +79,17 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
   }
 
   Future<void> _confirmDelete(
-      String seriesId, String categoryName) async {
+      String seriesId, ExpenseCategory category) async {
+    final l10n = context.l10n;
+    final categoryName = l10n.categoryName(category);
     final from = _selectedPeriod;
     final versions = widget.budgetRepository.seriesVersions(seriesId);
     final earliest = versions.isNotEmpty ? versions.first.validFrom : from;
     final latest = versions.isNotEmpty ? versions.last.validTo : null;
 
-    String fmt(YearMonth ym) => '${YearMonth.monthNames[ym.month]} ${ym.year}';
+    String fmt(YearMonth ym) => '${l10n.monthName(ym.month)} ${ym.year}';
     final rangeText = latest == null
-        ? '${fmt(earliest)} – present'
+        ? l10n.budgetRangePresent(fmt(earliest))
         : '${fmt(earliest)} – ${fmt(latest)}';
     final fromLabel = fmt(from);
 
@@ -95,26 +98,25 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
     final choice = await showDialog<_DeleteChoice>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Remove $categoryName budget'),
+        title: Text(l10n.removeBudgetDialogTitle(categoryName)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (!isClosed) ...[
               Text(
-                'End from $fromLabel',
+                l10n.endBudgetFromTitle(fromLabel),
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 4),
               Text(
-                'Stops the budget from $fromLabel onwards. '
-                'Earlier months keep their historical budget.',
+                l10n.endBudgetFromDescription(fromLabel),
                 style: const TextStyle(fontSize: 13),
               ),
               const SizedBox(height: 16),
             ],
             Text(
-              'Delete entire series',
+              l10n.deleteBudgetSeriesTitle,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 color: isClosed ? null : AppColors.expense,
@@ -122,9 +124,7 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Permanently removes all records ($rangeText). '
-              'No budget will appear for any month in this series. '
-              'This cannot be undone.',
+              l10n.deleteBudgetSeriesDescription(rangeText),
               style: const TextStyle(fontSize: 13),
             ),
             const SizedBox(height: 24),
@@ -134,7 +134,7 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
                 child: TextButton(
                   onPressed: () =>
                       Navigator.of(ctx).pop(_DeleteChoice.endFromNow),
-                  child: Text('End from $fromLabel'),
+                  child: Text(l10n.endBudgetFromTitle(fromLabel)),
                 ),
               ),
             SizedBox(
@@ -145,14 +145,14 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
                 style: TextButton.styleFrom(
                     foregroundColor:
                         isClosed ? null : AppColors.expense),
-                child: const Text('Delete all'),
+                child: Text(l10n.deleteBudgetSeriesConfirm),
               ),
             ),
             SizedBox(
               width: double.infinity,
               child: TextButton(
                 onPressed: () => Navigator.of(ctx).pop(_DeleteChoice.cancel),
-                child: const Text('Cancel'),
+                child: Text(l10n.actionCancel),
               ),
             ),
           ],
@@ -172,7 +172,7 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Category Budgets'),
+        title: Text(context.l10n.categoryBudgetsTitle),
         scrolledUnderElevation: 0,
       ),
       body: ListenableBuilder(
@@ -195,7 +195,7 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _navigateToAdd,
-        tooltip: 'Add budget',
+        tooltip: context.l10n.addBudgetTooltip,
         child: const Icon(Icons.add),
       ),
     );
@@ -207,11 +207,12 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
 
     if (activeBudgets.isEmpty) return _buildEmptyState();
 
+    final l10n = context.l10n;
     final entries = activeBudgets.entries.toList()
       ..sort((a, b) {
         if (a.key == ExpenseCategory.other) return 1;
         if (b.key == ExpenseCategory.other) return -1;
-        return a.key.displayName.compareTo(b.key.displayName);
+        return l10n.categoryName(a.key).compareTo(l10n.categoryName(b.key));
       });
 
     return ListView.separated(
@@ -232,7 +233,7 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
             activeVersionValidFrom: record.validFrom,
           ),
           onDelete: () =>
-              _confirmDelete(record.seriesId, category.displayName),
+              _confirmDelete(record.seriesId, category),
         );
       },
     );
@@ -245,9 +246,9 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
         children: [
           const Icon(Icons.tune_outlined, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
-          const Text(
-            'No category budgets set.',
-            style: TextStyle(color: AppColors.textMuted, fontSize: 16),
+          Text(
+            context.l10n.noCategoryBudgetsSet,
+            style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
           ),
           const SizedBox(height: 8),
           Text(

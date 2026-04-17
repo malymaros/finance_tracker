@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../models/category_budget.dart';
 import '../models/expense_category.dart';
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../services/currency_formatter.dart';
 import 'swipeable_tile.dart';
 
@@ -24,6 +26,7 @@ class CategoryBudgetTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cat = budget.category;
+    final l10n = context.l10n;
     return SwipeableTile(
       itemId: budget.id,
       onEdit: onEdit,
@@ -34,9 +37,9 @@ class CategoryBudgetTile extends StatelessWidget {
           backgroundColor: cat.color.withAlpha(30),
           child: Icon(cat.icon, size: 20, color: cat.color),
         ),
-        title: Text(cat.displayName),
+        title: Text(l10n.categoryName(cat)),
         trailing: Text(
-          '${CurrencyFormatter.format(budget.amount)}/month',
+          '${CurrencyFormatter.format(budget.amount)} ${l10n.perMonth}',
           style: const TextStyle(
             fontWeight: FontWeight.w600,
             fontSize: 14,

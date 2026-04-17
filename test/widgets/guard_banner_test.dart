@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/plan_item.dart';
@@ -32,6 +33,8 @@ Widget _banner({
   void Function(PlanItem, YearMonth)? onTapItem,
 }) =>
     MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
         body: GuardBanner(
           unpaidActive: unpaidActive,

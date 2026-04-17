@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/guard_payment.dart';
@@ -9,6 +10,12 @@ import 'package:finance_tracker/screens/plan/plan_item_detail_screen.dart';
 import 'package:finance_tracker/services/guard_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
 import 'package:finance_tracker/widgets/guard_item_status_card.dart';
+
+Widget _wrap(Widget child) => MaterialApp(
+  localizationsDelegates: AppLocalizations.localizationsDelegates,
+  supportedLocales: AppLocalizations.supportedLocales,
+  home: child,
+);
 
 void main() {
   group('PlanItemDetailScreen — income item', () {
@@ -28,52 +35,44 @@ void main() {
     });
 
     testWidgets('shows item name', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('Salary'), findsOneWidget);
     });
 
     testWidgets('shows Income type badge', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('Income'), findsOneWidget);
     });
 
     testWidgets('shows amount with frequency suffix', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.textContaining('3000.00 €'), findsOneWidget);
       expect(find.textContaining('/ month'), findsOneWidget);
     });
 
     testWidgets('shows frequency label', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('Monthly'), findsOneWidget);
     });
 
     testWidgets('shows valid from month', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('January 2025'), findsOneWidget);
     });
 
     testWidgets('shows Ongoing for income with no end date', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('Ongoing'), findsOneWidget);
     });
 
     testWidgets('shows note', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('main income'), findsOneWidget);
     });
 
     testWidgets('does not show category or financial type rows',
         (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: salary, period: const YearMonth(2025, 1))));
       expect(find.text('Category'), findsNothing);
       expect(find.text('Financial type'), findsNothing);
     });
@@ -98,26 +97,22 @@ void main() {
     });
 
     testWidgets('shows Fixed Cost type badge', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
       expect(find.text('Fixed Cost'), findsOneWidget);
     });
 
     testWidgets('shows category', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
       expect(find.text('Housing'), findsOneWidget);
     });
 
     testWidgets('shows financial type', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
       expect(find.text('Consumption'), findsOneWidget);
     });
 
     testWidgets('shows validTo date', (tester) async {
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: rent, period: const YearMonth(2025, 1))));
       expect(find.text('December 2025'), findsOneWidget);
     });
 
@@ -134,8 +129,7 @@ void main() {
         financialType: FinancialType.consumption,
       );
 
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: noEnd, period: const YearMonth(2025, 1))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: noEnd, period: const YearMonth(2025, 1))));
       expect(find.text('No end date'), findsOneWidget);
     });
 
@@ -152,8 +146,7 @@ void main() {
         financialType: FinancialType.insurance,
       );
 
-      await tester
-          .pumpWidget(MaterialApp(home: PlanItemDetailScreen(item: oneTime, period: const YearMonth(2025, 6))));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(item: oneTime, period: const YearMonth(2025, 6))));
       expect(find.text('Active until'), findsNothing);
       expect(find.textContaining('(one-time)'), findsOneWidget);
     });
@@ -185,26 +178,22 @@ void main() {
         (tester) async {
       final planRepo = PlanRepository(persist: false, seed: [guardedFixedCost]);
       final guardRepo = GuardRepository(persist: false);
-      await tester.pumpWidget(MaterialApp(
-        home: PlanItemDetailScreen(
-          item: guardedFixedCost,
-          period: pastPeriod,
-          planRepository: planRepo,
-          guardRepository: guardRepo,
-        ),
-      ));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(
+        item: guardedFixedCost,
+        period: pastPeriod,
+        planRepository: planRepo,
+        guardRepository: guardRepo,
+      )));
       expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsOneWidget);
     });
 
     testWidgets('does not show GUARD section when planRepository is null',
         (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: PlanItemDetailScreen(
-          item: guardedFixedCost,
-          period: pastPeriod,
-          // neither planRepository nor guardRepository
-        ),
-      ));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(
+        item: guardedFixedCost,
+        period: pastPeriod,
+        // neither planRepository nor guardRepository
+      )));
       expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsNothing);
       expect(find.text('GUARD'), findsNothing);
     });
@@ -212,14 +201,12 @@ void main() {
     testWidgets('hides GUARD section when item is guarded but guardRepository is null',
         (tester) async {
       final planRepo = PlanRepository(persist: false, seed: [guardedFixedCost]);
-      await tester.pumpWidget(MaterialApp(
-        home: PlanItemDetailScreen(
-          item: guardedFixedCost,
-          period: pastPeriod,
-          planRepository: planRepo,
-          // no guardRepository — section must be hidden, not show "Not enabled"
-        ),
-      ));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(
+        item: guardedFixedCost,
+        period: pastPeriod,
+        planRepository: planRepo,
+        // no guardRepository — section must be hidden, not show "Not enabled"
+      )));
       expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsNothing);
       expect(find.text('Not enabled'), findsNothing);
       expect(find.text('GUARD'), findsNothing);
@@ -239,14 +226,12 @@ void main() {
       );
       final planRepo = PlanRepository(persist: false, seed: [income]);
       final guardRepo = GuardRepository(persist: false);
-      await tester.pumpWidget(MaterialApp(
-        home: PlanItemDetailScreen(
-          item: income,
-          period: pastPeriod,
-          planRepository: planRepo,
-          guardRepository: guardRepo,
-        ),
-      ));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(
+        item: income,
+        period: pastPeriod,
+        planRepository: planRepo,
+        guardRepository: guardRepo,
+      )));
       expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsNothing);
       expect(find.text('GUARD'), findsNothing);
     });
@@ -255,14 +240,12 @@ void main() {
         (tester) async {
       final planRepo = PlanRepository(persist: false, seed: [guardedFixedCost]);
       final guardRepo = GuardRepository(persist: false);
-      await tester.pumpWidget(MaterialApp(
-        home: PlanItemDetailScreen(
-          item: guardedFixedCost,
-          period: pastPeriod,
-          planRepository: planRepo,
-          guardRepository: guardRepo,
-        ),
-      ));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(
+        item: guardedFixedCost,
+        period: pastPeriod,
+        planRepository: planRepo,
+        guardRepository: guardRepo,
+      )));
       await tester.ensureVisible(
           find.byType(GuardItemStatusCard, skipOffstage: false));
       await tester.pump();
@@ -279,14 +262,12 @@ void main() {
       );
       final planRepo = PlanRepository(persist: false, seed: [guardedFixedCost]);
       final guardRepo = GuardRepository(persist: false, seed: [paidPayment]);
-      await tester.pumpWidget(MaterialApp(
-        home: PlanItemDetailScreen(
-          item: guardedFixedCost,
-          period: pastPeriod,
-          planRepository: planRepo,
-          guardRepository: guardRepo,
-        ),
-      ));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(
+        item: guardedFixedCost,
+        period: pastPeriod,
+        planRepository: planRepo,
+        guardRepository: guardRepo,
+      )));
       await tester.ensureVisible(
           find.byType(GuardItemStatusCard, skipOffstage: false));
       await tester.pump();
@@ -307,14 +288,12 @@ void main() {
       );
       final planRepo = PlanRepository(persist: false, seed: [unguarded]);
       final guardRepo = GuardRepository(persist: false);
-      await tester.pumpWidget(MaterialApp(
-        home: PlanItemDetailScreen(
-          item: unguarded,
-          period: pastPeriod,
-          planRepository: planRepo,
-          guardRepository: guardRepo,
-        ),
-      ));
+      await tester.pumpWidget(_wrap(PlanItemDetailScreen(
+        item: unguarded,
+        period: pastPeriod,
+        planRepository: planRepo,
+        guardRepository: guardRepo,
+      )));
       expect(find.text('Not enabled'), findsOneWidget);
       expect(find.text('GUARD'), findsOneWidget);
       expect(find.byType(GuardItemStatusCard, skipOffstage: false), findsNothing);

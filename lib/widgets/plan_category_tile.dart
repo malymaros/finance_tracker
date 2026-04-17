@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense_category.dart';
 import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
@@ -37,8 +39,8 @@ class PlanCategoryTile extends StatelessWidget {
         backgroundColor: category.color.withAlpha(30),
         child: Icon(category.icon, color: category.color, size: 20),
       ),
-      title: Text(category.displayName),
-      subtitle: Text('$count ${count == 1 ? 'item' : 'items'}'),
+      title: Text(context.l10n.categoryName(category)),
+      subtitle: Text(context.l10n.itemCount(count)),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

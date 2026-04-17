@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 import '../l10n/l10n.dart';
 import '../services/currency_service.dart';
+import '../services/language_service.dart';
+import '../theme/app_theme.dart';
 import '../widgets/currency_picker_sheet.dart';
 
 // ── WelcomeScreen ─────────────────────────────────────────────────────────────
@@ -30,6 +32,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     showDialog<void>(
       context: context,
       builder: (_) => const CurrencyPickerDialog(),
+    );
+  }
+
+  void _showLanguagePicker(BuildContext context) {
+    showDialog<void>(
+      context: context,
+      builder: (_) => const _LanguagePickerDialog(),
     );
   }
 
@@ -96,6 +105,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                   const SizedBox(height: 16),
                   _LocaleIndicators(
+                    onLocaleTap: () => _showLanguagePicker(context),
                     onCurrencyTap: () => _showCurrencyPicker(context),
                   ),
                   const Spacer(flex: 3),
@@ -123,27 +133,50 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 // ── Locale indicators ─────────────────────────────────────────────────────────
 
 class _LocaleIndicators extends StatelessWidget {
+  final VoidCallback onLocaleTap;
   final VoidCallback onCurrencyTap;
 
-  const _LocaleIndicators({required this.onCurrencyTap});
+  const _LocaleIndicators({
+    required this.onLocaleTap,
+    required this.onCurrencyTap,
+  });
+
+  static String _localeLabel(Locale locale) {
+    switch (locale.languageCode) {
+      case 'de': return 'DE  🇩🇪';
+      case 'en':
+      default:   return 'EN  🇬🇧';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: CurrencyService.instance,
+      listenable: Listenable.merge([
+        CurrencyService.instance,
+        LanguageService.instance,
+      ]),
       builder: (context, _) {
-        final label =
+        final currencyLabel =
             '${CurrencyService.instance.code} ${CurrencyService.instance.symbol}';
+        final localeLabel =
+            _localeLabel(LanguageService.instance.current);
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(width: 90, child: _LocaleChip(label: 'EN  🇬🇧')),
+            SizedBox(
+              width: 90,
+              child: GestureDetector(
+                onTap: onLocaleTap,
+                child: _LocaleChip(label: localeLabel),
+              ),
+            ),
             const SizedBox(width: 8),
             SizedBox(
               width: 90,
               child: GestureDetector(
                 onTap: onCurrencyTap,
-                child: _LocaleChip(label: label),
+                child: _LocaleChip(label: currencyLabel),
               ),
             ),
           ],
@@ -152,6 +185,134 @@ class _LocaleIndicators extends StatelessWidget {
     );
   }
 }
+
+// ── Language picker dialog ────────────────────────────────────────────────────
+
+class _LanguagePickerDialog extends StatelessWidget {
+  const _LanguagePickerDialog();
+
+  static const _entries = [
+    (locale: Locale('en'), label: 'English', flag: '🇬🇧'),
+    (locale: Locale('de'), label: 'Deutsch', flag: '🇩🇪'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: LanguageService.instance,
+      builder: (context, _) {
+        final current = LanguageService.instance.current;
+
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Navy header
+              Container(
+                color: AppColors.navy,
+                padding: const EdgeInsets.fromLTRB(20, 14, 8, 14),
+                child: Row(
+                  children: [
+                    const Icon(Icons.language, color: AppColors.gold, size: 18),
+                    const SizedBox(width: 10),
+                    const Text(
+                      'Language',
+                      style: TextStyle(
+                        color: AppColors.gold,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.4,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.close,
+                          color: AppColors.gold, size: 20),
+                      onPressed: () => Navigator.of(context).pop(),
+                      visualDensity: VisualDensity.compact,
+                    ),
+                  ],
+                ),
+              ),
+
+              // Language rows
+              for (final entry in _entries)
+                _LanguageRow(
+                  flag: entry.flag,
+                  label: entry.label,
+                  isSelected: current.languageCode == entry.locale.languageCode,
+                  onTap: () async {
+                    await LanguageService.instance.setLocale(entry.locale);
+                    if (context.mounted) Navigator.of(context).pop();
+                  },
+                ),
+
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _LanguageRow extends StatelessWidget {
+  final String flag;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _LanguageRow({
+    required this.flag,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        color: isSelected ? AppColors.navy.withAlpha(10) : null,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        child: Row(
+          children: [
+            Text(flag, style: const TextStyle(fontSize: 22)),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight:
+                      isSelected ? FontWeight.w600 : FontWeight.w400,
+                  color: isSelected ? AppColors.navy : null,
+                ),
+              ),
+            ),
+            if (isSelected)
+              Stack(
+                alignment: Alignment.center,
+                children: const [
+                  Icon(Icons.circle, size: 20, color: AppColors.navy),
+                  Icon(Icons.check, size: 13, color: AppColors.gold),
+                ],
+              )
+            else
+              const Icon(Icons.radio_button_unchecked,
+                  size: 20, color: AppColors.border),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Locale chip ───────────────────────────────────────────────────────────────
 
 class _LocaleChip extends StatelessWidget {
   final String label;
