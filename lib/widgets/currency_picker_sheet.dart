@@ -141,16 +141,6 @@ class _PresetRow extends StatelessWidget {
                 ),
               ),
             ),
-            Text(
-              preset.symbol,
-              style: TextStyle(
-                fontSize: 15,
-                color: isSelected ? AppColors.navy : AppColors.textMuted,
-                fontWeight:
-                    isSelected ? FontWeight.w600 : FontWeight.w400,
-              ),
-            ),
-            const SizedBox(width: 8),
             if (isSelected)
               Stack(
                 alignment: Alignment.center,
