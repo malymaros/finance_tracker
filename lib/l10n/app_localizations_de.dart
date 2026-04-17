@@ -1507,6 +1507,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeFixedCostSubtitle => 'Miete, Versicherungen, Abonnements';
 
   @override
+  String get languagePickerTitle => 'Sprache';
+
+  @override
   String get currencyPickerTitle => 'Währung';
 
   @override

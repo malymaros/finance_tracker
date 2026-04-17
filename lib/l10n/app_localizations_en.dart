@@ -1496,6 +1496,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get typeFixedCostSubtitle => 'Rent, insurance, subscriptions';
 
   @override
+  String get languagePickerTitle => 'Language';
+
+  @override
   String get currencyPickerTitle => 'Currency';
 
   @override

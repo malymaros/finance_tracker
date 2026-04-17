@@ -1,0 +1,1623 @@
+{
+  "@@locale": "hu",
+
+  "appTitle": "Finance Tracker",
+  "@appTitle": {"description": "Az alkalmazás címe"},
+
+  "welcomeTagline": "Vedd kézbe a pénzügyeid irányítását",
+  "@welcomeTagline": {"description": "Üdvözlő képernyő alcíme az alkalmazás neve alatt"},
+
+  "getStarted": "Kezdés",
+  "@getStarted": {"description": "Az üdvözlő képernyő elsődleges műveletgombja"},
+
+  "tabExpenses": "Kiadások",
+  "@tabExpenses": {"description": "Alsó navigációs lap címkéje"},
+
+  "tabPlan": "Terv",
+  "@tabPlan": {"description": "Alsó navigációs lap címkéje"},
+
+  "tabReports": "Jelentések",
+  "@tabReports": {"description": "Alsó navigációs lap címkéje"},
+
+  "actionEdit": "Szerkesztés",
+  "@actionEdit": {"description": "Általános szerkesztési művelet címkéje"},
+
+  "actionDelete": "Törlés",
+  "@actionDelete": {"description": "Általános törlési művelet címkéje"},
+
+  "actionSave": "Mentés",
+  "@actionSave": {"description": "Általános mentés / elküldés gomb címkéje"},
+
+  "actionCancel": "Mégse",
+  "@actionCancel": {"description": "Általános megszakítás gomb címkéje"},
+
+  "actionLoad": "Betöltés",
+  "@actionLoad": {"description": "Egy mentett pillanatkép betöltése"},
+
+  "actionImport": "Importálás",
+  "@actionImport": {"description": "Általános import gomb címkéje"},
+
+  "actionOverwrite": "Felülírás",
+  "@actionOverwrite": {"description": "Egy mentési hely felülírása"},
+
+  "labelAmount": "Összeg",
+  "@labelAmount": {"description": "Pénzösszeg űrlapmezőjének címkéje"},
+
+  "labelCategory": "Kategória",
+  "@labelCategory": {"description": "Kiadáskategória űrlapmező / részletsor címkéje"},
+
+  "labelFinancialType": "Pénzügyi típus",
+  "@labelFinancialType": {"description": "Pénzügyi típus űrlapszakasz / részletsor címkéje"},
+
+  "labelDate": "Dátum",
+  "@labelDate": {"description": "Dátum űrlapmező / részletsor címkéje"},
+
+  "labelNote": "Megjegyzés",
+  "@labelNote": {"description": "Megjegyzés részletsor címkéje"},
+
+  "labelNoteOptional": "Megjegyzés (opcionális)",
+  "@labelNoteOptional": {"description": "Opcionális megjegyzés űrlapmező címkéje"},
+
+  "labelGroup": "Csoport",
+  "@labelGroup": {"description": "Csoport részletsor címkéje"},
+
+  "labelGroupOptional": "Csoport (opcionális)",
+  "@labelGroupOptional": {"description": "Opcionális csoport űrlapmező címkéje"},
+
+  "groupHintText": "pl. Nyaralás, Születésnap",
+  "@groupHintText": {"description": "Súgószöveg a csoport szövegmezőben"},
+
+  "labelName": "Név",
+  "@labelName": {"description": "Elemnév űrlapmező címkéje"},
+
+  "labelFrequency": "Gyakoriság",
+  "@labelFrequency": {"description": "Fizetési gyakoriság űrlapmező címkéje"},
+
+  "labelValidFrom": "Érvényes ettől",
+  "@labelValidFrom": {"description": "Kezdő időszak űrlapmező címkéje"},
+
+  "labelValidTo": "Érvényes eddig (opcionális)",
+  "@labelValidTo": {"description": "Opcionális záró időszak űrlapmező címkéje"},
+
+  "menuImportExpenses": "Kiadások importálása",
+  "@menuImportExpenses": {"description": "Túlcsorduló menüelem a Kiadások képernyőn"},
+
+  "menuExportExpenses": "Kiadások exportálása",
+  "@menuExportExpenses": {"description": "Túlcsorduló menüelem a Kiadások képernyőn"},
+
+  "menuImport": "Importálás",
+  "@menuImport": {"description": "Általános import túlcsorduló menüelem"},
+
+  "menuSaves": "Mentések",
+  "@menuSaves": {"description": "Túlcsorduló menüelem a mentések képernyő megnyitásához"},
+
+  "menuDeleteAll": "Összes adat törlése",
+  "@menuDeleteAll": {"description": "Túlcsorduló menüelem az összes adat törléséhez"},
+
+  "menuHowItWorks": "Hogyan működik",
+  "@menuHowItWorks": {"description": "Túlcsorduló menüelem a működést bemutató lap megnyitásához"},
+
+  "menuResetWithDummyData": "Visszaállítás mintaadatokkal",
+  "@menuResetWithDummyData": {"description": "Csak hibakereséshez használt túlcsorduló menüelem"},
+
+  "menuManageBudgets": "Keretek kezelése",
+  "@menuManageBudgets": {"description": "Túlcsorduló menüelem a Terv lapon"},
+
+  "menuGuard": "GUARD",
+  "@menuGuard": {"description": "Túlcsorduló menüelem a GUARD képernyő megnyitásához"},
+
+  "expenseListTitle": "Kiadások",
+  "@expenseListTitle": {"description": "A kiadáslista képernyő AppBar címe"},
+
+  "savesTooltip": "Mentések",
+  "@savesTooltip": {"description": "Eszköztipp az AppBar mentés ikongombjához"},
+
+  "howItWorksTooltip": "Hogyan működik",
+  "@howItWorksTooltip": {"description": "Eszköztipp a súgó ikongombhoz"},
+
+  "howItWorksQuestion": "Hogyan működik?",
+  "@howItWorksQuestion": {"description": "Hivatkozás szövege a működést bemutató lap megnyitásához"},
+
+  "viewModeItems": "Tételek",
+  "@viewModeItems": {"description": "Szegmentált váltó címkéje a tétellista nézethez"},
+
+  "viewModeByCategory": "Kategória",
+  "@viewModeByCategory": {"description": "Szegmentált váltó címkéje a kategória szerinti csoportosított nézethez"},
+
+  "viewModeByGroup": "Csoportok",
+  "@viewModeByGroup": {"description": "Szegmentált váltó címkéje a csoportnézethez"},
+
+  "thisMonthsBudget": "E havi keret",
+  "@thisMonthsBudget": {"description": "A költségkeret kártya / folyamatjelző címkéje"},
+
+  "budgetNotSet": "Nincs beállítva keret",
+  "@budgetNotSet": {"description": "A keret nélküli kártyán jelenik meg, ha nincs tervezett bevétel"},
+
+  "setIncomeInPlan": "Bevétel beállítása",
+  "@setIncomeInPlan": {"description": "Cselekvésre ösztönzés a keret nélküli kártyán"},
+
+  "noExpensesInMonth": "Nincs kiadás {monthName} {year} hónapban.",
+  "@noExpensesInMonth": {
+    "description": "Üres állapot üzenet a kiadáslista képernyőn a kiválasztott hónapra",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "tapPlusToAddOne": "Koppints a + gombra egy hozzáadásához.",
+  "@tapPlusToAddOne": {"description": "Üres állapot súgószöveg a kiadáslista képernyőn"},
+
+  "fixedBillsHint": "A fix számlák, mint a lakbér, a Tervhez tartoznak.",
+  "@fixedBillsHint": {"description": "Másodlagos üres állapot súgószöveg a kiadáslista képernyőn"},
+
+  "noGroupsThisMonth": "Ebben a hónapban nincsenek csoportok.",
+  "@noGroupsThisMonth": {"description": "Üres állapot, ha ebben a hónapban egyik kiadásnak sincs csoportja"},
+
+  "addGroupHint": "Adj meg egy csoportot kiadás létrehozásakor\nvagy szerkesztésekor.",
+  "@addGroupHint": {"description": "Másodlagos súgó az üres csoportállapot alatt"},
+
+  "howGroupsWorkQuestion": "Hogyan működnek a csoportok?",
+  "@howGroupsWorkQuestion": {"description": "Hivatkozás szövege a csoportok működését bemutató lap megnyitásához"},
+
+  "itemCount": "{count, plural, =1{1 tétel} other{{count} tétel}}",
+  "@itemCount": {
+    "description": "Tételek száma egy kategória vagy csoport fejlécében",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "addExpenseTitle": "Kiadás hozzáadása",
+  "@addExpenseTitle": {"description": "AppBar cím új kiadás hozzáadásakor"},
+
+  "editExpenseTitle": "Kiadás szerkesztése",
+  "@editExpenseTitle": {"description": "AppBar cím meglévő kiadás szerkesztésekor"},
+
+  "validationAmountEmpty": "Adj meg összeget",
+  "@validationAmountEmpty": {"description": "Érvényesítési hiba, ha az összeg mező üres"},
+
+  "validationAmountInvalid": "Adj meg érvényes pozitív számot",
+  "@validationAmountInvalid": {"description": "Érvényesítési hiba, ha az összeg nulla vagy nem szám"},
+
+  "expenseDetailTitle": "Kiadás",
+  "@expenseDetailTitle": {"description": "A kiadás részletképernyő AppBar címe"},
+
+  "noExpensesInNamedGroup": "Nincs kiadás itt: \"{name}\".",
+  "@noExpensesInNamedGroup": {
+    "description": "Üres állapot a csoport kiadáslista képernyőn",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "planTitle": "Terv",
+  "@planTitle": {"description": "A Terv lap AppBar címe"},
+
+  "toggleMonthly": "Havi",
+  "@toggleMonthly": {"description": "Váltócímke a havi nézethez"},
+
+  "toggleYearly": "Éves",
+  "@toggleYearly": {"description": "Váltócímke az éves nézethez"},
+
+  "sectionIncome": "Bevétel",
+  "@sectionIncome": {"description": "Szakaszcím a Terv képernyőn"},
+
+  "sectionFixedCosts": "Fix költségek",
+  "@sectionFixedCosts": {"description": "Szakaszcím a Terv képernyőn"},
+
+  "noIncomeItems": "Nincsenek bevételi tételek.",
+  "@noIncomeItems": {"description": "Üres állapot a bevétel harmonikán belül"},
+
+  "noFixedCostItems": "Nincsenek fix költség tételek.",
+  "@noFixedCostItems": {"description": "Üres állapot a fix költség harmonikán belül"},
+
+  "spendableBudget": "Elkölthető keret",
+  "@spendableBudget": {"description": "Az elkölthető keret összegének címkéje a Terv képernyő fejlécében"},
+
+  "deleteItemDialogTitle": "Tervtétel törlése",
+  "@deleteItemDialogTitle": {"description": "A tervtétel törlésekor megjelenő párbeszédablak címe"},
+
+  "deleteItemFromPeriod": "Ettől az időszaktól",
+  "@deleteItemFromPeriod": {"description": "Lehetőség a tétel csak az aktuális időszaktól történő eltávolítására"},
+
+  "deleteItemWholeSeries": "Teljes sorozat",
+  "@deleteItemWholeSeries": {"description": "Lehetőség a tervtétel összes verziójának törlésére"},
+
+  "planItemDeleted": "A tervtétel törölve.",
+  "@planItemDeleted": {"description": "Megerősítő snackbar tervtétel törlése után"},
+
+  "addIncomeTitle": "Bevétel hozzáadása",
+  "@addIncomeTitle": {"description": "AppBar cím új bevételi tétel hozzáadásakor"},
+
+  "addFixedCostTitle": "Fix költség hozzáadása",
+  "@addFixedCostTitle": {"description": "AppBar cím új fix költség hozzáadásakor"},
+
+  "editIncomeTitle": "Bevétel szerkesztése",
+  "@editIncomeTitle": {"description": "AppBar cím meglévő bevételi tétel szerkesztésekor"},
+
+  "editFixedCostTitle": "Fix költség szerkesztése",
+  "@editFixedCostTitle": {"description": "AppBar cím meglévő fix költség szerkesztésekor"},
+
+  "frequencyOneTime": "Egyszeri",
+  "@frequencyOneTime": {"description": "Gyakoriság opció címkéje"},
+
+  "frequencyMonthly": "Havi",
+  "@frequencyMonthly": {"description": "Gyakoriság opció címkéje"},
+
+  "frequencyYearly": "Éves",
+  "@frequencyYearly": {"description": "Gyakoriság opció címkéje"},
+
+  "guardSectionLabel": "GUARD",
+  "@guardSectionLabel": {"description": "A GUARD mezők szakaszcímkéje a tervtétel hozzáadás képernyőn"},
+
+  "guardTrackPayment": "Fizetés követése",
+  "@guardTrackPayment": {"description": "A GUARD kapcsoló címkéje a tervtétel hozzáadás képernyőn"},
+
+  "guardDueDayLabel": "Esedékesség napja",
+  "@guardDueDayLabel": {"description": "A GUARD esedékességnap-választó címkéje"},
+
+  "guardOneTimeLabel": "Egyszeri fizetés",
+  "@guardOneTimeLabel": {"description": "A GUARD egyszeri fizetés kapcsoló címkéje"},
+
+  "planItemSaved": "A tervtétel mentve.",
+  "@planItemSaved": {"description": "Megerősítő snackbar tervtétel mentése után"},
+
+  "addNewItemSheetTitle": "Új hozzáadása",
+  "@addNewItemSheetTitle": {"description": "A típuskiválasztó alsó lap címe tervtétel hozzáadása előtt"},
+
+  "typeIncome": "Bevétel",
+  "@typeIncome": {"description": "Tervtétel típus címkéje"},
+
+  "typeFixedCost": "Fix költség",
+  "@typeFixedCost": {"description": "Tervtétel típus címkéje"},
+
+  "ongoing": "Folyamatban",
+  "@ongoing": {"description": "Akkor jelenik meg, ha a tervtételnek nincs záródátuma"},
+
+  "manageBudgetsTitle": "Keretek kezelése",
+  "@manageBudgetsTitle": {"description": "A keretkezelő képernyő AppBar címe"},
+
+  "noBudgetsSet": "Ehhez az időszakhoz nincs beállított keret.",
+  "@noBudgetsSet": {"description": "Üres állapot üzenet a keretkezelő képernyőn"},
+
+  "addFirstBudget": "Add hozzá az első keretedet.",
+  "@addFirstBudget": {"description": "Cselekvésre ösztönzés a keretkezelő képernyő üres állapotában"},
+
+  "addBudgetTitle": "Keret hozzáadása",
+  "@addBudgetTitle": {"description": "AppBar cím új kategóriakeret hozzáadásakor"},
+
+  "editBudgetTitle": "Keret szerkesztése",
+  "@editBudgetTitle": {"description": "AppBar cím meglévő kategóriakeret szerkesztésekor"},
+
+  "budgetAmount": "Keret összege",
+  "@budgetAmount": {"description": "Keretösszeg űrlapmezőjének címkéje"},
+
+  "effectiveFrom": "Érvényes ettől",
+  "@effectiveFrom": {"description": "A keret kezdő hónapjának űrlapmező címkéje"},
+
+  "pastMonthBudgetWarning": "A múltbeli keret beállítása nem befolyásolja a korábbi költést.",
+  "@pastMonthBudgetWarning": {"description": "Beágyazott figyelmeztetés, ha a felhasználó múltbeli hónapot választ kerethez"},
+
+  "budgetSaved": "A keret mentve.",
+  "@budgetSaved": {"description": "Megerősítő snackbar kategóriakeret mentése után"},
+
+  "budgetDeleted": "A keret törölve.",
+  "@budgetDeleted": {"description": "Megerősítő snackbar kategóriakeret törlése után"},
+
+  "guardScreenTitle": "GUARD",
+  "@guardScreenTitle": {"description": "A GUARD képernyő AppBar címe"},
+
+  "guardDailyReminderTime": "Napi emlékeztető ideje",
+  "@guardDailyReminderTime": {"description": "A napi GUARD emlékeztető időbeállítás címkéje"},
+
+  "guardTimePicker": "Napi GUARD emlékeztető ideje",
+  "@guardTimePicker": {"description": "Súgószöveg a GUARD emlékeztetők időválasztó párbeszédablakában"},
+
+  "guardMarkPaid": "Fizetettnek jelölés",
+  "@guardMarkPaid": {"description": "Művelet egy GUARD tétel fizetettnek jelöléséhez"},
+
+  "guardSilence": "Némítás",
+  "@guardSilence": {"description": "Művelet GUARD emlékeztető némításához"},
+
+  "guardStatusPaid": "Fizetve",
+  "@guardStatusPaid": {"description": "GUARD fizetési állapot címkéje"},
+
+  "guardStatusScheduled": "Ütemezve",
+  "@guardStatusScheduled": {"description": "GUARD fizetési állapot címkéje"},
+
+  "guardStatusUnpaid": "Nincs fizetve",
+  "@guardStatusUnpaid": {"description": "GUARD fizetési állapot címkéje"},
+
+  "guardStatusSilenced": "Némítva",
+  "@guardStatusSilenced": {"description": "GUARD fizetési állapot címkéje"},
+
+  "noGuardedItems": "Nincsenek figyelt tételek.",
+  "@noGuardedItems": {"description": "Üres állapot üzenet a GUARD képernyőn"},
+
+  "reportsTitle": "Jelentések",
+  "@reportsTitle": {"description": "A jelentések képernyő AppBar címe"},
+
+  "reportModeMonthly": "Havi",
+  "@reportModeMonthly": {"description": "Jelentésmód lap címkéje"},
+
+  "reportModeYearly": "Éves",
+  "@reportModeYearly": {"description": "Jelentésmód lap címkéje"},
+
+  "reportModeOverview": "Áttekintés",
+  "@reportModeOverview": {"description": "Jelentésmód lap címkéje"},
+
+  "exportPdf": "PDF exportálása",
+  "@exportPdf": {"description": "Az aktuális jelentés PDF-be exportálására szolgáló gomb"},
+
+  "noExpensesForPeriod": "Ehhez az időszakhoz nincs rögzített kiadás.",
+  "@noExpensesForPeriod": {"description": "Üres állapot a jelentés képernyőn (havi/éves módok)"},
+
+  "noIncomeOrSpendingDataForYear": "Ehhez az évhez nincs bevételi vagy költési adat.",
+  "@noIncomeOrSpendingDataForYear": {"description": "Áttekintés mód üres állapota a jelentés képernyőn"},
+
+  "pieChartOther": "Egyéb",
+  "@pieChartOther": {"description": "A kis kategóriákat összevonó tortadiagram-szelet címkéje"},
+
+  "reportSectionFixedCosts": "FIX KÖLTSÉGEK",
+  "@reportSectionFixedCosts": {"description": "Szakaszcím a kategóriajelentés részletképernyőn"},
+
+  "reportSectionExpenses": "KIADÁSOK",
+  "@reportSectionExpenses": {"description": "Szakaszcím a kategóriajelentés részletképernyőn"},
+
+  "noneInPeriod": "Nincs ebben az időszakban.",
+  "@noneInPeriod": {"description": "Üres állapot a kategóriajelentés részletképernyő egyik szakaszán belül"},
+
+  "fixedCostCount": "{count, plural, =1{1 fix költség} other{{count} fix költség}}",
+  "@fixedCostCount": {
+    "description": "Fix költségek száma a kategóriajelentés fejlécében",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "expenseCount": "{count, plural, =1{1 kiadás} other{{count} kiadás}}",
+  "@expenseCount": {
+    "description": "Kiadások száma a kategóriajelentés fejlécében",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "noItemsInPeriod": "Nincs tétel ebben az időszakban",
+  "@noItemsInPeriod": {"description": "Felirat a kategóriajelentés fejlécében, ha nincs egyetlen tétel sem"},
+
+  "importTitle": "Kiadások importálása",
+  "@importTitle": {"description": "Az import képernyő AppBar címe"},
+
+  "importStep1Title": "Sablon letöltése",
+  "@importStep1Title": {"description": "Lépéskártya címe az import üres állapot képernyőjén"},
+
+  "importStep1Description": "Szerezd be a hivatalos Excel-sablont minden kötelező oszloppal és az érvényes értékek útmutatójával.",
+  "@importStep1Description": {"description": "Lépéskártya leírása az import üres állapot képernyőjén"},
+
+  "importStep1Button": "Sablon letöltése",
+  "@importStep1Button": {"description": "Lépéskártya gombjának címkéje az import üres állapot képernyőjén"},
+
+  "importStep2Title": "Kitöltés és import",
+  "@importStep2Title": {"description": "Lépéskártya címe az import üres állapot képernyőjén"},
+
+  "importStep2Description": "Töltsd ki a sablont Excelben vagy Google Táblázatokban, majd válaszd ki itt a fájlt a kiadásaid importálásához.",
+  "@importStep2Description": {"description": "Lépéskártya leírása az import üres állapot képernyőjén"},
+
+  "importStep2Button": "Fájl kiválasztása (.xlsx vagy .csv)",
+  "@importStep2Button": {"description": "Lépéskártya gombjának címkéje az import üres állapot képernyőjén"},
+
+  "importInfoText": "Csak kiadások importálhatók. Bevétel és tervtételek nem támogatottak.\n\nElfogadott formátumok: .xlsx (Excel) és .csv.\nA CSV fájloknak ugyanabban az oszlopsorrendben kell lenniük, mint a sablonnak: Date, Amount, Category, Financial Type, Note, Group.\n\nAz alkalmazásból exportált fájlok közvetlenül is importálhatók.",
+  "@importInfoText": {"description": "Tájékoztató szöveg az import üres állapot képernyőjén"},
+
+  "importReadyCount": "{count, plural, =1{1 kiadás készen áll az importra} other{{count} kiadás készen áll az importra}}",
+  "@importReadyCount": {
+    "description": "Összegző sor, amely megmutatja, hány érvényes sort sikerült beolvasni",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorCount": "{count, plural, =1{1 sort nem sikerült beolvasni} other{{count} sort nem sikerült beolvasni}}",
+  "@importErrorCount": {
+    "description": "Hibaszámláló sor, ha nincs jelen érvényes sor",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorCountSkipped": "{count, plural, =1{1 sort nem sikerült beolvasni — át lesz ugorva} other{{count} sort nem sikerült beolvasni — át lesz ugorva}}",
+  "@importErrorCountSkipped": {
+    "description": "Hibaszámláló sor, ha érvényes sorok is jelen vannak",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importNoDataFound": "Nem található adat a fájlban.",
+  "@importNoDataFound": {"description": "Akkor jelenik meg, ha a fájl sikeresen beolvasódott, de nem tartalmaz sorokat"},
+
+  "importTapToEdit": "Koppints bármelyik sorra, hogy importálás előtt szerkeszd vagy eltávolítsd.",
+  "@importTapToEdit": {"description": "Súgószöveg az import előnézeti képernyőn"},
+
+  "importRowsWithErrors": "Hibás sorok",
+  "@importRowsWithErrors": {"description": "Szakaszcím a hibás sorok fölött az import előnézetében"},
+
+  "importNoDataRows": "Nem találhatók adatsorok.",
+  "@importNoDataRows": {"description": "Üres állapot, ha az érvényes és érvénytelen sorok listája is üres"},
+
+  "importConfirmButton": "{count, plural, =1{1 kiadás importálása} other{{count} kiadás importálása}}",
+  "@importConfirmButton": {
+    "description": "Megerősítő gomb címkéje az import előnézeti képernyőn",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importSuccessMessage": "{count, plural, =1{1 kiadás importálva · {range}} other{{count} kiadás importálva · {range}}}",
+  "@importSuccessMessage": {
+    "description": "Sikeres import után megjelenő snackbar",
+    "placeholders": {
+      "count": {"type": "int"},
+      "range": {"type": "String"}
+    }
+  },
+
+  "importUnsupportedFile": "Nem támogatott fájltípus. Válassz .xlsx vagy .csv fájlt.",
+  "@importUnsupportedFile": {"description": "Snackbar, ha a kiválasztott fájl kiterjesztése nem támogatott"},
+
+  "importCouldNotReadFile": "A fájl nem olvasható. Próbáld újra.",
+  "@importCouldNotReadFile": {"description": "Snackbar, ha a fájl bájtjai nem tölthetők be"},
+
+  "importPickerError": "A fájlválasztó nem nyitható meg: {error}",
+  "@importPickerError": {
+    "description": "Snackbar, ha a fájlválasztó kivételt dob",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importTemplateError": "A sablon nem generálható: {error}",
+  "@importTemplateError": {
+    "description": "Snackbar, ha a sablon letöltése meghiúsul",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "tryAnotherFile": "Másik fájl kipróbálása",
+  "@tryAnotherFile": {"description": "Gomb az alapállapotra visszaállításhoz súlyos feldolgozási hiba után"},
+
+  "savesTitle": "Mentések",
+  "@savesTitle": {"description": "A mentések képernyő AppBar címe"},
+
+  "sectionAutoBackup": "AUTOMATIKUS BIZTONSÁGI MENTÉS",
+  "@sectionAutoBackup": {"description": "Szakaszcím a mentések képernyőn"},
+
+  "sectionSaves": "MENTÉSEK",
+  "@sectionSaves": {"description": "Szakaszcím a mentések képernyőn"},
+
+  "sectionDataTransfer": "ADATÁTADÁS",
+  "@sectionDataTransfer": {"description": "Szakaszcím a mentések képernyőn"},
+
+  "sectionDataDeletion": "ADATTÖRLÉS",
+  "@sectionDataDeletion": {"description": "Szakaszcím a mentések képernyőn"},
+
+  "exportAllData": "Összes adat exportálása",
+  "@exportAllData": {"description": "Műveleti gomb az összes adat JSON-ként történő exportálásához"},
+
+  "importAllData": "Összes adat importálása",
+  "@importAllData": {"description": "Műveleti gomb az összes adat JSON-ból történő importálásához"},
+
+  "deleteAllData": "Összes adat törlése",
+  "@deleteAllData": {"description": "Veszélyes műveleti gomb az összes adat törléséhez"},
+
+  "emptySlot": "Üres hely",
+  "@emptySlot": {"description": "Helyőrző szöveg egy nem használt mentési helyhez"},
+
+  "savedConfirmation": "'{name}' mentve.",
+  "@savedConfirmation": {
+    "description": "Snackbar mentési hely létrehozása vagy felülírása után",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "loadedConfirmation": "'{name}' betöltve.",
+  "@loadedConfirmation": {
+    "description": "Snackbar mentési hely betöltése után",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "exportFailed": "Exportálás sikertelen: {error}",
+  "@exportFailed": {
+    "description": "Snackbar, ha bármely exportálás meghiúsul",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importFailedInvalid": "Érvénytelen fájl: {error}",
+  "@importFailedInvalid": {
+    "description": "Snackbar, ha a JSON import érvénytelen tartalom miatt meghiúsul",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importDataSuccess": "Az adatok importálása sikeres.",
+  "@importDataSuccess": {"description": "Snackbar sikeres teljes adatos JSON-import után"},
+
+  "couldNotReadSelectedFile": "A kiválasztott fájl nem olvasható.",
+  "@couldNotReadSelectedFile": {"description": "Snackbar, ha a kiválasztott fájl bájtjai nem elérhetők"},
+
+  "importDataDialogTitle": "Importálod az adatokat?",
+  "@importDataDialogTitle": {"description": "A teljes adatok importálása előtti megerősítő párbeszédablak címe"},
+
+  "importDataDialogContent": "Ez a fájl tartalmával lecseréli az ÖSSZES jelenlegi kiadást és tervtételt. Ez nem vonható vissza.",
+  "@importDataDialogContent": {"description": "A teljes adatok importálása előtti megerősítő párbeszédablak szövege"},
+
+  "saveName": "Mentés neve",
+  "@saveName": {"description": "Szövegmező címkéje a mentésnév párbeszédablakban"},
+
+  "saveNameCannotBeEmpty": "A név nem lehet üres",
+  "@saveNameCannotBeEmpty": {"description": "Érvényesítési hiba a mentésnév párbeszédablakban"},
+
+  "replacingLabel": "Lecserélve: {name}",
+  "@replacingLabel": {
+    "description": "Felirat a felülírási párbeszédablakban, amely megmutatja, melyik hely lesz lecserélve",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "loadDialogDescription": "Minden jelenlegi adatot ez a mentett pillanatkép vált fel.",
+  "@loadDialogDescription": {"description": "Leíró szöveg a betöltés megerősítő párbeszédablakában"},
+
+  "deleteDialogDescription": "Ez a mentett pillanatkép végleg törlődik.",
+  "@deleteDialogDescription": {"description": "Leíró szöveg a törlés megerősítő párbeszédablakában"},
+
+  "damagedSaveFile": "Sérült mentési fájl",
+  "@damagedSaveFile": {"description": "Akkor jelenik meg, ha egy mentési fájl sérült"},
+
+  "overBudgetAmount": "{amount} túllépés",
+  "@overBudgetAmount": {
+    "description": "Keretfolyamatjelző címkéje, ha a költés meghaladja a keretet",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "underBudgetAmount": "{amount} maradt",
+  "@underBudgetAmount": {
+    "description": "Keretfolyamatjelző címkéje, ha a költés a keret alatt marad",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "spentLabel": "Elköltve: {amount}",
+  "@spentLabel": {
+    "description": "Keretfolyamatjelző részletsora",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "budgetLabel": "Keret: {amount}",
+  "@budgetLabel": {
+    "description": "Keretfolyamatjelző részletsora",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "progressBarLabel": "{spent} elköltve  /  {budget} keret",
+  "@progressBarLabel": {
+    "description": "Egysoros címke a kategóriakeret folyamatjelzőjén",
+    "placeholders": {
+      "spent": {"type": "String"},
+      "budget": {"type": "String"}
+    }
+  },
+
+  "categoryBudgetOverBy": "{category} keret: {amount} túllépés",
+  "@categoryBudgetOverBy": {
+    "description": "Figyelmeztető kártyaelem, amely megmutatja, mennyivel lépte túl egy kategória a keretet",
+    "placeholders": {
+      "category": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+
+  "deleteAllDataDialogTitle": "Törlöd az összes adatot?",
+  "@deleteAllDataDialogTitle": {"description": "A teljes adattörlés előtti megerősítő párbeszédablak címe"},
+
+  "deleteAllDataDialogContent": "Ez végleg törli az összes kiadást, bevételt és tervtételt. Ez nem vonható vissza.",
+  "@deleteAllDataDialogContent": {"description": "A teljes adattörlés előtti megerősítő párbeszédablak szövege"},
+
+  "deleteAllDataConfirm": "Összes törlése",
+  "@deleteAllDataConfirm": {"description": "Megerősítő gomb címkéje az összes törlése párbeszédablakban"},
+
+  "monthJanuary": "Január",
+  "@monthJanuary": {"description": "Teljes hónapnév"},
+  "monthFebruary": "Február",
+  "@monthFebruary": {"description": "Teljes hónapnév"},
+  "monthMarch": "Március",
+  "@monthMarch": {"description": "Teljes hónapnév"},
+  "monthApril": "Április",
+  "@monthApril": {"description": "Teljes hónapnév"},
+  "monthMay": "Május",
+  "@monthMay": {"description": "Teljes hónapnév"},
+  "monthJune": "Június",
+  "@monthJune": {"description": "Teljes hónapnév"},
+  "monthJuly": "Július",
+  "@monthJuly": {"description": "Teljes hónapnév"},
+  "monthAugust": "Augusztus",
+  "@monthAugust": {"description": "Teljes hónapnév"},
+  "monthSeptember": "Szeptember",
+  "@monthSeptember": {"description": "Teljes hónapnév"},
+  "monthOctober": "Október",
+  "@monthOctober": {"description": "Teljes hónapnév"},
+  "monthNovember": "November",
+  "@monthNovember": {"description": "Teljes hónapnév"},
+  "monthDecember": "December",
+  "@monthDecember": {"description": "Teljes hónapnév"},
+
+  "monthAbbrJan": "Jan",
+  "@monthAbbrJan": {"description": "Rövidített hónapnév"},
+  "monthAbbrFeb": "Feb",
+  "@monthAbbrFeb": {"description": "Rövidített hónapnév"},
+  "monthAbbrMar": "Már",
+  "@monthAbbrMar": {"description": "Rövidített hónapnév"},
+  "monthAbbrApr": "Ápr",
+  "@monthAbbrApr": {"description": "Rövidített hónapnév"},
+  "monthAbbrMay": "Máj",
+  "@monthAbbrMay": {"description": "Rövidített hónapnév"},
+  "monthAbbrJun": "Jún",
+  "@monthAbbrJun": {"description": "Rövidített hónapnév"},
+  "monthAbbrJul": "Júl",
+  "@monthAbbrJul": {"description": "Rövidített hónapnév"},
+  "monthAbbrAug": "Aug",
+  "@monthAbbrAug": {"description": "Rövidített hónapnév"},
+  "monthAbbrSep": "Szept",
+  "@monthAbbrSep": {"description": "Rövidített hónapnév"},
+  "monthAbbrOct": "Okt",
+  "@monthAbbrOct": {"description": "Rövidített hónapnév"},
+  "monthAbbrNov": "Nov",
+  "@monthAbbrNov": {"description": "Rövidített hónapnév"},
+  "monthAbbrDec": "Dec",
+  "@monthAbbrDec": {"description": "Rövidített hónapnév"},
+
+  "categoryHousing": "Lakhatás",
+  "@categoryHousing": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryGroceries": "Élelmiszer",
+  "@categoryGroceries": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryVacation": "Nyaralás",
+  "@categoryVacation": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryTransport": "Közlekedés",
+  "@categoryTransport": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryInsurance": "Biztosítás",
+  "@categoryInsurance": {"description": "Kiadáskategória megjelenített neve"},
+  "categorySubscriptions": "Előfizetések",
+  "@categorySubscriptions": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryCommunication": "Kommunikáció",
+  "@categoryCommunication": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryHealth": "Egészség",
+  "@categoryHealth": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryRestaurants": "Éttermek",
+  "@categoryRestaurants": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryEntertainment": "Szórakozás",
+  "@categoryEntertainment": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryClothing": "Ruházat",
+  "@categoryClothing": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryEducation": "Oktatás",
+  "@categoryEducation": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryInvestment": "Befektetés",
+  "@categoryInvestment": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryGifts": "Ajándékok",
+  "@categoryGifts": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryTaxes": "Adók",
+  "@categoryTaxes": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryMedications": "Gyógyszerek",
+  "@categoryMedications": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryOther": "Egyéb",
+  "@categoryOther": {"description": "Kiadáskategória megjelenített neve"},
+
+  "financialTypeAsset": "Eszköz",
+  "@financialTypeAsset": {"description": "Pénzügyi típus megjelenített neve"},
+  "financialTypeConsumption": "Fogyasztás",
+  "@financialTypeConsumption": {"description": "Pénzügyi típus megjelenített neve"},
+  "financialTypeInsurance": "Biztosítás",
+  "@financialTypeInsurance": {"description": "Pénzügyi típus megjelenített neve"},
+
+  "addPlanItemTitle": "Tervtétel hozzáadása",
+  "@addPlanItemTitle": {"description": "Az új tervtétel képernyő AppBar címe, ha nincs előre kiválasztott típus"},
+  "addMonthlyIncomeTitle": "Havi bevétel hozzáadása",
+  "@addMonthlyIncomeTitle": {"description": "AppBar cím havi bevételi tétel hozzáadásához"},
+  "addYearlyIncomeTitle": "Éves bevétel hozzáadása",
+  "@addYearlyIncomeTitle": {"description": "AppBar cím éves bevételi tétel hozzáadásához"},
+  "addOneTimeIncomeTitle": "Egyszeri bevétel hozzáadása",
+  "@addOneTimeIncomeTitle": {"description": "AppBar cím egyszeri bevételi tétel hozzáadásához"},
+  "addMonthlyFixedCostTitle": "Havi fix költség hozzáadása",
+  "@addMonthlyFixedCostTitle": {"description": "AppBar cím havi fix költség tétel hozzáadásához"},
+  "addYearlyFixedCostTitle": "Éves fix költség hozzáadása",
+  "@addYearlyFixedCostTitle": {"description": "AppBar cím éves fix költség tétel hozzáadásához"},
+  "editMonthlyIncomeTitle": "Havi bevétel szerkesztése",
+  "@editMonthlyIncomeTitle": {"description": "AppBar cím havi bevételi tétel szerkesztéséhez"},
+  "editYearlyIncomeTitle": "Éves bevétel szerkesztése",
+  "@editYearlyIncomeTitle": {"description": "AppBar cím éves bevételi tétel szerkesztéséhez"},
+  "editOneTimeIncomeTitle": "Egyszeri bevétel szerkesztése",
+  "@editOneTimeIncomeTitle": {"description": "AppBar cím egyszeri bevételi tétel szerkesztéséhez"},
+  "editMonthlyFixedCostTitle": "Havi fix költség szerkesztése",
+  "@editMonthlyFixedCostTitle": {"description": "AppBar cím havi fix költség tétel szerkesztéséhez"},
+  "editYearlyFixedCostTitle": "Éves fix költség szerkesztése",
+  "@editYearlyFixedCostTitle": {"description": "AppBar cím éves fix költség tétel szerkesztéséhez"},
+
+  "labelType": "Típus",
+  "@labelType": {"description": "Űrlapszakasz címkéje a tervtétel típusához (Bevétel / Fix költség)"},
+  "labelMonth": "Hónap",
+  "@labelMonth": {"description": "Legördülő címke a hónap/év választó párbeszédablakban"},
+  "labelYear": "Év",
+  "@labelYear": {"description": "Legördülő címke a hónap/év választó párbeszédablakban"},
+  "labelDayOfMonth": "Hónap napja",
+  "@labelDayOfMonth": {"description": "Legördülő címke a GUARD esedékességnap-választó párbeszédablakban"},
+  "nameHintText": "pl. Fizetés, Lakbér, Biztosítás",
+  "@nameHintText": {"description": "Súgószöveg a név mezőben a tervtétel hozzáadás képernyőn"},
+  "validationEnterName": "Adj meg egy nevet",
+  "@validationEnterName": {"description": "Érvényesítési hiba, ha a név mező üres"},
+
+  "selectMonthTitle": "Hónap kiválasztása",
+  "@selectMonthTitle": {"description": "A hónap/év választó párbeszédablak címe"},
+  "lastRenewalYearTitle": "Utolsó megújítás éve",
+  "@lastRenewalYearTitle": {"description": "Az éves záróév-választó párbeszédablak címe"},
+  "lastMonthRenewal": "Utolsó {monthName} megújítás",
+  "@lastMonthRenewal": {
+    "description": "Legördülő címke az éves záróév-választóban, amely a horgonyhónapot mutatja",
+    "placeholders": {"monthName": {"type": "String"}}
+  },
+  "lastActiveMonthInfo": "Utolsó aktív hónap: {label}",
+  "@lastActiveMonthInfo": {
+    "description": "Tájékoztató szöveg az éves záróév-választó párbeszédablakban",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "setEndDate": "Záródátum beállítása",
+  "@setEndDate": {"description": "Kapcsolócímke egy opcionális záródátum engedélyezéséhez tervtételnél"},
+  "untilLabel": "Eddig: {validToLabel}",
+  "@untilLabel": {
+    "description": "Gombcímke az aktuális záródátum megjelenítéséhez",
+    "placeholders": {"validToLabel": {"type": "String"}}
+  },
+  "lastActiveMonthNote": "{label} az utolsó aktív hónap.",
+  "@lastActiveMonthNote": {
+    "description": "Súgószöveg az Eddig gomb alatt éves tételeknél",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "endMonthAfterStart": "A záró hónapnak a kezdő hónap után kell lennie.",
+  "@endMonthAfterStart": {"description": "Beágyazott hiba, ha a záró hónap nincs a kezdő hónap után"},
+  "fromFieldLabel": "Ettől",
+  "@fromFieldLabel": {"description": "A zárolt Ettől mező címkéje éves fix költség szerkesztésekor"},
+  "renewedEachMonth": "Minden {monthName}-ban megújul. A dátumok rögzítettek.",
+  "@renewedEachMonth": {
+    "description": "Súgószöveg a zárolt Ettől mező alatt éves fix költségeknél",
+    "placeholders": {"monthName": {"type": "String"}}
+  },
+  "untilFieldLabel": "Eddig",
+  "@untilFieldLabel": {"description": "A zárolt Eddig mező címkéje éves fix költség szerkesztésekor"},
+  "lastActiveMonthParens": "{label} (utolsó aktív hónap)",
+  "@lastActiveMonthParens": {
+    "description": "Az éves tételek zárolt Eddig mezőjében megjelenő érték",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "openEnded": "Nyitott végű",
+  "@openEnded": {"description": "A zárolt Eddig mezőben jelenik meg, ha nincs beállított záródátum"},
+  "fromDateLabel": "Ettől: {validFromLabel}",
+  "@fromDateLabel": {
+    "description": "Gombcímke az aktuális kezdődátum megjelenítéséhez",
+    "placeholders": {"validFromLabel": {"type": "String"}}
+  },
+  "samePeriodInPlace": "Ugyanaz a hónap, mint az eredeti — helyben frissül.",
+  "@samePeriodInPlace": {"description": "Súgó, ha az új kezdőhónap megegyezik a meglévő tétel kezdőhónapjával"},
+  "differentPeriodNewVersion": "Másik hónap — új verzió jön létre.",
+  "@differentPeriodNewVersion": {"description": "Súgó, ha az új kezdőhónap eltér a meglévő tétel kezdőhónapjától"},
+
+  "applyChangesToTitle": "Mire alkalmazod a módosításokat...",
+  "@applyChangesToTitle": {"description": "Párbeszédablak címe az éves fix költség mentési választásához"},
+  "applyToWholeSeries": "Teljes sorozatra",
+  "@applyToWholeSeries": {"description": "Opció címe az éves mentési párbeszédablakban — a módosítások alkalmazása minden időszakra"},
+  "applyToWholeSeriesSubtitle": "Minden időszak {seriesStartLabel} időponttól kezdve",
+  "@applyToWholeSeriesSubtitle": {
+    "description": "A teljes sorozat opció felirata az éves mentési párbeszédablakban",
+    "placeholders": {"seriesStartLabel": {"type": "String"}}
+  },
+  "applyFromOnwards": "{nextLabel} időponttól kezdve",
+  "@applyFromOnwards": {
+    "description": "Opció címe az éves mentési párbeszédablakban — felosztás egy jövőbeli időszaktól",
+    "placeholders": {"nextLabel": {"type": "String"}}
+  },
+  "applyFromSubtitle": "Az eredeti sorozat {capLabel} időpontban ér véget.\nAz új sorozat {nextLabel} időpontban indul.",
+  "@applyFromSubtitle": {
+    "description": "A felosztás opció felirata az éves mentési párbeszédablakban",
+    "placeholders": {
+      "capLabel": {"type": "String"},
+      "nextLabel": {"type": "String"}
+    }
+  },
+  "applyFromUnavailable": "Ebben a sorozatban nincs elérhető jövőbeli időszak.",
+  "@applyFromUnavailable": {"description": "A felosztás opció felirata, ha nincs jövőbeli időszak"},
+  "yearlyItemsOnlyAtRenewal": "Az éves tételek csak a megújulási hónapjukban módosíthatók.",
+  "@yearlyItemsOnlyAtRenewal": {"description": "Snackbar, ha egy éves tétel szerkesztését érvénytelen határ miatt elutasítják"},
+
+  "guardRemindMe": "Emlékeztess, hogy megerősítsem ezt a fizetést",
+  "@guardRemindMe": {"description": "Felirat a GUARD kapcsoló alatt a tervtétel hozzáadás képernyőn"},
+  "guardShorterMonths": "A rövidebb hónapok az utolsó napjukat fogják használni.",
+  "@guardShorterMonths": {"description": "Súgó, ha a GUARD esedékesség napja > 28"},
+  "dueDayMonthly": "Esedékesség napja (havonta ismétlődik)",
+  "@dueDayMonthly": {"description": "Párbeszédablak címe a havi tételek GUARD esedékességnap-választójához"},
+  "dueDayYearly": "Esedékesség napja (minden {monthName} hónapban ismétlődik)",
+  "@dueDayYearly": {
+    "description": "Párbeszédablak címe az éves tételek GUARD esedékességnap-választójához",
+    "placeholders": {"monthName": {"type": "String"}}
+  },
+  "dueDayMonthlyLabel": "Minden hónap {day}. napja",
+  "@dueDayMonthlyLabel": {
+    "description": "Gombcímke a kiválasztott esedékességnap megjelenítéséhez havi tételnél",
+    "placeholders": {"day": {"type": "int"}}
+  },
+  "dueDayYearlyLabel": "{monthName} {day}. napja minden évben",
+  "@dueDayYearlyLabel": {
+    "description": "Gombcímke a kiválasztott esedékességnap megjelenítéséhez éves tételnél",
+    "placeholders": {
+      "day": {"type": "int"},
+      "monthName": {"type": "String"}
+    }
+  },
+
+  "guardDailyReminder": "Napi emlékeztető",
+  "@guardDailyReminder": {"description": "Csempe címe az értesítési idő beállításához a GUARD képernyőn"},
+  "guardChangeNotifTime": "Koppints az értesítés idejének módosításához",
+  "@guardChangeNotifTime": {"description": "Csempe felirata az értesítési idő beállításához a GUARD képernyőn"},
+  "guardNoGuardedItemsHint": "Kapcsold be a GUARD-ot egy fix költségnél a fizetések követéséhez.",
+  "@guardNoGuardedItemsHint": {"description": "Másodlagos üresállapot-szöveg a GUARD képernyőn"},
+  "guardedItemsCount": "Figyelt tételek · {count}",
+  "@guardedItemsCount": {
+    "description": "Szakaszfejléc, amely megmutatja a figyelt tételek számát a GUARD képernyőn",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "planItemTitle": "Tervtétel",
+  "@planItemTitle": {"description": "A tervtétel részletképernyő AppBar címe"},
+  "activeFrom": "Aktív ettől",
+  "@activeFrom": {"description": "Részletsor címkéje a tervtétel kezdő időszakához"},
+  "activeUntil": "Aktív eddig",
+  "@activeUntil": {"description": "Részletsor címkéje a tervtétel záró időszakához"},
+  "perMonth": "/ hó",
+  "@perMonth": {"description": "Összeg utótag havi tervtételeknél"},
+  "perYear": "/ év",
+  "@perYear": {"description": "Összeg utótag éves tervtételeknél"},
+  "oneTimeSuffix": "(egyszeri)",
+  "@oneTimeSuffix": {"description": "Összeg utótag egyszeri tervtételeknél"},
+  "noEndDate": "Nincs záródátum",
+  "@noEndDate": {"description": "Az aktív-eddig mezőnél jelenik meg, ha egy fix költségnek nincs záródátuma"},
+  "guardNotEnabled": "Nincs bekapcsolva",
+  "@guardNotEnabled": {"description": "A GUARD szakasz felirata, ha a GUARD még nincs beállítva a tételnél"},
+
+  "removeIncomeEntirely": "\"{name}\" teljesen el lesz távolítva.",
+  "@removeIncomeEntirely": {
+    "description": "Megerősítő párbeszédablak leírása, amikor olyan bevételi tételt távolítanak el, amely a kiválasztott időszaknál kezdődik",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "removeIncomeFromOnwards": "\"{name}\" {from} időponttól megszűnik. {prev} és a korábbi időszakok tervezve maradnak.",
+  "@removeIncomeFromOnwards": {
+    "description": "Megerősítő párbeszédablak leírása, amikor egy bevételi tételt a sorozat közepétől távolítanak el",
+    "placeholders": {
+      "name": {"type": "String"},
+      "from": {"type": "String"},
+      "prev": {"type": "String"}
+    }
+  },
+  "actionRemoveAllCaps": "ELTÁVOLÍT",
+  "@actionRemoveAllCaps": {"description": "Nagybetűs műveletcímke, amely hangsúlyosan jelenik meg a fix költség törlési párbeszédablakban"},
+  "removeFromOnwardsTitle": "{label} időponttól kezdve",
+  "@removeFromOnwardsTitle": {
+    "description": "Opció címe a fix költség törlési párbeszédablakban — eltávolítás a kiválasztott időszaktól",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "removeCycleSubtitle": "Ez a ciklus ({start} – {end}) és minden jövőbeli ciklus eltávolításra kerül.",
+  "@removeCycleSubtitle": {
+    "description": "A kiválasztott időszaktól opció felirata éves fix költség törlésekor",
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "removeHistoryKept": "A történet megmarad {prev} időpontig.",
+  "@removeHistoryKept": {
+    "description": "A kiválasztott időszaktól opció felirata havi fix költség törlésekor",
+    "placeholders": {"prev": {"type": "String"}}
+  },
+  "silenceReminderTitle": "Némítod ezt az emlékeztetőt?",
+  "@silenceReminderTitle": {"description": "Párbeszédablak címe, amikor a felhasználó elnémít egy GUARD emlékeztetőt a Terv képernyőről"},
+  "silenceReminderBody": "A(z) {periodLabel} fizetés továbbra is megerősítetlenként fog megjelenni. Bármikor fizetettnek jelölheted.",
+  "@silenceReminderBody": {
+    "description": "Párbeszédablak szövege, amikor a felhasználó elnémít egy GUARD emlékeztetőt",
+    "placeholders": {"periodLabel": {"type": "String"}}
+  },
+  "yesSilence": "Igen, némítás",
+  "@yesSilence": {"description": "Megerősítő gomb címkéje a némítási párbeszédablakban"},
+  "addPlanItemTooltip": "Tervtétel hozzáadása",
+  "@addPlanItemTooltip": {"description": "FAB eszköztipp a Terv képernyőn"},
+  "spendableThisMonth": "E hónapban elkölthető",
+  "@spendableThisMonth": {"description": "Az elkölthető összeg kártyájának címkéje havi tervnézetben"},
+  "spendableThisYear": "Idén elkölthető",
+  "@spendableThisYear": {"description": "Az elkölthető összeg kártyájának címkéje éves tervnézetben"},
+  "noPlanItemsYet": "Még nincsenek tervtételek.",
+  "@noPlanItemsYet": {"description": "Üres állapot elsődleges szövege a Terv képernyőn"},
+  "tapPlusToAddPlanItems": "Koppints a + gombra bevétel vagy fix költség hozzáadásához.",
+  "@tapPlusToAddPlanItems": {"description": "Üres állapot másodlagos szövege a Terv képernyőn"},
+  "removeWholeSeries": "Teljes sorozat",
+  "@removeWholeSeries": {"description": "Opció címe a fix költség törlési párbeszédablakban — a teljes sorozat eltávolítása"},
+  "removeWholeSeriesSubtitle": "{seriesStartLabel} időponttól minden időszak eltávolításra kerül.",
+  "@removeWholeSeriesSubtitle": {
+    "description": "A teljes sorozat opció felirata a fix költség törlési párbeszédablakban",
+    "placeholders": {"seriesStartLabel": {"type": "String"}}
+  },
+
+  "clearAllDataAction": "TÖRLÉS",
+  "@clearAllDataAction": {"description": "Nagybetűs műveletcímke, amely hangsúlyosan jelenik meg az összes adat törlésének megerősítő párbeszédablakában"},
+  "clearAllDataDescription": "A kiadások, tervtételek, keretek és guard fizetések végleg törlődnek. Ez nem vonható vissza.",
+  "@clearAllDataDescription": {"description": "Szövegtörzs az összes adat törlésének megerősítő párbeszédablakában"},
+  "clearAllDataPreservedNote": "A mentett pillanatképek és automatikus biztonsági mentések nem érintettek.",
+  "@clearAllDataPreservedNote": {"description": "Megjegyzés az összes adat törlésének megerősítő párbeszédablakában arról, mi marad meg"},
+
+  "allCategoriesBudgeted": "Minden kategóriához már van keret ebben a hónapban. Válassz másik hónapot egy új hozzáadásához.",
+  "@allCategoriesBudgeted": {"description": "A kategória legördülő helyett jelenik meg, ha minden kategóriához már van keret"},
+  "selectCategoryHint": "Válassz kategóriát",
+  "@selectCategoryHint": {"description": "Legördülő súgószöveg, ha nincs kiválasztva kategória"},
+  "validationSelectCategory": "Válassz kategóriát",
+  "@validationSelectCategory": {"description": "Érvényesítési hiba, ha nincs kiválasztva kategória a keret űrlapon"},
+  "monthlyBudgetLabel": "Havi keret",
+  "@monthlyBudgetLabel": {"description": "Szövegmező címkéje a havi keret összegéhez"},
+  "effectiveFromLabel": "Érvényes ettől: {validFromLabel}",
+  "@effectiveFromLabel": {
+    "description": "Gombcímke az aktuális érvényesség kezdetének hónapjához",
+    "placeholders": {"validFromLabel": {"type": "String"}}
+  },
+  "pastMonthBudgetCreateWarning": "Korábbi hónapra hozol létre keretet. Ez visszamenőleg {fromLabel} időponttól fog érvényesülni.",
+  "@pastMonthBudgetCreateWarning": {
+    "description": "Figyelmeztetés, amikor a felhasználó korábbi hónapra hoz létre keretet",
+    "placeholders": {"fromLabel": {"type": "String"}}
+  },
+  "pastMonthBudgetEditWarning": "Ez visszaállítja a(z) {catName} keretet {fromLabel} időpontig. A(z) {fromLabel}–{prevLabel} hónapok az új összeget fogják használni.",
+  "@pastMonthBudgetEditWarning": {
+    "description": "Figyelmeztetés, amikor a felhasználó korábbi hónapban kezdődő keretet szerkeszt",
+    "placeholders": {
+      "catName": {"type": "String"},
+      "fromLabel": {"type": "String"},
+      "prevLabel": {"type": "String"}
+    }
+  },
+
+  "noFixedCostsPlanned": "Nincs tervezett fix költség",
+  "@noFixedCostsPlanned": {"description": "Felirat a fix költségek összegző csempéjén, ha nincs egyetlen tétel sem"},
+  "noIncomePlanned": "Nincs tervezett bevétel",
+  "@noIncomePlanned": {"description": "Felirat a bevétel összegző csempéjén, ha nincs egyetlen tétel sem"},
+
+  "saveSlotSubtitle": "{date} · {expenseCount} kiadás · {planItemCount} tervtétel",
+  "@saveSlotSubtitle": {
+    "description": "Felirat egy mentési hely csempén, amely a dátumot és a számokat mutatja",
+    "placeholders": {
+      "date": {"type": "String"},
+      "expenseCount": {"type": "int"},
+      "planItemCount": {"type": "int"}
+    }
+  },
+  "saveSlotDamagedSubtitle": "A fájl sérült és nem tölthető be",
+  "@saveSlotDamagedSubtitle": {"description": "Felirat sérült mentési hely csempén"},
+
+  "howGroupsWorkTitle": "Hogyan működik?",
+  "@howGroupsWorkTitle": {"description": "A csoportok működését bemutató alsó lap felső fejlécének címe"},
+  "howGroupsTitle": "Csoportok",
+  "@howGroupsTitle": {"description": "A csoportok működését bemutató alsó lap lépésfejlécének címe"},
+  "howGroupsSubtitle0": "Mi a csoport és hogyan működik",
+  "@howGroupsSubtitle0": {"description": "Oldalankénti felirat a csoportok működését bemutató lap első oldalához"},
+  "howGroupsSubtitle1": "Hogyan használd ki jól",
+  "@howGroupsSubtitle1": {"description": "Oldalankénti felirat a csoportok működését bemutató lap második oldalához"},
+  "howGroupsSubtitle2": "Hol jelennek meg a csoportok az appban",
+  "@howGroupsSubtitle2": {"description": "Oldalankénti felirat a csoportok működését bemutató lap harmadik oldalához"},
+  "howGroupsLabel0": "Címke",
+  "@howGroupsLabel0": {"description": "Al-lépés jelző címke a csoportok működését bemutató lap 1. oldalához"},
+  "howGroupsLabel1": "Légy kreatív",
+  "@howGroupsLabel1": {"description": "Al-lépés jelző címke a csoportok működését bemutató lap 2. oldalához"},
+  "howGroupsLabel2": "Nyilvántartás",
+  "@howGroupsLabel2": {"description": "Al-lépés jelző címke a csoportok működését bemutató lap 3. oldalához"},
+  "howGroupsRule1": "A csoport egy opcionális szabad szöveges címke, amelyet bármely kiadáshoz hozzárendelhetsz.",
+  "@howGroupsRule1": {"description": "Felsoroláspont a Címke oldalon a csoportok működését bemutató lapon"},
+  "howGroupsRule2": "Bármilyen szöveget beírhatsz — nincs fix lista és nincs ellenőrzés.",
+  "@howGroupsRule2": {"description": "Felsoroláspont a Címke oldalon"},
+  "howGroupsRule3": "Két kiadás csak akkor tartozik ugyanabba a csoportba, ha a címkéik pontosan megegyeznek, karakterről karakterre.",
+  "@howGroupsRule3": {"description": "Felsoroláspont a Címke oldalon"},
+  "howGroupsRule4": "A kis- és nagybetűk megőrződnek — a „Trip” és a „trip” két külön csoportnak számít.",
+  "@howGroupsRule4": {"description": "Felsoroláspont a Címke oldalon"},
+  "howGroupsRule5": "A mező opcionális. Hagyd üresen, és a kiadásnak egyszerűen nem lesz csoportja.",
+  "@howGroupsRule5": {"description": "Felsoroláspont a Címke oldalon"},
+  "howGroupsHint": "A csoportot bármely kiadás létrehozásakor vagy szerkesztésekor állítsd be.",
+  "@howGroupsHint": {"description": "Súgódoboz a Címke oldal alján"},
+  "howGroupsUseIntro": "Használd akkor, amikor a költés egy olyan szeletét akarod követni, amely több kategórián is átnyúlik.",
+  "@howGroupsUseIntro": {"description": "Bevezető szöveg a Légy kreatív oldalon"},
+  "howGroupsExample1Label": "Barcelona {year}",
+  "@howGroupsExample1Label": {
+    "description": "Példa csoportcímke a Légy kreatív oldalon (utazás példa)",
+    "placeholders": {"year": {"type": "int"}}
+  },
+  "howGroupsExample1Desc": "Rendeld hozzá az utazás minden kiadásához — repülőjegyekhez, szállodákhoz, étkezésekhez, belépőkhöz. Egy koppintással lásd az egész út teljes költségét.",
+  "@howGroupsExample1Desc": {"description": "Az 1. példa leírása a Légy kreatív oldalon"},
+  "howGroupsExample2Label": "McDonald''s {year}",
+  "@howGroupsExample2Label": {
+    "description": "Példa csoportcímke a Légy kreatív oldalon (étterem példa)",
+    "placeholders": {"year": {"type": "int"}}
+  },
+  "howGroupsExample2Desc": "Használj következetes nevet egész évben. Év végén pontosan tudni fogod, mennyit költöttél arra az egy helyre.",
+  "@howGroupsExample2Desc": {"description": "A 2. példa leírása a Légy kreatív oldalon"},
+  "howGroupsExample3Label": "Otthonfelújítás Q1",
+  "@howGroupsExample3Label": {"description": "Példa csoportcímke a Légy kreatív oldalon (felújítás példa)"},
+  "howGroupsExample3Desc": "Terjeszd ki ugyanazt a címkét több hónapra. A Csoportok lap mindent e név alatt gyűjt össze.",
+  "@howGroupsExample3Desc": {"description": "A 3. példa leírása a Légy kreatív oldalon"},
+  "howGroupsPrecision": "Minél pontosabb a címkéd, annál hasznosabb lesz az összegzés.",
+  "@howGroupsPrecision": {"description": "Dőlt megjegyzés a Légy kreatív oldal alján"},
+  "howGroupsRecord0Title": "Csoportok lap a Kiadásokban",
+  "@howGroupsRecord0Title": {"description": "Az első rekord sor címe a Nyilvántartás oldalon"},
+  "howGroupsRecord0Body": "Minden csoport, amelyhez legalább egy kiadás tartozik az aktuális hónapban, itt egyetlen sorban jelenik meg a tételszámmal és az összeggel. Koppints egy csoportra a részletekért, és nézd meg a mögötte lévő egyes kiadásokat.",
+  "@howGroupsRecord0Body": {"description": "Az első rekord sor szövege a Nyilvántartás oldalon"},
+  "howGroupsRecord1Title": "Havi jelentés a Jelentésekben",
+  "@howGroupsRecord1Title": {"description": "A második rekord sor címe a Nyilvántartás oldalon"},
+  "howGroupsRecord1Body": "Amikor havi PDF-et exportálsz a Jelentések képernyőről, az adott hónapban kiadással rendelkező csoportok külön „Kiadási csoportok” oldalt kapnak — minden csoport felsorolva a kiadásaival, összegeivel és a csoport összesen értékével.",
+  "@howGroupsRecord1Body": {"description": "A második rekord sor szövege a Nyilvántartás oldalon"},
+  "howGroupsMonthlyNote": "A csoportok nem szerepelnek az éves jelentésben — ezek havi nézőpontot adnak.",
+  "@howGroupsMonthlyNote": {"description": "Megjegyzés a Nyilvántartás oldal alján"},
+
+  "howGroupsExampleGroupName": "Saját csoportom",
+  "@howGroupsExampleGroupName": {"description": "Példa csoportnév a demókártyán a Címke oldalon, a csoportok működését bemutató lapon"},
+
+  "otherCategories": "Egyéb kategóriák",
+  "@otherCategories": {"description": "A tortadiagramok és bontáslisták összevont „egyéb” szegmensének címkéje"},
+
+  "noCategoryExpenses": "Nincs {category} kiadás\nitt: {period}.",
+  "@noCategoryExpenses": {
+    "description": "Üres állapot a CategoryExpenseListScreen képernyőn",
+    "placeholders": {
+      "category": {"type": "String"},
+      "period": {"type": "String"}
+    }
+  },
+
+  "guardDueDate": "Esedékes: {monthName} {day}, {year}",
+  "@guardDueDate": {
+    "description": "Esedékességi dátum címkéje a GUARD állapotkártyán",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "day": {"type": "int"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "guardNotYetDue": "Még nem esedékes",
+  "@guardNotYetDue": {"description": "Címke a GUARD kártyán, ha a fizetés még nem esedékes"},
+
+  "guardNextReminder": "Következő: {label}",
+  "@guardNextReminder": {
+    "description": "Következő emlékeztető címkéje a GUARD kártyán",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardLastReminder": "Utolsó: {label}",
+  "@guardLastReminder": {
+    "description": "Utolsó emlékeztető címkéje a GUARD kártyán",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardChangeDay": "Nap módosítása",
+  "@guardChangeDay": {"description": "Műveleti gomb a GUARD kártyán az esedékesség napjának módosításához"},
+
+  "guardRemoveAction": "GUARD eltávolítása",
+  "@guardRemoveAction": {"description": "Műveleti gomb a GUARD kártyán a guard követés eltávolításához"},
+
+  "guardMarkUnpaidTitle": "Fizetetlennek jelölöd?",
+  "@guardMarkUnpaidTitle": {"description": "Párbeszédablak címe fizetési megerősítés visszavonásakor"},
+
+  "guardMarkUnpaidBody": "Ez eltávolítja a fizetési megerősítést ehhez: {monthName} {year}.",
+  "@guardMarkUnpaidBody": {
+    "description": "Párbeszédablak szövege fizetési megerősítés visszavonásakor",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "guardMarkUnpaidAction": "Jelölés fizetetlennek",
+  "@guardMarkUnpaidAction": {"description": "Megerősítő gomb címkéje a fizetetlennek jelölés párbeszédablakban"},
+
+  "guardMarkAsPaid": "Jelölés fizetettnek",
+  "@guardMarkAsPaid": {"description": "Elsődleges műveleti gomb a GUARD kártyán"},
+
+  "guardRemoveTitle": "Eltávolítod a GUARD-ot?",
+  "@guardRemoveTitle": {"description": "Párbeszédablak címe, amikor a GUARD-ot eltávolítják egy tervtételből"},
+
+  "guardRemoveBody": "A GUARD ki lesz kapcsolva ennél: \"{name}\". A meglévő fizetési rekordok megmaradnak, de új emlékeztetők nem fognak elindulni.",
+  "@guardRemoveBody": {
+    "description": "Párbeszédablak szövege a GUARD eltávolításakor",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "guardRemoveConfirm": "Eltávolítás",
+  "@guardRemoveConfirm": {"description": "Megerősítő gomb címkéje a GUARD eltávolítása párbeszédablakban"},
+
+  "guardSelectPaidDate": "Fizetési dátum kiválasztása",
+  "@guardSelectPaidDate": {"description": "Súgószöveg a dátumválasztóhoz fizetési dátum szerkesztésekor"},
+
+  "guardPaidOn": "Fizetve ekkor: {date}",
+  "@guardPaidOn": {
+    "description": "Címke a GUARD kártyán, amely a megerősített fizetési dátumot mutatja",
+    "placeholders": {"date": {"type": "String"}}
+  },
+
+  "howItWorksStep": "{n}. LÉPÉS",
+  "@howItWorksStep": {
+    "description": "Lépésszám címkéje minden fül fölött a működést bemutató lapon",
+    "placeholders": {"n": {"type": "int"}}
+  },
+
+  "planSubtitle0": "A fizetésed és a kötelező havi számláid",
+  "@planSubtitle0": {"description": "Felirat a Terv 0. aloldalához (Cashflow)"},
+
+  "planSubtitle1": "Hogyan vannak besorolva a fix költségeid",
+  "@planSubtitle1": {"description": "Felirat a Terv 1. aloldalához (Besorolás)"},
+
+  "planSubtitle2": "A bevételed mekkora részét viszi el az egyes típusok",
+  "@planSubtitle2": {"description": "Felirat a Terv 2. aloldalához (Elosztás)"},
+
+  "planSubStep0": "Cashflow",
+  "@planSubStep0": {"description": "Al-lépés címke a Terv 0. oldalához"},
+
+  "planSubStep1": "Besorolás",
+  "@planSubStep1": {"description": "Al-lépés címke a Terv 1. oldalához"},
+
+  "planSubStep2": "Elosztás",
+  "@planSubStep2": {"description": "Al-lépés címke a Terv 2. oldalához"},
+
+  "howItWorksPlanIncomeBody": "Add meg a fizetésedet és a kötelező havi számláidat — lakbér, biztosítás, előfizetések. Ezek valós, ismert számok, nem becslések vagy célok.",
+  "@howItWorksPlanIncomeBody": {"description": "Szövegtörzs a Terv > Cashflow oldalon"},
+
+  "howItWorksTypeConsumptionDesc": "Napi szintű költés — élelmiszer, lakbér, étkezés, közlekedés",
+  "@howItWorksTypeConsumptionDesc": {"description": "A Fogyasztás pénzügyi típus leírása a Besorolás oldalon"},
+
+  "howItWorksTypeAssetDesc": "Befektetések és megtakarítások, amelyek idővel növelik a vagyonodat",
+  "@howItWorksTypeAssetDesc": {"description": "Az Eszköz pénzügyi típus leírása a Besorolás oldalon"},
+
+  "howItWorksTypeInsuranceDesc": "Védelmi költségek — autó-, egészség- és életbiztosítás",
+  "@howItWorksTypeInsuranceDesc": {"description": "A Biztosítás pénzügyi típus leírása a Besorolás oldalon"},
+
+  "howItWorksFinancialTypesBody": "Minden fix költség egy pénzügyi típussal van megjelölve. Ez lehetővé teszi az app számára, hogy megmutassa, hogyan oszlik meg a bevételed a költés, a megtakarítás és a védelem között.",
+  "@howItWorksFinancialTypesBody": {"description": "Szövegtörzs a Terv > Besorolás oldalon"},
+
+  "howItWorksSpendingVsIncomeTitle": "Költés vs Bevétel",
+  "@howItWorksSpendingVsIncomeTitle": {"description": "Kártyacím a Terv > Elosztás oldalon"},
+
+  "howItWorksSpendingVsIncomeBody": "A Terv lap megmutatja, hogy a bevételedből mennyi jut az egyes pénzügyi típusokra — így egy pillantással láthatod, hogy megfelelő arányban költesz, takarítasz meg vagy védesz abból, amit keresel.",
+  "@howItWorksSpendingVsIncomeBody": {"description": "Szövegtörzs a Terv > Elosztás oldalon"},
+
+  "expSubtitle0": "Az elérhető kereted, a Tervből számolva",
+  "@expSubtitle0": {"description": "Felirat a Kiadások 0. aloldalához (Keret)"},
+
+  "expSubtitle1": "A rögzített napi költéseid",
+  "@expSubtitle1": {"description": "Felirat a Kiadások 1. aloldalához (Költés)"},
+
+  "expSubtitle2": "Benne maradtál a keretben?",
+  "@expSubtitle2": {"description": "Felirat a Kiadások 2. aloldalához (Eredmény)"},
+
+  "subStepBudget": "Keret",
+  "@subStepBudget": {"description": "Al-lépés címke a Kiadások Keret oldalához"},
+
+  "subStepSpending": "Költés",
+  "@subStepSpending": {"description": "Al-lépés címke a Kiadások Költés oldalához"},
+
+  "subStepResult": "Eredmény",
+  "@subStepResult": {"description": "Al-lépés címke a Kiadások Eredmény oldalához"},
+
+  "howItWorksBudgetBody": "Az app levonja a fix költségeidet a bevételedből, és itt mutatja az eredményt. Ezt a számot nem te állítod be — a Tervből származik.",
+  "@howItWorksBudgetBody": {"description": "Szövegtörzs a Kiadások > Keret oldalon"},
+
+  "howItWorksSpendingBody": "Rögzítsd az élelmiszert, étkezéseket, vásárlást és más változó költéseket. Az olyan fix havi számlák, mint a lakbér, a Tervhez tartoznak, nem ide.",
+  "@howItWorksSpendingBody": {"description": "Szövegtörzs a Kiadások > Költés oldalon"},
+
+  "howItWorksResultBody": "A hónap végén a Kiadások lap megmutatja, milyen eredményt értél el.",
+  "@howItWorksResultBody": {"description": "Szövegtörzs a Kiadások > Eredmény oldalon"},
+
+  "repSubtitle0": "Hová ment a pénzed?",
+  "@repSubtitle0": {"description": "Felirat a Jelentések 0. aloldalához (Bontás)"},
+
+  "repSubtitle1": "A pénzügyeid papíron",
+  "@repSubtitle1": {"description": "Felirat a Jelentések 1. aloldalához (Export)"},
+
+  "repSubtitle2": "A teljes kép, hónapról hónapra",
+  "@repSubtitle2": {"description": "Felirat a Jelentések 2. aloldalához (Áttekintés)"},
+
+  "repSubStep0": "Bontás",
+  "@repSubStep0": {"description": "Al-lépés címke a Jelentések Bontás oldalához"},
+
+  "repSubStep1": "Export",
+  "@repSubStep1": {"description": "Al-lépés címke a Jelentések Export oldalához"},
+
+  "repSubStep2": "Áttekintés",
+  "@repSubStep2": {"description": "Al-lépés címke a Jelentések Áttekintés oldalához"},
+
+  "howItWorksBreakdownBody": "A Bontás megmutatja a költésed kategóriák szerint bármely hónapra vagy évre. Koppints egy szeletre vagy kategóriasorra, hogy a mögötte lévő egyedi kiadásokat és fix költségeket lásd.",
+  "@howItWorksBreakdownBody": {"description": "Szövegtörzs a Jelentések > Bontás oldalon"},
+
+  "pdfFeatureCategoryTotals": "Kategóriaösszesítők",
+  "@pdfFeatureCategoryTotals": {"description": "Funkciópont a havi PDF kártyán"},
+
+  "pdfFeatureBudgetVsActual": "Keret vs tény",
+  "@pdfFeatureBudgetVsActual": {"description": "Funkciópont a havi PDF kártyán"},
+
+  "pdfFeatureTypeSplit": "Pénzügyi típus bontás",
+  "@pdfFeatureTypeSplit": {"description": "Funkciópont a havi PDF kártyán"},
+
+  "pdfFeatureAllExpenses": "Összes kiadás listázva",
+  "@pdfFeatureAllExpenses": {"description": "Funkciópont a havi PDF kártyán"},
+
+  "pdfFeatureCategoryBudgets": "Kategóriakeretek",
+  "@pdfFeatureCategoryBudgets": {"description": "Funkciópont a havi PDF kártyán"},
+
+  "pdfFeatureGroupSummaries": "Csoportösszegzések",
+  "@pdfFeatureGroupSummaries": {"description": "Funkciópont a havi PDF kártyán"},
+
+  "pdfFeature12MonthOverview": "12 hónapos áttekintés",
+  "@pdfFeature12MonthOverview": {"description": "Funkciópont az éves PDF kártyán"},
+
+  "pdfFeatureAnnualTotals": "Éves összesítők",
+  "@pdfFeatureAnnualTotals": {"description": "Funkciópont az éves PDF kártyán"},
+
+  "pdfFeatureMonthlyBreakdown": "Havi bontás",
+  "@pdfFeatureMonthlyBreakdown": {"description": "Funkciópont az éves PDF kártyán"},
+
+  "pdfFeaturePlanVsActual": "Terv vs tény",
+  "@pdfFeaturePlanVsActual": {"description": "Funkciópont az éves PDF kártyán"},
+
+  "pdfFeatureTypeRatios": "Típusarányok",
+  "@pdfFeatureTypeRatios": {"description": "Funkciópont az éves PDF kártyán"},
+
+  "pdfFeatureActivePlanItems": "Aktív tervtételek",
+  "@pdfFeatureActivePlanItems": {"description": "Funkciópont az éves PDF kártyán"},
+
+  "howItWorksExportBody": "Az exportáláshoz használd a PDF gombot a Bontásban. A jelentések bármely eszközödön lévő appon keresztül megoszthatók.",
+  "@howItWorksExportBody": {"description": "Szövegtörzs a Jelentések > Export oldalon"},
+
+  "howItWorksMoreMonths": "\u00B7 \u00B7 \u00B7 még 9 hónap",
+  "@howItWorksMoreMonths": {"description": "Kihagyás sor az Áttekintés mintakártyán"},
+
+  "howItWorksOverviewBody": "Az Áttekintés mind a 12 hónapot egymás mellett mutatja — mennyit kerestél, mennyi ment eszközökbe, és mennyi fogyott el. Koppints bármelyik hónapra, hogy arra az időszakra ugorj a Tervben.",
+  "@howItWorksOverviewBody": {"description": "Szövegtörzs a Jelentések > Áttekintés oldalon"},
+
+  "overBudgetBy": "{amount} túlköltés",
+  "@overBudgetBy": {
+    "description": "Eredmény-összegző címke, ha a költés meghaladja a keretet",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "savedAmount": "{amount} megtakarítva",
+  "@savedAmount": {
+    "description": "Eredmény-összegző címke, ha a költés a keret alatt marad",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "loadingLabel": "Betöltés…",
+  "@loadingLabel": {"description": "Általános betöltési helyőrző"},
+
+  "autoBackupTitle": "Automatikus biztonsági mentés",
+  "@autoBackupTitle": {"description": "Szakaszcím az automatikus biztonsági mentés helyeihez"},
+
+  "autoBackupNoBackupYet": "Még nincs biztonsági mentés",
+  "@autoBackupNoBackupYet": {"description": "Akkor jelenik meg, ha még nincs automatikus biztonsági mentés"},
+
+  "autoBackupSubtitleExpand": "Naponta frissül · koppints a kibontáshoz",
+  "@autoBackupSubtitleExpand": {"description": "Automatikus biztonsági mentés felirata, amikor a szakasz össze van csukva"},
+
+  "autoBackupSubtitleCollapse": "Naponta frissül · koppints az összecsukáshoz",
+  "@autoBackupSubtitleCollapse": {"description": "Automatikus biztonsági mentés felirata, amikor a szakasz ki van bontva"},
+
+  "actionRestoreAllCaps": "VISSZAÁLLÍTÁS",
+  "@actionRestoreAllCaps": {"description": "Nagybetűs visszaállítás műveletcímke"},
+
+  "actionRestore": "Visszaállítás",
+  "@actionRestore": {"description": "Visszaállítás műveletcímke"},
+
+  "autoBackupRestoreDescription": "A visszaállítás lecseréli az összes jelenlegi adatot a biztonsági mentésre.",
+  "@autoBackupRestoreDescription": {"description": "Szövegtörzs a visszaállítás megerősítő párbeszédablakában"},
+
+  "autoBackupRestored": "{date} dátumú biztonsági mentés visszaállítva.",
+  "@autoBackupRestored": {
+    "description": "Snackbar sikeres automatikus biztonsági mentés visszaállítása után",
+    "placeholders": {"date": {"type": "String"}}
+  },
+
+  "autoBackupRestoreFailed": "A biztonsági mentés visszaállítása sikertelen.",
+  "@autoBackupRestoreFailed": {"description": "Snackbar, ha az automatikus biztonsági mentés visszaállítása meghiúsul"},
+
+  "autoBackupPrimary": "Elsődleges biztonsági mentés",
+  "@autoBackupPrimary": {"description": "Névcímke a legfrissebb automatikus biztonsági mentési helyhez (0. hely)"},
+
+  "autoBackupSecondary": "Másodlagos biztonsági mentés",
+  "@autoBackupSecondary": {"description": "Névcímke az előző napi automatikus biztonsági mentési helyhez (1. hely)"},
+
+  "frequencyPickerFixed": "Milyen gyakran ismétlődik?",
+  "@frequencyPickerFixed": {"description": "Cím a fix költségek gyakoriságválasztó alsó lapjához"},
+
+  "frequencyMonthlyFixedSubtitle": "Lakbér, előfizetések, ismétlődő számlák",
+  "@frequencyMonthlyFixedSubtitle": {"description": "Felirat a Havi opcióhoz a fix költség gyakoriságválasztóban"},
+
+  "frequencyYearlyFixedSubtitle": "Éves előfizetések, biztosítás, tagságok",
+  "@frequencyYearlyFixedSubtitle": {"description": "Felirat az Éves opcióhoz a fix költség gyakoriságválasztóban"},
+
+  "frequencyPickerIncome": "Milyen gyakran kapod?",
+  "@frequencyPickerIncome": {"description": "Cím a bevétel gyakoriságválasztó alsó lapjához"},
+
+  "frequencyMonthlyIncomeSubtitle": "Fizetés, nyugdíj, rendszeres átutalások",
+  "@frequencyMonthlyIncomeSubtitle": {"description": "Felirat a Havi opcióhoz a bevétel gyakoriságválasztóban"},
+
+  "frequencyYearlyIncomeSubtitle": "Éves bónusz, adóvisszatérítés, osztalék",
+  "@frequencyYearlyIncomeSubtitle": {"description": "Felirat az Éves opcióhoz a bevétel gyakoriságválasztóban"},
+
+  "frequencyOneTimeIncomeSubtitle": "Ajándék, rendkívüli bevétel, egyszeri kifizetés",
+  "@frequencyOneTimeIncomeSubtitle": {"description": "Felirat az Egyszeri opcióhoz a bevétel gyakoriságválasztóban"},
+
+  "typePickerTitle": "Mit adsz hozzá?",
+  "@typePickerTitle": {"description": "Cím a tervtétel típusválasztó alsó lapjához"},
+
+  "typeIncomeSubtitle": "Fizetés, bónusz, nyugdíj, ajándékok",
+  "@typeIncomeSubtitle": {"description": "Felirat a Bevétel kártyához a típusválasztóban"},
+
+  "typeFixedCostSubtitle": "Lakbér, biztosítás, előfizetések",
+  "@typeFixedCostSubtitle": {"description": "Felirat a Fix költség kártyához a típusválasztóban"},
+
+  "languagePickerTitle": "Nyelv",
+  "@languagePickerTitle": {"description": "A nyelvválasztó párbeszédpanel címe"},
+
+  "currencyPickerTitle": "Pénznem",
+  "@currencyPickerTitle": {"description": "Cím a pénznemválasztó lapon"},
+
+  "currencyCustom": "Egyéni",
+  "@currencyCustom": {"description": "Címke az egyéni pénznem opcióhoz"},
+
+  "currencyCustomSubtitle": "Saját kód és szimbólum megadása",
+  "@currencyCustomSubtitle": {"description": "Felirat az egyéni pénznem opcióhoz"},
+
+  "currencyCustomTitle": "Egyéni pénznem",
+  "@currencyCustomTitle": {"description": "Az egyéni pénznem bevitel párbeszédablakának címe"},
+
+  "currencyCodeLabel": "Kód",
+  "@currencyCodeLabel": {"description": "A pénznemkód mező címkéje"},
+
+  "currencyCodeHint": "pl. USD",
+  "@currencyCodeHint": {"description": "Súgó a pénznemkód mezőhöz"},
+
+  "currencySymbolLabel": "Szimbólum",
+  "@currencySymbolLabel": {"description": "A pénznemszimbólum mező címkéje"},
+
+  "currencySymbolHint": "pl. $",
+  "@currencySymbolHint": {"description": "Súgó a pénznemszimbólum mezőhöz"},
+
+  "removeFromImport": "Eltávolítás az importból",
+  "@removeFromImport": {"description": "Eszköztipp / művelet egy sor eltávolításához az import előnézetből"},
+
+  "exportExpensesTitle": "Kiadások exportálása",
+  "@exportExpensesTitle": {"description": "Az export dátumtartomány párbeszédablak címe"},
+
+  "selectDateRangeHint": "Válaszd ki az exportálandó dátumtartományt:",
+  "@selectDateRangeHint": {"description": "Utasításszöveg az export dátumtartomány párbeszédablakban"},
+
+  "startDateLabel": "Kezdő dátum",
+  "@startDateLabel": {"description": "A kezdődátum-választó címkéje az export párbeszédablakban"},
+
+  "endDateLabel": "Záró dátum",
+  "@endDateLabel": {"description": "A záródátum-választó címkéje az export párbeszédablakban"},
+
+  "tapToSelectDate": "Koppints a kiválasztáshoz",
+  "@tapToSelectDate": {"description": "Helyőrző szöveg, ha még nincs dátum kiválasztva"},
+
+  "endDateAfterStart": "A záródátumnak a kezdődátummal azonosnak vagy későbbinek kell lennie.",
+  "@endDateAfterStart": {"description": "Érvényesítési hiba az export párbeszédablakban"},
+
+  "actionExport": "Exportálás",
+  "@actionExport": {"description": "Export műveleti gomb címkéje"},
+
+  "overspendWarning": "Ebben a(z) {period} időszakban {amount} összeggel többet költöttél, mint amennyit kerestél!",
+  "@overspendWarning": {
+    "description": "Figyelmeztetés a pénzügyi típus eloszlási kártyán, ha a költés meghaladja a bevételt",
+    "placeholders": {
+      "period": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+
+  "periodMonth": "hónapban",
+  "@periodMonth": {"description": "A 'month' szó az overspendWarning üzenetben"},
+
+  "periodYear": "évben",
+  "@periodYear": {"description": "A 'year' szó az overspendWarning üzenetben"},
+
+  "guardBannerCount": "{count, plural, =1{GUARD — 1 fizetés nincs megerősítve} other{GUARD — {count} fizetés nincs megerősítve}}",
+  "@guardBannerCount": {
+    "description": "Bannerszöveg, amely megmutatja, hány GUARD fizetés nincs megerősítve",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "guardSilencedBadge": "némítva",
+  "@guardSilencedBadge": {"description": "Jelvény egy elnémított GUARD tételen a bannerben"},
+
+  "guardExpenseStripPending": "{count, plural, =1{1 figyelt fizetés függőben} other{{count} figyelt fizetés függőben}}",
+  "@guardExpenseStripPending": {
+    "description": "Csík a kiadáslistán, ha függőben lévő GUARD fizetések vannak",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorRowLabel": "{row}. sor — {field}",
+  "@importErrorRowLabel": {
+    "description": "Import hibasor címkéje, amely a sorszámot és a mezőt mutatja",
+    "placeholders": {
+      "row": {"type": "int"},
+      "field": {"type": "String"}
+    }
+  },
+
+  "earnedLabel": "Kereset: {amount}",
+  "@earnedLabel": {
+    "description": "Megkeresett összeg címkéje az áttekintés havi sorában",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "fromDateShort": "{label} időponttól",
+  "@fromDateShort": {
+    "description": "Rövid 'ettől a dátumtól' címke a tervtétel felirataiban",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "untilDateShort": "{label} időpontig",
+  "@untilDateShort": {
+    "description": "Rövid 'eddig a dátumig' címke a tervtétel felirataiban",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardEnableToggle": "GUARD engedélyezése",
+  "@guardEnableToggle": {"description": "A GUARD engedélyező kapcsoló címkéje a beállító lapon"},
+
+  "guardEnableToggleSubtitle": "Fizetés követése és emlékeztetők fogadása",
+  "@guardEnableToggleSubtitle": {"description": "Felirat a GUARD engedélyező kapcsolóhoz"},
+
+  "actionOk": "OK",
+  "@actionOk": {"description": "Általános OK gomb címkéje"},
+
+  "labelTotal": "Összesen",
+  "@labelTotal": {"description": "Összesítő sor címkéje a jelentés képernyő kategórialistáján"},
+
+  "categoryBudgetsTitle": "Kategóriakeretek",
+  "@categoryBudgetsTitle": {"description": "A keretkezelő képernyő AppBar címe (kategóriakeret-specifikus)"},
+
+  "noCategoryBudgetsSet": "Nincsenek beállított kategóriakeretek.",
+  "@noCategoryBudgetsSet": {"description": "Üres állapot elsődleges szövege a keretkezelő képernyőn"},
+
+  "removeBudgetDialogTitle": "{category} keret eltávolítása",
+  "@removeBudgetDialogTitle": {
+    "description": "A kerettörlés megerősítő párbeszédablakának címe",
+    "placeholders": {"category": {"type": "String"}}
+  },
+
+  "endBudgetFromTitle": "Lezárás ettől: {from}",
+  "@endBudgetFromTitle": {
+    "description": "Opció címe a kerettörlési párbeszédablakban — a keretsorozat lezárása a kiválasztott hónaptól",
+    "placeholders": {"from": {"type": "String"}}
+  },
+
+  "endBudgetFromDescription": "Leállítja a keretet {from} időponttól kezdve. A korábbi hónapok megőrzik a történeti keretüket.",
+  "@endBudgetFromDescription": {
+    "description": "Felirat az ettől lezárás opcióhoz a kerettörlési párbeszédablakban",
+    "placeholders": {"from": {"type": "String"}}
+  },
+
+  "deleteBudgetSeriesTitle": "Teljes sorozat törlése",
+  "@deleteBudgetSeriesTitle": {"description": "Opció címe a kerettörlési párbeszédablakban — az összes keretrekord törlése ennél a sorozatnál"},
+
+  "deleteBudgetSeriesConfirm": "Sorozat törlése",
+  "@deleteBudgetSeriesConfirm": {"description": "Megerősítő gomb címkéje a keretsorozat törlési párbeszédablakban"},
+
+  "deleteBudgetSeriesDescription": "Végleg eltávolít minden rekordot ({range}). Ennél a sorozatnál egyetlen hónapban sem fog megjelenni keret. Ez nem vonható vissza.",
+  "@deleteBudgetSeriesDescription": {
+    "description": "Felirat az összes törlése opcióhoz a kerettörlési párbeszédablakban",
+    "placeholders": {"range": {"type": "String"}}
+  },
+
+  "budgetRangePresent": "{start} – jelenleg",
+  "@budgetRangePresent": {
+    "description": "Dátumtartomány címke a kerettörlési párbeszédablakban, ha a keretnek nincs záródátuma",
+    "placeholders": {"start": {"type": "String"}}
+  },
+
+  "pdfMonthlyReport": "Havi jelentés",
+  "@pdfMonthlyReport": {"description": "PDF ismétlődő fejléc címe havi jelentésekhez"},
+
+  "pdfYearlyReport": "Éves jelentés",
+  "@pdfYearlyReport": {"description": "PDF ismétlődő fejléc címe éves jelentésekhez"},
+
+  "pdfMonthlyReportHeader": "HAVI JELENTÉS ERRŐL: {month} {year}",
+  "@pdfMonthlyReportHeader": {
+    "description": "PDF első oldali címsáv címe havi jelentésekhez",
+    "placeholders": {
+      "month": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "pdfYearlyReportHeader": "ÉVES JELENTÉS ERRŐL: {year}",
+  "@pdfYearlyReportHeader": {
+    "description": "PDF első oldali címsáv címe éves jelentésekhez",
+    "placeholders": {"year": {"type": "int"}}
+  },
+
+  "pdfPartialYear": "(részleges év)",
+  "@pdfPartialYear": {"description": "PDF alcím utótag, amely az évhez kapcsolódik, ha az éves jelentés az évnek csak egy részét fedi le"},
+
+  "pdfSectionSpendingVsIncome": "KÖLTÉS VS BEVÉTEL",
+  "@pdfSectionSpendingVsIncome": {"description": "PDF szakaszcím a költés-vs-bevétel modulhoz"},
+
+  "pdfSectionCategorySummary": "KATEGÓRIA-ÖSSZEFOGLALÓ",
+  "@pdfSectionCategorySummary": {"description": "PDF szakaszcím a kategória-összefoglaló táblázathoz"},
+
+  "pdfSectionCashFlowSummary": "CASH FLOW ÖSSZEFOGLALÓ",
+  "@pdfSectionCashFlowSummary": {"description": "PDF szakaszcím a cash flow összefoglalóhoz"},
+
+  "pdfSectionExpenseGroups": "KIADÁSI CSOPORTOK",
+  "@pdfSectionExpenseGroups": {"description": "PDF szakaszcím a kiadási csoportok oldalhoz"},
+
+  "pdfSectionExpenseDetails": "KIADÁS RÉSZLETEK",
+  "@pdfSectionExpenseDetails": {"description": "PDF szakaszcím a kiadás részletező táblázathoz"},
+
+  "pdfSectionYearlyOverview": "ÉVES ÁTTEKINTÉS",
+  "@pdfSectionYearlyOverview": {"description": "PDF szakaszcím az éves áttekintés táblázathoz"},
+
+  "pdfSectionSpendingByCategory": "KÖLTÉS KATEGÓRIA ÉS HÓNAP SZERINT",
+  "@pdfSectionSpendingByCategory": {"description": "PDF szakaszcím a fekvő tájolású kategória-hónap táblázathoz"},
+
+  "pdfIncomeHeader": "BEVÉTEL",
+  "@pdfIncomeHeader": {"description": "PDF bevétel kártyafejléc címkéje a cash flow összefoglalóban"},
+
+  "pdfFixedCostsHeader": "FIX KÖLTSÉGEK",
+  "@pdfFixedCostsHeader": {"description": "PDF fix költség kártyafejléc címkéje a cash flow összefoglalóban"},
+
+  "pdfTotal": "ÖSSZESEN",
+  "@pdfTotal": {"description": "PDF csupa nagybetűs ÖSSZESEN sorcímke a kategória- és kiadástáblákban"},
+
+  "pdfColTotal": "Összesen",
+  "@pdfColTotal": {"description": "PDF oszlopfejléc 'Összesen' a fekvő tájolású kategória-hónap táblázatban"},
+
+  "pdfEarnedThisMonth": "Ebben a hónapban keresett",
+  "@pdfEarnedThisMonth": {"description": "PDF címke a bevételsorhoz a havi költés-vs-bevétel modulban"},
+
+  "pdfEarnedThisYear": "Ebben az évben keresett",
+  "@pdfEarnedThisYear": {"description": "PDF címke a bevételsorhoz az éves költés-vs-bevétel modulban"},
+
+  "pdfGroupTotal": "Csoport összesen (ebben a hónapban)",
+  "@pdfGroupTotal": {"description": "PDF részösszegsor címkéje a kiadási csoportok szakaszban"},
+
+  "pdfAllPeriodsTotal": "Minden időszak összesen",
+  "@pdfAllPeriodsTotal": {"description": "PDF teljes időszak összesen sorcímke a kiadási csoportok szakaszban"},
+
+  "pdfItemsThisMonth": "{count, plural, =1{1 tétel ebben a hónapban} other{{count} tétel ebben a hónapban}}",
+  "@pdfItemsThisMonth": {
+    "description": "PDF csoportfejléc darabszám címkéje, amely megmutatja, hány kiadás tartozik a csoporthoz az aktuális hónapban",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "pdfNormalized": " (normalizált)",
+  "@pdfNormalized": {"description": "PDF utótag az éves tervtételekhez, amikor havi cash flow összegzésben jelennek meg"},
+
+  "pdfAnnualized": " (évesítve)",
+  "@pdfAnnualized": {"description": "PDF utótag a havi tervtételekhez, amikor éves cash flow összegzésben jelennek meg"},
+
+  "pdfPartialYearNote": "Részleges év - a hónapok adatok nélkül nullát mutatnak. Csak év elejétől számított összesítések.",
+  "@pdfPartialYearNote": {"description": "PDF megjegyzés, amely a részleges éves jelentés tetején jelenik meg"},
+
+  "pdfPage": "{page}. oldal / {total}",
+  "@pdfPage": {
+    "description": "PDF lábléc oldalszám címkéje",
+    "placeholders": {
+      "page": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+
+  "pdfNoData": "Nincs adat.",
+  "@pdfNoData": {"description": "PDF helyőrző, ha egy táblázatban vagy szakaszban nincs megjeleníthető adat"},
+
+  "howItWorksExampleSalary": "Fizetés",
+  "@howItWorksExampleSalary": {"description": "Példa bevételi tételnév a működést bemutató lapon"},
+
+  "howItWorksExampleBonus": "Bónusz",
+  "@howItWorksExampleBonus": {"description": "Példa bevételi tételnév a működést bemutató lapon"},
+
+  "howItWorksExampleRent": "Lakbér",
+  "@howItWorksExampleRent": {"description": "Példa fix költség név a működést bemutató lapon"},
+
+  "howItWorksExampleInsurance": "Biztosítás",
+  "@howItWorksExampleInsurance": {"description": "Példa fix költség név a működést bemutató lapon"},
+
+  "howItWorksExampleEtfFonds": "ETF alapok",
+  "@howItWorksExampleEtfFonds": {"description": "Példa fix költség név a működést bemutató lapon"},
+
+  "addBudgetTooltip": "Keret hozzáadása",
+  "@addBudgetTooltip": {"description": "FAB eszköztipp a Kategóriakeretek képernyőn"}
+}

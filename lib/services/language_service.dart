@@ -21,6 +21,10 @@ class LanguageService extends ChangeNotifier {
   static const supportedLocales = [
     Locale('en'),
     Locale('de'),
+    Locale('sk'),
+    Locale('cs'),
+    Locale('pl'),
+    Locale('hu'),
   ];
 
   Locale _current = const Locale('en');

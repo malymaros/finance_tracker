@@ -1,0 +1,1623 @@
+{
+  "@@locale": "pl",
+
+  "appTitle": "Finance Tracker",
+  "@appTitle": {"description": "Nazwa aplikacji"},
+
+  "welcomeTagline": "Przejmij kontrolę nad swoimi pieniędzmi",
+  "@welcomeTagline": {"description": "Podtytuł ekranu powitalnego pod nazwą aplikacji"},
+
+  "getStarted": "Zacznij",
+  "@getStarted": {"description": "Główny przycisk akcji na ekranie powitalnym"},
+
+  "tabExpenses": "Wydatki",
+  "@tabExpenses": {"description": "Etykieta zakładki w dolnej nawigacji"},
+
+  "tabPlan": "Plan",
+  "@tabPlan": {"description": "Etykieta zakładki w dolnej nawigacji"},
+
+  "tabReports": "Raporty",
+  "@tabReports": {"description": "Etykieta zakładki w dolnej nawigacji"},
+
+  "actionEdit": "Edytuj",
+  "@actionEdit": {"description": "Ogólna etykieta akcji edycji"},
+
+  "actionDelete": "Usuń",
+  "@actionDelete": {"description": "Ogólna etykieta akcji usuwania"},
+
+  "actionSave": "Zapisz",
+  "@actionSave": {"description": "Ogólna etykieta przycisku zapisu / zatwierdzenia"},
+
+  "actionCancel": "Anuluj",
+  "@actionCancel": {"description": "Ogólna etykieta przycisku anulowania"},
+
+  "actionLoad": "Wczytaj",
+  "@actionLoad": {"description": "Wczytaj zapisany snapshot"},
+
+  "actionImport": "Importuj",
+  "@actionImport": {"description": "Ogólna etykieta przycisku importu"},
+
+  "actionOverwrite": "Nadpisz",
+  "@actionOverwrite": {"description": "Nadpisz slot zapisu"},
+
+  "labelAmount": "Kwota",
+  "@labelAmount": {"description": "Etykieta pola formularza dla kwoty pieniężnej"},
+
+  "labelCategory": "Kategoria",
+  "@labelCategory": {"description": "Etykieta pola formularza / wiersza szczegółów dla kategorii wydatku"},
+
+  "labelFinancialType": "Typ finansowy",
+  "@labelFinancialType": {"description": "Etykieta sekcji formularza / wiersza szczegółów dla typu finansowego"},
+
+  "labelDate": "Data",
+  "@labelDate": {"description": "Etykieta pola formularza / wiersza szczegółów dla daty"},
+
+  "labelNote": "Notatka",
+  "@labelNote": {"description": "Etykieta wiersza szczegółów dla notatki"},
+
+  "labelNoteOptional": "Notatka (opcjonalnie)",
+  "@labelNoteOptional": {"description": "Etykieta pola formularza dla opcjonalnej notatki"},
+
+  "labelGroup": "Grupa",
+  "@labelGroup": {"description": "Etykieta wiersza szczegółów dla grupy"},
+
+  "labelGroupOptional": "Grupa (opcjonalnie)",
+  "@labelGroupOptional": {"description": "Etykieta pola formularza dla opcjonalnej grupy"},
+
+  "groupHintText": "np. Wakacje, Urodziny",
+  "@groupHintText": {"description": "Tekst podpowiedzi wewnątrz pola tekstowego grupy"},
+
+  "labelName": "Nazwa",
+  "@labelName": {"description": "Etykieta pola formularza dla nazwy elementu"},
+
+  "labelFrequency": "Częstotliwość",
+  "@labelFrequency": {"description": "Etykieta pola formularza dla częstotliwości płatności"},
+
+  "labelValidFrom": "Obowiązuje od",
+  "@labelValidFrom": {"description": "Etykieta pola formularza dla okresu początkowego"},
+
+  "labelValidTo": "Obowiązuje do (opcjonalnie)",
+  "@labelValidTo": {"description": "Etykieta pola formularza dla opcjonalnego okresu końcowego"},
+
+  "menuImportExpenses": "Importuj wydatki",
+  "@menuImportExpenses": {"description": "Pozycja menu przepełnienia na ekranie Wydatki"},
+
+  "menuExportExpenses": "Eksportuj wydatki",
+  "@menuExportExpenses": {"description": "Pozycja menu przepełnienia na ekranie Wydatki"},
+
+  "menuImport": "Importuj",
+  "@menuImport": {"description": "Pozycja menu przepełnienia dla ogólnego importu"},
+
+  "menuSaves": "Zapisy",
+  "@menuSaves": {"description": "Pozycja menu przepełnienia do otwarcia ekranu zapisów"},
+
+  "menuDeleteAll": "Usuń wszystkie dane",
+  "@menuDeleteAll": {"description": "Pozycja menu przepełnienia do usunięcia wszystkich danych"},
+
+  "menuHowItWorks": "Jak to działa",
+  "@menuHowItWorks": {"description": "Pozycja menu przepełnienia do otwarcia wyjaśnienia jak to działa"},
+
+  "menuResetWithDummyData": "Zresetuj z przykładowymi danymi",
+  "@menuResetWithDummyData": {"description": "Pozycja menu przepełnienia tylko do debugowania"},
+
+  "menuManageBudgets": "Zarządzaj budżetami",
+  "@menuManageBudgets": {"description": "Pozycja menu przepełnienia na karcie Plan"},
+
+  "menuGuard": "GUARD",
+  "@menuGuard": {"description": "Pozycja menu przepełnienia do otwarcia ekranu GUARD"},
+
+  "expenseListTitle": "Wydatki",
+  "@expenseListTitle": {"description": "Tytuł AppBar dla ekranu listy wydatków"},
+
+  "savesTooltip": "Zapisy",
+  "@savesTooltip": {"description": "Podpowiedź dla przycisku ikony zapisów w AppBarze"},
+
+  "howItWorksTooltip": "Jak to działa",
+  "@howItWorksTooltip": {"description": "Podpowiedź dla przycisku pomocy"},
+
+  "howItWorksQuestion": "Jak to działa?",
+  "@howItWorksQuestion": {"description": "Tekst linku do otwarcia arkusza „jak to działa”"},
+
+  "viewModeItems": "Pozycje",
+  "@viewModeItems": {"description": "Etykieta przełącznika segmentowego dla widoku listy pozycji"},
+
+  "viewModeByCategory": "Kategoria",
+  "@viewModeByCategory": {"description": "Etykieta przełącznika segmentowego dla widoku grupowania według kategorii"},
+
+  "viewModeByGroup": "Grupy",
+  "@viewModeByGroup": {"description": "Etykieta przełącznika segmentowego dla widoku grup"},
+
+  "thisMonthsBudget": "Budżet na ten miesiąc",
+  "@thisMonthsBudget": {"description": "Etykieta na karcie budżetu / pasku postępu"},
+
+  "budgetNotSet": "Budżet nie jest ustawiony",
+  "@budgetNotSet": {"description": "Pokazywane na karcie bez budżetu, gdy nie zaplanowano dochodu"},
+
+  "setIncomeInPlan": "Ustaw dochód",
+  "@setIncomeInPlan": {"description": "Wezwanie do działania na karcie bez budżetu"},
+
+  "noExpensesInMonth": "Brak wydatków w {monthName} {year}.",
+  "@noExpensesInMonth": {
+    "description": "Komunikat pustego stanu na ekranie listy wydatków dla wybranego miesiąca",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "tapPlusToAddOne": "Dotknij +, aby dodać jeden.",
+  "@tapPlusToAddOne": {"description": "Wskazówka pustego stanu na ekranie listy wydatków"},
+
+  "fixedBillsHint": "Stałe rachunki, takie jak czynsz, należą do Planu.",
+  "@fixedBillsHint": {"description": "Dodatkowa wskazówka pustego stanu na ekranie listy wydatków"},
+
+  "noGroupsThisMonth": "W tym miesiącu nie ma grup.",
+  "@noGroupsThisMonth": {"description": "Pusty stan, gdy żaden wydatek w tym miesiącu nie ma grupy"},
+
+  "addGroupHint": "Dodaj grupę podczas tworzenia\nlub edycji wydatku.",
+  "@addGroupHint": {"description": "Dodatkowa wskazówka pod pustym stanem braku grup"},
+
+  "howGroupsWorkQuestion": "Jak działają grupy?",
+  "@howGroupsWorkQuestion": {"description": "Tekst linku do otwarcia arkusza „jak działają grupy”"},
+
+  "itemCount": "{count, plural, =1{1 pozycja} few{{count} pozycje} many{{count} pozycji} other{{count} pozycji}}",
+  "@itemCount": {
+    "description": "Liczba pozycji w nagłówku kategorii lub grupy",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "addExpenseTitle": "Dodaj wydatek",
+  "@addExpenseTitle": {"description": "Tytuł AppBar przy dodawaniu nowego wydatku"},
+
+  "editExpenseTitle": "Edytuj wydatek",
+  "@editExpenseTitle": {"description": "Tytuł AppBar przy edycji istniejącego wydatku"},
+
+  "validationAmountEmpty": "Wprowadź kwotę",
+  "@validationAmountEmpty": {"description": "Błąd walidacji, gdy pole kwoty jest puste"},
+
+  "validationAmountInvalid": "Wprowadź poprawną dodatnią liczbę",
+  "@validationAmountInvalid": {"description": "Błąd walidacji, gdy kwota jest zerowa lub nie jest liczbą"},
+
+  "expenseDetailTitle": "Wydatek",
+  "@expenseDetailTitle": {"description": "Tytuł AppBar dla ekranu szczegółów wydatku"},
+
+  "noExpensesInNamedGroup": "Brak wydatków w „{name}”.",
+  "@noExpensesInNamedGroup": {
+    "description": "Pusty stan na ekranie listy wydatków grupy",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "planTitle": "Plan",
+  "@planTitle": {"description": "Tytuł AppBar dla karty Plan"},
+
+  "toggleMonthly": "Miesięcznie",
+  "@toggleMonthly": {"description": "Etykieta przełącznika dla miesięcznego trybu widoku"},
+
+  "toggleYearly": "Rocznie",
+  "@toggleYearly": {"description": "Etykieta przełącznika dla rocznego trybu widoku"},
+
+  "sectionIncome": "Dochód",
+  "@sectionIncome": {"description": "Nagłówek sekcji na ekranie Plan"},
+
+  "sectionFixedCosts": "Stałe koszty",
+  "@sectionFixedCosts": {"description": "Nagłówek sekcji na ekranie Plan"},
+
+  "noIncomeItems": "Brak pozycji dochodu.",
+  "@noIncomeItems": {"description": "Pusty stan wewnątrz akordeonu dochodów"},
+
+  "noFixedCostItems": "Brak pozycji stałych kosztów.",
+  "@noFixedCostItems": {"description": "Pusty stan wewnątrz akordeonu stałych kosztów"},
+
+  "spendableBudget": "Budżet do wydania",
+  "@spendableBudget": {"description": "Etykieta kwoty budżetu do wydania w nagłówku ekranu Plan"},
+
+  "deleteItemDialogTitle": "Usuń pozycję planu",
+  "@deleteItemDialogTitle": {"description": "Tytuł dialogu przy usuwaniu pozycji planu"},
+
+  "deleteItemFromPeriod": "Od tego okresu",
+  "@deleteItemFromPeriod": {"description": "Opcja usunięcia pozycji tylko od bieżącego okresu"},
+
+  "deleteItemWholeSeries": "Cała seria",
+  "@deleteItemWholeSeries": {"description": "Opcja usunięcia wszystkich wersji pozycji planu"},
+
+  "planItemDeleted": "Pozycja planu została usunięta.",
+  "@planItemDeleted": {"description": "Snackbar potwierdzający po usunięciu pozycji planu"},
+
+  "addIncomeTitle": "Dodaj dochód",
+  "@addIncomeTitle": {"description": "Tytuł AppBar przy dodawaniu nowej pozycji dochodu"},
+
+  "addFixedCostTitle": "Dodaj stały koszt",
+  "@addFixedCostTitle": {"description": "Tytuł AppBar przy dodawaniu nowego stałego kosztu"},
+
+  "editIncomeTitle": "Edytuj dochód",
+  "@editIncomeTitle": {"description": "Tytuł AppBar przy edycji istniejącej pozycji dochodu"},
+
+  "editFixedCostTitle": "Edytuj stały koszt",
+  "@editFixedCostTitle": {"description": "Tytuł AppBar przy edycji istniejącego stałego kosztu"},
+
+  "frequencyOneTime": "Jednorazowo",
+  "@frequencyOneTime": {"description": "Etykieta opcji częstotliwości"},
+
+  "frequencyMonthly": "Miesięcznie",
+  "@frequencyMonthly": {"description": "Etykieta opcji częstotliwości"},
+
+  "frequencyYearly": "Rocznie",
+  "@frequencyYearly": {"description": "Etykieta opcji częstotliwości"},
+
+  "guardSectionLabel": "GUARD",
+  "@guardSectionLabel": {"description": "Etykieta sekcji dla pól GUARD na ekranie dodawania pozycji planu"},
+
+  "guardTrackPayment": "Śledź płatność",
+  "@guardTrackPayment": {"description": "Etykieta przełącznika GUARD na ekranie dodawania pozycji planu"},
+
+  "guardDueDayLabel": "Dzień płatności",
+  "@guardDueDayLabel": {"description": "Etykieta wyboru dnia płatności GUARD"},
+
+  "guardOneTimeLabel": "Płatność jednorazowa",
+  "@guardOneTimeLabel": {"description": "Etykieta przełącznika jednorazowej płatności GUARD"},
+
+  "planItemSaved": "Pozycja planu została zapisana.",
+  "@planItemSaved": {"description": "Snackbar potwierdzający po zapisaniu pozycji planu"},
+
+  "addNewItemSheetTitle": "Dodaj nowe",
+  "@addNewItemSheetTitle": {"description": "Tytuł dolnego arkusza wyboru typu przed dodaniem pozycji planu"},
+
+  "typeIncome": "Dochód",
+  "@typeIncome": {"description": "Etykieta typu pozycji planu"},
+
+  "typeFixedCost": "Stały koszt",
+  "@typeFixedCost": {"description": "Etykieta typu pozycji planu"},
+
+  "ongoing": "Bez końca",
+  "@ongoing": {"description": "Pokazywane, gdy pozycja planu nie ma daty końcowej"},
+
+  "manageBudgetsTitle": "Zarządzaj budżetami",
+  "@manageBudgetsTitle": {"description": "Tytuł AppBar dla ekranu zarządzania budżetami"},
+
+  "noBudgetsSet": "Brak ustawionych budżetów dla tego okresu.",
+  "@noBudgetsSet": {"description": "Komunikat pustego stanu na ekranie zarządzania budżetami"},
+
+  "addFirstBudget": "Dodaj swój pierwszy budżet.",
+  "@addFirstBudget": {"description": "Wezwanie do działania w pustym stanie na ekranie zarządzania budżetami"},
+
+  "addBudgetTitle": "Dodaj budżet",
+  "@addBudgetTitle": {"description": "Tytuł AppBar przy dodawaniu nowego budżetu kategorii"},
+
+  "editBudgetTitle": "Edytuj budżet",
+  "@editBudgetTitle": {"description": "Tytuł AppBar przy edycji istniejącego budżetu kategorii"},
+
+  "budgetAmount": "Kwota budżetu",
+  "@budgetAmount": {"description": "Etykieta pola formularza dla kwoty budżetu"},
+
+  "effectiveFrom": "Obowiązuje od",
+  "@effectiveFrom": {"description": "Etykieta pola formularza dla miesiąca początkowego budżetu"},
+
+  "pastMonthBudgetWarning": "Ustawienie budżetu w przeszłości nie wpłynie na wcześniejsze wydatki.",
+  "@pastMonthBudgetWarning": {"description": "Ostrzeżenie wbudowane, gdy użytkownik wybierze wcześniejszy miesiąc dla budżetu"},
+
+  "budgetSaved": "Budżet został zapisany.",
+  "@budgetSaved": {"description": "Snackbar potwierdzający po zapisaniu budżetu kategorii"},
+
+  "budgetDeleted": "Budżet został usunięty.",
+  "@budgetDeleted": {"description": "Snackbar potwierdzający po usunięciu budżetu kategorii"},
+
+  "guardScreenTitle": "GUARD",
+  "@guardScreenTitle": {"description": "Tytuł AppBar dla ekranu GUARD"},
+
+  "guardDailyReminderTime": "Czas codziennego przypomnienia",
+  "@guardDailyReminderTime": {"description": "Etykieta dla ustawienia czasu codziennego przypomnienia GUARD"},
+
+  "guardTimePicker": "Czas codziennego przypomnienia GUARD",
+  "@guardTimePicker": {"description": "Tekst pomocy w dialogu wyboru czasu dla przypomnień GUARD"},
+
+  "guardMarkPaid": "Oznacz jako opłacone",
+  "@guardMarkPaid": {"description": "Akcja oznaczenia pozycji GUARD jako opłaconej"},
+
+  "guardSilence": "Wycisz",
+  "@guardSilence": {"description": "Akcja wyciszenia przypomnienia GUARD"},
+
+  "guardStatusPaid": "Opłacone",
+  "@guardStatusPaid": {"description": "Etykieta statusu płatności GUARD"},
+
+  "guardStatusScheduled": "Zaplanowane",
+  "@guardStatusScheduled": {"description": "Etykieta statusu płatności GUARD"},
+
+  "guardStatusUnpaid": "Nieopłacone",
+  "@guardStatusUnpaid": {"description": "Etykieta statusu płatności GUARD"},
+
+  "guardStatusSilenced": "Wyciszone",
+  "@guardStatusSilenced": {"description": "Etykieta statusu płatności GUARD"},
+
+  "noGuardedItems": "Brak chronionych pozycji.",
+  "@noGuardedItems": {"description": "Komunikat pustego stanu na ekranie GUARD"},
+
+  "reportsTitle": "Raporty",
+  "@reportsTitle": {"description": "Tytuł AppBar dla ekranu raportów"},
+
+  "reportModeMonthly": "Miesięcznie",
+  "@reportModeMonthly": {"description": "Etykieta karty trybu raportu"},
+
+  "reportModeYearly": "Rocznie",
+  "@reportModeYearly": {"description": "Etykieta karty trybu raportu"},
+
+  "reportModeOverview": "Przegląd",
+  "@reportModeOverview": {"description": "Etykieta karty trybu raportu"},
+
+  "exportPdf": "Eksportuj PDF",
+  "@exportPdf": {"description": "Przycisk eksportu bieżącego raportu do PDF"},
+
+  "noExpensesForPeriod": "Brak zapisanych wydatków dla tego okresu.",
+  "@noExpensesForPeriod": {"description": "Pusty stan na ekranie raportu (tryby miesięczny/roczny)"},
+
+  "noIncomeOrSpendingDataForYear": "Brak danych o dochodach lub wydatkach dla tego roku.",
+  "@noIncomeOrSpendingDataForYear": {"description": "Pusty stan trybu Przegląd na ekranie raportów"},
+
+  "pieChartOther": "Inne",
+  "@pieChartOther": {"description": "Etykieta dla zwiniętego wycinka małych kategorii na wykresach kołowych"},
+
+  "reportSectionFixedCosts": "STAŁE KOSZTY",
+  "@reportSectionFixedCosts": {"description": "Nagłówek sekcji na ekranie szczegółów raportu kategorii"},
+
+  "reportSectionExpenses": "WYDATKI",
+  "@reportSectionExpenses": {"description": "Nagłówek sekcji na ekranie szczegółów raportu kategorii"},
+
+  "noneInPeriod": "Brak w tym okresie.",
+  "@noneInPeriod": {"description": "Pusty stan wewnątrz sekcji ekranu szczegółów raportu kategorii"},
+
+  "fixedCostCount": "{count, plural, =1{1 stały koszt} few{{count} stałe koszty} many{{count} stałych kosztów} other{{count} stałych kosztów}}",
+  "@fixedCostCount": {
+    "description": "Liczba stałych kosztów w nagłówku raportu kategorii",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "expenseCount": "{count, plural, =1{1 wydatek} few{{count} wydatki} many{{count} wydatków} other{{count} wydatków}}",
+  "@expenseCount": {
+    "description": "Liczba wydatków w nagłówku raportu kategorii",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "noItemsInPeriod": "Brak pozycji w tym okresie",
+  "@noItemsInPeriod": {"description": "Podtytuł w nagłówku raportu kategorii, gdy nie ma żadnych pozycji"},
+
+  "importTitle": "Importuj wydatki",
+  "@importTitle": {"description": "Tytuł AppBar dla ekranu importu"},
+
+  "importStep1Title": "Pobierz szablon",
+  "@importStep1Title": {"description": "Tytuł karty kroku na ekranie początkowym importu"},
+
+  "importStep1Description": "Pobierz oficjalny szablon Excel ze wszystkimi wymaganymi kolumnami oraz przewodnikiem po prawidłowych wartościach.",
+  "@importStep1Description": {"description": "Opis karty kroku na ekranie początkowym importu"},
+
+  "importStep1Button": "Pobierz szablon",
+  "@importStep1Button": {"description": "Etykieta przycisku karty kroku na ekranie początkowym importu"},
+
+  "importStep2Title": "Wypełnij i importuj",
+  "@importStep2Title": {"description": "Tytuł karty kroku na ekranie początkowym importu"},
+
+  "importStep2Description": "Wypełnij szablon w Excelu lub Google Sheets, a następnie wybierz tutaj plik, aby zaimportować swoje wydatki.",
+  "@importStep2Description": {"description": "Opis karty kroku na ekranie początkowym importu"},
+
+  "importStep2Button": "Wybierz plik (.xlsx lub .csv)",
+  "@importStep2Button": {"description": "Etykieta przycisku karty kroku na ekranie początkowym importu"},
+
+  "importInfoText": "Można importować tylko wydatki. Dochody i pozycje planu nie są obsługiwane.\n\nAkceptowane formaty: .xlsx (Excel) i .csv.\nPliki CSV muszą mieć taką samą kolejność kolumn jak szablon: Date, Amount, Category, Financial Type, Note, Group.\n\nPliki wyeksportowane z tej aplikacji również można importować bezpośrednio.",
+  "@importInfoText": {"description": "Tekst informacyjny na ekranie początkowym importu"},
+
+  "importReadyCount": "{count, plural, =1{1 wydatek gotowy do importu} few{{count} wydatki gotowe do importu} many{{count} wydatków gotowych do importu} other{{count} wydatków gotowych do importu}}",
+  "@importReadyCount": {
+    "description": "Linia podsumowania pokazująca, ile prawidłowych wierszy zostało odczytanych",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorCount": "{count, plural, =1{1 wiersza nie udało się odczytać} few{{count} wierszy nie udało się odczytać} many{{count} wierszy nie udało się odczytać} other{{count} wierszy nie udało się odczytać}}",
+  "@importErrorCount": {
+    "description": "Linia liczby błędów, gdy nie ma żadnych prawidłowych wierszy",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorCountSkipped": "{count, plural, =1{1 wiersza nie udało się odczytać — zostanie pominięty} few{{count} wierszy nie udało się odczytać — zostaną pominięte} many{{count} wierszy nie udało się odczytać — zostaną pominięte} other{{count} wierszy nie udało się odczytać — zostaną pominięte}}",
+  "@importErrorCountSkipped": {
+    "description": "Linia liczby błędów, gdy obecne są także prawidłowe wiersze",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importNoDataFound": "Nie znaleziono danych w pliku.",
+  "@importNoDataFound": {"description": "Pokazywane, gdy plik został poprawnie odczytany, ale nie zawiera żadnych wierszy"},
+
+  "importTapToEdit": "Dotknij dowolnego wiersza, aby go edytować lub usunąć przed importem.",
+  "@importTapToEdit": {"description": "Tekst wskazówki na ekranie podglądu importu"},
+
+  "importRowsWithErrors": "Wiersze z błędami",
+  "@importRowsWithErrors": {"description": "Nagłówek sekcji nad błędnymi wierszami w podglądzie importu"},
+
+  "importNoDataRows": "Nie znaleziono żadnych wierszy danych.",
+  "@importNoDataRows": {"description": "Pusty stan, gdy zarówno lista prawidłowych, jak i nieprawidłowych wierszy jest pusta"},
+
+  "importConfirmButton": "{count, plural, =1{Importuj 1 wydatek} few{Importuj {count} wydatki} many{Importuj {count} wydatków} other{Importuj {count} wydatków}}",
+  "@importConfirmButton": {
+    "description": "Etykieta przycisku potwierdzenia na ekranie podglądu importu",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importSuccessMessage": "{count, plural, =1{1 wydatek zaimportowano · {range}} few{{count} wydatki zaimportowano · {range}} many{{count} wydatków zaimportowano · {range}} other{{count} wydatków zaimportowano · {range}}}",
+  "@importSuccessMessage": {
+    "description": "Snackbar pokazywany po udanym imporcie",
+    "placeholders": {
+      "count": {"type": "int"},
+      "range": {"type": "String"}
+    }
+  },
+
+  "importUnsupportedFile": "Nieobsługiwany typ pliku. Wybierz plik .xlsx lub .csv.",
+  "@importUnsupportedFile": {"description": "Snackbar przy wyborze pliku z nieobsługiwanym rozszerzeniem"},
+
+  "importCouldNotReadFile": "Nie udało się odczytać pliku. Spróbuj ponownie.",
+  "@importCouldNotReadFile": {"description": "Snackbar, gdy nie udało się odczytać bajtów pliku"},
+
+  "importPickerError": "Nie udało się otworzyć wyboru pliku: {error}",
+  "@importPickerError": {
+    "description": "Snackbar, gdy wybór pliku zgłasza wyjątek",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importTemplateError": "Nie udało się wygenerować szablonu: {error}",
+  "@importTemplateError": {
+    "description": "Snackbar, gdy pobranie szablonu nie powiedzie się",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "tryAnotherFile": "Spróbuj innego pliku",
+  "@tryAnotherFile": {"description": "Przycisk resetujący do fazy początkowej po krytycznym błędzie parsowania"},
+
+  "savesTitle": "Zapisy",
+  "@savesTitle": {"description": "Tytuł AppBar dla ekranu zapisów"},
+
+  "sectionAutoBackup": "AUTOMATYCZNA KOPIA ZAPASOWA",
+  "@sectionAutoBackup": {"description": "Nagłówek sekcji na ekranie zapisów"},
+
+  "sectionSaves": "ZAPISY",
+  "@sectionSaves": {"description": "Nagłówek sekcji na ekranie zapisów"},
+
+  "sectionDataTransfer": "TRANSFER DANYCH",
+  "@sectionDataTransfer": {"description": "Nagłówek sekcji na ekranie zapisów"},
+
+  "sectionDataDeletion": "USUWANIE DANYCH",
+  "@sectionDataDeletion": {"description": "Nagłówek sekcji na ekranie zapisów"},
+
+  "exportAllData": "Eksportuj wszystkie dane",
+  "@exportAllData": {"description": "Przycisk akcji do eksportu wszystkich danych jako JSON"},
+
+  "importAllData": "Importuj wszystkie dane",
+  "@importAllData": {"description": "Przycisk akcji do importu wszystkich danych z JSON"},
+
+  "deleteAllData": "Usuń wszystkie dane",
+  "@deleteAllData": {"description": "Destrukcyjny przycisk akcji do wymazania wszystkich danych"},
+
+  "emptySlot": "Pusty slot",
+  "@emptySlot": {"description": "Tekst zastępczy dla nieużywanego slotu zapisu"},
+
+  "savedConfirmation": "„{name}” zapisano.",
+  "@savedConfirmation": {
+    "description": "Snackbar po utworzeniu lub nadpisaniu slotu zapisu",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "loadedConfirmation": "„{name}” wczytano.",
+  "@loadedConfirmation": {
+    "description": "Snackbar po wczytaniu slotu zapisu",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "exportFailed": "Eksport nie powiódł się: {error}",
+  "@exportFailed": {
+    "description": "Snackbar, gdy jakikolwiek eksport się nie powiedzie",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importFailedInvalid": "Nieprawidłowy plik: {error}",
+  "@importFailedInvalid": {
+    "description": "Snackbar, gdy import JSON nie powiedzie się z powodu nieprawidłowej zawartości",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importDataSuccess": "Dane zostały pomyślnie zaimportowane.",
+  "@importDataSuccess": {"description": "Snackbar po pomyślnym imporcie pełnych danych JSON"},
+
+  "couldNotReadSelectedFile": "Nie udało się odczytać wybranego pliku.",
+  "@couldNotReadSelectedFile": {"description": "Snackbar, gdy bajty wybranego pliku są niedostępne"},
+
+  "importDataDialogTitle": "Importować dane?",
+  "@importDataDialogTitle": {"description": "Tytuł dialogu potwierdzenia przed importem pełnych danych"},
+
+  "importDataDialogContent": "To zastąpi WSZYSTKIE bieżące wydatki i pozycje planu zawartością pliku. Tej operacji nie można cofnąć.",
+  "@importDataDialogContent": {"description": "Treść dialogu potwierdzenia przed importem pełnych danych"},
+
+  "saveName": "Nazwa zapisu",
+  "@saveName": {"description": "Etykieta pola tekstowego w dialogu nazwy zapisu"},
+
+  "saveNameCannotBeEmpty": "Nazwa nie może być pusta",
+  "@saveNameCannotBeEmpty": {"description": "Błąd walidacji w dialogu nazwy zapisu"},
+
+  "replacingLabel": "Zastępowane: {name}",
+  "@replacingLabel": {
+    "description": "Podtytuł w dialogu nadpisania zapisu pokazujący, który slot zostanie zastąpiony",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "loadDialogDescription": "Wszystkie bieżące dane zostaną zastąpione tym zapisanym snapshotem.",
+  "@loadDialogDescription": {"description": "Tekst opisu w dialogu potwierdzenia wczytania"},
+
+  "deleteDialogDescription": "Ten zapisany snapshot zostanie trwale usunięty.",
+  "@deleteDialogDescription": {"description": "Tekst opisu w dialogu potwierdzenia usunięcia"},
+
+  "damagedSaveFile": "Uszkodzony plik zapisu",
+  "@damagedSaveFile": {"description": "Etykieta pokazywana, gdy plik zapisu jest uszkodzony"},
+
+  "overBudgetAmount": "{amount} ponad budżet",
+  "@overBudgetAmount": {
+    "description": "Etykieta paska postępu budżetu, gdy wydatki przekraczają budżet",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "underBudgetAmount": "{amount} pozostało",
+  "@underBudgetAmount": {
+    "description": "Etykieta paska postępu budżetu, gdy wydatki są poniżej budżetu",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "spentLabel": "Wydano: {amount}",
+  "@spentLabel": {
+    "description": "Linia szczegółów paska postępu budżetu",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "budgetLabel": "Budżet: {amount}",
+  "@budgetLabel": {
+    "description": "Linia szczegółów paska postępu budżetu",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "progressBarLabel": "{spent} wydano  /  {budget} budżet",
+  "@progressBarLabel": {
+    "description": "Jednowierszowa etykieta na pasku postępu budżetu kategorii",
+    "placeholders": {
+      "spent": {"type": "String"},
+      "budget": {"type": "String"}
+    }
+  },
+
+  "categoryBudgetOverBy": "Budżet kategorii {category}: przekroczony o {amount}",
+  "@categoryBudgetOverBy": {
+    "description": "Pozycja karty ostrzeżenia pokazująca, o ile kategoria przekroczyła budżet",
+    "placeholders": {
+      "category": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+
+  "deleteAllDataDialogTitle": "Usunąć wszystkie dane?",
+  "@deleteAllDataDialogTitle": {"description": "Tytuł dialogu potwierdzenia przed wymazaniem wszystkich danych"},
+
+  "deleteAllDataDialogContent": "To trwale usunie wszystkie wydatki, dochody i pozycje planu. Tej operacji nie można cofnąć.",
+  "@deleteAllDataDialogContent": {"description": "Treść dialogu potwierdzenia przed wymazaniem wszystkich danych"},
+
+  "deleteAllDataConfirm": "Usuń wszystko",
+  "@deleteAllDataConfirm": {"description": "Etykieta przycisku potwierdzenia w dialogu usuwania wszystkiego"},
+
+  "monthJanuary": "Styczeń",
+  "@monthJanuary": {"description": "Pełna nazwa miesiąca"},
+  "monthFebruary": "Luty",
+  "@monthFebruary": {"description": "Pełna nazwa miesiąca"},
+  "monthMarch": "Marzec",
+  "@monthMarch": {"description": "Pełna nazwa miesiąca"},
+  "monthApril": "Kwiecień",
+  "@monthApril": {"description": "Pełna nazwa miesiąca"},
+  "monthMay": "Maj",
+  "@monthMay": {"description": "Pełna nazwa miesiąca"},
+  "monthJune": "Czerwiec",
+  "@monthJune": {"description": "Pełna nazwa miesiąca"},
+  "monthJuly": "Lipiec",
+  "@monthJuly": {"description": "Pełna nazwa miesiąca"},
+  "monthAugust": "Sierpień",
+  "@monthAugust": {"description": "Pełna nazwa miesiąca"},
+  "monthSeptember": "Wrzesień",
+  "@monthSeptember": {"description": "Pełna nazwa miesiąca"},
+  "monthOctober": "Październik",
+  "@monthOctober": {"description": "Pełna nazwa miesiąca"},
+  "monthNovember": "Listopad",
+  "@monthNovember": {"description": "Pełna nazwa miesiąca"},
+  "monthDecember": "Grudzień",
+  "@monthDecember": {"description": "Pełna nazwa miesiąca"},
+
+  "monthAbbrJan": "Sty",
+  "@monthAbbrJan": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrFeb": "Lut",
+  "@monthAbbrFeb": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrMar": "Mar",
+  "@monthAbbrMar": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrApr": "Kwi",
+  "@monthAbbrApr": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrMay": "Maj",
+  "@monthAbbrMay": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrJun": "Cze",
+  "@monthAbbrJun": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrJul": "Lip",
+  "@monthAbbrJul": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrAug": "Sie",
+  "@monthAbbrAug": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrSep": "Wrz",
+  "@monthAbbrSep": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrOct": "Paź",
+  "@monthAbbrOct": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrNov": "Lis",
+  "@monthAbbrNov": {"description": "Skrócona nazwa miesiąca"},
+  "monthAbbrDec": "Gru",
+  "@monthAbbrDec": {"description": "Skrócona nazwa miesiąca"},
+
+  "categoryHousing": "Mieszkanie",
+  "@categoryHousing": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryGroceries": "Zakupy spożywcze",
+  "@categoryGroceries": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryVacation": "Wakacje",
+  "@categoryVacation": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryTransport": "Transport",
+  "@categoryTransport": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryInsurance": "Ubezpieczenie",
+  "@categoryInsurance": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categorySubscriptions": "Subskrypcje",
+  "@categorySubscriptions": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryCommunication": "Komunikacja",
+  "@categoryCommunication": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryHealth": "Zdrowie",
+  "@categoryHealth": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryRestaurants": "Restauracje",
+  "@categoryRestaurants": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryEntertainment": "Rozrywka",
+  "@categoryEntertainment": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryClothing": "Odzież",
+  "@categoryClothing": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryEducation": "Edukacja",
+  "@categoryEducation": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryInvestment": "Inwestycje",
+  "@categoryInvestment": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryGifts": "Prezenty",
+  "@categoryGifts": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryTaxes": "Podatki",
+  "@categoryTaxes": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryMedications": "Leki",
+  "@categoryMedications": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryOther": "Inne",
+  "@categoryOther": {"description": "Wyświetlana nazwa kategorii wydatku"},
+
+  "financialTypeAsset": "Aktywa",
+  "@financialTypeAsset": {"description": "Wyświetlana nazwa typu finansowego"},
+  "financialTypeConsumption": "Konsumpcja",
+  "@financialTypeConsumption": {"description": "Wyświetlana nazwa typu finansowego"},
+  "financialTypeInsurance": "Ubezpieczenie",
+  "@financialTypeInsurance": {"description": "Wyświetlana nazwa typu finansowego"},
+
+  "addPlanItemTitle": "Dodaj pozycję planu",
+  "@addPlanItemTitle": {"description": "Tytuł AppBar dla ekranu dodawania pozycji planu, gdy typ nie jest wstępnie wybrany"},
+  "addMonthlyIncomeTitle": "Dodaj miesięczny dochód",
+  "@addMonthlyIncomeTitle": {"description": "Tytuł AppBar dla dodawania miesięcznej pozycji dochodu"},
+  "addYearlyIncomeTitle": "Dodaj roczny dochód",
+  "@addYearlyIncomeTitle": {"description": "Tytuł AppBar dla dodawania rocznej pozycji dochodu"},
+  "addOneTimeIncomeTitle": "Dodaj jednorazowy dochód",
+  "@addOneTimeIncomeTitle": {"description": "Tytuł AppBar dla dodawania jednorazowej pozycji dochodu"},
+  "addMonthlyFixedCostTitle": "Dodaj miesięczny stały koszt",
+  "@addMonthlyFixedCostTitle": {"description": "Tytuł AppBar dla dodawania miesięcznej pozycji stałego kosztu"},
+  "addYearlyFixedCostTitle": "Dodaj roczny stały koszt",
+  "@addYearlyFixedCostTitle": {"description": "Tytuł AppBar dla dodawania rocznej pozycji stałego kosztu"},
+  "editMonthlyIncomeTitle": "Edytuj miesięczny dochód",
+  "@editMonthlyIncomeTitle": {"description": "Tytuł AppBar dla edycji miesięcznej pozycji dochodu"},
+  "editYearlyIncomeTitle": "Edytuj roczny dochód",
+  "@editYearlyIncomeTitle": {"description": "Tytuł AppBar dla edycji rocznej pozycji dochodu"},
+  "editOneTimeIncomeTitle": "Edytuj jednorazowy dochód",
+  "@editOneTimeIncomeTitle": {"description": "Tytuł AppBar dla edycji jednorazowej pozycji dochodu"},
+  "editMonthlyFixedCostTitle": "Edytuj miesięczny stały koszt",
+  "@editMonthlyFixedCostTitle": {"description": "Tytuł AppBar dla edycji miesięcznej pozycji stałego kosztu"},
+  "editYearlyFixedCostTitle": "Edytuj roczny stały koszt",
+  "@editYearlyFixedCostTitle": {"description": "Tytuł AppBar dla edycji rocznej pozycji stałego kosztu"},
+
+  "labelType": "Typ",
+  "@labelType": {"description": "Etykieta sekcji formularza dla typu pozycji planu (Dochód / Stały koszt)"},
+  "labelMonth": "Miesiąc",
+  "@labelMonth": {"description": "Etykieta listy rozwijanej w dialogu wyboru miesiąca/roku"},
+  "labelYear": "Rok",
+  "@labelYear": {"description": "Etykieta listy rozwijanej w dialogu wyboru miesiąca/roku"},
+  "labelDayOfMonth": "Dzień miesiąca",
+  "@labelDayOfMonth": {"description": "Etykieta listy rozwijanej w dialogu wyboru dnia płatności GUARD"},
+  "nameHintText": "np. Wynagrodzenie, Czynsz, Ubezpieczenie",
+  "@nameHintText": {"description": "Tekst podpowiedzi wewnątrz pola tekstowego nazwy na ekranie dodawania pozycji planu"},
+  "validationEnterName": "Wprowadź nazwę",
+  "@validationEnterName": {"description": "Błąd walidacji, gdy pole nazwy jest puste"},
+
+  "selectMonthTitle": "Wybierz miesiąc",
+  "@selectMonthTitle": {"description": "Tytuł dialogu wyboru miesiąca/roku"},
+  "lastRenewalYearTitle": "Rok ostatniego odnowienia",
+  "@lastRenewalYearTitle": {"description": "Tytuł dialogu wyboru roku końcowego dla pozycji rocznej"},
+  "lastMonthRenewal": "Ostatnie odnowienie w {monthName}",
+  "@lastMonthRenewal": {
+    "description": "Etykieta listy rozwijanej w dialogu wyboru roku końcowego pokazująca miesiąc zakotwiczenia",
+    "placeholders": {"monthName": {"type": "String"}}
+  },
+  "lastActiveMonthInfo": "Ostatni aktywny miesiąc: {label}",
+  "@lastActiveMonthInfo": {
+    "description": "Tekst informacyjny w dialogu wyboru roku końcowego dla pozycji rocznej",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "setEndDate": "Ustaw datę końcową",
+  "@setEndDate": {"description": "Etykieta przełącznika włączającego opcjonalną datę końcową dla pozycji planu"},
+  "untilLabel": "Do: {validToLabel}",
+  "@untilLabel": {
+    "description": "Etykieta przycisku pokazującego bieżącą datę końcową",
+    "placeholders": {"validToLabel": {"type": "String"}}
+  },
+  "lastActiveMonthNote": "{label} jest ostatnim aktywnym miesiącem.",
+  "@lastActiveMonthNote": {
+    "description": "Tekst wskazówki pod przyciskiem Do dla pozycji rocznych",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "endMonthAfterStart": "Miesiąc końcowy musi być po miesiącu początkowym.",
+  "@endMonthAfterStart": {"description": "Błąd wbudowany, gdy miesiąc końcowy nie jest po miesiącu początkowym"},
+  "fromFieldLabel": "Od",
+  "@fromFieldLabel": {"description": "Etykieta zablokowanego pola Od podczas edycji rocznego stałego kosztu"},
+  "renewedEachMonth": "Odnawiane co {monthName}. Daty są stałe.",
+  "@renewedEachMonth": {
+    "description": "Tekst wskazówki pod zablokowanym polem Od dla rocznych stałych kosztów",
+    "placeholders": {"monthName": {"type": "String"}}
+  },
+  "untilFieldLabel": "Do",
+  "@untilFieldLabel": {"description": "Etykieta zablokowanego pola Do podczas edycji rocznej pozycji"},
+  "lastActiveMonthParens": "{label} (ostatni aktywny miesiąc)",
+  "@lastActiveMonthParens": {
+    "description": "Wartość pokazywana w zablokowanym polu Do dla pozycji rocznych",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "openEnded": "Bez końca",
+  "@openEnded": {"description": "Wartość pokazywana w zablokowanym polu Do, gdy nie ustawiono daty końcowej"},
+  "fromDateLabel": "Od: {validFromLabel}",
+  "@fromDateLabel": {
+    "description": "Etykieta przycisku pokazującego bieżącą datę początkową",
+    "placeholders": {"validFromLabel": {"type": "String"}}
+  },
+  "samePeriodInPlace": "Ten sam miesiąc co oryginał — zostanie zaktualizowany w miejscu.",
+  "@samePeriodInPlace": {"description": "Wskazówka pokazywana, gdy nowy miesiąc początkowy jest taki sam jak miesiąc początkowy istniejącej pozycji"},
+  "differentPeriodNewVersion": "Inny miesiąc — zostanie utworzona nowa wersja.",
+  "@differentPeriodNewVersion": {"description": "Wskazówka pokazywana, gdy nowy miesiąc początkowy różni się od istniejącego"},
+
+  "applyChangesToTitle": "Zastosuj zmiany do...",
+  "@applyChangesToTitle": {"description": "Tytuł dialogu wyboru zapisu dla rocznego stałego kosztu"},
+  "applyToWholeSeries": "Całej serii",
+  "@applyToWholeSeries": {"description": "Tytuł opcji w dialogu zapisu rocznego — zastosuj zmiany do wszystkich okresów"},
+  "applyToWholeSeriesSubtitle": "Wszystkie okresy od {seriesStartLabel} dalej",
+  "@applyToWholeSeriesSubtitle": {
+    "description": "Podtytuł opcji całej serii w dialogu zapisu rocznego",
+    "placeholders": {"seriesStartLabel": {"type": "String"}}
+  },
+  "applyFromOnwards": "Od {nextLabel} dalej",
+  "@applyFromOnwards": {
+    "description": "Tytuł opcji w dialogu zapisu rocznego — podziel od przyszłego okresu",
+    "placeholders": {"nextLabel": {"type": "String"}}
+  },
+  "applyFromSubtitle": "Oryginalna seria kończy się {capLabel}.\nNowa seria zaczyna się {nextLabel}.",
+  "@applyFromSubtitle": {
+    "description": "Podtytuł opcji podziału w dialogu zapisu rocznego",
+    "placeholders": {
+      "capLabel": {"type": "String"},
+      "nextLabel": {"type": "String"}
+    }
+  },
+  "applyFromUnavailable": "W tej serii nie ma dostępnego żadnego przyszłego okresu.",
+  "@applyFromUnavailable": {"description": "Podtytuł opcji podziału, gdy nie ma dostępnego żadnego przyszłego okresu"},
+  "yearlyItemsOnlyAtRenewal": "Pozycje roczne można zmieniać tylko w miesiącu ich odnowienia.",
+  "@yearlyItemsOnlyAtRenewal": {"description": "Snackbar pokazywany, gdy edycja pozycji rocznej zostaje odrzucona z powodu nieprawidłowej granicy"},
+
+  "guardRemindMe": "Przypomnij mi o potwierdzeniu tej płatności",
+  "@guardRemindMe": {"description": "Podtytuł pod przełącznikiem GUARD na ekranie dodawania pozycji planu"},
+  "guardShorterMonths": "Krótsze miesiące użyją swojego ostatniego dnia.",
+  "@guardShorterMonths": {"description": "Wskazówka pokazywana, gdy dzień płatności GUARD jest > 28"},
+  "dueDayMonthly": "Dzień płatności (powtarza się co miesiąc)",
+  "@dueDayMonthly": {"description": "Tytuł dialogu wyboru dnia płatności GUARD dla pozycji miesięcznych"},
+  "dueDayYearly": "Dzień płatności (powtarza się każdego {monthName})",
+  "@dueDayYearly": {
+    "description": "Tytuł dialogu wyboru dnia płatności GUARD dla pozycji rocznych",
+    "placeholders": {"monthName": {"type": "String"}}
+  },
+  "dueDayMonthlyLabel": "Dzień {day} każdego miesiąca",
+  "@dueDayMonthlyLabel": {
+    "description": "Etykieta przycisku pokazującego wybrany dzień płatności dla pozycji miesięcznej",
+    "placeholders": {"day": {"type": "int"}}
+  },
+  "dueDayYearlyLabel": "Dzień {day} miesiąca {monthName} każdego roku",
+  "@dueDayYearlyLabel": {
+    "description": "Etykieta przycisku pokazującego wybrany dzień płatności dla pozycji rocznej",
+    "placeholders": {
+      "day": {"type": "int"},
+      "monthName": {"type": "String"}
+    }
+  },
+
+  "guardDailyReminder": "Codzienne przypomnienie",
+  "@guardDailyReminder": {"description": "Tytuł kafelka ustawienia czasu powiadomień na ekranie GUARD"},
+  "guardChangeNotifTime": "Dotknij, aby zmienić czas powiadomienia",
+  "@guardChangeNotifTime": {"description": "Podtytuł kafelka ustawienia czasu powiadomień na ekranie GUARD"},
+  "guardNoGuardedItemsHint": "Włącz GUARD przy stałym koszcie, aby śledzić płatności.",
+  "@guardNoGuardedItemsHint": {"description": "Dodatkowy tekst pustego stanu na ekranie GUARD"},
+  "guardedItemsCount": "Chronione pozycje · {count}",
+  "@guardedItemsCount": {
+    "description": "Nagłówek sekcji pokazujący liczbę chronionych pozycji na ekranie GUARD",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "planItemTitle": "Pozycja planu",
+  "@planItemTitle": {"description": "Tytuł AppBar dla ekranu szczegółów pozycji planu"},
+  "activeFrom": "Aktywne od",
+  "@activeFrom": {"description": "Etykieta wiersza szczegółów dla okresu początkowego pozycji planu"},
+  "activeUntil": "Aktywne do",
+  "@activeUntil": {"description": "Etykieta wiersza szczegółów dla okresu końcowego pozycji planu"},
+  "perMonth": "/ miesiąc",
+  "@perMonth": {"description": "Sufiks kwoty dla miesięcznych pozycji planu"},
+  "perYear": "/ rok",
+  "@perYear": {"description": "Sufiks kwoty dla rocznych pozycji planu"},
+  "oneTimeSuffix": "(jednorazowo)",
+  "@oneTimeSuffix": {"description": "Sufiks kwoty dla jednorazowych pozycji planu"},
+  "noEndDate": "Brak daty końcowej",
+  "@noEndDate": {"description": "Wartość pokazywana dla pola aktywne-do, gdy stały koszt nie ma daty końcowej"},
+  "guardNotEnabled": "Nie włączono",
+  "@guardNotEnabled": {"description": "Podtytuł sekcji GUARD, gdy GUARD nie jest jeszcze skonfigurowany dla pozycji"},
+
+  "removeIncomeEntirely": "„{name}” zostanie całkowicie usunięte.",
+  "@removeIncomeEntirely": {
+    "description": "Opis dialogu potwierdzenia przy usuwaniu pozycji dochodu, która zaczyna się w wybranym okresie",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "removeIncomeFromOnwards": "„{name}” zostanie zatrzymane od {from} dalej. {prev} i wcześniejsze okresy pozostaną zaplanowane.",
+  "@removeIncomeFromOnwards": {
+    "description": "Opis dialogu potwierdzenia przy usuwaniu pozycji dochodu od okresu w środku serii",
+    "placeholders": {
+      "name": {"type": "String"},
+      "from": {"type": "String"},
+      "prev": {"type": "String"}
+    }
+  },
+  "actionRemoveAllCaps": "USUŃ",
+  "@actionRemoveAllCaps": {"description": "Etykieta akcji wielkimi literami, wyraźnie pokazana w dialogu usuwania stałego kosztu"},
+  "removeFromOnwardsTitle": "Od {label} dalej",
+  "@removeFromOnwardsTitle": {
+    "description": "Tytuł opcji w dialogu usuwania stałego kosztu — usuń od wybranego okresu",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "removeCycleSubtitle": "Ten cykl ({start} – {end}) i wszystkie przyszłe cykle zostaną usunięte.",
+  "@removeCycleSubtitle": {
+    "description": "Podtytuł opcji od okresu podczas usuwania rocznego stałego kosztu",
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "removeHistoryKept": "Historia do {prev} zostaje zachowana.",
+  "@removeHistoryKept": {
+    "description": "Podtytuł opcji od okresu podczas usuwania miesięcznego stałego kosztu",
+    "placeholders": {"prev": {"type": "String"}}
+  },
+  "silenceReminderTitle": "Wyciszyć to przypomnienie?",
+  "@silenceReminderTitle": {"description": "Tytuł dialogu, gdy użytkownik wycisza przypomnienie GUARD z ekranu Plan"},
+  "silenceReminderBody": "Płatność za {periodLabel} nadal będzie pokazywana jako niepotwierdzona. Możesz w każdej chwili oznaczyć ją jako opłaconą.",
+  "@silenceReminderBody": {
+    "description": "Treść dialogu, gdy użytkownik wycisza przypomnienie GUARD",
+    "placeholders": {"periodLabel": {"type": "String"}}
+  },
+  "yesSilence": "Tak, wycisz",
+  "@yesSilence": {"description": "Etykieta przycisku potwierdzenia w dialogu wyciszenia przypomnienia"},
+  "addPlanItemTooltip": "Dodaj pozycję planu",
+  "@addPlanItemTooltip": {"description": "Podpowiedź FAB na ekranie Plan"},
+  "spendableThisMonth": "Do wydania w tym miesiącu",
+  "@spendableThisMonth": {"description": "Etykieta karty kwoty do wydania w miesięcznym widoku planu"},
+  "spendableThisYear": "Do wydania w tym roku",
+  "@spendableThisYear": {"description": "Etykieta karty kwoty do wydania w rocznym widoku planu"},
+  "noPlanItemsYet": "Brak jeszcze pozycji planu.",
+  "@noPlanItemsYet": {"description": "Główny tekst pustego stanu na ekranie Plan"},
+  "tapPlusToAddPlanItems": "Dotknij +, aby dodać dochód lub stałe koszty.",
+  "@tapPlusToAddPlanItems": {"description": "Dodatkowy tekst pustego stanu na ekranie Plan"},
+  "removeWholeSeries": "Cała seria",
+  "@removeWholeSeries": {"description": "Tytuł opcji w dialogu usuwania stałego kosztu — usuń całą serię"},
+  "removeWholeSeriesSubtitle": "Wszystkie okresy od {seriesStartLabel} są usuwane.",
+  "@removeWholeSeriesSubtitle": {
+    "description": "Podtytuł opcji całej serii w dialogu usuwania stałego kosztu",
+    "placeholders": {"seriesStartLabel": {"type": "String"}}
+  },
+
+  "clearAllDataAction": "USUŃ",
+  "@clearAllDataAction": {"description": "Etykieta akcji wielkimi literami, wyraźnie pokazana w dialogu potwierdzenia usunięcia wszystkiego"},
+  "clearAllDataDescription": "Wydatki, pozycje planu, budżety i płatności guard zostaną trwale usunięte. Tej operacji nie można cofnąć.",
+  "@clearAllDataDescription": {"description": "Treść dialogu potwierdzenia usunięcia wszystkiego"},
+  "clearAllDataPreservedNote": "Zapisane snapshoty i automatyczne kopie zapasowe pozostają bez zmian.",
+  "@clearAllDataPreservedNote": {"description": "Notatka w dialogu potwierdzenia usunięcia wszystkiego wyjaśniająca, co zostaje zachowane"},
+
+  "allCategoriesBudgeted": "Wszystkie kategorie mają już budżet na ten miesiąc. Wybierz inny miesiąc, aby dodać kolejny.",
+  "@allCategoriesBudgeted": {"description": "Pokazywane zamiast listy rozwijanej kategorii, gdy wszystkie kategorie mają już budżet"},
+  "selectCategoryHint": "Wybierz kategorię",
+  "@selectCategoryHint": {"description": "Podpowiedź listy rozwijanej, gdy nie wybrano żadnej kategorii"},
+  "validationSelectCategory": "Wybierz kategorię",
+  "@validationSelectCategory": {"description": "Błąd walidacji, gdy w formularzu budżetu nie wybrano kategorii"},
+  "monthlyBudgetLabel": "Budżet miesięczny",
+  "@monthlyBudgetLabel": {"description": "Etykieta pola tekstowego dla kwoty budżetu miesięcznego"},
+  "effectiveFromLabel": "Obowiązuje od: {validFromLabel}",
+  "@effectiveFromLabel": {
+    "description": "Etykieta przycisku pokazującego bieżący miesiąc wejścia w życie",
+    "placeholders": {"validFromLabel": {"type": "String"}}
+  },
+  "pastMonthBudgetCreateWarning": "Tworzysz budżet dla wcześniejszego miesiąca. Będzie obowiązywał wstecz od {fromLabel}.",
+  "@pastMonthBudgetCreateWarning": {
+    "description": "Ostrzeżenie pokazywane przy tworzeniu budżetu dla wcześniejszego miesiąca",
+    "placeholders": {"fromLabel": {"type": "String"}}
+  },
+  "pastMonthBudgetEditWarning": "To zmieni budżet kategorii {catName} wstecz do {fromLabel}. Miesiące {fromLabel}–{prevLabel} użyją nowej kwoty.",
+  "@pastMonthBudgetEditWarning": {
+    "description": "Ostrzeżenie pokazywane przy edycji budżetu zaczynającego się w wcześniejszym miesiącu",
+    "placeholders": {
+      "catName": {"type": "String"},
+      "fromLabel": {"type": "String"},
+      "prevLabel": {"type": "String"}
+    }
+  },
+
+  "noFixedCostsPlanned": "Brak zaplanowanych stałych kosztów",
+  "@noFixedCostsPlanned": {"description": "Podtytuł na kafelku podsumowania stałych kosztów, gdy nie istnieją żadne pozycje"},
+  "noIncomePlanned": "Brak zaplanowanego dochodu",
+  "@noIncomePlanned": {"description": "Podtytuł na kafelku podsumowania dochodu, gdy nie istnieją żadne pozycje"},
+
+  "saveSlotSubtitle": "{date} · {expenseCount} wydatków · {planItemCount} pozycji planu",
+  "@saveSlotSubtitle": {
+    "description": "Tekst podtytułu na kafelku slotu zapisu pokazujący datę i liczby",
+    "placeholders": {
+      "date": {"type": "String"},
+      "expenseCount": {"type": "int"},
+      "planItemCount": {"type": "int"}
+    }
+  },
+  "saveSlotDamagedSubtitle": "Plik jest uszkodzony i nie można go wczytać",
+  "@saveSlotDamagedSubtitle": {"description": "Podtytuł na kafelku uszkodzonego slotu zapisu"},
+
+  "howGroupsWorkTitle": "Jak to działa?",
+  "@howGroupsWorkTitle": {"description": "Górny nagłówek arkusza „jak działają grupy”"},
+  "howGroupsTitle": "Grupy",
+  "@howGroupsTitle": {"description": "Nagłówek kroku w arkuszu „jak działają grupy”"},
+  "howGroupsSubtitle0": "Czym jest grupa i jak działa",
+  "@howGroupsSubtitle0": {"description": "Podtytuł dla pierwszej strony arkusza „jak działają grupy”"},
+  "howGroupsSubtitle1": "Jak najlepiej to wykorzystać",
+  "@howGroupsSubtitle1": {"description": "Podtytuł dla drugiej strony arkusza „jak działają grupy”"},
+  "howGroupsSubtitle2": "Gdzie grupy pojawiają się w aplikacji",
+  "@howGroupsSubtitle2": {"description": "Podtytuł dla trzeciej strony arkusza „jak działają grupy”"},
+  "howGroupsLabel0": "Tag",
+  "@howGroupsLabel0": {"description": "Wskaźnik podkroku dla strony 1 arkusza „jak działają grupy”"},
+  "howGroupsLabel1": "Bądź kreatywny",
+  "@howGroupsLabel1": {"description": "Wskaźnik podkroku dla strony 2 arkusza „jak działają grupy”"},
+  "howGroupsLabel2": "Rejestr",
+  "@howGroupsLabel2": {"description": "Wskaźnik podkroku dla strony 3 arkusza „jak działają grupy”"},
+  "howGroupsRule1": "Grupa to opcjonalna etykieta dowolnego tekstu, którą przypisujesz do dowolnego wydatku.",
+  "@howGroupsRule1": {"description": "Zasada punktowana na stronie Tag arkusza „jak działają grupy”"},
+  "howGroupsRule2": "Możesz wpisać dowolny ciąg znaków — nie ma stałej listy ani walidacji.",
+  "@howGroupsRule2": {"description": "Zasada punktowana na stronie Tag"},
+  "howGroupsRule3": "Dwa wydatki należą do tej samej grupy tylko wtedy, gdy ich etykiety są dokładnie takie same, znak po znaku.",
+  "@howGroupsRule3": {"description": "Zasada punktowana na stronie Tag"},
+  "howGroupsRule4": "Wielkość liter jest zachowana — „Trip” i „trip” są traktowane jako dwie różne grupy.",
+  "@howGroupsRule4": {"description": "Zasada punktowana na stronie Tag"},
+  "howGroupsRule5": "To pole jest opcjonalne. Zostaw je puste, a wydatek po prostu nie będzie miał grupy.",
+  "@howGroupsRule5": {"description": "Zasada punktowana na stronie Tag"},
+  "howGroupsHint": "Ustaw grupę podczas tworzenia lub edycji dowolnego wydatku.",
+  "@howGroupsHint": {"description": "Pole wskazówki na dole strony Tag"},
+  "howGroupsUseIntro": "Używaj tego zawsze, gdy chcesz śledzić fragment wydatków przecinający się z wieloma kategoriami.",
+  "@howGroupsUseIntro": {"description": "Tekst wprowadzający na stronie Bądź kreatywny"},
+  "howGroupsExample1Label": "Barcelona {year}",
+  "@howGroupsExample1Label": {
+    "description": "Przykładowa etykieta grupy na stronie Bądź kreatywny (przykład podróży)",
+    "placeholders": {"year": {"type": "int"}}
+  },
+  "howGroupsExample1Desc": "Przypisz ją do każdego wydatku podczas podróży — lotów, hoteli, posiłków, biletów. Zobacz całkowity koszt całej podróży jednym dotknięciem.",
+  "@howGroupsExample1Desc": {"description": "Opis przykładu 1 na stronie Bądź kreatywny"},
+  "howGroupsExample2Label": "McDonald''s {year}",
+  "@howGroupsExample2Label": {
+    "description": "Przykładowa etykieta grupy na stronie Bądź kreatywny (przykład restauracji)",
+    "placeholders": {"year": {"type": "int"}}
+  },
+  "howGroupsExample2Desc": "Używaj spójnej nazwy przez cały rok. Pod koniec roku będziesz dokładnie wiedzieć, ile wydałeś w tym jednym miejscu.",
+  "@howGroupsExample2Desc": {"description": "Opis przykładu 2 na stronie Bądź kreatywny"},
+  "howGroupsExample3Label": "Remont domu Q1",
+  "@howGroupsExample3Label": {"description": "Przykładowa etykieta grupy na stronie Bądź kreatywny (przykład remontu)"},
+  "howGroupsExample3Desc": "Rozciągnij ten sam tag na wiele miesięcy. Karta Grupy zbierze wszystko pod tą nazwą.",
+  "@howGroupsExample3Desc": {"description": "Opis przykładu 3 na stronie Bądź kreatywny"},
+  "howGroupsPrecision": "Im bardziej precyzyjny jest twój tag, tym bardziej użyteczne będzie podsumowanie.",
+  "@howGroupsPrecision": {"description": "Kursywą zapisana notatka na dole strony Bądź kreatywny"},
+  "howGroupsRecord0Title": "Karta Grupy w Wydatkach",
+  "@howGroupsRecord0Title": {"description": "Tytuł pierwszego wiersza rekordu na stronie Rejestr"},
+  "howGroupsRecord0Body": "Każda grupa, która ma co najmniej jeden wydatek w bieżącym miesiącu, pojawia się tutaj jako jeden wiersz pokazujący liczbę pozycji i sumę. Dotknij grupy, aby wejść głębiej i zobaczyć każdy pojedynczy wydatek, który za nią stoi.",
+  "@howGroupsRecord0Body": {"description": "Treść pierwszego wiersza rekordu na stronie Rejestr"},
+  "howGroupsRecord1Title": "Raport miesięczny w Raportach",
+  "@howGroupsRecord1Title": {"description": "Tytuł drugiego wiersza rekordu na stronie Rejestr"},
+  "howGroupsRecord1Body": "Gdy eksportujesz miesięczny PDF z ekranu Raporty, grupy z wydatkami w tym miesiącu otrzymują osobną stronę „Grupy wydatków” — każda grupa jest wymieniona wraz ze swoimi wydatkami, kwotami i sumą grupy.",
+  "@howGroupsRecord1Body": {"description": "Treść drugiego wiersza rekordu na stronie Rejestr"},
+  "howGroupsMonthlyNote": "Grupy nie są uwzględniane w raporcie rocznym — to miesięczna perspektywa.",
+  "@howGroupsMonthlyNote": {"description": "Notatka na dole strony Rejestr"},
+
+  "howGroupsExampleGroupName": "Moja grupa",
+  "@howGroupsExampleGroupName": {"description": "Przykładowa nazwa grupy na karcie demonstracyjnej na stronie Tag arkusza „jak działają grupy”"},
+
+  "otherCategories": "Inne kategorie",
+  "@otherCategories": {"description": "Etykieta dla zwiniętego segmentu „inne” na wykresach kołowych i listach podziału"},
+
+  "noCategoryExpenses": "Brak wydatków kategorii {category}\nw {period}.",
+  "@noCategoryExpenses": {
+    "description": "Pusty stan w CategoryExpenseListScreen",
+    "placeholders": {
+      "category": {"type": "String"},
+      "period": {"type": "String"}
+    }
+  },
+
+  "guardDueDate": "Termin {monthName} {day}, {year}",
+  "@guardDueDate": {
+    "description": "Etykieta daty płatności na karcie statusu GUARD",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "day": {"type": "int"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "guardNotYetDue": "Jeszcze nie jest wymagalne",
+  "@guardNotYetDue": {"description": "Etykieta na karcie GUARD, gdy płatność nie jest jeszcze wymagalna"},
+
+  "guardNextReminder": "Następne: {label}",
+  "@guardNextReminder": {
+    "description": "Etykieta następnego przypomnienia na karcie GUARD",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardLastReminder": "Ostatnie: {label}",
+  "@guardLastReminder": {
+    "description": "Etykieta ostatniego przypomnienia na karcie GUARD",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardChangeDay": "Zmień dzień",
+  "@guardChangeDay": {"description": "Przycisk akcji na karcie GUARD do zmiany dnia płatności"},
+
+  "guardRemoveAction": "Usuń GUARD",
+  "@guardRemoveAction": {"description": "Przycisk akcji na karcie GUARD do usunięcia śledzenia guard"},
+
+  "guardMarkUnpaidTitle": "Oznaczyć jako nieopłacone?",
+  "@guardMarkUnpaidTitle": {"description": "Tytuł dialogu przy cofnięciu potwierdzenia płatności"},
+
+  "guardMarkUnpaidBody": "To usunie potwierdzenie płatności dla {monthName} {year}.",
+  "@guardMarkUnpaidBody": {
+    "description": "Treść dialogu przy cofnięciu potwierdzenia płatności",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "guardMarkUnpaidAction": "Oznacz jako nieopłacone",
+  "@guardMarkUnpaidAction": {"description": "Przycisk potwierdzenia w dialogu oznaczenia jako nieopłacone"},
+
+  "guardMarkAsPaid": "Oznacz jako opłacone",
+  "@guardMarkAsPaid": {"description": "Główny przycisk akcji na karcie GUARD"},
+
+  "guardRemoveTitle": "Usunąć GUARD?",
+  "@guardRemoveTitle": {"description": "Tytuł dialogu przy usuwaniu GUARD z pozycji planu"},
+
+  "guardRemoveBody": "GUARD zostanie wyłączony dla „{name}”. Istniejące rekordy płatności zostaną zachowane, ale nowe przypomnienia nie będą już uruchamiane.",
+  "@guardRemoveBody": {
+    "description": "Treść dialogu przy usuwaniu GUARD",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "guardRemoveConfirm": "Usuń",
+  "@guardRemoveConfirm": {"description": "Przycisk potwierdzenia w dialogu usuwania GUARD"},
+
+  "guardSelectPaidDate": "Wybierz datę opłacenia",
+  "@guardSelectPaidDate": {"description": "Tekst pomocy dla wyboru daty przy edycji daty opłacenia"},
+
+  "guardPaidOn": "Opłacono {date}",
+  "@guardPaidOn": {
+    "description": "Etykieta na karcie GUARD pokazująca potwierdzoną datę opłacenia",
+    "placeholders": {"date": {"type": "String"}}
+  },
+
+  "howItWorksStep": "KROK {n}",
+  "@howItWorksStep": {
+    "description": "Etykieta numeru kroku nad każdą kartą w arkuszu „jak to działa”",
+    "placeholders": {"n": {"type": "int"}}
+  },
+
+  "planSubtitle0": "Twoje wynagrodzenie i stałe miesięczne rachunki",
+  "@planSubtitle0": {"description": "Podtytuł dla podstrony Plan 0 (Przepływ gotówki)"},
+
+  "planSubtitle1": "Jak klasyfikowane są twoje stałe koszty",
+  "@planSubtitle1": {"description": "Podtytuł dla podstrony Plan 1 (Klasyfikacja)"},
+
+  "planSubtitle2": "Jaką część twojego dochodu pochłania każdy typ",
+  "@planSubtitle2": {"description": "Podtytuł dla podstrony Plan 2 (Alokacja)"},
+
+  "planSubStep0": "Przepływ gotówki",
+  "@planSubStep0": {"description": "Etykieta podkroku dla strony Plan 0"},
+
+  "planSubStep1": "Klasyfikacja",
+  "@planSubStep1": {"description": "Etykieta podkroku dla strony Plan 1"},
+
+  "planSubStep2": "Alokacja",
+  "@planSubStep2": {"description": "Etykieta podkroku dla strony Plan 2"},
+
+  "howItWorksPlanIncomeBody": "Wprowadź swoje wynagrodzenie i stałe miesięczne rachunki — czynsz, ubezpieczenie, subskrypcje. To są prawdziwe, znane liczby, a nie szacunki ani cele.",
+  "@howItWorksPlanIncomeBody": {"description": "Treść na stronie Plan > Przepływ gotówki"},
+
+  "howItWorksTypeConsumptionDesc": "Codzienne wydatki — zakupy spożywcze, czynsz, jedzenie na mieście, transport",
+  "@howItWorksTypeConsumptionDesc": {"description": "Opis typu finansowego Konsumpcja na stronie Klasyfikacja"},
+
+  "howItWorksTypeAssetDesc": "Inwestycje i oszczędności, które z czasem powiększają twój majątek",
+  "@howItWorksTypeAssetDesc": {"description": "Opis typu finansowego Aktywa na stronie Klasyfikacja"},
+
+  "howItWorksTypeInsuranceDesc": "Koszty ochrony — ubezpieczenie samochodu, zdrowia i życia",
+  "@howItWorksTypeInsuranceDesc": {"description": "Opis typu finansowego Ubezpieczenie na stronie Klasyfikacja"},
+
+  "howItWorksFinancialTypesBody": "Każdy stały koszt jest oznaczony typem finansowym. Dzięki temu aplikacja może pokazać, jak twój dochód jest rozłożony między wydatki, oszczędności i ochronę.",
+  "@howItWorksFinancialTypesBody": {"description": "Treść na stronie Plan > Klasyfikacja"},
+
+  "howItWorksSpendingVsIncomeTitle": "Wydatki vs Dochód",
+  "@howItWorksSpendingVsIncomeTitle": {"description": "Tytuł karty na stronie Plan > Alokacja"},
+
+  "howItWorksSpendingVsIncomeBody": "Karta Plan pokazuje, ile twojego dochodu trafia do każdego typu finansowego — dzięki czemu na pierwszy rzut oka widzisz, czy wydajesz, oszczędzasz lub chronisz właściwą część tego, co zarabiasz.",
+  "@howItWorksSpendingVsIncomeBody": {"description": "Treść na stronie Plan > Alokacja"},
+
+  "expSubtitle0": "Twój dostępny budżet, obliczony z Planu",
+  "@expSubtitle0": {"description": "Podtytuł dla podstrony Wydatki 0 (Budżet)"},
+
+  "expSubtitle1": "Codzienne wydatki, które zapisujesz",
+  "@expSubtitle1": {"description": "Podtytuł dla podstrony Wydatki 1 (Wydawanie)"},
+
+  "expSubtitle2": "Czy zmieściłeś się w budżecie?",
+  "@expSubtitle2": {"description": "Podtytuł dla podstrony Wydatki 2 (Wynik)"},
+
+  "subStepBudget": "Budżet",
+  "@subStepBudget": {"description": "Etykieta podkroku dla strony Budżet w Wydatkach"},
+
+  "subStepSpending": "Wydawanie",
+  "@subStepSpending": {"description": "Etykieta podkroku dla strony Wydawanie w Wydatkach"},
+
+  "subStepResult": "Wynik",
+  "@subStepResult": {"description": "Etykieta podkroku dla strony Wynik w Wydatkach"},
+
+  "howItWorksBudgetBody": "Aplikacja odejmuje twoje stałe koszty od twojego dochodu i pokazuje wynik tutaj. Nie ustawiasz tej liczby — pochodzi z twojego Planu.",
+  "@howItWorksBudgetBody": {"description": "Treść na stronie Wydatki > Budżet"},
+
+  "howItWorksSpendingBody": "Zapisuj zakupy spożywcze, posiłki, zakupy i inne zmienne wydatki. Stałe miesięczne rachunki, takie jak czynsz, należą do Planu, nie tutaj.",
+  "@howItWorksSpendingBody": {"description": "Treść na stronie Wydatki > Wydawanie"},
+
+  "howItWorksResultBody": "Na koniec miesiąca karta Wydatki pokaże, jaki wynik osiągnąłeś.",
+  "@howItWorksResultBody": {"description": "Treść na stronie Wydatki > Wynik"},
+
+  "repSubtitle0": "Gdzie poszły twoje pieniądze?",
+  "@repSubtitle0": {"description": "Podtytuł dla podstrony Raporty 0 (Podział)"},
+
+  "repSubtitle1": "Twoje finanse na papierze",
+  "@repSubtitle1": {"description": "Podtytuł dla podstrony Raporty 1 (Eksport)"},
+
+  "repSubtitle2": "Pełny obraz, miesiąc po miesiącu",
+  "@repSubtitle2": {"description": "Podtytuł dla podstrony Raporty 2 (Przegląd)"},
+
+  "repSubStep0": "Podział",
+  "@repSubStep0": {"description": "Etykieta podkroku dla strony Podział w Raportach"},
+
+  "repSubStep1": "Eksport",
+  "@repSubStep1": {"description": "Etykieta podkroku dla strony Eksport w Raportach"},
+
+  "repSubStep2": "Przegląd",
+  "@repSubStep2": {"description": "Etykieta podkroku dla strony Przegląd w Raportach"},
+
+  "howItWorksBreakdownBody": "Podział pokazuje twoje wydatki według kategorii dla dowolnego miesiąca lub roku. Dotknij wycinka lub wiersza kategorii, aby przejść do pojedynczych wydatków i stałych kosztów, które za nimi stoją.",
+  "@howItWorksBreakdownBody": {"description": "Treść na stronie Raporty > Podział"},
+
+  "pdfFeatureCategoryTotals": "Sumy kategorii",
+  "@pdfFeatureCategoryTotals": {"description": "Punkt funkcji na karcie Miesięczny PDF"},
+
+  "pdfFeatureBudgetVsActual": "Budżet vs rzeczywistość",
+  "@pdfFeatureBudgetVsActual": {"description": "Punkt funkcji na karcie Miesięczny PDF"},
+
+  "pdfFeatureTypeSplit": "Podział typu finansowego",
+  "@pdfFeatureTypeSplit": {"description": "Punkt funkcji na karcie Miesięczny PDF"},
+
+  "pdfFeatureAllExpenses": "Wszystkie wydatki wymienione",
+  "@pdfFeatureAllExpenses": {"description": "Punkt funkcji na karcie Miesięczny PDF"},
+
+  "pdfFeatureCategoryBudgets": "Budżety kategorii",
+  "@pdfFeatureCategoryBudgets": {"description": "Punkt funkcji na karcie Miesięczny PDF"},
+
+  "pdfFeatureGroupSummaries": "Podsumowania grup",
+  "@pdfFeatureGroupSummaries": {"description": "Punkt funkcji na karcie Miesięczny PDF"},
+
+  "pdfFeature12MonthOverview": "Przegląd 12 miesięcy",
+  "@pdfFeature12MonthOverview": {"description": "Punkt funkcji na karcie Roczny PDF"},
+
+  "pdfFeatureAnnualTotals": "Roczne sumy",
+  "@pdfFeatureAnnualTotals": {"description": "Punkt funkcji na karcie Roczny PDF"},
+
+  "pdfFeatureMonthlyBreakdown": "Podział miesięczny",
+  "@pdfFeatureMonthlyBreakdown": {"description": "Punkt funkcji na karcie Roczny PDF"},
+
+  "pdfFeaturePlanVsActual": "Plan vs rzeczywistość",
+  "@pdfFeaturePlanVsActual": {"description": "Punkt funkcji na karcie Roczny PDF"},
+
+  "pdfFeatureTypeRatios": "Wskaźniki typów",
+  "@pdfFeatureTypeRatios": {"description": "Punkt funkcji na karcie Roczny PDF"},
+
+  "pdfFeatureActivePlanItems": "Aktywne pozycje planu",
+  "@pdfFeatureActivePlanItems": {"description": "Punkt funkcji na karcie Roczny PDF"},
+
+  "howItWorksExportBody": "Użyj przycisku PDF w Podziale, aby eksportować. Raporty można udostępniać przez dowolną aplikację na twoim urządzeniu.",
+  "@howItWorksExportBody": {"description": "Treść na stronie Raporty > Eksport"},
+
+  "howItWorksMoreMonths": "· · · jeszcze 9 miesięcy",
+  "@howItWorksMoreMonths": {"description": "Wiersz wielokropka w makiecie karty Przegląd"},
+
+  "howItWorksOverviewBody": "Przegląd pokazuje wszystkie 12 miesięcy obok siebie — ile zarobiłeś, ile trafiło do aktywów i ile zostało skonsumowane. Dotknij dowolnego miesiąca, aby przejść do tego okresu w Planie.",
+  "@howItWorksOverviewBody": {"description": "Treść na stronie Raporty > Przegląd"},
+
+  "overBudgetBy": "Ponad budżet o {amount}",
+  "@overBudgetBy": {
+    "description": "Etykieta podsumowania wyniku, gdy wydatki przekraczają budżet",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "savedAmount": "Zaoszczędzono {amount}",
+  "@savedAmount": {
+    "description": "Etykieta podsumowania wyniku, gdy wydatki są poniżej budżetu",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "loadingLabel": "Ładowanie…",
+  "@loadingLabel": {"description": "Ogólny placeholder ładowania"},
+
+  "autoBackupTitle": "Automatyczna kopia zapasowa",
+  "@autoBackupTitle": {"description": "Nagłówek sekcji dla slotów automatycznej kopii zapasowej"},
+
+  "autoBackupNoBackupYet": "Brak kopii zapasowej",
+  "@autoBackupNoBackupYet": {"description": "Pokazywane, gdy nie istnieje jeszcze żadna automatyczna kopia zapasowa"},
+
+  "autoBackupSubtitleExpand": "Aktualizowane codziennie · dotknij, aby rozwinąć",
+  "@autoBackupSubtitleExpand": {"description": "Podtytuł automatycznej kopii zapasowej, gdy sekcja jest zwinięta"},
+
+  "autoBackupSubtitleCollapse": "Aktualizowane codziennie · dotknij, aby zwinąć",
+  "@autoBackupSubtitleCollapse": {"description": "Podtytuł automatycznej kopii zapasowej, gdy sekcja jest rozwinięta"},
+
+  "actionRestoreAllCaps": "PRZYWRÓĆ",
+  "@actionRestoreAllCaps": {"description": "Etykieta akcji przywracania wielkimi literami"},
+
+  "actionRestore": "Przywróć",
+  "@actionRestore": {"description": "Etykieta akcji przywracania"},
+
+  "autoBackupRestoreDescription": "Przywrócenie zastąpi wszystkie bieżące dane kopią zapasową.",
+  "@autoBackupRestoreDescription": {"description": "Treść w dialogu potwierdzenia przywracania"},
+
+  "autoBackupRestored": "Przywrócono kopię zapasową z {date}.",
+  "@autoBackupRestored": {
+    "description": "Snackbar pokazywany po pomyślnym przywróceniu automatycznej kopii zapasowej",
+    "placeholders": {"date": {"type": "String"}}
+  },
+
+  "autoBackupRestoreFailed": "Nie udało się przywrócić kopii zapasowej.",
+  "@autoBackupRestoreFailed": {"description": "Snackbar pokazywany, gdy przywracanie automatycznej kopii zapasowej się nie powiedzie"},
+
+  "autoBackupPrimary": "Główna kopia zapasowa",
+  "@autoBackupPrimary": {"description": "Etykieta nazwy dla najnowszego slotu automatycznej kopii zapasowej (slot 0)"},
+
+  "autoBackupSecondary": "Pomocnicza kopia zapasowa",
+  "@autoBackupSecondary": {"description": "Etykieta nazwy dla slotu automatycznej kopii zapasowej z poprzedniego dnia (slot 1)"},
+
+  "frequencyPickerFixed": "Jak często to się powtarza?",
+  "@frequencyPickerFixed": {"description": "Tytuł dolnego arkusza wyboru częstotliwości dla stałych kosztów"},
+
+  "frequencyMonthlyFixedSubtitle": "Czynsz, subskrypcje, powtarzające się rachunki",
+  "@frequencyMonthlyFixedSubtitle": {"description": "Podtytuł opcji Miesięcznie w wyborze częstotliwości stałych kosztów"},
+
+  "frequencyYearlyFixedSubtitle": "Roczne subskrypcje, ubezpieczenia, członkostwa",
+  "@frequencyYearlyFixedSubtitle": {"description": "Podtytuł opcji Rocznie w wyborze częstotliwości stałych kosztów"},
+
+  "frequencyPickerIncome": "Jak często to otrzymujesz?",
+  "@frequencyPickerIncome": {"description": "Tytuł dolnego arkusza wyboru częstotliwości dla dochodu"},
+
+  "frequencyMonthlyIncomeSubtitle": "Wynagrodzenie, emerytura, regularne przelewy",
+  "@frequencyMonthlyIncomeSubtitle": {"description": "Podtytuł opcji Miesięcznie w wyborze częstotliwości dochodu"},
+
+  "frequencyYearlyIncomeSubtitle": "Roczna premia, zwrot podatku, dywidendy",
+  "@frequencyYearlyIncomeSubtitle": {"description": "Podtytuł opcji Rocznie w wyborze częstotliwości dochodu"},
+
+  "frequencyOneTimeIncomeSubtitle": "Prezent, niespodziewany dochód, jednorazowa płatność",
+  "@frequencyOneTimeIncomeSubtitle": {"description": "Podtytuł opcji Jednorazowo w wyborze częstotliwości dochodu"},
+
+  "typePickerTitle": "Co dodajesz?",
+  "@typePickerTitle": {"description": "Tytuł dolnego arkusza wyboru typu pozycji planu"},
+
+  "typeIncomeSubtitle": "Wynagrodzenie, premia, emerytura, prezenty",
+  "@typeIncomeSubtitle": {"description": "Podtytuł dla karty Dochód w wyborze typu"},
+
+  "typeFixedCostSubtitle": "Czynsz, ubezpieczenie, subskrypcje",
+  "@typeFixedCostSubtitle": {"description": "Podtytuł dla karty Stały koszt w wyborze typu"},
+
+  "languagePickerTitle": "Język",
+  "@languagePickerTitle": {"description": "Tytuł okna wyboru języka"},
+
+  "currencyPickerTitle": "Waluta",
+  "@currencyPickerTitle": {"description": "Tytuł arkusza wyboru waluty"},
+
+  "currencyCustom": "Niestandardowa",
+  "@currencyCustom": {"description": "Etykieta opcji waluty niestandardowej"},
+
+  "currencyCustomSubtitle": "Zdefiniuj własny kod i symbol",
+  "@currencyCustomSubtitle": {"description": "Podtytuł opcji waluty niestandardowej"},
+
+  "currencyCustomTitle": "Waluta niestandardowa",
+  "@currencyCustomTitle": {"description": "Tytuł dialogu wprowadzania waluty niestandardowej"},
+
+  "currencyCodeLabel": "Kod",
+  "@currencyCodeLabel": {"description": "Etykieta pola wejściowego kodu waluty"},
+
+  "currencyCodeHint": "np. USD",
+  "@currencyCodeHint": {"description": "Podpowiedź dla pola wejściowego kodu waluty"},
+
+  "currencySymbolLabel": "Symbol",
+  "@currencySymbolLabel": {"description": "Etykieta pola wejściowego symbolu waluty"},
+
+  "currencySymbolHint": "np. $",
+  "@currencySymbolHint": {"description": "Podpowiedź dla pola wejściowego symbolu waluty"},
+
+  "removeFromImport": "Usuń z importu",
+  "@removeFromImport": {"description": "Podpowiedź/akcja usunięcia wiersza z podglądu importu"},
+
+  "exportExpensesTitle": "Eksportuj wydatki",
+  "@exportExpensesTitle": {"description": "Tytuł dialogu zakresu dat eksportu"},
+
+  "selectDateRangeHint": "Wybierz zakres dat do eksportu:",
+  "@selectDateRangeHint": {"description": "Tekst instrukcji w dialogu zakresu dat eksportu"},
+
+  "startDateLabel": "Data początkowa",
+  "@startDateLabel": {"description": "Etykieta wyboru daty początkowej w dialogu eksportu"},
+
+  "endDateLabel": "Data końcowa",
+  "@endDateLabel": {"description": "Etykieta wyboru daty końcowej w dialogu eksportu"},
+
+  "tapToSelectDate": "Dotknij, aby wybrać",
+  "@tapToSelectDate": {"description": "Placeholder pokazywany, gdy nie wybrano jeszcze żadnej daty"},
+
+  "endDateAfterStart": "Data końcowa musi przypadać w dniu rozpoczęcia lub po nim.",
+  "@endDateAfterStart": {"description": "Błąd walidacji pokazywany w dialogu eksportu"},
+
+  "actionExport": "Eksportuj",
+  "@actionExport": {"description": "Etykieta przycisku akcji eksportu"},
+
+  "overspendWarning": "W tym {period} wydałeś o {amount} więcej, niż zarobiłeś!",
+  "@overspendWarning": {
+    "description": "Ostrzeżenie pokazywane na karcie rozkładu typu finansowego, gdy wydatki przekraczają dochód",
+    "placeholders": {
+      "period": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+
+  "periodMonth": "miesiącu",
+  "@periodMonth": {"description": "Słowo „miesiąc” używane w overspendWarning"},
+
+  "periodYear": "roku",
+  "@periodYear": {"description": "Słowo „rok” używane w overspendWarning"},
+
+  "guardBannerCount": "{count, plural, =1{GUARD — 1 płatność nie została potwierdzona} few{GUARD — {count} płatności nie zostały potwierdzone} many{GUARD — {count} płatności nie zostało potwierdzonych} other{GUARD — {count} płatności nie zostało potwierdzonych}}",
+  "@guardBannerCount": {
+    "description": "Tekst bannera pokazujący, ile płatności GUARD nie zostało potwierdzonych",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "guardSilencedBadge": "wyciszone",
+  "@guardSilencedBadge": {"description": "Odznaka pokazywana przy wyciszonej pozycji GUARD w bannerze"},
+
+  "guardExpenseStripPending": "{count, plural, =1{1 chroniona płatność oczekuje} few{{count} chronione płatności oczekują} many{{count} chronionych płatności oczekuje} other{{count} chronionych płatności oczekuje}}",
+  "@guardExpenseStripPending": {
+    "description": "Pasek pokazywany na liście wydatków, gdy istnieją oczekujące płatności GUARD",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorRowLabel": "Wiersz {row} — {field}",
+  "@importErrorRowLabel": {
+    "description": "Etykieta wiersza błędu importu pokazująca numer wiersza i pole",
+    "placeholders": {
+      "row": {"type": "int"},
+      "field": {"type": "String"}
+    }
+  },
+
+  "earnedLabel": "Zarobiono: {amount}",
+  "@earnedLabel": {
+    "description": "Etykieta zarobionej kwoty w wierszu miesiąca przeglądu",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "fromDateShort": "od {label}",
+  "@fromDateShort": {
+    "description": "Krótka etykieta „od daty” używana w podtytułach pozycji planu",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "untilDateShort": "do {label}",
+  "@untilDateShort": {
+    "description": "Krótka etykieta „do daty” używana w podtytułach pozycji planu",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardEnableToggle": "Włącz GUARD",
+  "@guardEnableToggle": {"description": "Etykieta przełącznika włączenia GUARD w arkuszu konfiguracji"},
+
+  "guardEnableToggleSubtitle": "Śledź płatność i otrzymuj przypomnienia",
+  "@guardEnableToggleSubtitle": {"description": "Podtytuł przełącznika włączenia GUARD"},
+
+  "actionOk": "OK",
+  "@actionOk": {"description": "Ogólna etykieta przycisku OK"},
+
+  "labelTotal": "Razem",
+  "@labelTotal": {"description": "Etykieta wiersza sumy całkowitej na ekranie raportu"},
+
+  "categoryBudgetsTitle": "Budżety kategorii",
+  "@categoryBudgetsTitle": {"description": "Tytuł AppBar dla ekranu zarządzania budżetami (specyficznie dla budżetów kategorii)"},
+
+  "noCategoryBudgetsSet": "Brak ustawionych budżetów kategorii.",
+  "@noCategoryBudgetsSet": {"description": "Główny tekst pustego stanu na ekranie zarządzania budżetami"},
+
+  "removeBudgetDialogTitle": "Usuń budżet kategorii {category}",
+  "@removeBudgetDialogTitle": {
+    "description": "Tytuł dialogu potwierdzenia usunięcia budżetu",
+    "placeholders": {"category": {"type": "String"}}
+  },
+
+  "endBudgetFromTitle": "Zakończ od {from}",
+  "@endBudgetFromTitle": {
+    "description": "Tytuł opcji w dialogu usuwania budżetu — zakończ serię budżetu od wybranego miesiąca",
+    "placeholders": {"from": {"type": "String"}}
+  },
+
+  "endBudgetFromDescription": "Zatrzymuje budżet od {from} dalej. Wcześniejsze miesiące zachowają swój historyczny budżet.",
+  "@endBudgetFromDescription": {
+    "description": "Podtytuł opcji zakończenia od wybranego miesiąca w dialogu usuwania budżetu",
+    "placeholders": {"from": {"type": "String"}}
+  },
+
+  "deleteBudgetSeriesTitle": "Usuń całą serię",
+  "@deleteBudgetSeriesTitle": {"description": "Tytuł opcji w dialogu usuwania budżetu — usuń wszystkie rekordy budżetu tej serii"},
+
+  "deleteBudgetSeriesConfirm": "Usuń serię",
+  "@deleteBudgetSeriesConfirm": {"description": "Etykieta przycisku potwierdzenia w dialogu usunięcia serii budżetu"},
+
+  "deleteBudgetSeriesDescription": "Trwale usuwa wszystkie rekordy ({range}). Budżet nie pojawi się w żadnym miesiącu tej serii. Tej operacji nie można cofnąć.",
+  "@deleteBudgetSeriesDescription": {
+    "description": "Podtytuł opcji usunięcia wszystkiego w dialogu usuwania budżetu",
+    "placeholders": {"range": {"type": "String"}}
+  },
+
+  "budgetRangePresent": "{start} – obecnie",
+  "@budgetRangePresent": {
+    "description": "Etykieta zakresu dat używana w dialogu usuwania budżetu, gdy budżet nie ma daty końcowej",
+    "placeholders": {"start": {"type": "String"}}
+  },
+
+  "pdfMonthlyReport": "Raport miesięczny",
+  "@pdfMonthlyReport": {"description": "Powtarzający się nagłówek PDF dla raportów miesięcznych"},
+
+  "pdfYearlyReport": "Raport roczny",
+  "@pdfYearlyReport": {"description": "Powtarzający się nagłówek PDF dla raportów rocznych"},
+
+  "pdfMonthlyReportHeader": "RAPORT MIESIĘCZNY ZA {month} {year}",
+  "@pdfMonthlyReportHeader": {
+    "description": "Tytuł banera pierwszej strony dla raportów miesięcznych PDF",
+    "placeholders": {
+      "month": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "pdfYearlyReportHeader": "RAPORT ROCZNY ZA {year}",
+  "@pdfYearlyReportHeader": {
+    "description": "Tytuł banera pierwszej strony dla raportów rocznych PDF",
+    "placeholders": {"year": {"type": "int"}}
+  },
+
+  "pdfPartialYear": "(niepełny rok)",
+  "@pdfPartialYear": {"description": "Sufiks podtytułu PDF dołączany do roku, gdy raport roczny obejmuje tylko część roku"},
+
+  "pdfSectionSpendingVsIncome": "WYDATKI VS DOCHÓD",
+  "@pdfSectionSpendingVsIncome": {"description": "Tytuł sekcji PDF dla widżetu wydatki vs dochód"},
+
+  "pdfSectionCategorySummary": "PODSUMOWANIE KATEGORII",
+  "@pdfSectionCategorySummary": {"description": "Tytuł sekcji PDF dla tabeli podsumowania kategorii"},
+
+  "pdfSectionCashFlowSummary": "PODSUMOWANIE PRZEPŁYWU GOTÓWKI",
+  "@pdfSectionCashFlowSummary": {"description": "Tytuł sekcji PDF dla podsumowania przepływu gotówki"},
+
+  "pdfSectionExpenseGroups": "GRUPY WYDATKÓW",
+  "@pdfSectionExpenseGroups": {"description": "Tytuł sekcji PDF dla strony grup wydatków"},
+
+  "pdfSectionExpenseDetails": "SZCZEGÓŁY WYDATKÓW",
+  "@pdfSectionExpenseDetails": {"description": "Tytuł sekcji PDF dla tabeli szczegółów wydatków"},
+
+  "pdfSectionYearlyOverview": "PRZEGLĄD ROCZNY",
+  "@pdfSectionYearlyOverview": {"description": "Tytuł sekcji PDF dla tabeli przeglądu rocznego"},
+
+  "pdfSectionSpendingByCategory": "WYDATKI WEDŁUG KATEGORII I MIESIĘCY",
+  "@pdfSectionSpendingByCategory": {"description": "Tytuł sekcji PDF dla poziomej tabeli kategorii według miesięcy"},
+
+  "pdfIncomeHeader": "DOCHÓD",
+  "@pdfIncomeHeader": {"description": "Etykieta nagłówka karty dochodu w podsumowaniu przepływu gotówki PDF"},
+
+  "pdfFixedCostsHeader": "STAŁE KOSZTY",
+  "@pdfFixedCostsHeader": {"description": "Etykieta nagłówka karty stałych kosztów w podsumowaniu przepływu gotówki PDF"},
+
+  "pdfTotal": "RAZEM",
+  "@pdfTotal": {"description": "Etykieta wiersza RAZEM wielkimi literami w tabelach kategorii i wydatków PDF"},
+
+  "pdfColTotal": "Razem",
+  "@pdfColTotal": {"description": "Nagłówek kolumny „Razem” w poziomej tabeli kategorii według miesięcy PDF"},
+
+  "pdfEarnedThisMonth": "Zarobiono w tym miesiącu",
+  "@pdfEarnedThisMonth": {"description": "Etykieta wiersza dochodu w widżecie wydatki vs dochód w miesięcznym PDF"},
+
+  "pdfEarnedThisYear": "Zarobiono w tym roku",
+  "@pdfEarnedThisYear": {"description": "Etykieta wiersza dochodu w widżecie wydatki vs dochód w rocznym PDF"},
+
+  "pdfGroupTotal": "Suma grupy (w tym miesiącu)",
+  "@pdfGroupTotal": {"description": "Etykieta wiersza sumy częściowej w sekcji grup wydatków PDF"},
+
+  "pdfAllPeriodsTotal": "Suma wszystkich okresów",
+  "@pdfAllPeriodsTotal": {"description": "Etykieta wiersza sumy całkowitej za cały okres w sekcji grup wydatków PDF"},
+
+  "pdfItemsThisMonth": "{count, plural, =1{1 pozycja w tym miesiącu} few{{count} pozycje w tym miesiącu} many{{count} pozycji w tym miesiącu} other{{count} pozycji w tym miesiącu}}",
+  "@pdfItemsThisMonth": {
+    "description": "Etykieta liczby w nagłówku grupy PDF pokazująca, ile wydatków należy do grupy w bieżącym miesiącu",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "pdfNormalized": " (znormalizowane)",
+  "@pdfNormalized": {"description": "Sufiks PDF dołączany do rocznych pozycji planu pokazanych w miesięcznym podsumowaniu przepływu gotówki"},
+
+  "pdfAnnualized": " (w ujęciu rocznym)",
+  "@pdfAnnualized": {"description": "Sufiks PDF dołączany do miesięcznych pozycji planu pokazanych w rocznym podsumowaniu przepływu gotówki"},
+
+  "pdfPartialYearNote": "Niepełny rok - miesiące bez danych pokazują zera. Tylko sumy od początku roku do dziś.",
+  "@pdfPartialYearNote": {"description": "Notatka PDF pokazywana u góry raportu dla niepełnego roku"},
+
+  "pdfPage": "Strona {page} z {total}",
+  "@pdfPage": {
+    "description": "Etykieta numeru strony w stopce PDF",
+    "placeholders": {
+      "page": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+
+  "pdfNoData": "Brak danych.",
+  "@pdfNoData": {"description": "Placeholder PDF pokazywany, gdy tabela lub sekcja nie ma danych do wyświetlenia"},
+
+  "howItWorksExampleSalary": "Wynagrodzenie",
+  "@howItWorksExampleSalary": {"description": "Przykładowa nazwa pozycji dochodu w arkuszu „jak to działa”"},
+
+  "howItWorksExampleBonus": "Premia",
+  "@howItWorksExampleBonus": {"description": "Przykładowa nazwa pozycji dochodu w arkuszu „jak to działa”"},
+
+  "howItWorksExampleRent": "Czynsz",
+  "@howItWorksExampleRent": {"description": "Przykładowa nazwa pozycji stałego kosztu w arkuszu „jak to działa”"},
+
+  "howItWorksExampleInsurance": "Ubezpieczenie",
+  "@howItWorksExampleInsurance": {"description": "Przykładowa nazwa pozycji stałego kosztu w arkuszu „jak to działa”"},
+
+  "howItWorksExampleEtfFonds": "Fundusze ETF",
+  "@howItWorksExampleEtfFonds": {"description": "Przykładowa nazwa pozycji stałego kosztu w arkuszu „jak to działa”"},
+
+  "addBudgetTooltip": "Dodaj budżet",
+  "@addBudgetTooltip": {"description": "Podpowiedź FAB na ekranie Budżety kategorii"}
+}

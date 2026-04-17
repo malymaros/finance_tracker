@@ -1,0 +1,1623 @@
+{
+  "@@locale": "sk",
+
+  "appTitle": "Finance Tracker",
+  "@appTitle": {"description": "Názov aplikácie"},
+
+  "welcomeTagline": "Získajte kontrolu nad svojimi peniazmi",
+  "@welcomeTagline": {"description": "Podtitul na uvítacej obrazovke pod názvom aplikácie"},
+
+  "getStarted": "Začať",
+  "@getStarted": {"description": "Primárne tlačidlo na uvítacej obrazovke"},
+
+  "tabExpenses": "Výdavky",
+  "@tabExpenses": {"description": "Popisok karty v spodnej navigácii"},
+
+  "tabPlan": "Plán",
+  "@tabPlan": {"description": "Popisok karty v spodnej navigácii"},
+
+  "tabReports": "Prehľady",
+  "@tabReports": {"description": "Popisok karty v spodnej navigácii"},
+
+  "actionEdit": "Upraviť",
+  "@actionEdit": {"description": "Všeobecný popisok akcie úpravy"},
+
+  "actionDelete": "Odstrániť",
+  "@actionDelete": {"description": "Všeobecný popisok akcie odstránenia"},
+
+  "actionSave": "Uložiť",
+  "@actionSave": {"description": "Všeobecný popisok tlačidla uloženia / potvrdenia"},
+
+  "actionCancel": "Zrušiť",
+  "@actionCancel": {"description": "Všeobecný popisok tlačidla zrušenia"},
+
+  "actionLoad": "Načítať",
+  "@actionLoad": {"description": "Načítať uložený snapshot"},
+
+  "actionImport": "Importovať",
+  "@actionImport": {"description": "Všeobecný popisok tlačidla importu"},
+
+  "actionOverwrite": "Prepísať",
+  "@actionOverwrite": {"description": "Prepísať slot uloženia"},
+
+  "labelAmount": "Suma",
+  "@labelAmount": {"description": "Popisok poľa formulára pre peňažnú sumu"},
+
+  "labelCategory": "Kategória",
+  "@labelCategory": {"description": "Popisok poľa formulára / riadka detailu pre kategóriu výdavku"},
+
+  "labelFinancialType": "Finančný typ",
+  "@labelFinancialType": {"description": "Popisok sekcie formulára / riadka detailu pre finančný typ"},
+
+  "labelDate": "Dátum",
+  "@labelDate": {"description": "Popisok poľa formulára / riadka detailu pre dátum"},
+
+  "labelNote": "Poznámka",
+  "@labelNote": {"description": "Popisok riadka detailu pre poznámku"},
+
+  "labelNoteOptional": "Poznámka (voliteľné)",
+  "@labelNoteOptional": {"description": "Popisok poľa formulára pre voliteľnú poznámku"},
+
+  "labelGroup": "Skupina",
+  "@labelGroup": {"description": "Popisok riadka detailu pre skupinu"},
+
+  "labelGroupOptional": "Skupina (voliteľné)",
+  "@labelGroupOptional": {"description": "Popisok poľa formulára pre voliteľnú skupinu"},
+
+  "groupHintText": "napr. Dovolenka, Narodeniny",
+  "@groupHintText": {"description": "Pomocný text v poli pre skupinu"},
+
+  "labelName": "Názov",
+  "@labelName": {"description": "Popisok poľa formulára pre názov položky"},
+
+  "labelFrequency": "Frekvencia",
+  "@labelFrequency": {"description": "Popisok poľa formulára pre frekvenciu platby"},
+
+  "labelValidFrom": "Platné od",
+  "@labelValidFrom": {"description": "Popisok poľa formulára pre začiatočné obdobie"},
+
+  "labelValidTo": "Platné do (voliteľné)",
+  "@labelValidTo": {"description": "Popisok poľa formulára pre voliteľné koncové obdobie"},
+
+  "menuImportExpenses": "Importovať výdavky",
+  "@menuImportExpenses": {"description": "Položka v overflow menu na obrazovke Výdavky"},
+
+  "menuExportExpenses": "Exportovať výdavky",
+  "@menuExportExpenses": {"description": "Položka v overflow menu na obrazovke Výdavky"},
+
+  "menuImport": "Importovať",
+  "@menuImport": {"description": "Položka v overflow menu pre všeobecný import"},
+
+  "menuSaves": "Uloženia",
+  "@menuSaves": {"description": "Položka v overflow menu na otvorenie obrazovky uložených stavov"},
+
+  "menuDeleteAll": "Odstrániť všetky dáta",
+  "@menuDeleteAll": {"description": "Položka v overflow menu na odstránenie všetkých dát"},
+
+  "menuHowItWorks": "Ako to funguje",
+  "@menuHowItWorks": {"description": "Položka v overflow menu na otvorenie vysvetlenia fungovania"},
+
+  "menuResetWithDummyData": "Resetovať s testovacími dátami",
+  "@menuResetWithDummyData": {"description": "Položka v overflow menu dostupná len v debug režime"},
+
+  "menuManageBudgets": "Spravovať rozpočty",
+  "@menuManageBudgets": {"description": "Položka v overflow menu na karte Plán"},
+
+  "menuGuard": "GUARD",
+  "@menuGuard": {"description": "Položka v overflow menu na otvorenie obrazovky GUARD"},
+
+  "expenseListTitle": "Výdavky",
+  "@expenseListTitle": {"description": "Názov AppBaru pre obrazovku zoznamu výdavkov"},
+
+  "savesTooltip": "Uloženia",
+  "@savesTooltip": {"description": "Tooltip pre tlačidlo uložených stavov v AppBare"},
+
+  "howItWorksTooltip": "Ako to funguje",
+  "@howItWorksTooltip": {"description": "Tooltip pre tlačidlo pomoci"},
+
+  "howItWorksQuestion": "Ako to funguje?",
+  "@howItWorksQuestion": {"description": "Text odkazu na otvorenie vysvetľujúceho panelu"},
+
+  "viewModeItems": "Položky",
+  "@viewModeItems": {"description": "Popisok prepínača pre zobrazenie zoznamu položiek"},
+
+  "viewModeByCategory": "Kategória",
+  "@viewModeByCategory": {"description": "Popisok prepínača pre zobrazenie podľa kategórií"},
+
+  "viewModeByGroup": "Skupiny",
+  "@viewModeByGroup": {"description": "Popisok prepínača pre zobrazenie podľa skupín"},
+
+  "thisMonthsBudget": "Rozpočet na tento mesiac",
+  "@thisMonthsBudget": {"description": "Popisok na karte rozpočtu / progress bare"},
+
+  "budgetNotSet": "Rozpočet nie je nastavený",
+  "@budgetNotSet": {"description": "Zobrazené na karte bez rozpočtu, keď nie je naplánovaný príjem"},
+
+  "setIncomeInPlan": "Nastaviť príjem",
+  "@setIncomeInPlan": {"description": "Výzva na akciu na karte bez rozpočtu"},
+
+  "noExpensesInMonth": "V mesiaci {monthName} {year} nie sú žiadne výdavky.",
+  "@noExpensesInMonth": {
+    "description": "Text prázdneho stavu na obrazovke zoznamu výdavkov pre vybraný mesiac",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "tapPlusToAddOne": "Ťuknite na + a pridajte výdavok.",
+  "@tapPlusToAddOne": {"description": "Nápoveda prázdneho stavu na obrazovke výdavkov"},
+
+  "fixedBillsHint": "Fixné platby ako nájom patria do Plánu.",
+  "@fixedBillsHint": {"description": "Sekundárna nápoveda v prázdnom stave na obrazovke výdavkov"},
+
+  "noGroupsThisMonth": "Tento mesiac nie sú žiadne skupiny.",
+  "@noGroupsThisMonth": {"description": "Prázdny stav, keď v danom mesiaci žiadne výdavky nemajú skupinu"},
+
+  "addGroupHint": "Pridajte skupinu pri vytváraní\nalebo úprave výdavku.",
+  "@addGroupHint": {"description": "Sekundárna nápoveda pod prázdnym stavom bez skupín"},
+
+  "howGroupsWorkQuestion": "Ako fungujú skupiny?",
+  "@howGroupsWorkQuestion": {"description": "Text odkazu na otvorenie panelu Ako fungujú skupiny"},
+
+  "itemCount": "{count, plural, =1{1 položka} few{{count} položky} other{{count} položiek}}",
+  "@itemCount": {
+    "description": "Počet položiek v hlavičke kategórie alebo skupiny",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "addExpenseTitle": "Pridať výdavok",
+  "@addExpenseTitle": {"description": "Názov AppBaru pri pridávaní nového výdavku"},
+
+  "editExpenseTitle": "Upraviť výdavok",
+  "@editExpenseTitle": {"description": "Názov AppBaru pri úprave existujúceho výdavku"},
+
+  "validationAmountEmpty": "Zadajte sumu",
+  "@validationAmountEmpty": {"description": "Validačná chyba, keď je pole sumy prázdne"},
+
+  "validationAmountInvalid": "Zadajte platné kladné číslo",
+  "@validationAmountInvalid": {"description": "Validačná chyba, keď je suma nulová alebo nečíselná"},
+
+  "expenseDetailTitle": "Výdavok",
+  "@expenseDetailTitle": {"description": "Názov AppBaru pre detail výdavku"},
+
+  "noExpensesInNamedGroup": "V skupine „{name}“ nie sú žiadne výdavky.",
+  "@noExpensesInNamedGroup": {
+    "description": "Prázdny stav na obrazovke zoznamu výdavkov skupiny",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "planTitle": "Plán",
+  "@planTitle": {"description": "Názov AppBaru pre kartu Plán"},
+
+  "toggleMonthly": "Mesačne",
+  "@toggleMonthly": {"description": "Popisok prepínača pre mesačný režim zobrazenia"},
+
+  "toggleYearly": "Ročne",
+  "@toggleYearly": {"description": "Popisok prepínača pre ročný režim zobrazenia"},
+
+  "sectionIncome": "Príjem",
+  "@sectionIncome": {"description": "Nadpis sekcie na obrazovke Plán"},
+
+  "sectionFixedCosts": "Fixné náklady",
+  "@sectionFixedCosts": {"description": "Nadpis sekcie na obrazovke Plán"},
+
+  "noIncomeItems": "Žiadne položky príjmu.",
+  "@noIncomeItems": {"description": "Prázdny stav vo vnútri harmoniky príjmov"},
+
+  "noFixedCostItems": "Žiadne položky fixných nákladov.",
+  "@noFixedCostItems": {"description": "Prázdny stav vo vnútri harmoniky fixných nákladov"},
+
+  "spendableBudget": "Rozpočet na míňanie",
+  "@spendableBudget": {"description": "Popisok sumy rozpočtu na míňanie v hlavičke obrazovky Plán"},
+
+  "deleteItemDialogTitle": "Odstrániť položku plánu",
+  "@deleteItemDialogTitle": {"description": "Názov dialógu pri odstraňovaní položky plánu"},
+
+  "deleteItemFromPeriod": "Od tohto obdobia",
+  "@deleteItemFromPeriod": {"description": "Možnosť odstrániť položku len od aktuálneho obdobia"},
+
+  "deleteItemWholeSeries": "Celú sériu",
+  "@deleteItemWholeSeries": {"description": "Možnosť odstrániť všetky verzie položky plánu"},
+
+  "planItemDeleted": "Položka plánu bola odstránená.",
+  "@planItemDeleted": {"description": "Potvrdzujúci snackbar po odstránení položky plánu"},
+
+  "addIncomeTitle": "Pridať príjem",
+  "@addIncomeTitle": {"description": "Názov AppBaru pri pridávaní novej položky príjmu"},
+
+  "addFixedCostTitle": "Pridať fixný náklad",
+  "@addFixedCostTitle": {"description": "Názov AppBaru pri pridávaní nového fixného nákladu"},
+
+  "editIncomeTitle": "Upraviť príjem",
+  "@editIncomeTitle": {"description": "Názov AppBaru pri úprave existujúcej položky príjmu"},
+
+  "editFixedCostTitle": "Upraviť fixný náklad",
+  "@editFixedCostTitle": {"description": "Názov AppBaru pri úprave existujúceho fixného nákladu"},
+
+  "frequencyOneTime": "Jednorazovo",
+  "@frequencyOneTime": {"description": "Popisok možnosti frekvencie"},
+
+  "frequencyMonthly": "Mesačne",
+  "@frequencyMonthly": {"description": "Popisok možnosti frekvencie"},
+
+  "frequencyYearly": "Ročne",
+  "@frequencyYearly": {"description": "Popisok možnosti frekvencie"},
+
+  "guardSectionLabel": "GUARD",
+  "@guardSectionLabel": {"description": "Popisok sekcie pre polia GUARD na obrazovke pridania položky plánu"},
+
+  "guardTrackPayment": "Sledovať platbu",
+  "@guardTrackPayment": {"description": "Popisok prepínača GUARD na obrazovke pridania položky plánu"},
+
+  "guardDueDayLabel": "Deň splatnosti",
+  "@guardDueDayLabel": {"description": "Popisok výberu dňa splatnosti v GUARD"},
+
+  "guardOneTimeLabel": "Jednorazová platba",
+  "@guardOneTimeLabel": {"description": "Popisok prepínača jednorazovej platby v GUARD"},
+
+  "planItemSaved": "Položka plánu bola uložená.",
+  "@planItemSaved": {"description": "Potvrdzujúci snackbar po uložení položky plánu"},
+
+  "addNewItemSheetTitle": "Pridať nové",
+  "@addNewItemSheetTitle": {"description": "Názov spodného panelu výberu typu pred pridaním položky plánu"},
+
+  "typeIncome": "Príjem",
+  "@typeIncome": {"description": "Popisok typu položky plánu"},
+
+  "typeFixedCost": "Fixný náklad",
+  "@typeFixedCost": {"description": "Popisok typu položky plánu"},
+
+  "ongoing": "Bez ukončenia",
+  "@ongoing": {"description": "Zobrazené, keď položka plánu nemá koncový dátum"},
+
+  "manageBudgetsTitle": "Spravovať rozpočty",
+  "@manageBudgetsTitle": {"description": "Názov AppBaru pre obrazovku správy rozpočtov"},
+
+  "noBudgetsSet": "Pre toto obdobie nie sú nastavené žiadne rozpočty.",
+  "@noBudgetsSet": {"description": "Text prázdneho stavu na obrazovke správy rozpočtov"},
+
+  "addFirstBudget": "Pridajte svoj prvý rozpočet.",
+  "@addFirstBudget": {"description": "Výzva na akciu v prázdnom stave na obrazovke správy rozpočtov"},
+
+  "addBudgetTitle": "Pridať rozpočet",
+  "@addBudgetTitle": {"description": "Názov AppBaru pri pridávaní nového rozpočtu kategórie"},
+
+  "editBudgetTitle": "Upraviť rozpočet",
+  "@editBudgetTitle": {"description": "Názov AppBaru pri úprave existujúceho rozpočtu kategórie"},
+
+  "budgetAmount": "Suma rozpočtu",
+  "@budgetAmount": {"description": "Popisok poľa formulára pre sumu rozpočtu"},
+
+  "effectiveFrom": "Platné od",
+  "@effectiveFrom": {"description": "Popisok poľa formulára pre začiatočný mesiac rozpočtu"},
+
+  "pastMonthBudgetWarning": "Nastavenie rozpočtu v minulosti neovplyvní minulé výdavky.",
+  "@pastMonthBudgetWarning": {"description": "Vnorené upozornenie, keď používateľ vyberie minulý mesiac pre rozpočet"},
+
+  "budgetSaved": "Rozpočet bol uložený.",
+  "@budgetSaved": {"description": "Potvrdzujúci snackbar po uložení rozpočtu kategórie"},
+
+  "budgetDeleted": "Rozpočet bol odstránený.",
+  "@budgetDeleted": {"description": "Potvrdzujúci snackbar po odstránení rozpočtu kategórie"},
+
+  "guardScreenTitle": "GUARD",
+  "@guardScreenTitle": {"description": "Názov AppBaru pre obrazovku GUARD"},
+
+  "guardDailyReminderTime": "Čas dennej pripomienky",
+  "@guardDailyReminderTime": {"description": "Popisok pre nastavenie času dennej pripomienky GUARD"},
+
+  "guardTimePicker": "Čas dennej pripomienky GUARD",
+  "@guardTimePicker": {"description": "Pomocný text v dialógu výberu času pre pripomienky GUARD"},
+
+  "guardMarkPaid": "Označiť ako zaplatené",
+  "@guardMarkPaid": {"description": "Akcia na označenie položky GUARD ako zaplatenej"},
+
+  "guardSilence": "Stíšiť",
+  "@guardSilence": {"description": "Akcia na stíšenie pripomienky GUARD"},
+
+  "guardStatusPaid": "Zaplatené",
+  "@guardStatusPaid": {"description": "Popisok stavu platby GUARD"},
+
+  "guardStatusScheduled": "Naplánované",
+  "@guardStatusScheduled": {"description": "Popisok stavu platby GUARD"},
+
+  "guardStatusUnpaid": "Nezaplatené",
+  "@guardStatusUnpaid": {"description": "Popisok stavu platby GUARD"},
+
+  "guardStatusSilenced": "Stíšené",
+  "@guardStatusSilenced": {"description": "Popisok stavu platby GUARD"},
+
+  "noGuardedItems": "Žiadne sledované položky.",
+  "@noGuardedItems": {"description": "Text prázdneho stavu na obrazovke GUARD"},
+
+  "reportsTitle": "Prehľady",
+  "@reportsTitle": {"description": "Názov AppBaru pre obrazovku prehľadov"},
+
+  "reportModeMonthly": "Mesačne",
+  "@reportModeMonthly": {"description": "Popisok karty režimu prehľadu"},
+
+  "reportModeYearly": "Ročne",
+  "@reportModeYearly": {"description": "Popisok karty režimu prehľadu"},
+
+  "reportModeOverview": "Prehľad",
+  "@reportModeOverview": {"description": "Popisok karty režimu prehľadu"},
+
+  "exportPdf": "Exportovať PDF",
+  "@exportPdf": {"description": "Tlačidlo na export aktuálneho prehľadu do PDF"},
+
+  "noExpensesForPeriod": "Pre toto obdobie nie sú zaznamenané žiadne výdavky.",
+  "@noExpensesForPeriod": {"description": "Prázdny stav na obrazovke prehľadov (mesačný/ročný režim)"},
+
+  "noIncomeOrSpendingDataForYear": "Pre tento rok nie sú k dispozícii údaje o príjmoch ani výdavkoch.",
+  "@noIncomeOrSpendingDataForYear": {"description": "Prázdny stav režimu Prehľad na obrazovke prehľadov"},
+
+  "pieChartOther": "Ostatné",
+  "@pieChartOther": {"description": "Popisok pre zlúčený segment malých kategórií v koláčových grafoch"},
+
+  "reportSectionFixedCosts": "FIXNÉ NÁKLADY",
+  "@reportSectionFixedCosts": {"description": "Nadpis sekcie na obrazovke detailu kategórie v prehľade"},
+
+  "reportSectionExpenses": "VÝDAVKY",
+  "@reportSectionExpenses": {"description": "Nadpis sekcie na obrazovke detailu kategórie v prehľade"},
+
+  "noneInPeriod": "V tomto období nič.",
+  "@noneInPeriod": {"description": "Prázdny stav vo vnútri sekcie obrazovky detailu kategórie v prehľade"},
+
+  "fixedCostCount": "{count, plural, =1{1 fixný náklad} few{{count} fixné náklady} other{{count} fixných nákladov}}",
+  "@fixedCostCount": {
+    "description": "Počet fixných nákladov v hlavičke prehľadu kategórie",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "expenseCount": "{count, plural, =1{1 výdavok} few{{count} výdavky} other{{count} výdavkov}}",
+  "@expenseCount": {
+    "description": "Počet výdavkov v hlavičke prehľadu kategórie",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "noItemsInPeriod": "V tomto období nie sú žiadne položky",
+  "@noItemsInPeriod": {"description": "Podtitul v hlavičke prehľadu kategórie, keď neexistujú žiadne položky"},
+
+  "importTitle": "Importovať výdavky",
+  "@importTitle": {"description": "Názov AppBaru pre obrazovku importu"},
+
+  "importStep1Title": "Stiahnuť šablónu",
+  "@importStep1Title": {"description": "Názov karty kroku na úvodnej obrazovke importu"},
+
+  "importStep1Description": "Získajte oficiálnu Excel šablónu so všetkými povinnými stĺpcami a návodom na platné hodnoty.",
+  "@importStep1Description": {"description": "Popis karty kroku na úvodnej obrazovke importu"},
+
+  "importStep1Button": "Stiahnuť šablónu",
+  "@importStep1Button": {"description": "Popisok tlačidla na karte kroku na úvodnej obrazovke importu"},
+
+  "importStep2Title": "Vyplniť a importovať",
+  "@importStep2Title": {"description": "Názov karty kroku na úvodnej obrazovke importu"},
+
+  "importStep2Description": "Vyplňte šablónu v Exceli alebo Google Sheets a potom tu vyberte súbor na import výdavkov.",
+  "@importStep2Description": {"description": "Popis karty kroku na úvodnej obrazovke importu"},
+
+  "importStep2Button": "Vybrať súbor (.xlsx alebo .csv)",
+  "@importStep2Button": {"description": "Popisok tlačidla na karte kroku na úvodnej obrazovke importu"},
+
+  "importInfoText": "Importovať je možné iba výdavky. Príjmy a položky plánu nie sú podporované.\n\nPodporované formáty: .xlsx (Excel) a .csv.\nCSV súbory musia mať rovnaké poradie stĺpcov ako šablóna: Dátum, Suma, Kategória, Finančný typ, Poznámka, Skupina.\n\nSúbory exportované z tejto aplikácie je možné importovať priamo.",
+  "@importInfoText": {"description": "Informačný text na úvodnej obrazovke importu"},
+
+  "importReadyCount": "{count, plural, =1{1 výdavok pripravený na import} few{{count} výdavky pripravené na import} other{{count} výdavkov pripravených na import}}",
+  "@importReadyCount": {
+    "description": "Súhrnný riadok zobrazujúci počet platných načítaných riadkov",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorCount": "{count, plural, =1{1 riadok sa nepodarilo načítať} few{{count} riadky sa nepodarilo načítať} other{{count} riadkov sa nepodarilo načítať}}",
+  "@importErrorCount": {
+    "description": "Riadok s počtom chýb, keď neexistujú žiadne platné riadky",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorCountSkipped": "{count, plural, =1{1 riadok sa nepodarilo načítať — bude preskočený} few{{count} riadky sa nepodarilo načítať — budú preskočené} other{{count} riadkov sa nepodarilo načítať — budú preskočené}}",
+  "@importErrorCountSkipped": {
+    "description": "Riadok s počtom chýb, keď sú zároveň prítomné aj platné riadky",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importNoDataFound": "V súbore sa nenašli žiadne dáta.",
+  "@importNoDataFound": {"description": "Zobrazené, keď sa súbor úspešne načíta, ale neobsahuje žiadne riadky"},
+
+  "importTapToEdit": "Ťuknite na ľubovoľný riadok a pred importom ho upravte alebo odstráňte.",
+  "@importTapToEdit": {"description": "Nápoveda na obrazovke náhľadu importu"},
+
+  "importRowsWithErrors": "Riadky s chybami",
+  "@importRowsWithErrors": {"description": "Nadpis sekcie nad chybnými riadkami v náhľade importu"},
+
+  "importNoDataRows": "Nenašli sa žiadne dátové riadky.",
+  "@importNoDataRows": {"description": "Prázdny stav, keď sú zoznamy platných aj neplatných riadkov prázdne"},
+
+  "importConfirmButton": "{count, plural, =1{Importovať 1 výdavok} few{Importovať {count} výdavky} other{Importovať {count} výdavkov}}",
+  "@importConfirmButton": {
+    "description": "Popisok potvrdzovacieho tlačidla na obrazovke náhľadu importu",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importSuccessMessage": "{count, plural, =1{1 výdavok importovaný · {range}} few{{count} výdavky importované · {range}} other{{count} výdavkov importovaných · {range}}}",
+  "@importSuccessMessage": {
+    "description": "Snackbar zobrazený po úspešnom importe",
+    "placeholders": {
+      "count": {"type": "int"},
+      "range": {"type": "String"}
+    }
+  },
+
+  "importUnsupportedFile": "Nepodporovaný typ súboru. Vyberte prosím súbor .xlsx alebo .csv.",
+  "@importUnsupportedFile": {"description": "Snackbar pri výbere súboru s nepodporovanou príponou"},
+
+  "importCouldNotReadFile": "Súbor sa nepodarilo načítať. Skúste to znova.",
+  "@importCouldNotReadFile": {"description": "Snackbar, keď sa nepodarí načítať bajty súboru"},
+
+  "importPickerError": "Nepodarilo sa otvoriť výber súboru: {error}",
+  "@importPickerError": {
+    "description": "Snackbar, keď výber súboru vyhodí výnimku",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importTemplateError": "Nepodarilo sa vygenerovať šablónu: {error}",
+  "@importTemplateError": {
+    "description": "Snackbar, keď zlyhá stiahnutie šablóny",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "tryAnotherFile": "Skúsiť iný súbor",
+  "@tryAnotherFile": {"description": "Tlačidlo na návrat do úvodnej fázy po vážnej chybe pri spracovaní"},
+
+  "savesTitle": "Uloženia",
+  "@savesTitle": {"description": "Názov AppBaru pre obrazovku uložených stavov"},
+
+  "sectionAutoBackup": "AUTOMATICKÁ ZÁLOHA",
+  "@sectionAutoBackup": {"description": "Nadpis sekcie na obrazovke uložených stavov"},
+
+  "sectionSaves": "ULOŽENIA",
+  "@sectionSaves": {"description": "Nadpis sekcie na obrazovke uložených stavov"},
+
+  "sectionDataTransfer": "PRENOS DÁT",
+  "@sectionDataTransfer": {"description": "Nadpis sekcie na obrazovke uložených stavov"},
+
+  "sectionDataDeletion": "ODSTRÁNENIE DÁT",
+  "@sectionDataDeletion": {"description": "Nadpis sekcie na obrazovke uložených stavov"},
+
+  "exportAllData": "Exportovať všetky dáta",
+  "@exportAllData": {"description": "Akčné tlačidlo na export všetkých dát do JSON"},
+
+  "importAllData": "Importovať všetky dáta",
+  "@importAllData": {"description": "Akčné tlačidlo na import všetkých dát z JSON"},
+
+  "deleteAllData": "Odstrániť všetky dáta",
+  "@deleteAllData": {"description": "Deštruktívne tlačidlo na vymazanie všetkých dát"},
+
+  "emptySlot": "Prázdny slot",
+  "@emptySlot": {"description": "Zástupný text pre nepoužitý slot uloženia"},
+
+  "savedConfirmation": "„{name}“ bolo uložené.",
+  "@savedConfirmation": {
+    "description": "Snackbar po vytvorení alebo prepísaní slotu uloženia",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "loadedConfirmation": "„{name}“ bolo načítané.",
+  "@loadedConfirmation": {
+    "description": "Snackbar po načítaní slotu uloženia",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "exportFailed": "Export zlyhal: {error}",
+  "@exportFailed": {
+    "description": "Snackbar pri zlyhaní akéhokoľvek exportu",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importFailedInvalid": "Neplatný súbor: {error}",
+  "@importFailedInvalid": {
+    "description": "Snackbar, keď JSON import zlyhá kvôli neplatnému obsahu",
+    "placeholders": {"error": {"type": "Object"}}
+  },
+
+  "importDataSuccess": "Dáta boli úspešne importované.",
+  "@importDataSuccess": {"description": "Snackbar po úspešnom importe kompletných dát z JSON"},
+
+  "couldNotReadSelectedFile": "Vybraný súbor sa nepodarilo načítať.",
+  "@couldNotReadSelectedFile": {"description": "Snackbar, keď bajty vybraného súboru nie sú k dispozícii"},
+
+  "importDataDialogTitle": "Importovať dáta?",
+  "@importDataDialogTitle": {"description": "Názov potvrdzovacieho dialógu pred importom kompletných dát"},
+
+  "importDataDialogContent": "Týmto nahradíte VŠETKY aktuálne výdavky a položky plánu obsahom súboru. Túto akciu nie je možné vrátiť späť.",
+  "@importDataDialogContent": {"description": "Text tela potvrdzovacieho dialógu pred importom kompletných dát"},
+
+  "saveName": "Názov uloženia",
+  "@saveName": {"description": "Popisok textového poľa v dialógu názvu uloženia"},
+
+  "saveNameCannotBeEmpty": "Názov nemôže byť prázdny",
+  "@saveNameCannotBeEmpty": {"description": "Validačná chyba v dialógu názvu uloženia"},
+
+  "replacingLabel": "Nahrádza sa: {name}",
+  "@replacingLabel": {
+    "description": "Podtitul v dialógu prepísania uloženia, ktorý zobrazuje, ktorý slot bude nahradený",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "loadDialogDescription": "Všetky aktuálne dáta budú nahradené týmto uloženým snapshotom.",
+  "@loadDialogDescription": {"description": "Text popisu v dialógu potvrdenia načítania"},
+
+  "deleteDialogDescription": "Tento uložený snapshot bude natrvalo odstránený.",
+  "@deleteDialogDescription": {"description": "Text popisu v dialógu potvrdenia odstránenia"},
+
+  "damagedSaveFile": "Poškodený súbor uloženia",
+  "@damagedSaveFile": {"description": "Popisok zobrazený, keď je súbor uloženia poškodený"},
+
+  "overBudgetAmount": "{amount} nad limit",
+  "@overBudgetAmount": {
+    "description": "Popisok progress baru rozpočtu, keď výdavky presiahnu rozpočet",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "underBudgetAmount": "Zostáva {amount}",
+  "@underBudgetAmount": {
+    "description": "Popisok progress baru rozpočtu, keď sú výdavky pod rozpočtom",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "spentLabel": "Minuté: {amount}",
+  "@spentLabel": {
+    "description": "Detailný riadok progress baru rozpočtu",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "budgetLabel": "Rozpočet: {amount}",
+  "@budgetLabel": {
+    "description": "Detailný riadok progress baru rozpočtu",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "progressBarLabel": "{spent} minuté  /  {budget} rozpočet",
+  "@progressBarLabel": {
+    "description": "Jednoriadkový popisok progress baru rozpočtu kategórie",
+    "placeholders": {
+      "spent": {"type": "String"},
+      "budget": {"type": "String"}
+    }
+  },
+
+  "categoryBudgetOverBy": "Rozpočet {category}: prekročený o {amount}",
+  "@categoryBudgetOverBy": {
+    "description": "Záznam na upozorňovacej karte ukazujúci, o koľko je kategória nad rozpočtom",
+    "placeholders": {
+      "category": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+
+  "deleteAllDataDialogTitle": "Odstrániť všetky dáta?",
+  "@deleteAllDataDialogTitle": {"description": "Názov potvrdzovacieho dialógu pred vymazaním všetkých dát"},
+
+  "deleteAllDataDialogContent": "Týmto natrvalo odstránite všetky výdavky, príjmy a položky plánu. Túto akciu nie je možné vrátiť späť.",
+  "@deleteAllDataDialogContent": {"description": "Text tela potvrdzovacieho dialógu pred vymazaním všetkých dát"},
+
+  "deleteAllDataConfirm": "Odstrániť všetko",
+  "@deleteAllDataConfirm": {"description": "Popisok potvrdzovacieho tlačidla v dialógu odstránenia všetkých dát"},
+
+  "monthJanuary": "Január",
+  "@monthJanuary": {"description": "Celý názov mesiaca"},
+  "monthFebruary": "Február",
+  "@monthFebruary": {"description": "Celý názov mesiaca"},
+  "monthMarch": "Marec",
+  "@monthMarch": {"description": "Celý názov mesiaca"},
+  "monthApril": "Apríl",
+  "@monthApril": {"description": "Celý názov mesiaca"},
+  "monthMay": "Máj",
+  "@monthMay": {"description": "Celý názov mesiaca"},
+  "monthJune": "Jún",
+  "@monthJune": {"description": "Celý názov mesiaca"},
+  "monthJuly": "Júl",
+  "@monthJuly": {"description": "Celý názov mesiaca"},
+  "monthAugust": "August",
+  "@monthAugust": {"description": "Celý názov mesiaca"},
+  "monthSeptember": "September",
+  "@monthSeptember": {"description": "Celý názov mesiaca"},
+  "monthOctober": "Október",
+  "@monthOctober": {"description": "Celý názov mesiaca"},
+  "monthNovember": "November",
+  "@monthNovember": {"description": "Celý názov mesiaca"},
+  "monthDecember": "December",
+  "@monthDecember": {"description": "Celý názov mesiaca"},
+
+  "monthAbbrJan": "Jan",
+  "@monthAbbrJan": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrFeb": "Feb",
+  "@monthAbbrFeb": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrMar": "Mar",
+  "@monthAbbrMar": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrApr": "Apr",
+  "@monthAbbrApr": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrMay": "Máj",
+  "@monthAbbrMay": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrJun": "Jún",
+  "@monthAbbrJun": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrJul": "Júl",
+  "@monthAbbrJul": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrAug": "Aug",
+  "@monthAbbrAug": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrSep": "Sep",
+  "@monthAbbrSep": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrOct": "Okt",
+  "@monthAbbrOct": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrNov": "Nov",
+  "@monthAbbrNov": {"description": "Skrátený názov mesiaca"},
+  "monthAbbrDec": "Dec",
+  "@monthAbbrDec": {"description": "Skrátený názov mesiaca"},
+
+  "categoryHousing": "Bývanie",
+  "@categoryHousing": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryGroceries": "Potraviny",
+  "@categoryGroceries": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryVacation": "Dovolenka",
+  "@categoryVacation": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryTransport": "Doprava",
+  "@categoryTransport": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryInsurance": "Poistenie",
+  "@categoryInsurance": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categorySubscriptions": "Predplatné",
+  "@categorySubscriptions": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryCommunication": "Komunikácia",
+  "@categoryCommunication": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryHealth": "Zdravie",
+  "@categoryHealth": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryRestaurants": "Reštaurácie",
+  "@categoryRestaurants": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryEntertainment": "Zábava",
+  "@categoryEntertainment": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryClothing": "Oblečenie",
+  "@categoryClothing": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryEducation": "Vzdelávanie",
+  "@categoryEducation": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryInvestment": "Investície",
+  "@categoryInvestment": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryGifts": "Dary",
+  "@categoryGifts": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryTaxes": "Dane",
+  "@categoryTaxes": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryMedications": "Lieky",
+  "@categoryMedications": {"description": "Zobrazovaný názov kategórie výdavku"},
+  "categoryOther": "Ostatné",
+  "@categoryOther": {"description": "Zobrazovaný názov kategórie výdavku"},
+
+  "financialTypeAsset": "Aktíva",
+  "@financialTypeAsset": {"description": "Zobrazovaný názov finančného typu"},
+  "financialTypeConsumption": "Spotreba",
+  "@financialTypeConsumption": {"description": "Zobrazovaný názov finančného typu"},
+  "financialTypeInsurance": "Poistenie",
+  "@financialTypeInsurance": {"description": "Zobrazovaný názov finančného typu"},
+
+  "addPlanItemTitle": "Pridať položku plánu",
+  "@addPlanItemTitle": {"description": "Názov AppBaru pre obrazovku pridania položky plánu, keď nie je typ vopred vybraný"},
+  "addMonthlyIncomeTitle": "Pridať mesačný príjem",
+  "@addMonthlyIncomeTitle": {"description": "Názov AppBaru pri pridávaní mesačného príjmu"},
+  "addYearlyIncomeTitle": "Pridať ročný príjem",
+  "@addYearlyIncomeTitle": {"description": "Názov AppBaru pri pridávaní ročného príjmu"},
+  "addOneTimeIncomeTitle": "Pridať jednorazový príjem",
+  "@addOneTimeIncomeTitle": {"description": "Názov AppBaru pri pridávaní jednorazového príjmu"},
+  "addMonthlyFixedCostTitle": "Pridať mesačný fixný náklad",
+  "@addMonthlyFixedCostTitle": {"description": "Názov AppBaru pri pridávaní mesačného fixného nákladu"},
+  "addYearlyFixedCostTitle": "Pridať ročný fixný náklad",
+  "@addYearlyFixedCostTitle": {"description": "Názov AppBaru pri pridávaní ročného fixného nákladu"},
+  "editMonthlyIncomeTitle": "Upraviť mesačný príjem",
+  "@editMonthlyIncomeTitle": {"description": "Názov AppBaru pri úprave mesačného príjmu"},
+  "editYearlyIncomeTitle": "Upraviť ročný príjem",
+  "@editYearlyIncomeTitle": {"description": "Názov AppBaru pri úprave ročného príjmu"},
+  "editOneTimeIncomeTitle": "Upraviť jednorazový príjem",
+  "@editOneTimeIncomeTitle": {"description": "Názov AppBaru pri úprave jednorazového príjmu"},
+  "editMonthlyFixedCostTitle": "Upraviť mesačný fixný náklad",
+  "@editMonthlyFixedCostTitle": {"description": "Názov AppBaru pri úprave mesačného fixného nákladu"},
+  "editYearlyFixedCostTitle": "Upraviť ročný fixný náklad",
+  "@editYearlyFixedCostTitle": {"description": "Názov AppBaru pri úprave ročného fixného nákladu"},
+
+  "labelType": "Typ",
+  "@labelType": {"description": "Popisok sekcie formulára pre typ položky plánu (Príjem / Fixný náklad)"},
+  "labelMonth": "Mesiac",
+  "@labelMonth": {"description": "Popisok dropdownu v dialógu výberu mesiaca/roku"},
+  "labelYear": "Rok",
+  "@labelYear": {"description": "Popisok dropdownu v dialógu výberu mesiaca/roku"},
+  "labelDayOfMonth": "Deň v mesiaci",
+  "@labelDayOfMonth": {"description": "Popisok dropdownu v dialógu výberu dňa splatnosti GUARD"},
+  "nameHintText": "napr. Výplata, Nájom, Poistenie",
+  "@nameHintText": {"description": "Pomocný text v poli názvu na obrazovke pridania položky plánu"},
+  "validationEnterName": "Zadajte názov",
+  "@validationEnterName": {"description": "Validačná chyba, keď je pole názvu prázdne"},
+
+  "selectMonthTitle": "Vybrať mesiac",
+  "@selectMonthTitle": {"description": "Názov dialógu výberu mesiaca/roku"},
+  "lastRenewalYearTitle": "Rok posledného obnovenia",
+  "@lastRenewalYearTitle": {"description": "Názov dialógu výberu koncového roka pre ročné položky"},
+  "lastMonthRenewal": "Posledné obnovenie v mesiaci {monthName}",
+  "@lastMonthRenewal": {
+    "description": "Popisok dropdownu v dialógu výberu koncového roka pre ročné položky, zobrazujúci kotviaci mesiac",
+    "placeholders": {"monthName": {"type": "String"}}
+  },
+  "lastActiveMonthInfo": "Posledný aktívny mesiac: {label}",
+  "@lastActiveMonthInfo": {
+    "description": "Informačný text v dialógu výberu koncového roka pre ročné položky",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "setEndDate": "Nastaviť koncový dátum",
+  "@setEndDate": {"description": "Popisok prepínača na zapnutie voliteľného koncového dátumu položky plánu"},
+  "untilLabel": "Do: {validToLabel}",
+  "@untilLabel": {
+    "description": "Popisok tlačidla zobrazujúceho aktuálny koncový dátum",
+    "placeholders": {"validToLabel": {"type": "String"}}
+  },
+  "lastActiveMonthNote": "{label} je posledný aktívny mesiac.",
+  "@lastActiveMonthNote": {
+    "description": "Nápoveda pod tlačidlom Do pre ročné položky",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "endMonthAfterStart": "Koncový mesiac musí byť po začiatočnom mesiaci.",
+  "@endMonthAfterStart": {"description": "Inline chyba, keď koncový mesiac nie je po začiatočnom mesiaci"},
+  "fromFieldLabel": "Od",
+  "@fromFieldLabel": {"description": "Popisok pre uzamknuté pole Od pri úprave ročného fixného nákladu"},
+  "renewedEachMonth": "Obnovuje sa každý {monthName}. Dátumy sú pevné.",
+  "@renewedEachMonth": {
+    "description": "Nápoveda pod uzamknutým poľom Od pre ročné fixné náklady",
+    "placeholders": {"monthName": {"type": "String"}}
+  },
+  "untilFieldLabel": "Do",
+  "@untilFieldLabel": {"description": "Popisok pre uzamknuté pole Do pri úprave ročných položiek"},
+  "lastActiveMonthParens": "{label} (posledný aktívny mesiac)",
+  "@lastActiveMonthParens": {
+    "description": "Hodnota zobrazená v uzamknutom poli Do pre ročné položky",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "openEnded": "Bez ukončenia",
+  "@openEnded": {"description": "Hodnota zobrazená v uzamknutom poli Do, keď nie je nastavený koncový dátum"},
+  "fromDateLabel": "Od: {validFromLabel}",
+  "@fromDateLabel": {
+    "description": "Popisok tlačidla zobrazujúceho aktuálny začiatočný dátum",
+    "placeholders": {"validFromLabel": {"type": "String"}}
+  },
+  "samePeriodInPlace": "Rovnaký mesiac ako pôvodný — aktualizuje sa na mieste.",
+  "@samePeriodInPlace": {"description": "Nápoveda zobrazená, keď nový začiatočný mesiac zodpovedá existujúcemu začiatočnému mesiacu položky"},
+  "differentPeriodNewVersion": "Iný mesiac — vytvorí sa nová verzia.",
+  "@differentPeriodNewVersion": {"description": "Nápoveda zobrazená, keď sa nový začiatočný mesiac líši od existujúceho"},
+
+  "applyChangesToTitle": "Použiť zmeny na...",
+  "@applyChangesToTitle": {"description": "Názov dialógu pre voľbu uloženia pri ročnom fixnom náklade"},
+  "applyToWholeSeries": "Celú sériu",
+  "@applyToWholeSeries": {"description": "Názov možnosti v dialógu pre ročné uloženie — použiť zmeny na všetky obdobia"},
+  "applyToWholeSeriesSubtitle": "Všetky obdobia od {seriesStartLabel}",
+  "@applyToWholeSeriesSubtitle": {
+    "description": "Podtitul možnosti celej série v dialógu pre ročné uloženie",
+    "placeholders": {"seriesStartLabel": {"type": "String"}}
+  },
+  "applyFromOnwards": "Od {nextLabel} ďalej",
+  "@applyFromOnwards": {
+    "description": "Názov možnosti v dialógu pre ročné uloženie — rozdeliť od budúceho obdobia",
+    "placeholders": {"nextLabel": {"type": "String"}}
+  },
+  "applyFromSubtitle": "Pôvodná séria končí {capLabel}.\nNová séria začína {nextLabel}.",
+  "@applyFromSubtitle": {
+    "description": "Podtitul možnosti rozdelenia v dialógu pre ročné uloženie",
+    "placeholders": {
+      "capLabel": {"type": "String"},
+      "nextLabel": {"type": "String"}
+    }
+  },
+  "applyFromUnavailable": "V tejto sérii nie je dostupné žiadne budúce obdobie.",
+  "@applyFromUnavailable": {"description": "Podtitul možnosti rozdelenia, keď neexistuje žiadne budúce obdobie"},
+  "yearlyItemsOnlyAtRenewal": "Ročné položky je možné meniť iba v mesiaci ich obnovenia.",
+  "@yearlyItemsOnlyAtRenewal": {"description": "Snackbar zobrazený, keď je úprava ročnej položky zamietnutá kvôli neplatnej hranici"},
+
+  "guardRemindMe": "Pripomeň mi potvrdiť túto platbu",
+  "@guardRemindMe": {"description": "Podtitul pod prepínačom GUARD na obrazovke pridania položky plánu"},
+  "guardShorterMonths": "Kratšie mesiace použijú svoj posledný deň.",
+  "@guardShorterMonths": {"description": "Nápoveda zobrazená, keď je deň splatnosti GUARD > 28"},
+  "dueDayMonthly": "Deň splatnosti (opakovať každý mesiac)",
+  "@dueDayMonthly": {"description": "Názov dialógu výberu dňa splatnosti GUARD pre mesačné položky"},
+  "dueDayYearly": "Deň splatnosti (opakovať každý {monthName})",
+  "@dueDayYearly": {
+    "description": "Názov dialógu výberu dňa splatnosti GUARD pre ročné položky",
+    "placeholders": {"monthName": {"type": "String"}}
+  },
+  "dueDayMonthlyLabel": "{day}. deň každého mesiaca",
+  "@dueDayMonthlyLabel": {
+    "description": "Popisok tlačidla zobrazujúceho vybraný deň splatnosti pre mesačnú položku",
+    "placeholders": {"day": {"type": "int"}}
+  },
+  "dueDayYearlyLabel": "{day}. deň v mesiaci {monthName} každý rok",
+  "@dueDayYearlyLabel": {
+    "description": "Popisok tlačidla zobrazujúceho vybraný deň splatnosti pre ročnú položku",
+    "placeholders": {
+      "day": {"type": "int"},
+      "monthName": {"type": "String"}
+    }
+  },
+
+  "guardDailyReminder": "Denná pripomienka",
+  "@guardDailyReminder": {"description": "Názov dlaždice pre nastavenie času notifikácií na obrazovke GUARD"},
+  "guardChangeNotifTime": "Ťuknite pre zmenu času notifikácie",
+  "@guardChangeNotifTime": {"description": "Podtitul dlaždice pre nastavenie času notifikácií na obrazovke GUARD"},
+  "guardNoGuardedItemsHint": "Zapnite GUARD na fixnom náklade, aby ste mohli sledovať platby.",
+  "@guardNoGuardedItemsHint": {"description": "Sekundárny text prázdneho stavu na obrazovke GUARD"},
+  "guardedItemsCount": "Sledované položky · {count}",
+  "@guardedItemsCount": {
+    "description": "Nadpis sekcie zobrazujúci počet sledovaných položiek na obrazovke GUARD",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "planItemTitle": "Položka plánu",
+  "@planItemTitle": {"description": "Názov AppBaru pre detail položky plánu"},
+  "activeFrom": "Aktívne od",
+  "@activeFrom": {"description": "Popisok riadka detailu pre začiatočné obdobie položky plánu"},
+  "activeUntil": "Aktívne do",
+  "@activeUntil": {"description": "Popisok riadka detailu pre koncové obdobie položky plánu"},
+  "perMonth": "/ mesiac",
+  "@perMonth": {"description": "Prípona sumy pre mesačné položky plánu"},
+  "perYear": "/ rok",
+  "@perYear": {"description": "Prípona sumy pre ročné položky plánu"},
+  "oneTimeSuffix": "(jednorazovo)",
+  "@oneTimeSuffix": {"description": "Prípona sumy pre jednorazové položky plánu"},
+  "noEndDate": "Bez koncového dátumu",
+  "@noEndDate": {"description": "Hodnota zobrazená pre pole Aktívne do, keď fixný náklad nemá koncový dátum"},
+  "guardNotEnabled": "Nie je zapnuté",
+  "@guardNotEnabled": {"description": "Podtitul sekcie GUARD, keď GUARD ešte nie je pre položku nastavený"},
+
+  "removeIncomeEntirely": "„{name}“ bude odstránený úplne.",
+  "@removeIncomeEntirely": {
+    "description": "Popis potvrdzovacieho dialógu pri odstránení položky príjmu, ktorá začína vo vybranom období",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "removeIncomeFromOnwards": "„{name}“ sa zastaví od {from}. {prev} a skoršie obdobia zostanú naplánované.",
+  "@removeIncomeFromOnwards": {
+    "description": "Popis potvrdzovacieho dialógu pri odstránení položky príjmu od stredu série",
+    "placeholders": {
+      "name": {"type": "String"},
+      "from": {"type": "String"},
+      "prev": {"type": "String"}
+    }
+  },
+  "actionRemoveAllCaps": "ODSTRÁNIŤ",
+  "@actionRemoveAllCaps": {"description": "Veľkými písmenami zobrazený popisok akcie v dialógu odstránenia fixného nákladu"},
+  "removeFromOnwardsTitle": "Od {label} ďalej",
+  "@removeFromOnwardsTitle": {
+    "description": "Názov možnosti v dialógu odstránenia fixného nákladu — odstrániť od vybraného obdobia",
+    "placeholders": {"label": {"type": "String"}}
+  },
+  "removeCycleSubtitle": "Tento cyklus ({start} – {end}) a všetky budúce cykly budú odstránené.",
+  "@removeCycleSubtitle": {
+    "description": "Podtitul možnosti od obdobia pri odstránení ročného fixného nákladu",
+    "placeholders": {
+      "start": {"type": "String"},
+      "end": {"type": "String"}
+    }
+  },
+  "removeHistoryKept": "História do {prev} zostane zachovaná.",
+  "@removeHistoryKept": {
+    "description": "Podtitul možnosti od obdobia pri odstraňovaní mesačného fixného nákladu",
+    "placeholders": {"prev": {"type": "String"}}
+  },
+  "silenceReminderTitle": "Stíšiť túto pripomienku?",
+  "@silenceReminderTitle": {"description": "Názov dialógu pri stíšení pripomienky GUARD z obrazovky Plán"},
+  "silenceReminderBody": "Platba za obdobie {periodLabel} bude stále zobrazená ako nepotvrdená. Kedykoľvek ju môžete označiť ako zaplatenú.",
+  "@silenceReminderBody": {
+    "description": "Text tela dialógu pri stíšení pripomienky GUARD",
+    "placeholders": {"periodLabel": {"type": "String"}}
+  },
+  "yesSilence": "Áno, stíšiť",
+  "@yesSilence": {"description": "Popisok potvrdzovacieho tlačidla v dialógu stíšenia pripomienky"},
+  "addPlanItemTooltip": "Pridať položku plánu",
+  "@addPlanItemTooltip": {"description": "Tooltip FAB tlačidla na obrazovke Plán"},
+  "spendableThisMonth": "Na míňanie tento mesiac",
+  "@spendableThisMonth": {"description": "Popisok karty sumy na míňanie v mesačnom zobrazení plánu"},
+  "spendableThisYear": "Na míňanie tento rok",
+  "@spendableThisYear": {"description": "Popisok karty sumy na míňanie v ročnom zobrazení plánu"},
+  "noPlanItemsYet": "Zatiaľ nie sú žiadne položky plánu.",
+  "@noPlanItemsYet": {"description": "Primárny text prázdneho stavu na obrazovke Plán"},
+  "tapPlusToAddPlanItems": "Ťuknite na + a pridajte príjem alebo fixné náklady.",
+  "@tapPlusToAddPlanItems": {"description": "Sekundárny text prázdneho stavu na obrazovke Plán"},
+  "removeWholeSeries": "Celú sériu",
+  "@removeWholeSeries": {"description": "Názov možnosti v dialógu odstránenia fixného nákladu — odstrániť celú sériu"},
+  "removeWholeSeriesSubtitle": "Všetky obdobia od {seriesStartLabel} budú odstránené.",
+  "@removeWholeSeriesSubtitle": {
+    "description": "Podtitul možnosti celej série v dialógu odstránenia fixného nákladu",
+    "placeholders": {"seriesStartLabel": {"type": "String"}}
+  },
+
+  "clearAllDataAction": "VYMAZAŤ",
+  "@clearAllDataAction": {"description": "Veľkými písmenami zobrazený popisok akcie v dialógu potvrdenia vymazania všetkých dát"},
+  "clearAllDataDescription": "Výdavky, položky plánu, rozpočty a platby GUARD budú natrvalo odstránené. Túto akciu nie je možné vrátiť späť.",
+  "@clearAllDataDescription": {"description": "Text tela v dialógu potvrdenia vymazania všetkých dát"},
+  "clearAllDataPreservedNote": "Uložené snapshoty a automatické zálohy nebudú ovplyvnené.",
+  "@clearAllDataPreservedNote": {"description": "Poznámka v dialógu vymazania všetkých dát, ktorá objasňuje, čo zostáva zachované"},
+
+  "allCategoriesBudgeted": "Všetky kategórie už majú na tento mesiac nastavený rozpočet. Vyberte iný mesiac, ak chcete pridať ďalší.",
+  "@allCategoriesBudgeted": {"description": "Zobrazené namiesto dropdownu kategórií, keď už majú všetky kategórie nastavený rozpočet"},
+  "selectCategoryHint": "Vyberte kategóriu",
+  "@selectCategoryHint": {"description": "Pomocný text dropdownu, keď nie je vybraná žiadna kategória"},
+  "validationSelectCategory": "Vyberte kategóriu",
+  "@validationSelectCategory": {"description": "Validačná chyba, keď vo formulári rozpočtu nie je vybraná kategória"},
+  "monthlyBudgetLabel": "Mesačný rozpočet",
+  "@monthlyBudgetLabel": {"description": "Popisok textového poľa pre sumu mesačného rozpočtu"},
+  "effectiveFromLabel": "Platné od: {validFromLabel}",
+  "@effectiveFromLabel": {
+    "description": "Popisok tlačidla zobrazujúceho aktuálny začiatočný mesiac platnosti",
+    "placeholders": {"validFromLabel": {"type": "String"}}
+  },
+  "pastMonthBudgetCreateWarning": "Vytvárate rozpočet pre minulý mesiac. Bude platiť spätne od {fromLabel}.",
+  "@pastMonthBudgetCreateWarning": {
+    "description": "Upozornenie zobrazené pri vytváraní rozpočtu pre minulý mesiac",
+    "placeholders": {"fromLabel": {"type": "String"}}
+  },
+  "pastMonthBudgetEditWarning": "Týmto zmeníte rozpočet kategórie {catName} späť na {fromLabel}. Mesiace {fromLabel}–{prevLabel} použijú novú sumu.",
+  "@pastMonthBudgetEditWarning": {
+    "description": "Upozornenie zobrazené pri úprave rozpočtu začínajúceho v minulom mesiaci",
+    "placeholders": {
+      "catName": {"type": "String"},
+      "fromLabel": {"type": "String"},
+      "prevLabel": {"type": "String"}
+    }
+  },
+
+  "noFixedCostsPlanned": "Nie sú naplánované fixné náklady",
+  "@noFixedCostsPlanned": {"description": "Podtitul na súhrnnej dlaždici fixných nákladov, keď neexistujú žiadne položky"},
+  "noIncomePlanned": "Nie je naplánovaný príjem",
+  "@noIncomePlanned": {"description": "Podtitul na súhrnnej dlaždici príjmu, keď neexistujú žiadne položky"},
+
+  "saveSlotSubtitle": "{date} · {expenseCount} výdavkov · {planItemCount} položiek plánu",
+  "@saveSlotSubtitle": {
+    "description": "Podtitul na dlaždici slotu uloženia zobrazujúci dátum a počty",
+    "placeholders": {
+      "date": {"type": "String"},
+      "expenseCount": {"type": "int"},
+      "planItemCount": {"type": "int"}
+    }
+  },
+  "saveSlotDamagedSubtitle": "Súbor je poškodený a nedá sa načítať",
+  "@saveSlotDamagedSubtitle": {"description": "Podtitul na dlaždici poškodeného slotu uloženia"},
+
+  "howGroupsWorkTitle": "Ako to funguje?",
+  "@howGroupsWorkTitle": {"description": "Horný nadpis spodného panelu Ako fungujú skupiny"},
+  "howGroupsTitle": "Skupiny",
+  "@howGroupsTitle": {"description": "Nadpis kroku v spodnom paneli Ako fungujú skupiny"},
+  "howGroupsSubtitle0": "Čo je skupina a ako funguje",
+  "@howGroupsSubtitle0": {"description": "Podtitul pre prvú stránku panelu Ako fungujú skupiny"},
+  "howGroupsSubtitle1": "Ako z nej vyťažiť čo najviac",
+  "@howGroupsSubtitle1": {"description": "Podtitul pre druhú stránku panelu Ako fungujú skupiny"},
+  "howGroupsSubtitle2": "Kde sa skupiny v aplikácii zobrazujú",
+  "@howGroupsSubtitle2": {"description": "Podtitul pre tretiu stránku panelu Ako fungujú skupiny"},
+  "howGroupsLabel0": "Štítok",
+  "@howGroupsLabel0": {"description": "Popis podkroku pre 1. stranu panelu Ako fungujú skupiny"},
+  "howGroupsLabel1": "Buďte kreatívni",
+  "@howGroupsLabel1": {"description": "Popis podkroku pre 2. stranu panelu Ako fungujú skupiny"},
+  "howGroupsLabel2": "Prehľad",
+  "@howGroupsLabel2": {"description": "Popis podkroku pre 3. stranu panelu Ako fungujú skupiny"},
+  "howGroupsRule1": "Skupina je voliteľný textový štítok, ktorý môžete priradiť ku každému výdavku.",
+  "@howGroupsRule1": {"description": "Odrážka na stránke Štítok v paneli Ako fungujú skupiny"},
+  "howGroupsRule2": "Môžete zadať ľubovoľný text — neexistuje pevný zoznam ani validácia.",
+  "@howGroupsRule2": {"description": "Odrážka na stránke Štítok"},
+  "howGroupsRule3": "Dva výdavky patria do rovnakej skupiny len vtedy, keď sa ich názvy zhodujú presne, znak po znaku.",
+  "@howGroupsRule3": {"description": "Odrážka na stránke Štítok"},
+  "howGroupsRule4": "Rozlišuje sa veľkosť písmen — „Trip“ a „trip“ sú dve odlišné skupiny.",
+  "@howGroupsRule4": {"description": "Odrážka na stránke Štítok"},
+  "howGroupsRule5": "Pole je voliteľné. Ak ho necháte prázdne, výdavok jednoducho nebude mať skupinu.",
+  "@howGroupsRule5": {"description": "Odrážka na stránke Štítok"},
+  "howGroupsHint": "Skupinu nastavíte pri vytváraní alebo úprave ľubovoľného výdavku.",
+  "@howGroupsHint": {"description": "Box s nápovedou v spodnej časti stránky Štítok"},
+  "howGroupsUseIntro": "Použite ju vždy, keď chcete sledovať výsek výdavkov, ktorý sa tiahne naprieč kategóriami.",
+  "@howGroupsUseIntro": {"description": "Úvodný text na stránke Buďte kreatívni"},
+  "howGroupsExample1Label": "Barcelona {year}",
+  "@howGroupsExample1Label": {
+    "description": "Príklad názvu skupiny na stránke Buďte kreatívni (príklad cesty)",
+    "placeholders": {"year": {"type": "int"}}
+  },
+  "howGroupsExample1Desc": "Priraďte ho ku všetkým výdavkom na výlete — letenky, hotely, jedlá, vstupy. Celkovú cenu celého výletu uvidíte na jedno ťuknutie.",
+  "@howGroupsExample1Desc": {"description": "Popis 1. príkladu na stránke Buďte kreatívni"},
+  "howGroupsExample2Label": "McDonald''s {year}",
+  "@howGroupsExample2Label": {
+    "description": "Príklad názvu skupiny na stránke Buďte kreatívni (príklad reštaurácie)",
+    "placeholders": {"year": {"type": "int"}}
+  },
+  "howGroupsExample2Desc": "Používajte počas celého roka rovnaký názov. Na konci roka presne uvidíte, koľko ste minuli na tomto jednom mieste.",
+  "@howGroupsExample2Desc": {"description": "Popis 2. príkladu na stránke Buďte kreatívni"},
+  "howGroupsExample3Label": "Rekonštrukcia domu Q1",
+  "@howGroupsExample3Label": {"description": "Príklad názvu skupiny na stránke Buďte kreatívni (príklad rekonštrukcie)"},
+  "howGroupsExample3Desc": "Používajte rovnaký názov naprieč viacerými mesiacmi. Karta Skupiny zhromaždí všetko pod týmto názvom.",
+  "@howGroupsExample3Desc": {"description": "Popis 3. príkladu na stránke Buďte kreatívni"},
+  "howGroupsPrecision": "Čím presnejší názov zadáte, tým užitočnejší bude výsledný súhrn.",
+  "@howGroupsPrecision": {"description": "Kurzívou zobrazená poznámka v spodnej časti stránky Buďte kreatívni"},
+  "howGroupsRecord0Title": "Karta Skupiny vo Výdavkoch",
+  "@howGroupsRecord0Title": {"description": "Názov prvého informačného riadku na stránke Prehľad"},
+  "howGroupsRecord0Body": "Každá skupina, ktorá má v aktuálnom mesiaci aspoň jeden výdavok, sa tu zobrazí ako jeden riadok s počtom položiek a celkovou sumou. Ťuknite na skupinu a zobrazia sa jednotlivé výdavky, ktoré ju tvoria.",
+  "@howGroupsRecord0Body": {"description": "Text prvého informačného riadku na stránke Prehľad"},
+  "howGroupsRecord1Title": "Mesačný prehľad v Prehľadoch",
+  "@howGroupsRecord1Title": {"description": "Názov druhého informačného riadku na stránke Prehľad"},
+  "howGroupsRecord1Body": "Keď na obrazovke Prehľady exportujete mesačné PDF, skupiny s výdavkami v danom mesiaci dostanú vlastnú stránku „Skupiny výdavkov“ — každá skupina bude uvedená so svojimi výdavkami, sumami a celkovým súčtom skupiny.",
+  "@howGroupsRecord1Body": {"description": "Text druhého informačného riadku na stránke Prehľad"},
+  "howGroupsMonthlyNote": "Skupiny nie sú súčasťou ročného prehľadu — ide o mesačný pohľad.",
+  "@howGroupsMonthlyNote": {"description": "Poznámka v spodnej časti stránky Prehľad"},
+
+  "howGroupsExampleGroupName": "Moja skupina",
+  "@howGroupsExampleGroupName": {"description": "Príklad názvu skupiny v demo karte na stránke Štítok panelu Ako fungujú skupiny"},
+
+  "otherCategories": "Ostatné kategórie",
+  "@otherCategories": {"description": "Popisok pre zlúčený segment „ostatné“ v koláčových grafoch a zoznamoch rozpisu"},
+
+  "noCategoryExpenses": "Žiadne výdavky kategórie {category}\nv období {period}.",
+  "@noCategoryExpenses": {
+    "description": "Prázdny stav v CategoryExpenseListScreen",
+    "placeholders": {
+      "category": {"type": "String"},
+      "period": {"type": "String"}
+    }
+  },
+
+  "guardDueDate": "Splatné {day}. {monthName} {year}",
+  "@guardDueDate": {
+    "description": "Popisok dátumu splatnosti na stavovej karte GUARD",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "day": {"type": "int"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "guardNotYetDue": "Ešte nie je splatné",
+  "@guardNotYetDue": {"description": "Popisok na karte GUARD, keď platba ešte nie je splatná"},
+
+  "guardNextReminder": "Ďalšia: {label}",
+  "@guardNextReminder": {
+    "description": "Popisok ďalšej pripomienky na karte GUARD",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardLastReminder": "Posledná: {label}",
+  "@guardLastReminder": {
+    "description": "Popisok poslednej pripomienky na karte GUARD",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardChangeDay": "Zmeniť deň",
+  "@guardChangeDay": {"description": "Akčné tlačidlo na karte GUARD na zmenu dňa splatnosti"},
+
+  "guardRemoveAction": "Odstrániť GUARD",
+  "@guardRemoveAction": {"description": "Akčné tlačidlo na karte GUARD na vypnutie sledovania GUARD"},
+
+  "guardMarkUnpaidTitle": "Označiť ako nezaplatené?",
+  "@guardMarkUnpaidTitle": {"description": "Názov dialógu pri zrušení potvrdenia platby"},
+
+  "guardMarkUnpaidBody": "Týmto odstránite potvrdenie platby za {monthName} {year}.",
+  "@guardMarkUnpaidBody": {
+    "description": "Text tela dialógu pri zrušení potvrdenia platby",
+    "placeholders": {
+      "monthName": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "guardMarkUnpaidAction": "Označiť ako nezaplatené",
+  "@guardMarkUnpaidAction": {"description": "Potvrdzovacie tlačidlo v dialógu označenia ako nezaplatené"},
+
+  "guardMarkAsPaid": "Označiť ako zaplatené",
+  "@guardMarkAsPaid": {"description": "Primárne akčné tlačidlo na karte GUARD"},
+
+  "guardRemoveTitle": "Odstrániť GUARD?",
+  "@guardRemoveTitle": {"description": "Názov dialógu pri odstraňovaní GUARD z položky plánu"},
+
+  "guardRemoveBody": "GUARD bude vypnutý pre „{name}“. Existujúce záznamy o platbách zostanú zachované, ale nové pripomienky sa už nebudú spúšťať.",
+  "@guardRemoveBody": {
+    "description": "Text tela dialógu pri odstraňovaní GUARD",
+    "placeholders": {"name": {"type": "String"}}
+  },
+
+  "guardRemoveConfirm": "Odstrániť",
+  "@guardRemoveConfirm": {"description": "Potvrdzovacie tlačidlo v dialógu odstránenia GUARD"},
+
+  "guardSelectPaidDate": "Vyberte dátum zaplatenia",
+  "@guardSelectPaidDate": {"description": "Pomocný text pre date picker pri úprave dátumu zaplatenia"},
+
+  "guardPaidOn": "Zaplatené {date}",
+  "@guardPaidOn": {
+    "description": "Popisok na karte GUARD zobrazujúci potvrdený dátum zaplatenia",
+    "placeholders": {"date": {"type": "String"}}
+  },
+
+  "howItWorksStep": "KROK {n}",
+  "@howItWorksStep": {
+    "description": "Popisok čísla kroku nad každou kartou v paneli Ako to funguje",
+    "placeholders": {"n": {"type": "int"}}
+  },
+
+  "planSubtitle0": "Vaša výplata a pravidelné mesačné záväzky",
+  "@planSubtitle0": {"description": "Podtitul pre podstranu Plán 0 (Cashflow)"},
+
+  "planSubtitle1": "Ako sú klasifikované vaše fixné náklady",
+  "@planSubtitle1": {"description": "Podtitul pre podstranu Plán 1 (Klasifikácia)"},
+
+  "planSubtitle2": "Koľko z vášho príjmu zaberá každý typ",
+  "@planSubtitle2": {"description": "Podtitul pre podstranu Plán 2 (Rozdelenie)"},
+
+  "planSubStep0": "Cashflow",
+  "@planSubStep0": {"description": "Popis podkroku pre stránku Plán 0"},
+
+  "planSubStep1": "Klasifikácia",
+  "@planSubStep1": {"description": "Popis podkroku pre stránku Plán 1"},
+
+  "planSubStep2": "Rozdelenie",
+  "@planSubStep2": {"description": "Popis podkroku pre stránku Plán 2"},
+
+  "howItWorksPlanIncomeBody": "Zadajte svoju výplatu a pravidelné mesačné záväzky — nájom, poistenie, predplatné. Sú to reálne, známe sumy, nie odhady ani ciele.",
+  "@howItWorksPlanIncomeBody": {"description": "Text na stránke Plán > Cashflow"},
+
+  "howItWorksTypeConsumptionDesc": "Každodenné výdavky — potraviny, nájom, strava, doprava",
+  "@howItWorksTypeConsumptionDesc": {"description": "Popis finančného typu Spotreba na stránke Klasifikácia"},
+
+  "howItWorksTypeAssetDesc": "Investície a úspory, ktoré časom zvyšujú váš majetok",
+  "@howItWorksTypeAssetDesc": {"description": "Popis finančného typu Aktíva na stránke Klasifikácia"},
+
+  "howItWorksTypeInsuranceDesc": "Náklady na ochranu — auto, zdravie a životné poistenie",
+  "@howItWorksTypeInsuranceDesc": {"description": "Popis finančného typu Poistenie na stránke Klasifikácia"},
+
+  "howItWorksFinancialTypesBody": "Každý fixný náklad je označený finančným typom. Vďaka tomu aplikácia ukáže, ako je váš príjem rozdelený medzi spotrebu, úspory a ochranu.",
+  "@howItWorksFinancialTypesBody": {"description": "Text na stránke Plán > Klasifikácia"},
+
+  "howItWorksSpendingVsIncomeTitle": "Výdavky vs príjem",
+  "@howItWorksSpendingVsIncomeTitle": {"description": "Názov karty na stránke Plán > Rozdelenie"},
+
+  "howItWorksSpendingVsIncomeBody": "Karta Plán ukazuje, koľko z vášho príjmu smeruje do každého finančného typu — takže na prvý pohľad vidíte, či míňate, šetríte alebo sa chránite v správnom pomere.",
+  "@howItWorksSpendingVsIncomeBody": {"description": "Text na stránke Plán > Rozdelenie"},
+
+  "expSubtitle0": "Váš dostupný rozpočet vypočítaný z Plánu",
+  "@expSubtitle0": {"description": "Podtitul pre podstranu Výdavky 0 (Rozpočet)"},
+
+  "expSubtitle1": "Každodenné výdavky, ktoré zaznamenávate",
+  "@expSubtitle1": {"description": "Podtitul pre podstranu Výdavky 1 (Míňanie)"},
+
+  "expSubtitle2": "Zostali ste v rozpočte?",
+  "@expSubtitle2": {"description": "Podtitul pre podstranu Výdavky 2 (Výsledok)"},
+
+  "subStepBudget": "Rozpočet",
+  "@subStepBudget": {"description": "Popis podkroku pre stránku Rozpočet vo Výdavkoch"},
+
+  "subStepSpending": "Míňanie",
+  "@subStepSpending": {"description": "Popis podkroku pre stránku Míňanie vo Výdavkoch"},
+
+  "subStepResult": "Výsledok",
+  "@subStepResult": {"description": "Popis podkroku pre stránku Výsledok vo Výdavkoch"},
+
+  "howItWorksBudgetBody": "Aplikácia odpočíta fixné náklady od vášho príjmu a výsledok zobrazí tu. Toto číslo nenastavujete ručne — vzniká z vášho Plánu.",
+  "@howItWorksBudgetBody": {"description": "Text na stránke Výdavky > Rozpočet"},
+
+  "howItWorksSpendingBody": "Zapisujte potraviny, jedlá, nákupy a ďalšie variabilné výdavky. Fixné mesačné platby ako nájom patria do Plánu, nie sem.",
+  "@howItWorksSpendingBody": {"description": "Text na stránke Výdavky > Míňanie"},
+
+  "howItWorksResultBody": "Na konci mesiaca karta Výdavky ukáže, aký výsledok ste dosiahli.",
+  "@howItWorksResultBody": {"description": "Text na stránke Výdavky > Výsledok"},
+
+  "repSubtitle0": "Kam odišli vaše peniaze?",
+  "@repSubtitle0": {"description": "Podtitul pre podstranu Prehľady 0 (Rozpis)"},
+
+  "repSubtitle1": "Vaše financie na papieri",
+  "@repSubtitle1": {"description": "Podtitul pre podstranu Prehľady 1 (Export)"},
+
+  "repSubtitle2": "Veľký obraz, mesiac po mesiaci",
+  "@repSubtitle2": {"description": "Podtitul pre podstranu Prehľady 2 (Prehľad)"},
+
+  "repSubStep0": "Rozpis",
+  "@repSubStep0": {"description": "Popis podkroku pre stránku Rozpis v Prehľadoch"},
+
+  "repSubStep1": "Export",
+  "@repSubStep1": {"description": "Popis podkroku pre stránku Export v Prehľadoch"},
+
+  "repSubStep2": "Prehľad",
+  "@repSubStep2": {"description": "Popis podkroku pre stránku Prehľad v Prehľadoch"},
+
+  "howItWorksBreakdownBody": "Rozpis ukazuje vaše výdavky podľa kategórií za ľubovoľný mesiac alebo rok. Ťuknite na výsek grafu alebo riadok kategórie a zobrazia sa jednotlivé výdavky a fixné náklady, ktoré za tým stoja.",
+  "@howItWorksBreakdownBody": {"description": "Text na stránke Prehľady > Rozpis"},
+
+  "pdfFeatureCategoryTotals": "Súčty kategórií",
+  "@pdfFeatureCategoryTotals": {"description": "Odrážka funkcie na karte Mesačné PDF"},
+
+  "pdfFeatureBudgetVsActual": "Rozpočet vs skutočnosť",
+  "@pdfFeatureBudgetVsActual": {"description": "Odrážka funkcie na karte Mesačné PDF"},
+
+  "pdfFeatureTypeSplit": "Rozdelenie podľa finančných typov",
+  "@pdfFeatureTypeSplit": {"description": "Odrážka funkcie na karte Mesačné PDF"},
+
+  "pdfFeatureAllExpenses": "Všetky výdavky v zozname",
+  "@pdfFeatureAllExpenses": {"description": "Odrážka funkcie na karte Mesačné PDF"},
+
+  "pdfFeatureCategoryBudgets": "Rozpočty kategórií",
+  "@pdfFeatureCategoryBudgets": {"description": "Odrážka funkcie na karte Mesačné PDF"},
+
+  "pdfFeatureGroupSummaries": "Súhrny skupín",
+  "@pdfFeatureGroupSummaries": {"description": "Odrážka funkcie na karte Mesačné PDF"},
+
+  "pdfFeature12MonthOverview": "12-mesačný prehľad",
+  "@pdfFeature12MonthOverview": {"description": "Odrážka funkcie na karte Ročné PDF"},
+
+  "pdfFeatureAnnualTotals": "Ročné súčty",
+  "@pdfFeatureAnnualTotals": {"description": "Odrážka funkcie na karte Ročné PDF"},
+
+  "pdfFeatureMonthlyBreakdown": "Mesačný rozpis",
+  "@pdfFeatureMonthlyBreakdown": {"description": "Odrážka funkcie na karte Ročné PDF"},
+
+  "pdfFeaturePlanVsActual": "Plán vs skutočnosť",
+  "@pdfFeaturePlanVsActual": {"description": "Odrážka funkcie na karte Ročné PDF"},
+
+  "pdfFeatureTypeRatios": "Pomery finančných typov",
+  "@pdfFeatureTypeRatios": {"description": "Odrážka funkcie na karte Ročné PDF"},
+
+  "pdfFeatureActivePlanItems": "Aktívne položky plánu",
+  "@pdfFeatureActivePlanItems": {"description": "Odrážka funkcie na karte Ročné PDF"},
+
+  "howItWorksExportBody": "Na export použite tlačidlo PDF v Rozpise. Prehľady môžete zdieľať cez akúkoľvek aplikáciu vo svojom zariadení.",
+  "@howItWorksExportBody": {"description": "Text na stránke Prehľady > Export"},
+
+  "howItWorksMoreMonths": "· · · 9 ďalších mesiacov",
+  "@howItWorksMoreMonths": {"description": "Riadok s elipsou v mock karte Prehľadu"},
+
+  "howItWorksOverviewBody": "Prehľad zobrazuje všetkých 12 mesiacov vedľa seba — koľko ste zarobili, koľko išlo do aktív a koľko sa spotrebovalo. Ťuknite na ľubovoľný mesiac a preskočíte do tohto obdobia v Pláne.",
+  "@howItWorksOverviewBody": {"description": "Text na stránke Prehľady > Prehľad"},
+
+  "overBudgetBy": "Nad rozpočet o {amount}",
+  "@overBudgetBy": {
+    "description": "Súhrnný popisok výsledku, keď výdavky presiahnu rozpočet",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "savedAmount": "Ušetrené {amount}",
+  "@savedAmount": {
+    "description": "Súhrnný popisok výsledku, keď sú výdavky pod rozpočtom",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "loadingLabel": "Načítava sa…",
+  "@loadingLabel": {"description": "Všeobecný zástupný text načítavania"},
+
+  "autoBackupTitle": "Automatická záloha",
+  "@autoBackupTitle": {"description": "Nadpis sekcie pre sloty automatickej zálohy"},
+
+  "autoBackupNoBackupYet": "Zatiaľ žiadna záloha",
+  "@autoBackupNoBackupYet": {"description": "Zobrazené, keď neexistuje žiadna automatická záloha"},
+
+  "autoBackupSubtitleExpand": "Aktualizované denne · ťuknite pre rozbalenie",
+  "@autoBackupSubtitleExpand": {"description": "Podtitul automatickej zálohy, keď je sekcia zbalená"},
+
+  "autoBackupSubtitleCollapse": "Aktualizované denne · ťuknite pre zbalenie",
+  "@autoBackupSubtitleCollapse": {"description": "Podtitul automatickej zálohy, keď je sekcia rozbalená"},
+
+  "actionRestoreAllCaps": "OBNOVIŤ",
+  "@actionRestoreAllCaps": {"description": "Popisok akcie Obnoviť veľkými písmenami"},
+
+  "actionRestore": "Obnoviť",
+  "@actionRestore": {"description": "Popisok akcie Obnoviť"},
+
+  "autoBackupRestoreDescription": "Obnovením nahradíte všetky aktuálne dáta obsahom zálohy.",
+  "@autoBackupRestoreDescription": {"description": "Text tela v potvrdzovacom dialógu obnovenia"},
+
+  "autoBackupRestored": "Záloha z {date} bola obnovená.",
+  "@autoBackupRestored": {
+    "description": "Snackbar zobrazený po úspešnom obnovení automatickej zálohy",
+    "placeholders": {"date": {"type": "String"}}
+  },
+
+  "autoBackupRestoreFailed": "Obnovenie zálohy zlyhalo.",
+  "@autoBackupRestoreFailed": {"description": "Snackbar zobrazený pri zlyhaní obnovenia automatickej zálohy"},
+
+  "autoBackupPrimary": "Primárna záloha",
+  "@autoBackupPrimary": {"description": "Názov najnovšieho slotu automatickej zálohy (slot 0)"},
+
+  "autoBackupSecondary": "Sekundárna záloha",
+  "@autoBackupSecondary": {"description": "Názov slotu automatickej zálohy z predchádzajúceho dňa (slot 1)"},
+
+  "frequencyPickerFixed": "Ako často sa opakuje?",
+  "@frequencyPickerFixed": {"description": "Názov spodného panelu výberu frekvencie pre fixné náklady"},
+
+  "frequencyMonthlyFixedSubtitle": "Nájom, predplatné, pravidelné účty",
+  "@frequencyMonthlyFixedSubtitle": {"description": "Podtitul možnosti Mesačne vo výbere frekvencie fixných nákladov"},
+
+  "frequencyYearlyFixedSubtitle": "Ročné predplatné, poistenie, členstvá",
+  "@frequencyYearlyFixedSubtitle": {"description": "Podtitul možnosti Ročne vo výbere frekvencie fixných nákladov"},
+
+  "frequencyPickerIncome": "Ako často ho dostávate?",
+  "@frequencyPickerIncome": {"description": "Názov spodného panelu výberu frekvencie pre príjem"},
+
+  "frequencyMonthlyIncomeSubtitle": "Výplata, dôchodok, pravidelné prevody",
+  "@frequencyMonthlyIncomeSubtitle": {"description": "Podtitul možnosti Mesačne vo výbere frekvencie príjmu"},
+
+  "frequencyYearlyIncomeSubtitle": "Ročný bonus, daňový preplatok, dividendy",
+  "@frequencyYearlyIncomeSubtitle": {"description": "Podtitul možnosti Ročne vo výbere frekvencie príjmu"},
+
+  "frequencyOneTimeIncomeSubtitle": "Dar, neočakávaný príjem, jednorazová platba",
+  "@frequencyOneTimeIncomeSubtitle": {"description": "Podtitul možnosti Jednorazovo vo výbere frekvencie príjmu"},
+
+  "typePickerTitle": "Čo pridávate?",
+  "@typePickerTitle": {"description": "Názov spodného panelu výberu typu položky plánu"},
+
+  "typeIncomeSubtitle": "Výplata, bonus, dôchodok, dary",
+  "@typeIncomeSubtitle": {"description": "Podtitul pre kartu Príjem vo výbere typu"},
+
+  "typeFixedCostSubtitle": "Nájom, poistenie, predplatné",
+  "@typeFixedCostSubtitle": {"description": "Podtitul pre kartu Fixný náklad vo výbere typu"},
+
+  "languagePickerTitle": "Jazyk",
+  "@languagePickerTitle": {"description": "Názov dialógu výberu jazyka"},
+
+  "currencyPickerTitle": "Mena",
+  "@currencyPickerTitle": {"description": "Názov panelu výberu meny"},
+
+  "currencyCustom": "Vlastná",
+  "@currencyCustom": {"description": "Popisok možnosti vlastnej meny"},
+
+  "currencyCustomSubtitle": "Definujte vlastný kód a symbol",
+  "@currencyCustomSubtitle": {"description": "Podtitul možnosti vlastnej meny"},
+
+  "currencyCustomTitle": "Vlastná mena",
+  "@currencyCustomTitle": {"description": "Názov dialógu pre zadanie vlastnej meny"},
+
+  "currencyCodeLabel": "Kód",
+  "@currencyCodeLabel": {"description": "Popisok vstupného poľa pre kód meny"},
+
+  "currencyCodeHint": "napr. USD",
+  "@currencyCodeHint": {"description": "Pomocný text pre vstupné pole kódu meny"},
+
+  "currencySymbolLabel": "Symbol",
+  "@currencySymbolLabel": {"description": "Popisok vstupného poľa pre symbol meny"},
+
+  "currencySymbolHint": "napr. $",
+  "@currencySymbolHint": {"description": "Pomocný text pre vstupné pole symbolu meny"},
+
+  "removeFromImport": "Odstrániť z importu",
+  "@removeFromImport": {"description": "Tooltip/akcia na odstránenie riadku z náhľadu importu"},
+
+  "exportExpensesTitle": "Exportovať výdavky",
+  "@exportExpensesTitle": {"description": "Názov dialógu výberu dátumového rozsahu pre export"},
+
+  "selectDateRangeHint": "Vyberte dátumový rozsah na export:",
+  "@selectDateRangeHint": {"description": "Inštrukčný text v dialógu výberu dátumového rozsahu pri exporte"},
+
+  "startDateLabel": "Dátum od",
+  "@startDateLabel": {"description": "Popisok výberu začiatočného dátumu v exportnom dialógu"},
+
+  "endDateLabel": "Dátum do",
+  "@endDateLabel": {"description": "Popisok výberu koncového dátumu v exportnom dialógu"},
+
+  "tapToSelectDate": "Ťuknite pre výber",
+  "@tapToSelectDate": {"description": "Zástupný text zobrazený, keď ešte nebol vybraný dátum"},
+
+  "endDateAfterStart": "Koncový dátum musí byť rovnaký alebo neskorší ako začiatočný dátum.",
+  "@endDateAfterStart": {"description": "Validačná chyba zobrazená v exportnom dialógu"},
+
+  "actionExport": "Exportovať",
+  "@actionExport": {"description": "Popisok tlačidla akcie Exportovať"},
+
+  "overspendWarning": "V tomto {period} ste minuli o {amount} viac, než ste zarobili!",
+  "@overspendWarning": {
+    "description": "Upozornenie zobrazené v karte rozdelenia podľa finančných typov, keď výdavky presiahnu príjem",
+    "placeholders": {
+      "period": {"type": "String"},
+      "amount": {"type": "String"}
+    }
+  },
+
+  "periodMonth": "mesiaci",
+  "@periodMonth": {"description": "Slovo „mesiac“ použité v overspendWarning"},
+
+  "periodYear": "roku",
+  "@periodYear": {"description": "Slovo „rok“ použité v overspendWarning"},
+
+  "guardBannerCount": "{count, plural, =1{GUARD — 1 nepotvrdená platba} few{GUARD — {count} nepotvrdené platby} other{GUARD — {count} nepotvrdených platieb}}",
+  "@guardBannerCount": {
+    "description": "Text bannera zobrazujúci, koľko platieb GUARD nie je potvrdených",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "guardSilencedBadge": "stíšené",
+  "@guardSilencedBadge": {"description": "Odznak zobrazený pri stíšenej položke GUARD v bannery"},
+
+  "guardExpenseStripPending": "{count, plural, =1{1 sledovaná platba čaká} few{{count} sledované platby čakajú} other{{count} sledovaných platieb čaká}}",
+  "@guardExpenseStripPending": {
+    "description": "Pás zobrazený na zozname výdavkov, keď existujú čakajúce platby GUARD",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "importErrorRowLabel": "Riadok {row} — {field}",
+  "@importErrorRowLabel": {
+    "description": "Popisok riadku chyby importu zobrazujúci číslo riadku a pole",
+    "placeholders": {
+      "row": {"type": "int"},
+      "field": {"type": "String"}
+    }
+  },
+
+  "earnedLabel": "Zarobené: {amount}",
+  "@earnedLabel": {
+    "description": "Popisok sumy zarobeného v riadku mesiaca v prehľade",
+    "placeholders": {"amount": {"type": "String"}}
+  },
+
+  "fromDateShort": "od {label}",
+  "@fromDateShort": {
+    "description": "Krátky popisok „od dátumu“ používaný v podtituloch položiek plánu",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "untilDateShort": "do {label}",
+  "@untilDateShort": {
+    "description": "Krátky popisok „do dátumu“ používaný v podtituloch položiek plánu",
+    "placeholders": {"label": {"type": "String"}}
+  },
+
+  "guardEnableToggle": "Zapnúť GUARD",
+  "@guardEnableToggle": {"description": "Popisok prepínača zapnutia GUARD v paneli nastavenia"},
+
+  "guardEnableToggleSubtitle": "Sledovať platbu a dostávať pripomienky",
+  "@guardEnableToggleSubtitle": {"description": "Podtitul prepínača zapnutia GUARD"},
+
+  "actionOk": "OK",
+  "@actionOk": {"description": "Všeobecný popisok tlačidla OK"},
+
+  "labelTotal": "Spolu",
+  "@labelTotal": {"description": "Popisok riadku súčtu na obrazovke prehľadov"},
+
+  "categoryBudgetsTitle": "Rozpočty kategórií",
+  "@categoryBudgetsTitle": {"description": "Názov AppBaru pre obrazovku správy rozpočtov (špecificky pre rozpočty kategórií)"},
+
+  "noCategoryBudgetsSet": "Nie sú nastavené žiadne rozpočty kategórií.",
+  "@noCategoryBudgetsSet": {"description": "Primárny text prázdneho stavu na obrazovke správy rozpočtov"},
+
+  "removeBudgetDialogTitle": "Odstrániť rozpočet kategórie {category}",
+  "@removeBudgetDialogTitle": {
+    "description": "Názov potvrdzovacieho dialógu pri odstránení rozpočtu",
+    "placeholders": {"category": {"type": "String"}}
+  },
+
+  "endBudgetFromTitle": "Ukončiť od {from}",
+  "@endBudgetFromTitle": {
+    "description": "Názov možnosti v dialógu odstránenia rozpočtu — ukončiť sériu rozpočtu od vybraného mesiaca",
+    "placeholders": {"from": {"type": "String"}}
+  },
+
+  "endBudgetFromDescription": "Ukončí rozpočet od {from} ďalej. Predchádzajúce mesiace si ponechajú historický rozpočet.",
+  "@endBudgetFromDescription": {
+    "description": "Podtitul možnosti ukončenia od vybraného mesiaca v dialógu odstránenia rozpočtu",
+    "placeholders": {"from": {"type": "String"}}
+  },
+
+  "deleteBudgetSeriesTitle": "Odstrániť celú sériu",
+  "@deleteBudgetSeriesTitle": {"description": "Názov možnosti v dialógu odstránenia rozpočtu — odstrániť všetky záznamy rozpočtu tejto série"},
+
+  "deleteBudgetSeriesConfirm": "Odstrániť sériu",
+  "@deleteBudgetSeriesConfirm": {"description": "Popisok potvrdzovacieho tlačidla v dialógu odstránenia série rozpočtu"},
+
+  "deleteBudgetSeriesDescription": "Natrvalo odstráni všetky záznamy ({range}). V žiadnom mesiaci tejto série sa už rozpočet nezobrazí. Túto akciu nie je možné vrátiť späť.",
+  "@deleteBudgetSeriesDescription": {
+    "description": "Podtitul možnosti odstránenia všetkých záznamov v dialógu odstránenia rozpočtu",
+    "placeholders": {"range": {"type": "String"}}
+  },
+
+  "budgetRangePresent": "{start} – súčasnosť",
+  "@budgetRangePresent": {
+    "description": "Popisok dátumového rozsahu použitý v dialógu odstránenia rozpočtu, keď rozpočet nemá koncový dátum",
+    "placeholders": {"start": {"type": "String"}}
+  },
+
+  "pdfMonthlyReport": "Mesačný prehľad",
+  "@pdfMonthlyReport": {"description": "Opakujúci sa nadpis v PDF pre mesačné prehľady"},
+
+  "pdfYearlyReport": "Ročný prehľad",
+  "@pdfYearlyReport": {"description": "Opakujúci sa nadpis v PDF pre ročné prehľady"},
+
+  "pdfMonthlyReportHeader": "MESAČNÝ PREHĽAD ZA {month} {year}",
+  "@pdfMonthlyReportHeader": {
+    "description": "Nadpis bannera na prvej strane mesačných PDF prehľadov",
+    "placeholders": {
+      "month": {"type": "String"},
+      "year": {"type": "int"}
+    }
+  },
+
+  "pdfYearlyReportHeader": "ROČNÝ PREHĽAD ZA {year}",
+  "@pdfYearlyReportHeader": {
+    "description": "Nadpis bannera na prvej strane ročných PDF prehľadov",
+    "placeholders": {"year": {"type": "int"}}
+  },
+
+  "pdfPartialYear": "(čiastočný rok)",
+  "@pdfPartialYear": {"description": "Prípona titulku v PDF pridaná k roku, keď ročný prehľad pokrýva len časť roka"},
+
+  "pdfSectionSpendingVsIncome": "VÝDAVKY VS PRÍJEM",
+  "@pdfSectionSpendingVsIncome": {"description": "Názov sekcie PDF pre widget výdavky vs príjem"},
+
+  "pdfSectionCategorySummary": "SÚHRN KATEGÓRIÍ",
+  "@pdfSectionCategorySummary": {"description": "Názov sekcie PDF pre tabuľku súhrnu kategórií"},
+
+  "pdfSectionCashFlowSummary": "SÚHRN CASH FLOW",
+  "@pdfSectionCashFlowSummary": {"description": "Názov sekcie PDF pre súhrn cash flow"},
+
+  "pdfSectionExpenseGroups": "SKUPINY VÝDAVKOV",
+  "@pdfSectionExpenseGroups": {"description": "Názov sekcie PDF pre stránku skupín výdavkov"},
+
+  "pdfSectionExpenseDetails": "DETAILY VÝDAVKOV",
+  "@pdfSectionExpenseDetails": {"description": "Názov sekcie PDF pre tabuľku detailov výdavkov"},
+
+  "pdfSectionYearlyOverview": "ROČNÝ PREHĽAD",
+  "@pdfSectionYearlyOverview": {"description": "Názov sekcie PDF pre tabuľku ročného prehľadu"},
+
+  "pdfSectionSpendingByCategory": "VÝDAVKY PODĽA KATEGÓRIÍ A MESIACOV",
+  "@pdfSectionSpendingByCategory": {"description": "Názov sekcie PDF pre landscape tabuľku kategórií podľa mesiacov"},
+
+  "pdfIncomeHeader": "PRÍJEM",
+  "@pdfIncomeHeader": {"description": "Popisok hlavičky karty príjmu v PDF v súhrne cash flow"},
+
+  "pdfFixedCostsHeader": "FIXNÉ NÁKLADY",
+  "@pdfFixedCostsHeader": {"description": "Popisok hlavičky karty fixných nákladov v PDF v súhrne cash flow"},
+
+  "pdfTotal": "SPOLU",
+  "@pdfTotal": {"description": "Popisok riadku SPOLU veľkými písmenami v tabuľkách kategórií a výdavkov v PDF"},
+
+  "pdfColTotal": "Spolu",
+  "@pdfColTotal": {"description": "Názov stĺpca „Spolu“ v landscape tabuľke kategórií podľa mesiacov v PDF"},
+
+  "pdfEarnedThisMonth": "Zarobené tento mesiac",
+  "@pdfEarnedThisMonth": {"description": "Popisok riadku príjmu vo widgete výdavky vs príjem v mesačnom PDF"},
+
+  "pdfEarnedThisYear": "Zarobené tento rok",
+  "@pdfEarnedThisYear": {"description": "Popisok riadku príjmu vo widgete výdavky vs príjem v ročnom PDF"},
+
+  "pdfGroupTotal": "Súčet skupiny (tento mesiac)",
+  "@pdfGroupTotal": {"description": "Popisok medzisúčtu v sekcii skupín výdavkov v PDF"},
+
+  "pdfAllPeriodsTotal": "Súčet za všetky obdobia",
+  "@pdfAllPeriodsTotal": {"description": "Popisok riadku celkového súčtu za všetky obdobia v sekcii skupín výdavkov v PDF"},
+
+  "pdfItemsThisMonth": "{count, plural, =1{1 položka tento mesiac} few{{count} položky tento mesiac} other{{count} položiek tento mesiac}}",
+  "@pdfItemsThisMonth": {
+    "description": "Popisok počtu položiek v hlavičke skupiny v PDF, zobrazujúci koľko výdavkov patrí do skupiny v aktuálnom mesiaci",
+    "placeholders": {"count": {"type": "int"}}
+  },
+
+  "pdfNormalized": " (normalizované)",
+  "@pdfNormalized": {"description": "Prípona v PDF pridaná k ročným položkám plánu zobrazeným v mesačnom súhrne cash flow"},
+
+  "pdfAnnualized": " (prepočítané na rok)",
+  "@pdfAnnualized": {"description": "Prípona v PDF pridaná k mesačným položkám plánu zobrazeným v ročnom súhrne cash flow"},
+
+  "pdfPartialYearNote": "Čiastočný rok - mesiace bez dát zobrazujú nuly. Sú uvedené len priebežné súčty od začiatku roka.",
+  "@pdfPartialYearNote": {"description": "Poznámka v PDF zobrazená na začiatku čiastočného ročného prehľadu"},
+
+  "pdfPage": "Strana {page} z {total}",
+  "@pdfPage": {
+    "description": "Popisok číslovania strán v pätičke PDF",
+    "placeholders": {
+      "page": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  },
+
+  "pdfNoData": "Žiadne dáta.",
+  "@pdfNoData": {"description": "Zástupný text v PDF, keď tabuľka alebo sekcia nemá žiadne dáta na zobrazenie"},
+
+  "howItWorksExampleSalary": "Výplata",
+  "@howItWorksExampleSalary": {"description": "Príklad názvu položky príjmu v paneli Ako to funguje"},
+
+  "howItWorksExampleBonus": "Bonus",
+  "@howItWorksExampleBonus": {"description": "Príklad názvu položky príjmu v paneli Ako to funguje"},
+
+  "howItWorksExampleRent": "Nájom",
+  "@howItWorksExampleRent": {"description": "Príklad názvu položky fixného nákladu v paneli Ako to funguje"},
+
+  "howItWorksExampleInsurance": "Poistenie",
+  "@howItWorksExampleInsurance": {"description": "Príklad názvu položky fixného nákladu v paneli Ako to funguje"},
+
+  "howItWorksExampleEtfFonds": "ETF fondy",
+  "@howItWorksExampleEtfFonds": {"description": "Príklad názvu položky fixného nákladu v paneli Ako to funguje"},
+
+  "addBudgetTooltip": "Pridať rozpočet",
+  "@addBudgetTooltip": {"description": "Tooltip FAB tlačidla na obrazovke Rozpočty kategórií"}
+}

@@ -144,6 +144,10 @@ class _LocaleIndicators extends StatelessWidget {
   static String _localeLabel(Locale locale) {
     switch (locale.languageCode) {
       case 'de': return 'DE  🇩🇪';
+      case 'sk': return 'SK  🇸🇰';
+      case 'cs': return 'CS  🇨🇿';
+      case 'pl': return 'PL  🇵🇱';
+      case 'hu': return 'HU  🇭🇺';
       case 'en':
       default:   return 'EN  🇬🇧';
     }
@@ -194,6 +198,10 @@ class _LanguagePickerDialog extends StatelessWidget {
   static const _entries = [
     (locale: Locale('en'), label: 'English', flag: '🇬🇧'),
     (locale: Locale('de'), label: 'Deutsch', flag: '🇩🇪'),
+    (locale: Locale('sk'), label: 'Slovenčina', flag: '🇸🇰'),
+    (locale: Locale('cs'), label: 'Čeština', flag: '🇨🇿'),
+    (locale: Locale('pl'), label: 'Polski', flag: '🇵🇱'),
+    (locale: Locale('hu'), label: 'Magyar', flag: '🇭🇺'),
   ];
 
   @override
@@ -218,9 +226,9 @@ class _LanguagePickerDialog extends StatelessWidget {
                   children: [
                     const Icon(Icons.language, color: AppColors.gold, size: 18),
                     const SizedBox(width: 10),
-                    const Text(
-                      'Language',
-                      style: TextStyle(
+                    Text(
+                      context.l10n.languagePickerTitle,
+                      style: const TextStyle(
                         color: AppColors.gold,
                         fontSize: 17,
                         fontWeight: FontWeight.w700,

@@ -1113,6 +1113,9 @@
   "typeFixedCostSubtitle": "Miete, Versicherungen, Abonnements",
   "@typeFixedCostSubtitle": {"description": "Untertitel für die Fixkosten-Karte im Typenpicker"},
 
+  "languagePickerTitle": "Sprache",
+  "@languagePickerTitle": {"description": "Titel des Sprachauswahl-Dialogs"},
+
   "currencyPickerTitle": "Währung",
   "@currencyPickerTitle": {"description": "Titel des Währungspicker-Sheets"},
 

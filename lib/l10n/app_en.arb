@@ -1345,6 +1345,9 @@
   "typeFixedCostSubtitle": "Rent, insurance, subscriptions",
   "@typeFixedCostSubtitle": {"description": "Subtitle for the Fixed Cost card in the type picker"},
 
+  "languagePickerTitle": "Language",
+  "@languagePickerTitle": {"description": "Title for the language picker dialog"},
+
   "currencyPickerTitle": "Currency",
   "@currencyPickerTitle": {"description": "Title for the currency picker sheet"},
 
