@@ -1,6 +1,7 @@
 import 'app_localizations.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
+import '../models/year_month.dart';
 
 extension AppLocalizationsMonths on AppLocalizations {
   String monthName(int month) => [
@@ -60,4 +61,6 @@ extension AppLocalizationsMonths on AppLocalizations {
         FinancialType.consumption => financialTypeConsumption,
         FinancialType.insurance => financialTypeInsurance,
       };
+
+  String yearMonthLabel(YearMonth ym) => '${monthName(ym.month)} ${ym.year}';
 }

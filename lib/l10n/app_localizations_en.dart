@@ -1195,6 +1195,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Groups are not included in the yearly report — they are a monthly lens.';
 
   @override
+  String get howGroupsExampleGroupName => 'My group';
+
+  @override
   String get otherCategories => 'Other categories';
 
   @override

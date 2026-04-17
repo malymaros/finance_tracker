@@ -133,7 +133,7 @@
   "budgetNotSet": "Budget nicht festgelegt",
   "@budgetNotSet": { "description": "Wird auf der Karte ohne Budget angezeigt, wenn kein Einkommen geplant ist" },
 
-  "setIncomeInPlan": "Einnahmen im Plan festlegen",
+  "setIncomeInPlan": "Einnahmen festlegen",
   "@setIncomeInPlan": { "description": "Handlungsaufforderung auf der Karte ohne Budget" },
 
   "noExpensesInMonth": "Keine Ausgaben im {monthName} {year}.",
@@ -1040,6 +1040,9 @@
   "@howGroupsRecord1Body": { "description": "Text der zweiten Zeile auf der Auswerten-Seite" },
   "howGroupsMonthlyNote": "Gruppen sind nicht im Jahresbericht enthalten – sie sind eine monatliche Perspektive.",
   "@howGroupsMonthlyNote": { "description": "Hinweis am Ende der Auswerten-Seite" },
+
+  "howGroupsExampleGroupName": "Meine Gruppe",
+  "@howGroupsExampleGroupName": { "description": "Beispielgruppenname im Demo-Card auf der Tag-Seite des How Groups Work Sheets" },
 
   "loadingLabel": "Wird geladen…",
   "@loadingLabel": {"description": "Generischer Ladeplatzhalter"},

@@ -195,10 +195,10 @@ class _TagPage extends StatelessWidget {
                 color: AppColors.gold,
                 size: 22,
               ),
-              title: const Text('My group'),
-              subtitle: const Text(
-                '15 items',
-                style: TextStyle(fontSize: 12),
+              title: Text(l10n.howGroupsExampleGroupName),
+              subtitle: Text(
+                l10n.itemCount(15),
+                style: const TextStyle(fontSize: 12),
               ),
               trailing: Text(
                 '440.00 ${CurrencyFormatter.currencySymbol}',

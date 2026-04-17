@@ -285,7 +285,7 @@ class PlanItemDetailScreen extends StatelessWidget {
             icon: Icons.calendar_today_outlined,
             iconColor: AppColors.textMuted,
             label: l10n.activeFrom,
-            value: item.validFrom.label,
+            value: l10n.yearMonthLabel(item.validFrom),
           ),
           if (item.frequency != PlanFrequency.oneTime) ...[
             const Divider(height: 1, indent: 56),
@@ -294,7 +294,7 @@ class PlanItemDetailScreen extends StatelessWidget {
               iconColor: AppColors.textMuted,
               label: l10n.activeUntil,
               value: item.validTo != null
-                  ? item.validTo!.label
+                  ? l10n.yearMonthLabel(item.validTo!)
                   : isIncome
                       ? l10n.ongoing
                       : l10n.noEndDate,

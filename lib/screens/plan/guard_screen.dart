@@ -256,7 +256,7 @@ class _GuardScreenState extends State<GuardScreen> {
   }
 
   String _formatReminderPeriod(PlanItem item, YearMonth period) =>
-      GuardCalculator.formatReminderPeriod(item.guardDueDay, period);
+      GuardCalculator.formatReminderPeriod(item.guardDueDay, period, context.l10n);
 
   Widget _buildSectionHeader(BuildContext context, int count) {
     return Padding(

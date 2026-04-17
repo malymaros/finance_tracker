@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
@@ -18,12 +19,6 @@ class ExpenseDetailScreen extends StatelessWidget {
   /// The caller is responsible for popping this screen before deleting.
   final VoidCallback? onDelete;
 
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
-
   const ExpenseDetailScreen({
     super.key,
     required this.expense,
@@ -31,9 +26,9 @@ class ExpenseDetailScreen extends StatelessWidget {
     this.onDelete,
   });
 
-  String _formatDate(DateTime dt) {
+  String _formatDate(DateTime dt, BuildContext context) {
     final day = dt.day.toString().padLeft(2, '0');
-    return '$day ${_monthNames[dt.month]} ${dt.year}';
+    return '$day ${context.l10n.monthName(dt.month)} ${dt.year}';
   }
 
   @override
@@ -96,21 +91,21 @@ class ExpenseDetailScreen extends StatelessWidget {
             icon: expense.category.icon,
             iconColor: expense.category.color,
             label: context.l10n.labelCategory,
-            value: expense.category.displayName,
+            value: context.l10n.categoryName(expense.category),
           ),
           const Divider(height: 1, indent: 56),
           _buildDetailRow(
             icon: expense.financialType.icon,
             iconColor: expense.financialType.color,
             label: context.l10n.labelFinancialType,
-            value: expense.financialType.displayName,
+            value: context.l10n.financialTypeName(expense.financialType),
           ),
           const Divider(height: 1, indent: 56),
           _buildDetailRow(
             icon: Icons.calendar_today_outlined,
             iconColor: AppColors.textMuted,
             label: context.l10n.labelDate,
-            value: _formatDate(expense.date),
+            value: _formatDate(expense.date, context),
           ),
           if (expense.group != null) ...[
             const Divider(height: 1, indent: 56),

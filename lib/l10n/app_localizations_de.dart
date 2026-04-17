@@ -141,7 +141,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get budgetNotSet => 'Budget nicht festgelegt';
 
   @override
-  String get setIncomeInPlan => 'Einnahmen im Plan festlegen';
+  String get setIncomeInPlan => 'Einnahmen festlegen';
 
   @override
   String noExpensesInMonth(String monthName, int year) {
@@ -1201,6 +1201,9 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get howGroupsMonthlyNote =>
       'Gruppen sind nicht im Jahresbericht enthalten – sie sind eine monatliche Perspektive.';
+
+  @override
+  String get howGroupsExampleGroupName => 'Meine Gruppe';
 
   @override
   String get otherCategories => 'Andere Kategorien';

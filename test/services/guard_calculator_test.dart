@@ -1,6 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:finance_tracker/l10n/app_localizations_en.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/services/guard_calculator.dart';
+
+final _l10n = AppLocalizationsEn();
 
 void main() {
   // ── daysInMonth ────────────────────────────────────────────────────────────
@@ -76,21 +79,21 @@ void main() {
   group('formatReminderPeriod', () {
     test('formats a standard date correctly', () {
       expect(
-        GuardCalculator.formatReminderPeriod(15, YearMonth(2026, 3)),
+        GuardCalculator.formatReminderPeriod(15, YearMonth(2026, 3), _l10n),
         'March 15, 2026',
       );
     });
 
     test('null due day formats as day 1', () {
       expect(
-        GuardCalculator.formatReminderPeriod(null, YearMonth(2026, 1)),
+        GuardCalculator.formatReminderPeriod(null, YearMonth(2026, 1), _l10n),
         'January 1, 2026',
       );
     });
 
     test('clamped day is reflected in the output (Feb 30 → Feb 28)', () {
       expect(
-        GuardCalculator.formatReminderPeriod(30, YearMonth(2025, 2)),
+        GuardCalculator.formatReminderPeriod(30, YearMonth(2025, 2), _l10n),
         'February 28, 2025',
       );
     });
@@ -101,14 +104,14 @@ void main() {
   group('dueDateLabel', () {
     test('appends " due" to the formatted period', () {
       expect(
-        GuardCalculator.dueDateLabel(15, YearMonth(2026, 3)),
+        GuardCalculator.dueDateLabel(15, YearMonth(2026, 3), _l10n),
         'March 15, 2026 due',
       );
     });
 
     test('null due day produces "... 1, ... due"', () {
       expect(
-        GuardCalculator.dueDateLabel(null, YearMonth(2026, 5)),
+        GuardCalculator.dueDateLabel(null, YearMonth(2026, 5), _l10n),
         'May 1, 2026 due',
       );
     });

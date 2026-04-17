@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
@@ -98,14 +99,15 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     final formattedDate =
         '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
 
     return Scaffold(
       appBar: AppBar(
           title: Text(widget.existing != null
-              ? context.l10n.editExpenseTitle
-              : context.l10n.addExpenseTitle)),
+              ? l10n.editExpenseTitle
+              : l10n.addExpenseTitle)),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -115,7 +117,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             TextFormField(
               controller: _amountController,
               decoration: InputDecoration(
-                labelText: context.l10n.labelAmount,
+                labelText: l10n.labelAmount,
                 suffixText: ' ${CurrencyFormatter.currencySymbol}',
                 border: const OutlineInputBorder(),
               ),
@@ -124,11 +126,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               autofocus: true,
               validator: (v) {
                 if (v == null || v.trim().isEmpty) {
-                  return context.l10n.validationAmountEmpty;
+                  return l10n.validationAmountEmpty;
                 }
                 final parsed = double.tryParse(v.trim());
                 if (parsed == null || parsed <= 0) {
-                  return context.l10n.validationAmountInvalid;
+                  return l10n.validationAmountInvalid;
                 }
                 return null;
               },
@@ -139,14 +141,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             DropdownButtonFormField<ExpenseCategory>(
               initialValue: _selectedCategory,
               decoration: InputDecoration(
-                labelText: context.l10n.labelCategory,
+                labelText: l10n.labelCategory,
                 border: const OutlineInputBorder(),
               ),
               items: (ExpenseCategory.values.toList()
                     ..sort((a, b) {
                       if (a == ExpenseCategory.other) return 1;
                       if (b == ExpenseCategory.other) return -1;
-                      return a.displayName.compareTo(b.displayName);
+                      return l10n.categoryName(a).compareTo(l10n.categoryName(b));
                     }))
                   .map((cat) {
                 return DropdownMenuItem(
@@ -155,7 +157,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
                     children: [
                       Icon(cat.icon, size: 20, color: cat.color),
                       const SizedBox(width: 8),
-                      Text(cat.displayName),
+                      Text(l10n.categoryName(cat)),
                     ],
                   ),
                 );
@@ -172,14 +174,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             const SizedBox(height: 16),
 
             // ── Financial type ───────────────────────────────────────────────
-            Text(context.l10n.labelFinancialType,
+            Text(l10n.labelFinancialType,
                 style: const TextStyle(fontSize: 12, color: AppColors.textMuted)),
             const SizedBox(height: 8),
             SegmentedButton<FinancialType>(
               segments: FinancialType.values
                   .map((t) => ButtonSegment(
                         value: t,
-                        label: Text(t.displayName),
+                        label: Text(l10n.financialTypeName(t)),
                         icon: Icon(t.icon),
                       ))
                   .toList(),
@@ -206,7 +208,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             TextFormField(
               controller: _noteController,
               decoration: InputDecoration(
-                labelText: context.l10n.labelNoteOptional,
+                labelText: l10n.labelNoteOptional,
                 border: const OutlineInputBorder(),
               ),
               maxLines: 2,
@@ -217,8 +219,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             TextFormField(
               controller: _groupController,
               decoration: InputDecoration(
-                labelText: context.l10n.labelGroupOptional,
-                hintText: context.l10n.groupHintText,
+                labelText: l10n.labelGroupOptional,
+                hintText: l10n.groupHintText,
                 border: const OutlineInputBorder(),
               ),
             ),
@@ -226,7 +228,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
             FilledButton(
               onPressed: _submit,
-              child: Text(context.l10n.actionSave),
+              child: Text(l10n.actionSave),
             ),
           ],
         ),

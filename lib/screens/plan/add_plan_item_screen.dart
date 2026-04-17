@@ -333,7 +333,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    l10n.lastActiveMonthInfo(endDate.label),
+                    l10n.lastActiveMonthInfo(l10n.yearMonthLabel(endDate)),
                     style: const TextStyle(
                         fontSize: 12, color: AppColors.textMuted),
                   ),
@@ -367,9 +367,9 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   /// Returns null  → cancelled.
   Future<bool?> _showYearlySaveDialog() async {
     final nextPeriod = _nextUpcomingPeriod();
-    final nextLabel = nextPeriod.label;
-    final capLabel = nextPeriod.addMonths(-1).label;
-    final seriesStartLabel = widget.existing!.validFrom.label;
+    final nextLabel = context.l10n.yearMonthLabel(nextPeriod);
+    final capLabel = context.l10n.yearMonthLabel(nextPeriod.addMonths(-1));
+    final seriesStartLabel = context.l10n.yearMonthLabel(widget.existing!.validFrom);
 
     // Check whether the split is meaningful: nextPeriod must still be within
     // the item's active range (for bounded items).
@@ -562,7 +562,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     final isYearly = _frequency == PlanFrequency.yearly;
     final isInvalid = hasEndDate && _validTo!.isBefore(_validFrom);
 
-    final String? validToLabel = hasEndDate ? _validTo!.label : null;
+    final String? validToLabel = hasEndDate ? context.l10n.yearMonthLabel(_validTo!) : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -612,7 +612,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               builder: (context) => Padding(
                 padding: const EdgeInsets.only(top: 6),
                 child: Text(
-                  context.l10n.lastActiveMonthNote(_validTo!.label),
+                  context.l10n.lastActiveMonthNote(context.l10n.yearMonthLabel(_validTo!)),
                   style: const TextStyle(
                       fontSize: 12, color: AppColors.textMuted),
                 ),
@@ -762,7 +762,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final isEditing = widget.existing != null;
-    final validFromLabel = _validFrom.label;
+    final validFromLabel = l10n.yearMonthLabel(_validFrom);
 
     return Scaffold(
       appBar: AppBar(
@@ -896,7 +896,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                       ..sort((a, b) {
                         if (a == ExpenseCategory.other) return 1;
                         if (b == ExpenseCategory.other) return -1;
-                        return a.displayName.compareTo(b.displayName);
+                        return l10n.categoryName(a).compareTo(l10n.categoryName(b));
                       }))
                     .map((cat) {
                   return DropdownMenuItem(
@@ -950,7 +950,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
               _buildLockedDateRow(
                 label: l10n.untilFieldLabel,
                 value: _validTo != null
-                    ? l10n.lastActiveMonthParens(_validTo!.label)
+                    ? l10n.lastActiveMonthParens(l10n.yearMonthLabel(_validTo!))
                     : l10n.openEnded,
               ),
               const SizedBox(height: 16),

@@ -1041,6 +1041,9 @@
   "howGroupsMonthlyNote": "Groups are not included in the yearly report — they are a monthly lens.",
   "@howGroupsMonthlyNote": {"description": "Note at the bottom of the Record page"},
 
+  "howGroupsExampleGroupName": "My group",
+  "@howGroupsExampleGroupName": {"description": "Example group name in the demo card on the Tag page of the How Groups Work sheet"},
+
   "otherCategories": "Other categories",
   "@otherCategories": {"description": "Label for the collapsed 'other' segment in pie charts and breakdown lists"},
 

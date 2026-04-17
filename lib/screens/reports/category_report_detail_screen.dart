@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
+import '../../l10n/l10n_extensions.dart';
 import '../../models/expense.dart';
 import '../../models/expense_category.dart';
 import '../../models/plan_item.dart';
@@ -53,7 +54,7 @@ class _CategoryReportDetailScreenState
 
   String get _periodLabel => _isYearly
       ? '${widget.year}'
-      : '${YearMonth.monthNames[widget.month!]} ${widget.year}';
+      : '${context.l10n.monthName(widget.month!)} ${widget.year}';
 
   // ── Data helpers ──────────────────────────────────────────────────────────
 
@@ -98,7 +99,7 @@ class _CategoryReportDetailScreenState
         title: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(widget.category.displayName),
+            Text(context.l10n.categoryName(widget.category)),
             Text(
               _periodLabel,
               style: const TextStyle(

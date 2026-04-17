@@ -87,7 +87,7 @@ class _AddCategoryBudgetScreenState extends State<AddCategoryBudgetScreen> {
           ..sort((a, b) {
             if (a == ExpenseCategory.other) return 1;
             if (b == ExpenseCategory.other) return -1;
-            return a.displayName.compareTo(b.displayName);
+            return context.l10n.categoryName(a).compareTo(context.l10n.categoryName(b));
           }))
         .where((c) => !existing.containsKey(c))
         .toList();

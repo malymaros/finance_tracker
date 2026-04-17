@@ -2100,6 +2100,12 @@ abstract class AppLocalizations {
   /// **'Groups are not included in the yearly report — they are a monthly lens.'**
   String get howGroupsMonthlyNote;
 
+  /// Example group name in the demo card on the Tag page of the How Groups Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'My group'**
+  String get howGroupsExampleGroupName;
+
   /// Label for the collapsed 'other' segment in pie charts and breakdown lists
   ///
   /// In en, this message translates to:

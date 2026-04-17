@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
+import '../../l10n/l10n_extensions.dart';
 import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/period_bounds.dart';
@@ -220,7 +221,7 @@ class _PlanScreenState extends State<PlanScreen> {
       final description = isFullDelete
           ? l10n.removeIncomeEntirely(item.name)
           : l10n.removeIncomeFromOnwards(
-              item.name, from.label, from.addMonths(-1).label);
+              item.name, l10n.yearMonthLabel(from), l10n.yearMonthLabel(from.addMonths(-1)));
       final confirmed = await SaveActionDialog.show(
         context,
         icon: Icons.remove_circle_outline,
@@ -253,13 +254,13 @@ class _PlanScreenState extends State<PlanScreen> {
       final cycleStart = YearMonth(cycleStartYear, anchor);
       final cycleEnd = YearMonth(cycleStartYear + 1, anchor).addMonths(-1);
       deleteFrom = cycleStart;
-      fromTitle = l10n.removeFromOnwardsTitle(cycleStart.label);
-      fromSubtitle = l10n.removeCycleSubtitle(cycleStart.label, cycleEnd.label);
+      fromTitle = l10n.removeFromOnwardsTitle(l10n.yearMonthLabel(cycleStart));
+      fromSubtitle = l10n.removeCycleSubtitle(l10n.yearMonthLabel(cycleStart), l10n.yearMonthLabel(cycleEnd));
     } else {
       deleteFrom = selectedPeriod;
       final prev = selectedPeriod.addMonths(-1);
-      fromTitle = l10n.removeFromOnwardsTitle(selectedPeriod.label);
-      fromSubtitle = l10n.removeHistoryKept(prev.label);
+      fromTitle = l10n.removeFromOnwardsTitle(l10n.yearMonthLabel(selectedPeriod));
+      fromSubtitle = l10n.removeHistoryKept(l10n.yearMonthLabel(prev));
     }
 
     final allVersions = widget.repositories.plan.items
@@ -272,7 +273,7 @@ class _PlanScreenState extends State<PlanScreen> {
       context: context,
       builder: (_) => _FixedCostDeleteDialog(
         itemName: item.name,
-        seriesStartLabel: seriesStart.label,
+        seriesStartLabel: l10n.yearMonthLabel(seriesStart),
         fromTitle: fromTitle,
         fromSubtitle: fromSubtitle,
       ),
@@ -288,7 +289,7 @@ class _PlanScreenState extends State<PlanScreen> {
 
   Future<void> _onSilenceRequested(
       String seriesId, YearMonth period) async {
-    final periodLabel = period.label;
+    final periodLabel = context.l10n.yearMonthLabel(period);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(

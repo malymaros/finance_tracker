@@ -127,7 +127,7 @@ class _GuardRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dueDateLabel = GuardCalculator.dueDateLabel(item.guardDueDay, period);
+    final dueDateLabel = GuardCalculator.dueDateLabel(item.guardDueDay, period, context.l10n);
     final nameColor =
         isSilenced ? AppColors.textMuted : AppColors.guardItemText;
 

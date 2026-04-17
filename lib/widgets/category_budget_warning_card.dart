@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense_category.dart';
 import '../services/currency_formatter.dart';
 import '../theme/app_theme.dart';
@@ -49,7 +50,7 @@ class CategoryBudgetWarningCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     context.l10n.categoryBudgetOverBy(
-                      entry.key.displayName,
+                      context.l10n.categoryName(entry.key),
                       CurrencyFormatter.format(entry.value),
                     ),
                     style: const TextStyle(

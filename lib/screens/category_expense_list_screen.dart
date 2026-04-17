@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../l10n/l10n.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/year_month.dart';
@@ -33,14 +34,8 @@ class CategoryExpenseListScreen extends StatefulWidget {
 
 class _CategoryExpenseListScreenState
     extends State<CategoryExpenseListScreen> {
-  static const _monthNames = [
-    '',
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-  ];
-
   String get _periodLabel =>
-      '${_monthNames[widget.period.month]} ${widget.period.year}';
+      '${context.l10n.monthName(widget.period.month)} ${widget.period.year}';
 
   List<Expense> _expensesForPeriod() =>
       widget.repository
@@ -58,7 +53,7 @@ class _CategoryExpenseListScreenState
         title: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(widget.category.displayName),
+            Text(context.l10n.categoryName(widget.category)),
             Text(
               _periodLabel,
               style: const TextStyle(
@@ -154,7 +149,7 @@ class _CategoryExpenseListScreenState
           Icon(widget.category.icon, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
           Text(
-            'No ${widget.category.displayName} expenses\nin $_periodLabel.',
+            context.l10n.noCategoryExpenses(context.l10n.categoryName(widget.category), _periodLabel),
             style: const TextStyle(color: AppColors.textMuted, fontSize: 16),
             textAlign: TextAlign.center,
           ),

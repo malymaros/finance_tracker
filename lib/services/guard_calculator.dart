@@ -1,3 +1,5 @@
+import '../l10n/app_localizations.dart';
+import '../l10n/l10n_extensions.dart';
 import '../models/year_month.dart';
 
 /// Pure static helpers for GUARD due-day arithmetic.
@@ -25,15 +27,17 @@ class GuardCalculator {
   /// Formats a period as a human-readable reminder date string.
   ///
   /// Example: "March 15, 2026"
-  static String formatReminderPeriod(int? rawDueDay, YearMonth period) {
+  static String formatReminderPeriod(
+      int? rawDueDay, YearMonth period, AppLocalizations l10n) {
     final day = clampDueDay(rawDueDay, period);
-    return '${YearMonth.monthNames[period.month]} $day, ${period.year}';
+    return '${l10n.monthName(period.month)} $day, ${period.year}';
   }
 
   /// Formats a due-date label for display in the GUARD banner.
   ///
   /// Delegates to [formatReminderPeriod] and appends " due".
   /// Example: "March 15, 2026 due"
-  static String dueDateLabel(int? rawDueDay, YearMonth period) =>
-      '${formatReminderPeriod(rawDueDay, period)} due';
+  static String dueDateLabel(
+          int? rawDueDay, YearMonth period, AppLocalizations l10n) =>
+      '${formatReminderPeriod(rawDueDay, period, l10n)} due';
 }
