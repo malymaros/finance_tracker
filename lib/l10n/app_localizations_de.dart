@@ -1466,6 +1466,12 @@ class AppLocalizationsDe extends AppLocalizations {
       'Backup konnte nicht wiederhergestellt werden.';
 
   @override
+  String get autoBackupPrimary => 'Primäres Backup';
+
+  @override
+  String get autoBackupSecondary => 'Sekundäres Backup';
+
+  @override
   String get frequencyPickerFixed => 'Wie oft wiederholt es sich?';
 
   @override

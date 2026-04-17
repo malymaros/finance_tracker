@@ -12,12 +12,17 @@ class SaveSlotTile extends StatelessWidget {
   final VoidCallback? onDelete;
   final VoidCallback? onTap;
 
+  /// Overrides [slot.name] in the tile title. Used by [AutoBackupTile] to
+  /// show a localized name without changing the service-layer slot object.
+  final String? nameOverride;
+
   const SaveSlotTile({
     super.key,
     required this.slot,
     required this.onLoad,
     this.onDelete,
     this.onTap,
+    this.nameOverride,
   });
 
   String _formatDate(DateTime dt) {
@@ -51,7 +56,7 @@ class SaveSlotTile extends StatelessWidget {
         backgroundColor: primary.withAlpha(20),
         child: Icon(Icons.save_outlined, color: primary),
       ),
-      title: Text(slot.name,
+      title: Text(nameOverride ?? slot.name,
           style: const TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Text(
         subtitle,
@@ -74,7 +79,7 @@ class SaveSlotTile extends StatelessWidget {
               color: AppColors.warning),
         ),
         title: Text(
-          slot.name,
+          nameOverride ?? slot.name,
           style: const TextStyle(
             color: AppColors.textMuted,
             fontStyle: FontStyle.italic,

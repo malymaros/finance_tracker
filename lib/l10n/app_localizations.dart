@@ -2550,6 +2550,18 @@ abstract class AppLocalizations {
   /// **'Failed to restore backup.'**
   String get autoBackupRestoreFailed;
 
+  /// Name label for the most recent auto-backup slot (slot 0)
+  ///
+  /// In en, this message translates to:
+  /// **'Primary backup'**
+  String get autoBackupPrimary;
+
+  /// Name label for the previous-day auto-backup slot (slot 1)
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary backup'**
+  String get autoBackupSecondary;
+
   /// Title for the frequency picker bottom sheet for fixed costs
   ///
   /// In en, this message translates to:

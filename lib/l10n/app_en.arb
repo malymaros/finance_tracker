@@ -1309,6 +1309,12 @@
   "autoBackupRestoreFailed": "Failed to restore backup.",
   "@autoBackupRestoreFailed": {"description": "Snackbar shown when an auto-backup restore fails"},
 
+  "autoBackupPrimary": "Primary backup",
+  "@autoBackupPrimary": {"description": "Name label for the most recent auto-backup slot (slot 0)"},
+
+  "autoBackupSecondary": "Secondary backup",
+  "@autoBackupSecondary": {"description": "Name label for the previous-day auto-backup slot (slot 1)"},
+
   "frequencyPickerFixed": "How often does it recur?",
   "@frequencyPickerFixed": {"description": "Title for the frequency picker bottom sheet for fixed costs"},
 

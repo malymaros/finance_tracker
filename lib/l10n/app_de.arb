@@ -1077,6 +1077,12 @@
   "autoBackupRestoreFailed": "Backup konnte nicht wiederhergestellt werden.",
   "@autoBackupRestoreFailed": {"description": "Snackbar wenn die Auto-Backup-Wiederherstellung fehlschlägt"},
 
+  "autoBackupPrimary": "Primäres Backup",
+  "@autoBackupPrimary": {"description": "Bezeichnung für den neuesten Auto-Backup-Slot (Slot 0)"},
+
+  "autoBackupSecondary": "Sekundäres Backup",
+  "@autoBackupSecondary": {"description": "Bezeichnung für den vorherigen Auto-Backup-Slot (Slot 1)"},
+
   "frequencyPickerFixed": "Wie oft wiederholt es sich?",
   "@frequencyPickerFixed": {"description": "Titel des Häufigkeits-Pickers für Fixkosten"},
 

@@ -128,6 +128,13 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
     );
   }
 
+  String _slotDisplayName(BuildContext context, SaveSlot slot) {
+    final l10n = context.l10n;
+    if (slot.id == 'autosave_0') return l10n.autoBackupPrimary;
+    if (slot.id == 'autosave_1') return l10n.autoBackupSecondary;
+    return slot.name;
+  }
+
   Widget _buildSlots() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -136,6 +143,7 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
           if (i > 0) const Divider(height: 1, color: AppColors.border),
           SaveSlotTile(
             slot: _slots[i],
+            nameOverride: _slotDisplayName(context, _slots[i]),
             onLoad: () => _confirmRestore(_slots[i]),
           ),
         ],
@@ -152,7 +160,7 @@ class _AutoBackupTileState extends State<AutoBackupTile> {
       icon: Icons.history,
       iconColor: AppColors.gold,
       actionLabel: l10n.actionRestoreAllCaps,
-      targetName: '${slot.name} · $date',
+      targetName: '${_slotDisplayName(context, slot)} · $date',
       description: l10n.autoBackupRestoreDescription,
       confirmLabel: l10n.actionRestore,
       confirmForeground: const Color(0xFF1A1A1A),

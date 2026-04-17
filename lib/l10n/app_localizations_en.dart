@@ -1455,6 +1455,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get autoBackupRestoreFailed => 'Failed to restore backup.';
 
   @override
+  String get autoBackupPrimary => 'Primary backup';
+
+  @override
+  String get autoBackupSecondary => 'Secondary backup';
+
+  @override
   String get frequencyPickerFixed => 'How often does it recur?';
 
   @override
