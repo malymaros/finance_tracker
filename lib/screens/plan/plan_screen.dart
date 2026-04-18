@@ -24,6 +24,7 @@ import '../../widgets/add_fixed_cost_frequency_sheet.dart';
 import '../../widgets/add_income_frequency_sheet.dart';
 import '../../widgets/add_plan_item_type_sheet.dart';
 import '../../widgets/plan_item_tile.dart';
+import '../../widgets/delete_option_card.dart';
 import '../../widgets/save_action_dialog.dart';
 import 'add_plan_item_screen.dart';
 import 'manage_budgets_screen.dart';
@@ -538,7 +539,6 @@ class _PlanScreenState extends State<PlanScreen> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(Icons.account_balance_outlined,
               size: 64, color: AppColors.textMuted),
@@ -753,7 +753,7 @@ class _FixedCostDeleteDialog extends StatelessWidget {
             const SizedBox(height: 20),
 
             // ── Whole series option ───────────────────────────────────────────
-            _OptionCard(
+            DeleteOptionCard(
               icon: Icons.delete_sweep_outlined,
               title: context.l10n.removeWholeSeries,
               subtitle: context.l10n.removeWholeSeriesSubtitle(seriesStartLabel),
@@ -763,7 +763,7 @@ class _FixedCostDeleteDialog extends StatelessWidget {
             const SizedBox(height: 8),
 
             // ── From period option ────────────────────────────────────────────
-            _OptionCard(
+            DeleteOptionCard(
               icon: Icons.content_cut,
               title: fromTitle,
               subtitle: fromSubtitle,
@@ -787,68 +787,3 @@ class _FixedCostDeleteDialog extends StatelessWidget {
   }
 }
 
-class _OptionCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const _OptionCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppColors.expense.withAlpha(10),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.expense.withAlpha(60)),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 1),
-              child: Icon(icon, color: AppColors.expense, size: 18),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 4),
-            const Icon(Icons.chevron_right,
-                color: AppColors.textMuted, size: 18),
-          ],
-        ),
-      ),
-    );
-  }
-}

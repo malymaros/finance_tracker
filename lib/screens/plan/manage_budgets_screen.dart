@@ -7,6 +7,7 @@ import '../../models/year_month.dart';
 import '../../services/category_budget_repository.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/category_budget_tile.dart';
+import '../../widgets/delete_option_card.dart';
 import '../../widgets/period_navigator.dart';
 import 'add_category_budget_screen.dart';
 
@@ -97,66 +98,11 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
 
     final choice = await showDialog<_DeleteChoice>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.removeBudgetDialogTitle(categoryName)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!isClosed) ...[
-              Text(
-                l10n.endBudgetFromTitle(fromLabel),
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                l10n.endBudgetFromDescription(fromLabel),
-                style: const TextStyle(fontSize: 13),
-              ),
-              const SizedBox(height: 16),
-            ],
-            Text(
-              l10n.deleteBudgetSeriesTitle,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: isClosed ? null : AppColors.expense,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              l10n.deleteBudgetSeriesDescription(rangeText),
-              style: const TextStyle(fontSize: 13),
-            ),
-            const SizedBox(height: 24),
-            if (!isClosed)
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: () =>
-                      Navigator.of(ctx).pop(_DeleteChoice.endFromNow),
-                  child: Text(l10n.endBudgetFromTitle(fromLabel)),
-                ),
-              ),
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () =>
-                    Navigator.of(ctx).pop(_DeleteChoice.deleteAll),
-                style: TextButton.styleFrom(
-                    foregroundColor:
-                        isClosed ? null : AppColors.expense),
-                child: Text(l10n.deleteBudgetSeriesConfirm),
-              ),
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: TextButton(
-                onPressed: () => Navigator.of(ctx).pop(_DeleteChoice.cancel),
-                child: Text(l10n.actionCancel),
-              ),
-            ),
-          ],
-        ),
+      builder: (ctx) => _BudgetDeleteDialog(
+        categoryName: categoryName,
+        fromLabel: fromLabel,
+        rangeText: rangeText,
+        isClosed: isClosed,
       ),
     );
 
@@ -243,7 +189,6 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(Icons.tune_outlined, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
@@ -263,3 +208,88 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
     );
   }
 }
+
+// ── Budget delete dialog ──────────────────────────────────────────────────────
+
+class _BudgetDeleteDialog extends StatelessWidget {
+  final String categoryName;
+  final String fromLabel;
+  final String rangeText;
+  final bool isClosed;
+
+  const _BudgetDeleteDialog({
+    required this.categoryName,
+    required this.fromLabel,
+    required this.rangeText,
+    required this.isClosed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: AppColors.expense.withAlpha(24),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.remove_circle_outline,
+                  color: AppColors.expense, size: 34),
+            ),
+            const SizedBox(height: 18),
+            Text(
+              l10n.removeBudgetAllCaps,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.navy,
+                letterSpacing: 2.5,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              categoryName,
+              style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            if (!isClosed) ...[
+              DeleteOptionCard(
+                showChevron: false,
+                icon: Icons.content_cut,
+                title: l10n.endBudgetFromTitle(fromLabel),
+                subtitle: l10n.endBudgetFromDescription(fromLabel),
+                onTap: () => Navigator.of(context).pop(_DeleteChoice.endFromNow),
+              ),
+              const SizedBox(height: 8),
+            ],
+            DeleteOptionCard(
+              showChevron: false,
+              icon: Icons.delete_sweep_outlined,
+              title: l10n.deleteBudgetSeriesTitle,
+              subtitle: l10n.deleteBudgetSeriesDescription(rangeText),
+              onTap: () => Navigator.of(context).pop(_DeleteChoice.deleteAll),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () => Navigator.of(context).pop(_DeleteChoice.cancel),
+                child: Text(l10n.actionCancel),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
