@@ -145,7 +145,6 @@ class _CategoryExpenseListScreenState
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Icon(widget.category.icon, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),

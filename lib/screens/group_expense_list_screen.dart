@@ -114,7 +114,6 @@ class _GroupExpenseListScreenState extends State<GroupExpenseListScreen> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(Icons.folder_open, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),

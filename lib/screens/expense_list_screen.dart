@@ -363,7 +363,6 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Icon(Icons.receipt_long, size: 64, color: AppColors.textMuted),
           const SizedBox(height: 16),
