@@ -199,7 +199,7 @@
   "sectionIncome": "Príjem",
   "@sectionIncome": {"description": "Nadpis sekcie na obrazovke Plán"},
 
-  "sectionFixedCosts": "Fixné náklady",
+  "sectionFixedCosts": "Fixné výdavky",
   "@sectionFixedCosts": {"description": "Nadpis sekcie na obrazovke Plán"},
 
   "noIncomeItems": "Žiadne položky príjmu.",
@@ -226,13 +226,13 @@
   "addIncomeTitle": "Pridať príjem",
   "@addIncomeTitle": {"description": "Názov AppBaru pri pridávaní novej položky príjmu"},
 
-  "addFixedCostTitle": "Pridať fixný náklad",
+  "addFixedCostTitle": "Pridať fixný výdavok",
   "@addFixedCostTitle": {"description": "Názov AppBaru pri pridávaní nového fixného nákladu"},
 
   "editIncomeTitle": "Upraviť príjem",
   "@editIncomeTitle": {"description": "Názov AppBaru pri úprave existujúcej položky príjmu"},
 
-  "editFixedCostTitle": "Upraviť fixný náklad",
+  "editFixedCostTitle": "Upraviť fixný výdavok",
   "@editFixedCostTitle": {"description": "Názov AppBaru pri úprave existujúceho fixného nákladu"},
 
   "frequencyOneTime": "Jednorazovo",
@@ -265,7 +265,7 @@
   "typeIncome": "Príjem",
   "@typeIncome": {"description": "Popisok typu položky plánu"},
 
-  "typeFixedCost": "Fixný náklad",
+  "typeFixedCost": "Fixný výdavok",
   "@typeFixedCost": {"description": "Popisok typu položky plánu"},
 
   "ongoing": "Bez ukončenia",
@@ -364,7 +364,7 @@
   "noneInPeriod": "V tomto období nič.",
   "@noneInPeriod": {"description": "Prázdny stav vo vnútri sekcie obrazovky detailu kategórie v prehľade"},
 
-  "fixedCostCount": "{count, plural, =1{1 fixný náklad} few{{count} fixné náklady} other{{count} fixných nákladov}}",
+  "fixedCostCount": "{count, plural, =1{1 fixný výdavok} few{{count} fixné výdavky} other{{count} fixných výdavkov}}",
   "@fixedCostCount": {
     "description": "Počet fixných nákladov v hlavičke prehľadu kategórie",
     "placeholders": {"count": {"type": "int"}}
@@ -682,7 +682,7 @@
   "@categoryEducation": {"description": "Zobrazovaný názov kategórie výdavku"},
   "categoryInvestment": "Investície",
   "@categoryInvestment": {"description": "Zobrazovaný názov kategórie výdavku"},
-  "categoryGifts": "Dary",
+  "categoryGifts": "Darčeky",
   "@categoryGifts": {"description": "Zobrazovaný názov kategórie výdavku"},
   "categoryTaxes": "Dane",
   "@categoryTaxes": {"description": "Zobrazovaný názov kategórie výdavku"},
@@ -708,7 +708,7 @@
   "@categoryFuel": {"description": "Zobrazovaný názov kategórie výdavku"},
   "categoryMaintenance": "Údržba",
   "@categoryMaintenance": {"description": "Zobrazovaný názov kategórie výdavku"},
-  "categoryDonations": "Dary",
+  "categoryDonations": "Charita",
   "@categoryDonations": {"description": "Zobrazovaný názov kategórie výdavku"},
   "categoryOther": "Ostatné",
   "@categoryOther": {"description": "Zobrazovaný názov kategórie výdavku"},
@@ -728,9 +728,9 @@
   "@addYearlyIncomeTitle": {"description": "Názov AppBaru pri pridávaní ročného príjmu"},
   "addOneTimeIncomeTitle": "Pridať jednorazový príjem",
   "@addOneTimeIncomeTitle": {"description": "Názov AppBaru pri pridávaní jednorazového príjmu"},
-  "addMonthlyFixedCostTitle": "Pridať mesačný fixný náklad",
+  "addMonthlyFixedCostTitle": "Pridať mesačný fixný výdavok",
   "@addMonthlyFixedCostTitle": {"description": "Názov AppBaru pri pridávaní mesačného fixného nákladu"},
-  "addYearlyFixedCostTitle": "Pridať ročný fixný náklad",
+  "addYearlyFixedCostTitle": "Pridať ročný fixný výdavok",
   "@addYearlyFixedCostTitle": {"description": "Názov AppBaru pri pridávaní ročného fixného nákladu"},
   "editMonthlyIncomeTitle": "Upraviť mesačný príjem",
   "@editMonthlyIncomeTitle": {"description": "Názov AppBaru pri úprave mesačného príjmu"},
@@ -738,13 +738,13 @@
   "@editYearlyIncomeTitle": {"description": "Názov AppBaru pri úprave ročného príjmu"},
   "editOneTimeIncomeTitle": "Upraviť jednorazový príjem",
   "@editOneTimeIncomeTitle": {"description": "Názov AppBaru pri úprave jednorazového príjmu"},
-  "editMonthlyFixedCostTitle": "Upraviť mesačný fixný náklad",
+  "editMonthlyFixedCostTitle": "Upraviť mesačný fixný výdavok",
   "@editMonthlyFixedCostTitle": {"description": "Názov AppBaru pri úprave mesačného fixného nákladu"},
-  "editYearlyFixedCostTitle": "Upraviť ročný fixný náklad",
+  "editYearlyFixedCostTitle": "Upraviť ročný fixný výdavok",
   "@editYearlyFixedCostTitle": {"description": "Názov AppBaru pri úprave ročného fixného nákladu"},
 
   "labelType": "Typ",
-  "@labelType": {"description": "Popisok sekcie formulára pre typ položky plánu (Príjem / Fixný náklad)"},
+  "@labelType": {"description": "Popisok sekcie formulára pre typ položky plánu (Príjem / Fixný výdavok)"},
   "labelMonth": "Mesiac",
   "@labelMonth": {"description": "Popisok dropdownu v dialógu výberu mesiaca/roku"},
   "labelYear": "Rok",
@@ -887,7 +887,7 @@
   "oneTimeSuffix": "(jednorazovo)",
   "@oneTimeSuffix": {"description": "Prípona sumy pre jednorazové položky plánu"},
   "noEndDate": "Bez koncového dátumu",
-  "@noEndDate": {"description": "Hodnota zobrazená pre pole Aktívne do, keď fixný náklad nemá koncový dátum"},
+  "@noEndDate": {"description": "Hodnota zobrazená pre pole Aktívne do, keď fixný výdavok nemá koncový dátum"},
   "guardNotEnabled": "Nie je zapnuté",
   "@guardNotEnabled": {"description": "Podtitul sekcie GUARD, keď GUARD ešte nie je pre položku nastavený"},
 
@@ -1189,7 +1189,7 @@
   "howItWorksTypeInsuranceDesc": "Náklady na ochranu — auto, zdravie a životné poistenie",
   "@howItWorksTypeInsuranceDesc": {"description": "Popis finančného typu Poistenie na stránke Klasifikácia"},
 
-  "howItWorksFinancialTypesBody": "Každý fixný náklad je označený finančným typom. Vďaka tomu aplikácia ukáže, ako je váš príjem rozdelený medzi spotrebu, úspory a ochranu.",
+  "howItWorksFinancialTypesBody": "Každý fixný výdavok je označený finančným typom. Vďaka tomu aplikácia ukáže, ako je váš príjem rozdelený medzi spotrebu, úspory a ochranu.",
   "@howItWorksFinancialTypesBody": {"description": "Text na stránke Plán > Klasifikácia"},
 
   "howItWorksSpendingVsIncomeTitle": "Výdavky vs príjem",
@@ -1370,7 +1370,7 @@
   "@typeIncomeSubtitle": {"description": "Podtitul pre kartu Príjem vo výbere typu"},
 
   "typeFixedCostSubtitle": "Nájom, poistenie, predplatné",
-  "@typeFixedCostSubtitle": {"description": "Podtitul pre kartu Fixný náklad vo výbere typu"},
+  "@typeFixedCostSubtitle": {"description": "Podtitul pre kartu Fixný výdavok vo výbere typu"},
 
   "languagePickerTitle": "Jazyk",
   "@languagePickerTitle": {"description": "Názov dialógu výberu jazyka"},

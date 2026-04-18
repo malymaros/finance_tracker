@@ -209,7 +209,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get sectionIncome => 'Príjem';
 
   @override
-  String get sectionFixedCosts => 'Fixné náklady';
+  String get sectionFixedCosts => 'Fixné výdavky';
 
   @override
   String get noIncomeItems => 'Žiadne položky príjmu.';
@@ -236,13 +236,13 @@ class AppLocalizationsSk extends AppLocalizations {
   String get addIncomeTitle => 'Pridať príjem';
 
   @override
-  String get addFixedCostTitle => 'Pridať fixný náklad';
+  String get addFixedCostTitle => 'Pridať fixný výdavok';
 
   @override
   String get editIncomeTitle => 'Upraviť príjem';
 
   @override
-  String get editFixedCostTitle => 'Upraviť fixný náklad';
+  String get editFixedCostTitle => 'Upraviť fixný výdavok';
 
   @override
   String get frequencyOneTime => 'Jednorazovo';
@@ -275,7 +275,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get typeIncome => 'Príjem';
 
   @override
-  String get typeFixedCost => 'Fixný náklad';
+  String get typeFixedCost => 'Fixný výdavok';
 
   @override
   String get ongoing => 'Bez ukončenia';
@@ -382,9 +382,9 @@ class AppLocalizationsSk extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count fixných nákladov',
-      few: '$count fixné náklady',
-      one: '1 fixný náklad',
+      other: '$count fixných výdavkov',
+      few: '$count fixné výdavky',
+      one: '1 fixný výdavok',
     );
     return '$_temp0';
   }
@@ -762,7 +762,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get categoryInvestment => 'Investície';
 
   @override
-  String get categoryGifts => 'Dary';
+  String get categoryGifts => 'Darčeky';
 
   @override
   String get categoryTaxes => 'Dane';
@@ -801,7 +801,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get categoryMaintenance => 'Údržba';
 
   @override
-  String get categoryDonations => 'Dary';
+  String get categoryDonations => 'Charita';
 
   @override
   String get categoryOther => 'Ostatné';
@@ -828,10 +828,10 @@ class AppLocalizationsSk extends AppLocalizations {
   String get addOneTimeIncomeTitle => 'Pridať jednorazový príjem';
 
   @override
-  String get addMonthlyFixedCostTitle => 'Pridať mesačný fixný náklad';
+  String get addMonthlyFixedCostTitle => 'Pridať mesačný fixný výdavok';
 
   @override
-  String get addYearlyFixedCostTitle => 'Pridať ročný fixný náklad';
+  String get addYearlyFixedCostTitle => 'Pridať ročný fixný výdavok';
 
   @override
   String get editMonthlyIncomeTitle => 'Upraviť mesačný príjem';
@@ -843,10 +843,10 @@ class AppLocalizationsSk extends AppLocalizations {
   String get editOneTimeIncomeTitle => 'Upraviť jednorazový príjem';
 
   @override
-  String get editMonthlyFixedCostTitle => 'Upraviť mesačný fixný náklad';
+  String get editMonthlyFixedCostTitle => 'Upraviť mesačný fixný výdavok';
 
   @override
-  String get editYearlyFixedCostTitle => 'Upraviť ročný fixný náklad';
+  String get editYearlyFixedCostTitle => 'Upraviť ročný fixný výdavok';
 
   @override
   String get labelType => 'Typ';
@@ -1354,7 +1354,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get howItWorksFinancialTypesBody =>
-      'Každý fixný náklad je označený finančným typom. Vďaka tomu aplikácia ukáže, ako je váš príjem rozdelený medzi spotrebu, úspory a ochranu.';
+      'Každý fixný výdavok je označený finančným typom. Vďaka tomu aplikácia ukáže, ako je váš príjem rozdelený medzi spotrebu, úspory a ochranu.';
 
   @override
   String get howItWorksSpendingVsIncomeTitle => 'Výdavky vs príjem';
