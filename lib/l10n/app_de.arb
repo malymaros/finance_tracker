@@ -103,7 +103,7 @@
   "menuManageBudgets": "Budgets verwalten",
   "@menuManageBudgets": { "description": "Menüeintrag im Überlaufmenü auf dem Plan-Tab" },
 
-  "menuGuard": "GUARD",
+  "menuGuard": "GUARD Einstellungen",
   "@menuGuard": { "description": "Menüeintrag im Überlaufmenü zum Öffnen des GUARD-Bildschirms" },
 
   "expenseListTitle": "Ausgaben",

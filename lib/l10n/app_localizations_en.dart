@@ -111,7 +111,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get menuManageBudgets => 'Manage Budgets';
 
   @override
-  String get menuGuard => 'GUARD';
+  String get menuGuard => 'GUARD settings';
 
   @override
   String get expenseListTitle => 'Expenses';

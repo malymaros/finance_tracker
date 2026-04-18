@@ -103,7 +103,7 @@
   "menuManageBudgets": "Spravovat rozpočty",
   "@menuManageBudgets": {"description": "Položka overflow menu na kartě Plán"},
 
-  "menuGuard": "GUARD",
+  "menuGuard": "Nastavení GUARD",
   "@menuGuard": {"description": "Položka overflow menu pro otevření obrazovky GUARD"},
 
   "expenseListTitle": "Výdaje",

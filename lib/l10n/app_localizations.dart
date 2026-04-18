@@ -313,7 +313,7 @@ abstract class AppLocalizations {
   /// Overflow menu item to open the GUARD screen
   ///
   /// In en, this message translates to:
-  /// **'GUARD'**
+  /// **'GUARD settings'**
   String get menuGuard;
 
   /// AppBar title for the expense list screen

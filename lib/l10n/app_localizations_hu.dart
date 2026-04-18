@@ -111,7 +111,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get menuManageBudgets => 'Keretek kezelése';
 
   @override
-  String get menuGuard => 'GUARD';
+  String get menuGuard => 'GUARD beállításai';
 
   @override
   String get expenseListTitle => 'Kiadások';

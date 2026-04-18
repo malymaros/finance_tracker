@@ -111,7 +111,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get menuManageBudgets => 'Spravovať rozpočty';
 
   @override
-  String get menuGuard => 'GUARD';
+  String get menuGuard => 'GUARD nastavenia';
 
   @override
   String get expenseListTitle => 'Výdavky';

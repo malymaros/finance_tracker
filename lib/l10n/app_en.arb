@@ -103,7 +103,7 @@
   "menuManageBudgets": "Manage Budgets",
   "@menuManageBudgets": {"description": "Overflow menu item on Plan tab"},
 
-  "menuGuard": "GUARD",
+  "menuGuard": "GUARD settings",
   "@menuGuard": {"description": "Overflow menu item to open the GUARD screen"},
 
   "expenseListTitle": "Expenses",

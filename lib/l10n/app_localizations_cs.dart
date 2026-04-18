@@ -111,7 +111,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get menuManageBudgets => 'Spravovat rozpočty';
 
   @override
-  String get menuGuard => 'GUARD';
+  String get menuGuard => 'Nastavení GUARD';
 
   @override
   String get expenseListTitle => 'Výdaje';

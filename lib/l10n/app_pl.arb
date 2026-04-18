@@ -103,7 +103,7 @@
   "menuManageBudgets": "Zarządzaj budżetami",
   "@menuManageBudgets": {"description": "Pozycja menu przepełnienia na karcie Plan"},
 
-  "menuGuard": "GUARD",
+  "menuGuard": "Ustawienia GUARD",
   "@menuGuard": {"description": "Pozycja menu przepełnienia do otwarcia ekranu GUARD"},
 
   "expenseListTitle": "Wydatki",

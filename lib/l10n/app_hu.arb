@@ -103,7 +103,7 @@
   "menuManageBudgets": "Keretek kezelése",
   "@menuManageBudgets": {"description": "Túlcsorduló menüelem a Terv lapon"},
 
-  "menuGuard": "GUARD",
+  "menuGuard": "GUARD beállításai",
   "@menuGuard": {"description": "Túlcsorduló menüelem a GUARD képernyő megnyitásához"},
 
   "expenseListTitle": "Kiadások",
