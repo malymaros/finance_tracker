@@ -883,6 +883,9 @@
   },
   "actionRemoveAllCaps": "ODSTRÁNIŤ",
   "@actionRemoveAllCaps": {"description": "Veľkými písmenami zobrazený popisok akcie v dialógu odstránenia fixného nákladu"},
+
+  "removeBudgetAllCaps": "ODSTRÁNIŤ ROZPOČET",
+  "@removeBudgetAllCaps": {"description": "Veľkými písmenami zobrazený popisok akcie v dialógu odstránenia rozpočtu"},
   "removeFromOnwardsTitle": "Od {label} ďalej",
   "@removeFromOnwardsTitle": {
     "description": "Názov možnosti v dialógu odstránenia fixného nákladu — odstrániť od vybraného obdobia",

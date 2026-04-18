@@ -990,6 +990,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get actionRemoveAllCaps => 'REMOVE';
 
   @override
+  String get removeBudgetAllCaps => 'REMOVE BUDGET';
+
+  @override
   String removeFromOnwardsTitle(String label) {
     return 'From $label onwards';
   }

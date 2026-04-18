@@ -995,6 +995,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get actionRemoveAllCaps => 'ENTFERNEN';
 
   @override
+  String get removeBudgetAllCaps => 'BUDGET ENTFERNEN';
+
+  @override
   String removeFromOnwardsTitle(String label) {
     return 'Ab $label';
   }

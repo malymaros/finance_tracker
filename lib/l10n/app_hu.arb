@@ -883,6 +883,9 @@
   },
   "actionRemoveAllCaps": "ELTÁVOLÍT",
   "@actionRemoveAllCaps": {"description": "Nagybetűs műveletcímke, amely hangsúlyosan jelenik meg a fix költség törlési párbeszédablakban"},
+
+  "removeBudgetAllCaps": "KÖLTSÉGKERET ELTÁVOLÍTÁSA",
+  "@removeBudgetAllCaps": {"description": "Nagybetűs műveletcímke a költségkeret törlési párbeszédablakban"},
   "removeFromOnwardsTitle": "{label} időponttól kezdve",
   "@removeFromOnwardsTitle": {
     "description": "Opció címe a fix költség törlési párbeszédablakban — eltávolítás a kiválasztott időszaktól",

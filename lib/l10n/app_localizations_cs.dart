@@ -1000,6 +1000,9 @@ class AppLocalizationsCs extends AppLocalizations {
   String get actionRemoveAllCaps => 'ODSTRANIT';
 
   @override
+  String get removeBudgetAllCaps => 'ODSTRANIT ROZPOČET';
+
+  @override
   String removeFromOnwardsTitle(String label) {
     return 'Od $label dál';
   }

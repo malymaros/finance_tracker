@@ -1010,6 +1010,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get actionRemoveAllCaps => 'USUŃ';
 
   @override
+  String get removeBudgetAllCaps => 'USUŃ BUDŻET';
+
+  @override
   String removeFromOnwardsTitle(String label) {
     return 'Od $label dalej';
   }

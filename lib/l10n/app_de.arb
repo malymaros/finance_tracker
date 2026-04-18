@@ -883,6 +883,9 @@
   },
   "actionRemoveAllCaps": "ENTFERNEN",
   "@actionRemoveAllCaps": { "description": "Hervorgehobene Aktionsbeschriftung im Fixkosten-Löschen-Dialog" },
+
+  "removeBudgetAllCaps": "BUDGET ENTFERNEN",
+  "@removeBudgetAllCaps": {"description": "Hervorgehobene Aktionsbeschriftung im Budget-Löschen-Dialog"},
   "removeFromOnwardsTitle": "Ab {label}",
   "@removeFromOnwardsTitle": {
     "description": "Optionstitel im Fixkosten-Löschen-Dialog – ab dem ausgewählten Zeitraum entfernen",

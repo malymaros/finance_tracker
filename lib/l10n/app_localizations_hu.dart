@@ -993,6 +993,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get actionRemoveAllCaps => 'ELTÁVOLÍT';
 
   @override
+  String get removeBudgetAllCaps => 'KÖLTSÉGKERET ELTÁVOLÍTÁSA';
+
+  @override
   String removeFromOnwardsTitle(String label) {
     return '$label időponttól kezdve';
   }

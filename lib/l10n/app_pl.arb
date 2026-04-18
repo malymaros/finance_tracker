@@ -883,6 +883,9 @@
   },
   "actionRemoveAllCaps": "USUŃ",
   "@actionRemoveAllCaps": {"description": "Etykieta akcji wielkimi literami, wyraźnie pokazana w dialogu usuwania stałego kosztu"},
+
+  "removeBudgetAllCaps": "USUŃ BUDŻET",
+  "@removeBudgetAllCaps": {"description": "Etykieta akcji wielkimi literami w dialogu usuwania budżetu"},
   "removeFromOnwardsTitle": "Od {label} dalej",
   "@removeFromOnwardsTitle": {
     "description": "Tytuł opcji w dialogu usuwania stałego kosztu — usuń od wybranego okresu",

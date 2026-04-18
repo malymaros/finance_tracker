@@ -1001,6 +1001,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get actionRemoveAllCaps => 'ODSTRÁNIŤ';
 
   @override
+  String get removeBudgetAllCaps => 'ODSTRÁNIŤ ROZPOČET';
+
+  @override
   String removeFromOnwardsTitle(String label) {
     return 'Od $label ďalej';
   }

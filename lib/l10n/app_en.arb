@@ -883,6 +883,10 @@
   },
   "actionRemoveAllCaps": "REMOVE",
   "@actionRemoveAllCaps": {"description": "All-caps action label shown prominently in the fixed cost delete dialog"},
+
+  "removeBudgetAllCaps": "REMOVE BUDGET",
+  "@removeBudgetAllCaps": {"description": "All-caps action label shown prominently in the budget delete dialog"},
+
   "removeFromOnwardsTitle": "From {label} onwards",
   "@removeFromOnwardsTitle": {
     "description": "Option title in the fixed cost delete dialog — remove from the selected period",

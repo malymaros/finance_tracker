@@ -1780,6 +1780,12 @@ abstract class AppLocalizations {
   /// **'REMOVE'**
   String get actionRemoveAllCaps;
 
+  /// All-caps action label shown prominently in the budget delete dialog
+  ///
+  /// In en, this message translates to:
+  /// **'REMOVE BUDGET'**
+  String get removeBudgetAllCaps;
+
   /// Option title in the fixed cost delete dialog — remove from the selected period
   ///
   /// In en, this message translates to:

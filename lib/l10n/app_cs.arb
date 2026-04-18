@@ -883,6 +883,9 @@
   },
   "actionRemoveAllCaps": "ODSTRANIT",
   "@actionRemoveAllCaps": {"description": "Velkými písmeny zobrazený popisek akce výrazně zvýrazněný v dialogu mazání pevného nákladu"},
+
+  "removeBudgetAllCaps": "ODSTRANIT ROZPOČET",
+  "@removeBudgetAllCaps": {"description": "Velkými písmeny zobrazený popisek akce v dialogu mazání rozpočtu"},
   "removeFromOnwardsTitle": "Od {label} dál",
   "@removeFromOnwardsTitle": {
     "description": "Název možnosti v dialogu mazání pevného nákladu — odstranit od vybraného období",
