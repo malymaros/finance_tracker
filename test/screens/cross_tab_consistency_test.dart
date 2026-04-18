@@ -11,6 +11,7 @@ import 'package:finance_tracker/screens/expense_list_screen.dart';
 import 'package:finance_tracker/screens/plan/plan_screen.dart';
 import 'package:finance_tracker/services/app_repositories.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
+import 'package:finance_tracker/services/category_preferences_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/guard_repository.dart';
 import 'package:finance_tracker/services/period_bounds_service.dart';
@@ -82,6 +83,7 @@ void main() {
           plan: planRepo,
           budget: CategoryBudgetRepository(persist: false),
           guard: GuardRepository(persist: false),
+          prefs: CategoryPreferencesRepository(),
         ),
         selectedPeriod: period,
         periodBounds: bounds,
@@ -113,6 +115,7 @@ void main() {
           plan: planRepo,
           budget: CategoryBudgetRepository(persist: false),
           guard: GuardRepository(persist: false),
+          prefs: CategoryPreferencesRepository(),
         ),
         selectedPeriod: period,
         periodBounds: bounds,
@@ -142,6 +145,7 @@ void main() {
           plan: planRepo,
           budget: CategoryBudgetRepository(persist: false),
           guard: GuardRepository(persist: false),
+          prefs: CategoryPreferencesRepository(),
         ),
         selectedPeriod: period,
         periodBounds: bounds,
@@ -177,6 +181,7 @@ void main() {
           plan: planRepo,
           budget: CategoryBudgetRepository(persist: false),
           guard: GuardRepository(persist: false),
+          prefs: CategoryPreferencesRepository(),
         ),
         selectedPeriod: period,
         periodBounds: bounds,
@@ -204,6 +209,7 @@ void main() {
           plan: planRepo,
           budget: CategoryBudgetRepository(persist: false),
           guard: GuardRepository(persist: false),
+          prefs: CategoryPreferencesRepository(),
         ),
         selectedPeriod: period,
         periodBounds: bounds,
@@ -404,6 +410,7 @@ void main() {
           plan: planRepo,
           budget: CategoryBudgetRepository(persist: false),
           guard: GuardRepository(persist: false),
+          prefs: CategoryPreferencesRepository(),
         ),
         selectedPeriod: period,
         periodBounds: boundsNotifier,

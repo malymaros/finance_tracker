@@ -750,6 +750,9 @@ class AppLocalizationsSk extends AppLocalizations {
   String get categoryEntertainment => 'Zábava';
 
   @override
+  String get categoryElectronics => 'Elektronika';
+
+  @override
   String get categoryClothing => 'Oblečenie';
 
   @override
@@ -766,6 +769,39 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get categoryMedications => 'Lieky';
+
+  @override
+  String get categoryUtilities => 'Energie a služby';
+
+  @override
+  String get categoryHousehold => 'Potreby domácnosti';
+
+  @override
+  String get categoryPersonalCare => 'Osobná starostlivosť';
+
+  @override
+  String get categorySavings => 'Úspory';
+
+  @override
+  String get categoryDebt => 'Dlhy';
+
+  @override
+  String get categoryKids => 'Deti';
+
+  @override
+  String get categoryPets => 'Domáce zvieratá';
+
+  @override
+  String get categoryFees => 'Poplatky';
+
+  @override
+  String get categoryFuel => 'Pohonné hmoty';
+
+  @override
+  String get categoryMaintenance => 'Údržba';
+
+  @override
+  String get categoryDonations => 'Dary';
 
   @override
   String get categoryOther => 'Ostatné';
@@ -1785,4 +1821,16 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String get addBudgetTooltip => 'Pridať rozpočet';
+
+  @override
+  String get selectCategoryTitle => 'Vybrať kategóriu';
+
+  @override
+  String get showAllCategories => 'Zobraziť všetky kategórie';
+
+  @override
+  String get showLessCategories => 'Zobraziť menej';
+
+  @override
+  String get allCategoriesTitle => 'Všetky kategórie';
 }

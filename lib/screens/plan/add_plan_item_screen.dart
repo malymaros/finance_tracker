@@ -7,13 +7,16 @@ import '../../models/expense_category.dart';
 import '../../models/financial_type.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
+import '../../services/category_preferences_repository.dart';
 import '../../services/currency_formatter.dart';
 import '../../services/plan_repository.dart';
+import '../../widgets/category_picker_sheet.dart';
 import '../../theme/app_theme.dart';
 import '../../utils/id_generator.dart';
 
 class AddPlanItemScreen extends StatefulWidget {
   final PlanRepository planRepository;
+  final CategoryPreferencesRepository prefsRepository;
 
   /// When non-null the form opens in edit mode.
   final PlanItem? existing;
@@ -34,6 +37,7 @@ class AddPlanItemScreen extends StatefulWidget {
   const AddPlanItemScreen({
     super.key,
     required this.planRepository,
+    required this.prefsRepository,
     this.existing,
     this.initialType,
     this.initialFrequency,
@@ -161,6 +165,28 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     _amountController.dispose();
     _noteController.dispose();
     super.dispose();
+  }
+
+  // ── Category picker ────────────────────────────────────────────────────────
+
+  Future<void> _pickCategory(BuildContext context) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => ListenableBuilder(
+        listenable: widget.prefsRepository,
+        builder: (ctx, _) => CategoryPickerSheet(
+          visible: widget.prefsRepository.visibleForPlan,
+          selected: _selectedCategory,
+          isFavorite: widget.prefsRepository.isVisibleForPlan,
+          onToggleFavorite: widget.prefsRepository.togglePlan,
+          onSelected: (cat) => setState(() {
+            _selectedCategory = cat;
+            _selectedFinancialType = cat.defaultFinancialType;
+          }),
+        ),
+      ),
+    );
   }
 
   // ── Month/year picker ──────────────────────────────────────────────────────
@@ -886,38 +912,28 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
 
             // ── Category (fixedCost only) ────────────────────────────────────
             if (_type == PlanItemType.fixedCost) ...[
-              DropdownButtonFormField<ExpenseCategory>(
-                initialValue: _selectedCategory,
-                decoration: InputDecoration(
-                  labelText: l10n.labelCategory,
-                  border: const OutlineInputBorder(),
+              OutlinedButton(
+                onPressed: () => _pickCategory(context),
+                style: OutlinedButton.styleFrom(
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 14),
                 ),
-                items: (ExpenseCategory.values.toList()
-                      ..sort((a, b) {
-                        if (a == ExpenseCategory.other) return 1;
-                        if (b == ExpenseCategory.other) return -1;
-                        return l10n.categoryName(a).compareTo(l10n.categoryName(b));
-                      }))
-                    .map((cat) {
-                  return DropdownMenuItem(
-                    value: cat,
-                    child: Row(
-                      children: [
-                        Icon(cat.icon, size: 20, color: cat.color),
-                        const SizedBox(width: 8),
-                        Text(l10n.categoryName(cat)),
-                      ],
+                child: Row(
+                  children: [
+                    Icon(_selectedCategory.icon,
+                        size: 20, color: _selectedCategory.color),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.categoryName(_selectedCategory),
+                        style: const TextStyle(fontSize: 16),
+                      ),
                     ),
-                  );
-                }).toList(),
-                onChanged: (v) {
-                  if (v != null) {
-                    setState(() {
-                      _selectedCategory = v;
-                      _selectedFinancialType = v.defaultFinancialType;
-                    });
-                  }
-                },
+                    const Icon(Icons.arrow_drop_down,
+                        color: AppColors.textMuted),
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
               Text(l10n.labelFinancialType,

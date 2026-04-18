@@ -674,6 +674,8 @@
   "@categoryRestaurants": {"description": "Wyświetlana nazwa kategorii wydatku"},
   "categoryEntertainment": "Rozrywka",
   "@categoryEntertainment": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryElectronics": "Elektronika",
+  "@categoryElectronics": {"description": "Wyświetlana nazwa kategorii wydatku"},
   "categoryClothing": "Odzież",
   "@categoryClothing": {"description": "Wyświetlana nazwa kategorii wydatku"},
   "categoryEducation": "Edukacja",
@@ -686,6 +688,28 @@
   "@categoryTaxes": {"description": "Wyświetlana nazwa kategorii wydatku"},
   "categoryMedications": "Leki",
   "@categoryMedications": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryUtilities": "Media",
+  "@categoryUtilities": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryHousehold": "Artykuły gospodarstwa domowego",
+  "@categoryHousehold": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryPersonalCare": "Pielęgnacja osobista",
+  "@categoryPersonalCare": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categorySavings": "Oszczędności",
+  "@categorySavings": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryDebt": "Dług",
+  "@categoryDebt": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryKids": "Dzieci",
+  "@categoryKids": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryPets": "Zwierzęta",
+  "@categoryPets": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryFees": "Opłaty",
+  "@categoryFees": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryFuel": "Paliwo",
+  "@categoryFuel": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryMaintenance": "Konserwacja",
+  "@categoryMaintenance": {"description": "Wyświetlana nazwa kategorii wydatku"},
+  "categoryDonations": "Darowizny",
+  "@categoryDonations": {"description": "Wyświetlana nazwa kategorii wydatku"},
   "categoryOther": "Inne",
   "@categoryOther": {"description": "Wyświetlana nazwa kategorii wydatku"},
 
@@ -1622,5 +1646,17 @@
   "@howItWorksExampleEtfFonds": {"description": "Przykładowa nazwa pozycji stałego kosztu w arkuszu „jak to działa”"},
 
   "addBudgetTooltip": "Dodaj budżet",
-  "@addBudgetTooltip": {"description": "Podpowiedź FAB na ekranie Budżety kategorii"}
+  "@addBudgetTooltip": {"description": "Podpowiedź FAB na ekranie Budżety kategorii"},
+
+  "selectCategoryTitle": "Wybierz kategorię",
+  "@selectCategoryTitle": {"description": "Tytuł arkusza wyboru kategorii"},
+
+  "showAllCategories": "Pokaż wszystkie kategorie",
+  "@showAllCategories": {"description": "Przycisk wyświetlający pełną listę kategorii"},
+
+  "showLessCategories": "Pokaż mniej",
+  "@showLessCategories": {"description": "Przycisk powracający do listy domyślnej"},
+
+  "allCategoriesTitle": "Wszystkie kategorie",
+  "@allCategoriesTitle": {"description": "Tytuł ekranu ze wszystkimi dostępnymi kategoriami"}
 }

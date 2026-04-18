@@ -11,6 +11,7 @@ import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/services/app_repositories.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
+import 'package:finance_tracker/services/category_preferences_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/guard_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
@@ -25,11 +26,14 @@ PlanRepository _planRepo() => PlanRepository(persist: false);
 CategoryBudgetRepository _budgetRepo() => CategoryBudgetRepository(persist: false);
 GuardRepository _guardRepo() => GuardRepository(persist: false);
 
+CategoryPreferencesRepository _prefsRepo() => CategoryPreferencesRepository();
+
 AppRepositories _repos({FinanceRepository? finance}) => AppRepositories(
       finance: finance ?? _financeRepo(),
       plan: _planRepo(),
       budget: _budgetRepo(),
       guard: _guardRepo(),
+      prefs: _prefsRepo(),
     );
 
 /// Writes a minimal valid save file directly into the saves/ subdirectory.
@@ -364,6 +368,7 @@ void main() {
           plan: _planRepo(),
           budget: _budgetRepo(),
           guard: guardRepo,
+          prefs: _prefsRepo(),
         ),
       );
 
@@ -519,6 +524,7 @@ void main() {
         plan: writePlan,
         budget: writeBudget,
         guard: writeGuard,
+        prefs: _prefsRepo(),
       );
 
       // ── Create the save ──────────────────────────────────────────────────────
@@ -549,6 +555,7 @@ void main() {
           plan: readPlan,
           budget: readBudget,
           guard: readGuard,
+          prefs: _prefsRepo(),
         ),
       );
       expect(ok, true, reason: 'loadSave must return true');
@@ -643,6 +650,7 @@ void main() {
         plan: writePlan,
         budget: writeBudget,
         guard: writeGuard,
+        prefs: _prefsRepo(),
       ));
 
       // Restore into fresh repos
@@ -658,6 +666,7 @@ void main() {
           plan: readPlan,
           budget: readBudget,
           guard: readGuard,
+          prefs: _prefsRepo(),
         ),
       );
       expect(ok, true);

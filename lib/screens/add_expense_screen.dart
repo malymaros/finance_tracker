@@ -5,13 +5,16 @@ import '../l10n/l10n_extensions.dart';
 import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/financial_type.dart';
+import '../services/category_preferences_repository.dart';
 import '../services/currency_formatter.dart';
 import '../services/finance_repository.dart';
 import '../theme/app_theme.dart';
 import '../utils/id_generator.dart';
+import '../widgets/category_picker_sheet.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   final FinanceRepository repository;
+  final CategoryPreferencesRepository prefsRepository;
   final Expense? existing;
 
   /// Pre-fills the date picker. Ignored when [existing] is provided.
@@ -20,6 +23,7 @@ class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({
     super.key,
     required this.repository,
+    required this.prefsRepository,
     this.existing,
     this.initialDate,
   });
@@ -58,6 +62,26 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     _noteController.dispose();
     _groupController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickCategory(BuildContext context) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => ListenableBuilder(
+        listenable: widget.prefsRepository,
+        builder: (ctx, _) => CategoryPickerSheet(
+          visible: widget.prefsRepository.visibleForExpenses,
+          selected: _selectedCategory,
+          isFavorite: widget.prefsRepository.isVisibleForExpenses,
+          onToggleFavorite: widget.prefsRepository.toggleExpenses,
+          onSelected: (cat) => setState(() {
+            _selectedCategory = cat;
+            _selectedFinancialType = cat.defaultFinancialType;
+          }),
+        ),
+      ),
+    );
   }
 
   Future<void> _pickDate() async {
@@ -138,38 +162,28 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             const SizedBox(height: 16),
 
             // ── Category ────────────────────────────────────────────────────
-            DropdownButtonFormField<ExpenseCategory>(
-              initialValue: _selectedCategory,
-              decoration: InputDecoration(
-                labelText: l10n.labelCategory,
-                border: const OutlineInputBorder(),
+            OutlinedButton(
+              onPressed: () => _pickCategory(context),
+              style: OutlinedButton.styleFrom(
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 12, vertical: 14),
               ),
-              items: (ExpenseCategory.values.toList()
-                    ..sort((a, b) {
-                      if (a == ExpenseCategory.other) return 1;
-                      if (b == ExpenseCategory.other) return -1;
-                      return l10n.categoryName(a).compareTo(l10n.categoryName(b));
-                    }))
-                  .map((cat) {
-                return DropdownMenuItem(
-                  value: cat,
-                  child: Row(
-                    children: [
-                      Icon(cat.icon, size: 20, color: cat.color),
-                      const SizedBox(width: 8),
-                      Text(l10n.categoryName(cat)),
-                    ],
+              child: Row(
+                children: [
+                  Icon(_selectedCategory.icon,
+                      size: 20, color: _selectedCategory.color),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      l10n.categoryName(_selectedCategory),
+                      style: const TextStyle(fontSize: 16),
+                    ),
                   ),
-                );
-              }).toList(),
-              onChanged: (v) {
-                if (v != null) {
-                  setState(() {
-                    _selectedCategory = v;
-                    _selectedFinancialType = v.defaultFinancialType;
-                  });
-                }
-              },
+                  const Icon(Icons.arrow_drop_down,
+                      color: AppColors.textMuted),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
 

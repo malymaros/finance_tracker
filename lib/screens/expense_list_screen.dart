@@ -485,6 +485,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           category: category,
           period: widget.selectedPeriod.value,
           repository: widget.repositories.finance,
+          prefsRepository: widget.repositories.prefs,
         ),
       ),
     );
@@ -547,6 +548,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         builder: (_) => GroupExpenseListScreen(
           groupName: groupName,
           repository: widget.repositories.finance,
+          prefsRepository: widget.repositories.prefs,
         ),
       ),
     );
@@ -557,6 +559,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       MaterialPageRoute(
         builder: (_) => AddExpenseScreen(
           repository: widget.repositories.finance,
+          prefsRepository: widget.repositories.prefs,
           initialDate: initialDate,
         ),
       ),
@@ -568,6 +571,7 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
       MaterialPageRoute(
         builder: (_) => AddExpenseScreen(
           repository: widget.repositories.finance,
+          prefsRepository: widget.repositories.prefs,
           existing: expense,
         ),
       ),

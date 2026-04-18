@@ -176,6 +176,7 @@ class _PlanScreenState extends State<PlanScreen> {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => AddPlanItemScreen(
         planRepository: widget.repositories.plan,
+        prefsRepository: widget.repositories.prefs,
         initialType: type,
         initialFrequency: frequency,
         initialValidFrom: widget.selectedPeriod.value,
@@ -187,6 +188,7 @@ class _PlanScreenState extends State<PlanScreen> {
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => AddPlanItemScreen(
         planRepository: widget.repositories.plan,
+        prefsRepository: widget.repositories.prefs,
         existing: item,
         initialValidFrom: widget.selectedPeriod.value,
       ),

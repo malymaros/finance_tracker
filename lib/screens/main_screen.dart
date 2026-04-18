@@ -63,6 +63,7 @@ class _MainScreenState extends State<MainScreen> {
             repository: widget.repositories.finance,
             planRepository: widget.repositories.plan,
             budgetRepository: widget.repositories.budget,
+            prefsRepository: widget.repositories.prefs,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onNavigateToPlan: () => _navigateToTab(0),
@@ -148,6 +149,7 @@ class _MainScreenState extends State<MainScreen> {
         widget.repositories.plan.clearAll(),
         widget.repositories.budget.clearAll(),
         widget.repositories.guard.clearAll(),
+        widget.repositories.prefs.clearAll(),
       ]);
     }
   }

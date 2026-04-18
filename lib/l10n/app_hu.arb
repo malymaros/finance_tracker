@@ -674,6 +674,8 @@
   "@categoryRestaurants": {"description": "Kiadáskategória megjelenített neve"},
   "categoryEntertainment": "Szórakozás",
   "@categoryEntertainment": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryElectronics": "Elektronika",
+  "@categoryElectronics": {"description": "Kiadáskategória megjelenített neve"},
   "categoryClothing": "Ruházat",
   "@categoryClothing": {"description": "Kiadáskategória megjelenített neve"},
   "categoryEducation": "Oktatás",
@@ -686,6 +688,28 @@
   "@categoryTaxes": {"description": "Kiadáskategória megjelenített neve"},
   "categoryMedications": "Gyógyszerek",
   "@categoryMedications": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryUtilities": "Közüzemi díjak",
+  "@categoryUtilities": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryHousehold": "Háztartási cikkek",
+  "@categoryHousehold": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryPersonalCare": "Személyes gondozás",
+  "@categoryPersonalCare": {"description": "Kiadáskategória megjelenített neve"},
+  "categorySavings": "Megtakarítások",
+  "@categorySavings": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryDebt": "Adósság",
+  "@categoryDebt": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryKids": "Gyerekek",
+  "@categoryKids": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryPets": "Háziállatok",
+  "@categoryPets": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryFees": "Díjak",
+  "@categoryFees": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryFuel": "Üzemanyag",
+  "@categoryFuel": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryMaintenance": "Karbantartás",
+  "@categoryMaintenance": {"description": "Kiadáskategória megjelenített neve"},
+  "categoryDonations": "Adományok",
+  "@categoryDonations": {"description": "Kiadáskategória megjelenített neve"},
   "categoryOther": "Egyéb",
   "@categoryOther": {"description": "Kiadáskategória megjelenített neve"},
 
@@ -1622,5 +1646,17 @@
   "@howItWorksExampleEtfFonds": {"description": "Példa fix költség név a működést bemutató lapon"},
 
   "addBudgetTooltip": "Keret hozzáadása",
-  "@addBudgetTooltip": {"description": "FAB eszköztipp a Kategóriakeretek képernyőn"}
+  "@addBudgetTooltip": {"description": "FAB eszköztipp a Kategóriakeretek képernyőn"},
+
+  "selectCategoryTitle": "Kategória kiválasztása",
+  "@selectCategoryTitle": {"description": "A kategóriaválasztó lap címe"},
+
+  "showAllCategories": "Az összes kategória megjelenítése",
+  "@showAllCategories": {"description": "Gomb a teljes kategórialist megjelenítéséhez"},
+
+  "showLessCategories": "Kevesebb megjelenítése",
+  "@showLessCategories": {"description": "Gomb az alapértelmezett listára való visszatéréshez"},
+
+  "allCategoriesTitle": "Összes kategória",
+  "@allCategoriesTitle": {"description": "Az összes elérhető kategóriát megjelenítő képernyő címe"}
 }

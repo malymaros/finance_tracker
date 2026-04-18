@@ -1357,6 +1357,12 @@ abstract class AppLocalizations {
   /// Expense category display name
   ///
   /// In en, this message translates to:
+  /// **'Electronics'**
+  String get categoryElectronics;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
   /// **'Clothing'**
   String get categoryClothing;
 
@@ -1389,6 +1395,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Medications'**
   String get categoryMedications;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Utilities'**
+  String get categoryUtilities;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Household Supplies'**
+  String get categoryHousehold;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Care'**
+  String get categoryPersonalCare;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Savings'**
+  String get categorySavings;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Debt'**
+  String get categoryDebt;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Kids'**
+  String get categoryKids;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Pets'**
+  String get categoryPets;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Fees'**
+  String get categoryFees;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Fuel'**
+  String get categoryFuel;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance'**
+  String get categoryMaintenance;
+
+  /// Expense category display name
+  ///
+  /// In en, this message translates to:
+  /// **'Donations'**
+  String get categoryDonations;
 
   /// Expense category display name
   ///
@@ -3067,6 +3139,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add budget'**
   String get addBudgetTooltip;
+
+  /// Title of the category picker bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Select category'**
+  String get selectCategoryTitle;
+
+  /// Button in the category picker that expands to show the full category list
+  ///
+  /// In en, this message translates to:
+  /// **'Show all categories'**
+  String get showAllCategories;
+
+  /// Button in the category picker that collapses back to the default list
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get showLessCategories;
+
+  /// Title of the screen showing all available categories
+  ///
+  /// In en, this message translates to:
+  /// **'All Categories'**
+  String get allCategoriesTitle;
 }
 
 class _AppLocalizationsDelegate

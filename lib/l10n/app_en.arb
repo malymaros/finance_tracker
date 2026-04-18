@@ -674,6 +674,8 @@
   "@categoryRestaurants": {"description": "Expense category display name"},
   "categoryEntertainment": "Entertainment",
   "@categoryEntertainment": {"description": "Expense category display name"},
+  "categoryElectronics": "Electronics",
+  "@categoryElectronics": {"description": "Expense category display name"},
   "categoryClothing": "Clothing",
   "@categoryClothing": {"description": "Expense category display name"},
   "categoryEducation": "Education",
@@ -686,6 +688,28 @@
   "@categoryTaxes": {"description": "Expense category display name"},
   "categoryMedications": "Medications",
   "@categoryMedications": {"description": "Expense category display name"},
+  "categoryUtilities": "Utilities",
+  "@categoryUtilities": {"description": "Expense category display name"},
+  "categoryHousehold": "Household Supplies",
+  "@categoryHousehold": {"description": "Expense category display name"},
+  "categoryPersonalCare": "Personal Care",
+  "@categoryPersonalCare": {"description": "Expense category display name"},
+  "categorySavings": "Savings",
+  "@categorySavings": {"description": "Expense category display name"},
+  "categoryDebt": "Debt",
+  "@categoryDebt": {"description": "Expense category display name"},
+  "categoryKids": "Kids",
+  "@categoryKids": {"description": "Expense category display name"},
+  "categoryPets": "Pets",
+  "@categoryPets": {"description": "Expense category display name"},
+  "categoryFees": "Fees",
+  "@categoryFees": {"description": "Expense category display name"},
+  "categoryFuel": "Fuel",
+  "@categoryFuel": {"description": "Expense category display name"},
+  "categoryMaintenance": "Maintenance",
+  "@categoryMaintenance": {"description": "Expense category display name"},
+  "categoryDonations": "Donations",
+  "@categoryDonations": {"description": "Expense category display name"},
   "categoryOther": "Other",
   "@categoryOther": {"description": "Expense category display name"},
 
@@ -1623,5 +1647,17 @@
   "@howItWorksExampleEtfFonds": {"description": "Example fixed cost name in the How It Works sheet"},
 
   "addBudgetTooltip": "Add budget",
-  "@addBudgetTooltip": {"description": "FAB tooltip on the Category Budgets screen"}
+  "@addBudgetTooltip": {"description": "FAB tooltip on the Category Budgets screen"},
+
+  "selectCategoryTitle": "Select category",
+  "@selectCategoryTitle": {"description": "Title of the category picker bottom sheet"},
+
+  "showAllCategories": "Show all categories",
+  "@showAllCategories": {"description": "Button in the category picker that expands to show the full category list"},
+
+  "showLessCategories": "Show less",
+  "@showLessCategories": {"description": "Button in the category picker that collapses back to the default list"},
+
+  "allCategoriesTitle": "All Categories",
+  "@allCategoriesTitle": {"description": "Title of the screen showing all available categories"}
 }

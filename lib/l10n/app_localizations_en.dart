@@ -740,6 +740,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoryEntertainment => 'Entertainment';
 
   @override
+  String get categoryElectronics => 'Electronics';
+
+  @override
   String get categoryClothing => 'Clothing';
 
   @override
@@ -756,6 +759,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get categoryMedications => 'Medications';
+
+  @override
+  String get categoryUtilities => 'Utilities';
+
+  @override
+  String get categoryHousehold => 'Household Supplies';
+
+  @override
+  String get categoryPersonalCare => 'Personal Care';
+
+  @override
+  String get categorySavings => 'Savings';
+
+  @override
+  String get categoryDebt => 'Debt';
+
+  @override
+  String get categoryKids => 'Kids';
+
+  @override
+  String get categoryPets => 'Pets';
+
+  @override
+  String get categoryFees => 'Fees';
+
+  @override
+  String get categoryFuel => 'Fuel';
+
+  @override
+  String get categoryMaintenance => 'Maintenance';
+
+  @override
+  String get categoryDonations => 'Donations';
 
   @override
   String get categoryOther => 'Other';
@@ -1764,4 +1800,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addBudgetTooltip => 'Add budget';
+
+  @override
+  String get selectCategoryTitle => 'Select category';
+
+  @override
+  String get showAllCategories => 'Show all categories';
+
+  @override
+  String get showLessCategories => 'Show less';
+
+  @override
+  String get allCategoriesTitle => 'All Categories';
 }

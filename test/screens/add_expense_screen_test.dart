@@ -5,6 +5,7 @@ import 'package:finance_tracker/models/expense.dart';
 import 'package:finance_tracker/models/expense_category.dart';
 import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/screens/add_expense_screen.dart';
+import 'package:finance_tracker/services/category_preferences_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -16,6 +17,7 @@ Widget _wrap(Widget child) => MaterialApp(
     );
 
 FinanceRepository _repo() => FinanceRepository(persist: false);
+CategoryPreferencesRepository _prefs() => CategoryPreferencesRepository();
 
 Expense _makeExpense({
   required double amount,
@@ -33,34 +35,34 @@ Expense _makeExpense({
 void main() {
   group('AddExpenseScreen — new expense', () {
     testWidgets('renders with "Add Expense" title', (tester) async {
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo())));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo(), prefsRepository: _prefs())));
       expect(find.text('Add Expense'), findsOneWidget);
     });
 
     testWidgets('default category is Groceries', (tester) async {
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo())));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo(), prefsRepository: _prefs())));
       expect(find.text('Groceries'), findsOneWidget);
     });
 
     testWidgets('default financial type is Consumption', (tester) async {
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo())));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo(), prefsRepository: _prefs())));
       expect(find.text('Consumption'), findsOneWidget);
     });
 
     testWidgets('Save button is present', (tester) async {
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo())));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo(), prefsRepository: _prefs())));
       expect(find.text('Save'), findsOneWidget);
     });
 
     testWidgets('shows validation error for empty amount', (tester) async {
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo())));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo(), prefsRepository: _prefs())));
       await tester.tap(find.text('Save'));
       await tester.pump();
       expect(find.text('Enter an amount'), findsOneWidget);
     });
 
     testWidgets('shows validation error for zero amount', (tester) async {
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo())));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo(), prefsRepository: _prefs())));
       await tester.enterText(
           find.widgetWithText(TextFormField, 'Amount'), '0');
       await tester.tap(find.text('Save'));
@@ -69,7 +71,7 @@ void main() {
     });
 
     testWidgets('shows validation error for negative amount', (tester) async {
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo())));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo(), prefsRepository: _prefs())));
       await tester.enterText(
           find.widgetWithText(TextFormField, 'Amount'), '-10');
       await tester.tap(find.text('Save'));
@@ -78,7 +80,7 @@ void main() {
     });
 
     testWidgets('shows validation error for non-numeric amount', (tester) async {
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo())));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: _repo(), prefsRepository: _prefs())));
       await tester.enterText(
           find.widgetWithText(TextFormField, 'Amount'), 'abc');
       await tester.tap(find.text('Save'));
@@ -88,7 +90,7 @@ void main() {
 
     testWidgets('valid amount saves expense and navigates back', (tester) async {
       final repo = _repo();
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo)));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo, prefsRepository: _prefs())));
 
       await tester.enterText(
           find.widgetWithText(TextFormField, 'Amount'), '42.50');
@@ -101,7 +103,7 @@ void main() {
 
     testWidgets('saves expense with default Groceries category', (tester) async {
       final repo = _repo();
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo)));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo, prefsRepository: _prefs())));
 
       await tester.enterText(
           find.widgetWithText(TextFormField, 'Amount'), '10');
@@ -114,7 +116,7 @@ void main() {
     testWidgets('saves expense with default consumption financial type',
         (tester) async {
       final repo = _repo();
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo)));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo, prefsRepository: _prefs())));
 
       await tester.enterText(
           find.widgetWithText(TextFormField, 'Amount'), '10');
@@ -126,7 +128,7 @@ void main() {
 
     testWidgets('note is stored when provided', (tester) async {
       final repo = _repo();
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo)));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo, prefsRepository: _prefs())));
 
       await tester.enterText(
           find.widgetWithText(TextFormField, 'Amount'), '25');
@@ -140,7 +142,7 @@ void main() {
 
     testWidgets('note is null when left empty', (tester) async {
       final repo = _repo();
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo)));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo, prefsRepository: _prefs())));
 
       await tester.enterText(
           find.widgetWithText(TextFormField, 'Amount'), '25');
@@ -152,7 +154,7 @@ void main() {
 
     testWidgets('group is stored when provided', (tester) async {
       final repo = _repo();
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo)));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo, prefsRepository: _prefs())));
 
       await tester.enterText(
           find.widgetWithText(TextFormField, 'Amount'), '99');
@@ -166,7 +168,7 @@ void main() {
 
     testWidgets('group is null when left empty', (tester) async {
       final repo = _repo();
-      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo)));
+      await tester.pumpWidget(_wrap(AddExpenseScreen(repository: repo, prefsRepository: _prefs())));
 
       await tester.enterText(
           find.widgetWithText(TextFormField, 'Amount'), '99');
@@ -179,7 +181,7 @@ void main() {
     testWidgets('initialDate pre-fills the date button label', (tester) async {
       final date = DateTime(2026, 7, 15);
       await tester.pumpWidget(
-        _wrap(AddExpenseScreen(repository: _repo(), initialDate: date)),
+        _wrap(AddExpenseScreen(repository: _repo(), prefsRepository: _prefs(), initialDate: date)),
       );
       expect(find.text('2026-07-15'), findsOneWidget);
     });
@@ -191,7 +193,7 @@ void main() {
       await repo.addExpense(
           _makeExpense(amount: 50, category: ExpenseCategory.transport));
       await tester.pumpWidget(_wrap(
-        AddExpenseScreen(repository: repo, existing: repo.expenses.first),
+        AddExpenseScreen(repository: repo, prefsRepository: _prefs(), existing: repo.expenses.first),
       ));
       expect(find.text('Edit Expense'), findsOneWidget);
     });
@@ -201,7 +203,7 @@ void main() {
       await repo.addExpense(
           _makeExpense(amount: 77.50, category: ExpenseCategory.transport));
       await tester.pumpWidget(_wrap(
-        AddExpenseScreen(repository: repo, existing: repo.expenses.first),
+        AddExpenseScreen(repository: repo, prefsRepository: _prefs(), existing: repo.expenses.first),
       ));
       expect(find.text('77.5'), findsOneWidget);
     });
@@ -213,7 +215,7 @@ void main() {
       final original = repo.expenses.first;
 
       await tester.pumpWidget(_wrap(
-        AddExpenseScreen(repository: repo, existing: original),
+        AddExpenseScreen(repository: repo, prefsRepository: _prefs(), existing: original),
       ));
 
       await tester.enterText(

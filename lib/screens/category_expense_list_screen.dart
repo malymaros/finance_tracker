@@ -6,6 +6,7 @@ import '../models/expense.dart';
 import '../models/expense_category.dart';
 import '../models/year_month.dart';
 import '../services/currency_formatter.dart';
+import '../services/category_preferences_repository.dart';
 import '../services/finance_repository.dart';
 import '../theme/app_theme.dart';
 import '../widgets/expense_list_tile.dart';
@@ -19,12 +20,14 @@ class CategoryExpenseListScreen extends StatefulWidget {
   final ExpenseCategory category;
   final YearMonth period;
   final FinanceRepository repository;
+  final CategoryPreferencesRepository prefsRepository;
 
   const CategoryExpenseListScreen({
     super.key,
     required this.category,
     required this.period,
     required this.repository,
+    required this.prefsRepository,
   });
 
   @override
@@ -181,6 +184,7 @@ class _CategoryExpenseListScreenState
       MaterialPageRoute(
         builder: (_) => AddExpenseScreen(
           repository: widget.repository,
+          prefsRepository: widget.prefsRepository,
           existing: expense,
         ),
       ),

@@ -758,6 +758,9 @@ class AppLocalizationsPl extends AppLocalizations {
   String get categoryEntertainment => 'Rozrywka';
 
   @override
+  String get categoryElectronics => 'Elektronika';
+
+  @override
   String get categoryClothing => 'Odzież';
 
   @override
@@ -774,6 +777,39 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get categoryMedications => 'Leki';
+
+  @override
+  String get categoryUtilities => 'Media';
+
+  @override
+  String get categoryHousehold => 'Artykuły gospodarstwa domowego';
+
+  @override
+  String get categoryPersonalCare => 'Pielęgnacja osobista';
+
+  @override
+  String get categorySavings => 'Oszczędności';
+
+  @override
+  String get categoryDebt => 'Dług';
+
+  @override
+  String get categoryKids => 'Dzieci';
+
+  @override
+  String get categoryPets => 'Zwierzęta';
+
+  @override
+  String get categoryFees => 'Opłaty';
+
+  @override
+  String get categoryFuel => 'Paliwo';
+
+  @override
+  String get categoryMaintenance => 'Konserwacja';
+
+  @override
+  String get categoryDonations => 'Darowizny';
 
   @override
   String get categoryOther => 'Inne';
@@ -1798,4 +1834,16 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get addBudgetTooltip => 'Dodaj budżet';
+
+  @override
+  String get selectCategoryTitle => 'Wybierz kategorię';
+
+  @override
+  String get showAllCategories => 'Pokaż wszystkie kategorie';
+
+  @override
+  String get showLessCategories => 'Pokaż mniej';
+
+  @override
+  String get allCategoriesTitle => 'Wszystkie kategorie';
 }

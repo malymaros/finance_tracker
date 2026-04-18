@@ -741,6 +741,9 @@ class AppLocalizationsHu extends AppLocalizations {
   String get categoryEntertainment => 'Szórakozás';
 
   @override
+  String get categoryElectronics => 'Elektronika';
+
+  @override
   String get categoryClothing => 'Ruházat';
 
   @override
@@ -757,6 +760,39 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get categoryMedications => 'Gyógyszerek';
+
+  @override
+  String get categoryUtilities => 'Közüzemi díjak';
+
+  @override
+  String get categoryHousehold => 'Háztartási cikkek';
+
+  @override
+  String get categoryPersonalCare => 'Személyes gondozás';
+
+  @override
+  String get categorySavings => 'Megtakarítások';
+
+  @override
+  String get categoryDebt => 'Adósság';
+
+  @override
+  String get categoryKids => 'Gyerekek';
+
+  @override
+  String get categoryPets => 'Háziállatok';
+
+  @override
+  String get categoryFees => 'Díjak';
+
+  @override
+  String get categoryFuel => 'Üzemanyag';
+
+  @override
+  String get categoryMaintenance => 'Karbantartás';
+
+  @override
+  String get categoryDonations => 'Adományok';
 
   @override
   String get categoryOther => 'Egyéb';
@@ -1776,4 +1812,16 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get addBudgetTooltip => 'Keret hozzáadása';
+
+  @override
+  String get selectCategoryTitle => 'Kategória kiválasztása';
+
+  @override
+  String get showAllCategories => 'Az összes kategória megjelenítése';
+
+  @override
+  String get showLessCategories => 'Kevesebb megjelenítése';
+
+  @override
+  String get allCategoriesTitle => 'Összes kategória';
 }

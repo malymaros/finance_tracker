@@ -6,6 +6,7 @@ import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/plan/add_plan_item_screen.dart';
+import 'package:finance_tracker/services/category_preferences_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
@@ -15,6 +16,7 @@ Widget _wrap(Widget child) => MaterialApp(
 );
 
 PlanRepository _repo() => PlanRepository(persist: false);
+CategoryPreferencesRepository _prefs() => CategoryPreferencesRepository();
 
 void main() {
   group('AddPlanItemScreen — initialValidFrom (Bug 1)', () {
@@ -23,6 +25,7 @@ void main() {
       final selectedMonth = YearMonth(2025, 9); // September 2025
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
+        prefsRepository: _prefs(),
         initialValidFrom: selectedMonth,
       )));
 
@@ -35,6 +38,7 @@ void main() {
       final now = YearMonth.now();
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
+        prefsRepository: _prefs(),
       )));
 
       final monthNames = [
@@ -61,6 +65,7 @@ void main() {
       final repo = _repo();
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         initialValidFrom: selectedMonth,
       )));
 
@@ -97,6 +102,7 @@ void main() {
       final selectedMonth = YearMonth(2025, 10);
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         existing: original,
         initialValidFrom: selectedMonth,
       )));
@@ -124,6 +130,7 @@ void main() {
 
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         existing: original,
         initialValidFrom: YearMonth(2025, 10), // different from item's start
       )));
@@ -149,6 +156,7 @@ void main() {
 
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         existing: original,
         initialValidFrom: YearMonth(2025, 10),
       )));
@@ -186,6 +194,7 @@ void main() {
 
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         existing: original,
         initialValidFrom: YearMonth(2025, 10), // different from original
       )));
@@ -199,6 +208,7 @@ void main() {
     testWidgets('shows "Add Monthly Income" for monthly income', (tester) async {
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
+        prefsRepository: _prefs(),
         initialType: PlanItemType.income,
         initialFrequency: PlanFrequency.monthly,
       )));
@@ -208,6 +218,7 @@ void main() {
     testWidgets('shows "Add Yearly Income" for yearly income', (tester) async {
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
+        prefsRepository: _prefs(),
         initialType: PlanItemType.income,
         initialFrequency: PlanFrequency.yearly,
       )));
@@ -218,6 +229,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
+        prefsRepository: _prefs(),
         initialType: PlanItemType.income,
         initialFrequency: PlanFrequency.oneTime,
       )));
@@ -228,6 +240,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
+        prefsRepository: _prefs(),
         initialType: PlanItemType.fixedCost,
         initialFrequency: PlanFrequency.monthly,
       )));
@@ -238,6 +251,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
+        prefsRepository: _prefs(),
         initialType: PlanItemType.fixedCost,
         initialFrequency: PlanFrequency.yearly,
       )));
@@ -248,6 +262,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
+        prefsRepository: _prefs(),
       )));
       expect(find.text('Add Plan Item'), findsOneWidget);
     });
@@ -267,6 +282,7 @@ void main() {
       await repo.addPlanItem(item);
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         existing: item,
       )));
       expect(find.text('Edit Monthly Income'), findsOneWidget);
@@ -287,6 +303,7 @@ void main() {
       await repo.addPlanItem(item);
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         existing: item,
       )));
       expect(find.text('Edit Yearly Income'), findsOneWidget);
@@ -307,6 +324,7 @@ void main() {
       await repo.addPlanItem(item);
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         existing: item,
       )));
       expect(find.text('Edit One-time Income'), findsOneWidget);
@@ -329,6 +347,7 @@ void main() {
       await repo.addPlanItem(item);
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         existing: item,
       )));
       expect(find.text('Edit Monthly Fixed Cost'), findsOneWidget);
@@ -351,6 +370,7 @@ void main() {
       await repo.addPlanItem(item);
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         existing: item,
       )));
       expect(find.text('Edit Yearly Fixed Cost'), findsOneWidget);
@@ -362,6 +382,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
+        prefsRepository: _prefs(),
         initialType: PlanItemType.income,
       )));
       // The "Type" label above the selector should not be visible.
@@ -386,6 +407,7 @@ void main() {
       await repo.addPlanItem(item);
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: repo,
+        prefsRepository: _prefs(),
         existing: item,
       )));
       expect(find.text('Type'), findsNothing);
@@ -395,6 +417,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(_wrap(AddPlanItemScreen(
         planRepository: _repo(),
+        prefsRepository: _prefs(),
       )));
       expect(find.text('Type'), findsOneWidget);
     });

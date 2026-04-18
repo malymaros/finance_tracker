@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n/l10n.dart';
 import '../models/expense.dart';
+import '../services/category_preferences_repository.dart';
 import '../services/currency_formatter.dart';
 import '../services/finance_repository.dart';
 import '../theme/app_theme.dart';
@@ -15,11 +16,13 @@ import 'expense_detail_screen.dart';
 class GroupExpenseListScreen extends StatefulWidget {
   final String groupName;
   final FinanceRepository repository;
+  final CategoryPreferencesRepository prefsRepository;
 
   const GroupExpenseListScreen({
     super.key,
     required this.groupName,
     required this.repository,
+    required this.prefsRepository,
   });
 
   @override
@@ -150,6 +153,7 @@ class _GroupExpenseListScreenState extends State<GroupExpenseListScreen> {
       MaterialPageRoute(
         builder: (_) => AddExpenseScreen(
           repository: widget.repository,
+          prefsRepository: widget.prefsRepository,
           existing: expense,
         ),
       ),

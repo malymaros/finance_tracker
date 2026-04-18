@@ -8,6 +8,7 @@ import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/services/app_repositories.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
+import 'package:finance_tracker/services/category_preferences_repository.dart';
 import 'package:finance_tracker/services/data_portability_service.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/guard_repository.dart';
@@ -42,6 +43,7 @@ AppRepositories _repos({
       plan: plan ?? PlanRepository(persist: false),
       budget: budget ?? CategoryBudgetRepository(persist: false),
       guard: guard ?? GuardRepository(persist: false),
+      prefs: CategoryPreferencesRepository(),
     );
 
 void main() {

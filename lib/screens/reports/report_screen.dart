@@ -13,6 +13,7 @@ import '../../models/yearly_pdf_data.dart';
 import '../../l10n/l10n.dart';
 import '../../services/budget_calculator.dart';
 import '../../services/category_budget_repository.dart';
+import '../../services/category_preferences_repository.dart';
 import '../../services/currency_formatter.dart';
 import '../../services/finance_repository.dart';
 import '../../services/pdf_report_service.dart';
@@ -50,6 +51,7 @@ class ReportScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
   final CategoryBudgetRepository budgetRepository;
+  final CategoryPreferencesRepository prefsRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
 
@@ -63,6 +65,7 @@ class ReportScreen extends StatefulWidget {
     required this.repository,
     required this.planRepository,
     required this.budgetRepository,
+    required this.prefsRepository,
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onNavigateToPlan,
@@ -612,6 +615,7 @@ class _ReportScreenState extends State<ReportScreen> {
         month: _mode == _ReportMode.monthly ? _month : null,
         repository: widget.repository,
         planRepository: widget.planRepository,
+        prefsRepository: widget.prefsRepository,
       ),
     ));
   }

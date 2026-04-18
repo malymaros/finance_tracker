@@ -7,6 +7,7 @@ import 'package:finance_tracker/models/financial_type.dart';
 import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/reports/category_report_detail_screen.dart';
+import 'package:finance_tracker/services/category_preferences_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
 import 'package:finance_tracker/widgets/expense_list_tile.dart';
@@ -62,6 +63,7 @@ Widget _wrapMonthly({
         month: month,
         repository: financeRepo ?? FinanceRepository(persist: false),
         planRepository: planRepo ?? PlanRepository(persist: false),
+        prefsRepository: CategoryPreferencesRepository(),
       ),
     );
 
@@ -79,6 +81,7 @@ Widget _wrapYearly({
         year: year,
         repository: financeRepo ?? FinanceRepository(persist: false),
         planRepository: planRepo ?? PlanRepository(persist: false),
+        prefsRepository: CategoryPreferencesRepository(),
       ),
     );
 

@@ -674,6 +674,8 @@
   "@categoryRestaurants": {"description": "Zobrazovaný název kategorie výdaje"},
   "categoryEntertainment": "Zábava",
   "@categoryEntertainment": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryElectronics": "Elektronika",
+  "@categoryElectronics": {"description": "Zobrazovaný název kategorie výdaje"},
   "categoryClothing": "Oblečení",
   "@categoryClothing": {"description": "Zobrazovaný název kategorie výdaje"},
   "categoryEducation": "Vzdělávání",
@@ -686,6 +688,28 @@
   "@categoryTaxes": {"description": "Zobrazovaný název kategorie výdaje"},
   "categoryMedications": "Léky",
   "@categoryMedications": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryUtilities": "Energie a služby",
+  "@categoryUtilities": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryHousehold": "Potřeby domácnosti",
+  "@categoryHousehold": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryPersonalCare": "Osobní péče",
+  "@categoryPersonalCare": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categorySavings": "Úspory",
+  "@categorySavings": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryDebt": "Dluhy",
+  "@categoryDebt": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryKids": "Děti",
+  "@categoryKids": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryPets": "Domácí zvířata",
+  "@categoryPets": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryFees": "Poplatky",
+  "@categoryFees": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryFuel": "Pohonné hmoty",
+  "@categoryFuel": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryMaintenance": "Údržba",
+  "@categoryMaintenance": {"description": "Zobrazovaný název kategorie výdaje"},
+  "categoryDonations": "Dary",
+  "@categoryDonations": {"description": "Zobrazovaný název kategorie výdaje"},
   "categoryOther": "Ostatní",
   "@categoryOther": {"description": "Zobrazovaný název kategorie výdaje"},
 
@@ -1622,5 +1646,17 @@
   "@howItWorksExampleEtfFonds": {"description": "Příklad názvu položky pevného nákladu v panelu Jak to funguje"},
 
   "addBudgetTooltip": "Přidat rozpočet",
-  "@addBudgetTooltip": {"description": "Tooltip FAB na obrazovce Rozpočty kategorií"}
+  "@addBudgetTooltip": {"description": "Tooltip FAB na obrazovce Rozpočty kategorií"},
+
+  "selectCategoryTitle": "Vybrat kategorii",
+  "@selectCategoryTitle": {"description": "Název listu pro výběr kategorie"},
+
+  "showAllCategories": "Zobrazit všechny kategorie",
+  "@showAllCategories": {"description": "Tlačítko pro zobrazení úplného seznamu kategorií"},
+
+  "showLessCategories": "Zobrazit méně",
+  "@showLessCategories": {"description": "Tlačítko pro návrat na výchozí seznam"},
+
+  "allCategoriesTitle": "Všechny kategorie",
+  "@allCategoriesTitle": {"description": "Název obrazovky se všemi dostupnými kategoriemi"}
 }

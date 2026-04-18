@@ -7,6 +7,7 @@ import '../../models/expense_category.dart';
 import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/budget_calculator.dart';
+import '../../services/category_preferences_repository.dart';
 import '../../services/currency_formatter.dart';
 import '../../services/finance_repository.dart';
 import '../../services/plan_repository.dart';
@@ -33,6 +34,7 @@ class CategoryReportDetailScreen extends StatefulWidget {
 
   final FinanceRepository repository;
   final PlanRepository planRepository;
+  final CategoryPreferencesRepository prefsRepository;
 
   const CategoryReportDetailScreen({
     super.key,
@@ -41,6 +43,7 @@ class CategoryReportDetailScreen extends StatefulWidget {
     this.month,
     required this.repository,
     required this.planRepository,
+    required this.prefsRepository,
   });
 
   @override
@@ -292,6 +295,7 @@ class _CategoryReportDetailScreenState
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => AddPlanItemScreen(
         planRepository: widget.planRepository,
+        prefsRepository: widget.prefsRepository,
         existing: item,
         initialValidFrom: validFrom,
       ),
@@ -332,6 +336,7 @@ class _CategoryReportDetailScreenState
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => AddExpenseScreen(
         repository: widget.repository,
+        prefsRepository: widget.prefsRepository,
         existing: expense,
       ),
     ));

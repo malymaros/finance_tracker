@@ -674,6 +674,8 @@
   "@categoryRestaurants": { "description": "Anzeigename der Ausgabenkategorie" },
   "categoryEntertainment": "Unterhaltung",
   "@categoryEntertainment": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryElectronics": "Elektronik",
+  "@categoryElectronics": { "description": "Anzeigename der Ausgabenkategorie" },
   "categoryClothing": "Kleidung",
   "@categoryClothing": { "description": "Anzeigename der Ausgabenkategorie" },
   "categoryEducation": "Bildung",
@@ -686,6 +688,28 @@
   "@categoryTaxes": { "description": "Anzeigename der Ausgabenkategorie" },
   "categoryMedications": "Medikamente",
   "@categoryMedications": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryUtilities": "Nebenkosten",
+  "@categoryUtilities": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryHousehold": "Haushaltsbedarf",
+  "@categoryHousehold": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryPersonalCare": "Körperpflege",
+  "@categoryPersonalCare": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categorySavings": "Ersparnisse",
+  "@categorySavings": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryDebt": "Schulden",
+  "@categoryDebt": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryKids": "Kinder",
+  "@categoryKids": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryPets": "Haustiere",
+  "@categoryPets": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryFees": "Gebühren",
+  "@categoryFees": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryFuel": "Kraftstoff",
+  "@categoryFuel": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryMaintenance": "Wartung",
+  "@categoryMaintenance": { "description": "Anzeigename der Ausgabenkategorie" },
+  "categoryDonations": "Spenden",
+  "@categoryDonations": { "description": "Anzeigename der Ausgabenkategorie" },
   "categoryOther": "Sonstiges",
   "@categoryOther": { "description": "Anzeigename der Ausgabenkategorie" },
 
@@ -1622,5 +1646,17 @@
   "@howItWorksExampleEtfFonds": {"description": "Beispiel-Fixkosten in der Wie-es-funktioniert-Erklärung"},
 
   "addBudgetTooltip": "Budget hinzufügen",
-  "@addBudgetTooltip": {"description": "FAB-Tooltip auf dem Kategoriebudgets-Bildschirm"}
+  "@addBudgetTooltip": {"description": "FAB-Tooltip auf dem Kategoriebudgets-Bildschirm"},
+
+  "selectCategoryTitle": "Kategorie auswählen",
+  "@selectCategoryTitle": {"description": "Titel des Kategorie-Auswahl-Sheets"},
+
+  "showAllCategories": "Alle Kategorien anzeigen",
+  "@showAllCategories": {"description": "Schaltfläche, die die vollständige Kategorienliste anzeigt"},
+
+  "showLessCategories": "Weniger anzeigen",
+  "@showLessCategories": {"description": "Schaltfläche, die zur Standardliste zurückkehrt"},
+
+  "allCategoriesTitle": "Alle Kategorien",
+  "@allCategoriesTitle": {"description": "Titel des Bildschirms mit allen verfügbaren Kategorien"}
 }

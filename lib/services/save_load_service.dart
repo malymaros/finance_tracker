@@ -94,6 +94,7 @@ class SaveLoadService {
             repos.budget.budgets.map((b) => b.toJson()).toList(),
         'guardPayments':
             repos.guard.payments.map((p) => p.toJson()).toList(),
+        'categoryPreferences': repos.prefs.preferences.toJson(),
       };
 
       final dir = await _savesDir();
@@ -132,6 +133,8 @@ class SaveLoadService {
       await repos.plan.restoreFromSnapshot(planItems);
       await repos.budget.restoreFromSnapshot(categoryBudgets);
       await repos.guard.restoreFromSnapshot(guardPayments);
+      await repos.prefs.restoreFromSnapshot(
+          json['categoryPreferences'] as Map<String, dynamic>?);
       return true;
     } catch (_) {
       return false;
@@ -192,6 +195,7 @@ class SaveLoadService {
         'planItems': repos.plan.items.map((e) => e.toJson()).toList(),
         'categoryBudgets': repos.budget.budgets.map((b) => b.toJson()).toList(),
         'guardPayments': repos.guard.payments.map((p) => p.toJson()).toList(),
+        'categoryPreferences': repos.prefs.preferences.toJson(),
       };
       await slot0.writeAsString(jsonEncode(data));
 
@@ -264,6 +268,8 @@ class SaveLoadService {
       await repos.plan.restoreFromSnapshot(planItems);
       await repos.budget.restoreFromSnapshot(categoryBudgets);
       await repos.guard.restoreFromSnapshot(guardPayments);
+      await repos.prefs.restoreFromSnapshot(
+          json['categoryPreferences'] as Map<String, dynamic>?);
       return true;
     } catch (_) {
       return false;

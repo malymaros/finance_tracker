@@ -9,6 +9,7 @@ import 'package:finance_tracker/models/plan_item.dart';
 import 'package:finance_tracker/models/year_month.dart';
 import 'package:finance_tracker/screens/reports/report_screen.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
+import 'package:finance_tracker/services/category_preferences_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
 import 'package:finance_tracker/widgets/overview_month_row.dart';
@@ -54,6 +55,7 @@ Widget _wrap({
       repository: financeRepo ?? FinanceRepository(persist: false),
       planRepository: planRepo ?? PlanRepository(persist: false),
       budgetRepository: CategoryBudgetRepository(persist: false),
+      prefsRepository: CategoryPreferencesRepository(),
       selectedPeriod: ValueNotifier(period ?? _period),
       periodBounds: ValueNotifier(const PeriodBounds()),
       onNavigateToPlan: onNavigateToPlan ?? () {},
@@ -203,6 +205,7 @@ void main() {
           repository: FinanceRepository(persist: false),
           planRepository: planRepo,
           budgetRepository: CategoryBudgetRepository(persist: false),
+          prefsRepository: CategoryPreferencesRepository(),
           selectedPeriod: period,
           periodBounds: ValueNotifier(const PeriodBounds()),
           onNavigateToPlan: () {},

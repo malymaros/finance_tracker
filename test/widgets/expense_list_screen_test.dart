@@ -11,6 +11,7 @@ import 'package:finance_tracker/screens/expense_list_screen.dart';
 import 'package:finance_tracker/screens/add_expense_screen.dart';
 import 'package:finance_tracker/services/app_repositories.dart';
 import 'package:finance_tracker/services/category_budget_repository.dart';
+import 'package:finance_tracker/services/category_preferences_repository.dart';
 import 'package:finance_tracker/services/finance_repository.dart';
 import 'package:finance_tracker/services/guard_repository.dart';
 import 'package:finance_tracker/services/plan_repository.dart';
@@ -51,6 +52,7 @@ Widget _wrapScreen({
           plan: PlanRepository(persist: false),
           budget: budgetRepo ?? CategoryBudgetRepository(persist: false),
           guard: GuardRepository(persist: false),
+          prefs: CategoryPreferencesRepository(),
         ),
         selectedPeriod: ValueNotifier(_period),
         periodBounds: ValueNotifier(const PeriodBounds()),
@@ -69,6 +71,7 @@ Widget wrapInMaterial(FinanceRepository repo) => MaterialApp(
           plan: PlanRepository(persist: false),
           budget: CategoryBudgetRepository(persist: false),
           guard: GuardRepository(persist: false),
+          prefs: CategoryPreferencesRepository(),
         ),
         selectedPeriod: ValueNotifier(YearMonth.now()),
         periodBounds: ValueNotifier(const PeriodBounds()),

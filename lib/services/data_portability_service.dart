@@ -32,6 +32,7 @@ class DataPortabilityService {
           repos.budget.budgets.map((b) => b.toJson()).toList(),
       'guardPayments':
           repos.guard.payments.map((p) => p.toJson()).toList(),
+      'categoryPreferences': repos.prefs.preferences.toJson(),
     };
     return jsonEncode(data);
   }
@@ -71,5 +72,7 @@ class DataPortabilityService {
     await repos.plan.restoreFromSnapshot(planItems);
     await repos.budget.restoreFromSnapshot(categoryBudgets);
     await repos.guard.restoreFromSnapshot(guardPayments);
+    await repos.prefs.restoreFromSnapshot(
+        map['categoryPreferences'] as Map<String, dynamic>?);
   }
 }
