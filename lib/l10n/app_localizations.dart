@@ -2423,7 +2423,7 @@ abstract class AppLocalizations {
   /// Body text on the Expenses > Budget page
   ///
   /// In en, this message translates to:
-  /// **'The app subtracts your fixed costs from your income and shows the result here. You don\'\'t set this number — it comes from your Plan.'**
+  /// **'The app subtracts your fixed costs from your income and shows the result here. You don\'t set this number — it comes from your Plan.'**
   String get howItWorksBudgetBody;
 
   /// Body text on the Expenses > Spending page

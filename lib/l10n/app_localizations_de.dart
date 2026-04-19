@@ -1832,7 +1832,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get allCategoriesTitle => 'Alle Kategorien';
 
   @override
-  String get howCategoryBudgetsSubtitle0 => 'Warum es das gibt';
+  String get howCategoryBudgetsSubtitle0 => 'Begrenzen Sie Ihre Ausgaben nach Kategorie!';
 
   @override
   String get howCategoryBudgetsSubtitle1 => 'Budget erstellen';

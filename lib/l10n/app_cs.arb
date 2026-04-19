@@ -1664,7 +1664,7 @@
   "allCategoriesTitle": "Všechny kategorie",
   "@allCategoriesTitle": {"description": "Název obrazovky se všemi dostupnými kategoriemi"},
 
-  "howCategoryBudgetsSubtitle0": "Proč to existuje",
+  "howCategoryBudgetsSubtitle0": "Omezte výdaje podle kategorie!",
   "@howCategoryBudgetsSubtitle0": {"description": "Subtitle for page 0 of the How Category Budgets Work sheet"},
   "howCategoryBudgetsSubtitle1": "Vytvoření rozpočtu",
   "@howCategoryBudgetsSubtitle1": {"description": "Subtitle for page 1 of the How Category Budgets Work sheet"},

@@ -1837,7 +1837,7 @@ class AppLocalizationsCs extends AppLocalizations {
   String get allCategoriesTitle => 'Všechny kategorie';
 
   @override
-  String get howCategoryBudgetsSubtitle0 => 'Proč to existuje';
+  String get howCategoryBudgetsSubtitle0 => 'Omezte výdaje podle kategorie!';
 
   @override
   String get howCategoryBudgetsSubtitle1 => 'Vytvoření rozpočtu';

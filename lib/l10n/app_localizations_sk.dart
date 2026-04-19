@@ -1839,7 +1839,7 @@ class AppLocalizationsSk extends AppLocalizations {
   String get allCategoriesTitle => 'Všetky kategórie';
 
   @override
-  String get howCategoryBudgetsSubtitle0 => 'Prečo to existuje';
+  String get howCategoryBudgetsSubtitle0 => 'Obmedzte výdavky podľa kategórie!';
 
   @override
   String get howCategoryBudgetsSubtitle1 => 'Vytvorenie rozpočtu';

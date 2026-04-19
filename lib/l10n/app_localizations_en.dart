@@ -1374,7 +1374,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get howItWorksBudgetBody =>
-      'The app subtracts your fixed costs from your income and shows the result here. You don\'\'t set this number — it comes from your Plan.';
+      'The app subtracts your fixed costs from your income and shows the result here. You don\'t set this number — it comes from your Plan.';
 
   @override
   String get howItWorksSpendingBody =>
@@ -1817,7 +1817,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get allCategoriesTitle => 'All Categories';
 
   @override
-  String get howCategoryBudgetsSubtitle0 => 'Why it exists';
+  String get howCategoryBudgetsSubtitle0 => 'Limit your spending by category!';
 
   @override
   String get howCategoryBudgetsSubtitle1 => 'Creating a budget';

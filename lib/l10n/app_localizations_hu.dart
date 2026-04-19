@@ -1830,7 +1830,7 @@ class AppLocalizationsHu extends AppLocalizations {
   String get allCategoriesTitle => 'Összes kategória';
 
   @override
-  String get howCategoryBudgetsSubtitle0 => 'Miért létezik';
+  String get howCategoryBudgetsSubtitle0 => 'Korlátozza kiadásait kategóriánként!';
 
   @override
   String get howCategoryBudgetsSubtitle1 => 'Keret létrehozása';

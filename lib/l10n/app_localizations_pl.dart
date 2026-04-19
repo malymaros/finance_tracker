@@ -1845,7 +1845,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get allCategoriesTitle => 'Wszystkie kategorie';
 
   @override
-  String get howCategoryBudgetsSubtitle0 => 'Po co to jest';
+  String get howCategoryBudgetsSubtitle0 => 'Ogranicz wydatki według kategorii!';
 
   @override
   String get howCategoryBudgetsSubtitle1 => 'Tworzenie budżetu';

@@ -1221,7 +1221,7 @@
   "subStepResult": "Result",
   "@subStepResult": {"description": "Sub-step label for the Result page in Expenses"},
 
-  "howItWorksBudgetBody": "The app subtracts your fixed costs from your income and shows the result here. You don''t set this number — it comes from your Plan.",
+  "howItWorksBudgetBody": "The app subtracts your fixed costs from your income and shows the result here. You don't set this number — it comes from your Plan.",
   "@howItWorksBudgetBody": {"description": "Body text on the Expenses > Budget page"},
 
   "howItWorksSpendingBody": "Log groceries, meals, shopping and other variable spending. Fixed monthly bills like rent belong in Plan, not here.",
@@ -1665,7 +1665,7 @@
   "allCategoriesTitle": "All Categories",
   "@allCategoriesTitle": {"description": "Title of the screen showing all available categories"},
 
-  "howCategoryBudgetsSubtitle0": "Why it exists",
+  "howCategoryBudgetsSubtitle0": "Limit your spending by category!",
   "@howCategoryBudgetsSubtitle0": {"description": "Subtitle for page 0 of the How Category Budgets Work sheet"},
   "howCategoryBudgetsSubtitle1": "Creating a budget",
   "@howCategoryBudgetsSubtitle1": {"description": "Subtitle for page 1 of the How Category Budgets Work sheet"},

@@ -1664,7 +1664,7 @@
   "allCategoriesTitle": "Wszystkie kategorie",
   "@allCategoriesTitle": {"description": "Tytuł ekranu ze wszystkimi dostępnymi kategoriami"},
 
-  "howCategoryBudgetsSubtitle0": "Po co to jest",
+  "howCategoryBudgetsSubtitle0": "Ogranicz wydatki według kategorii!",
   "@howCategoryBudgetsSubtitle0": {"description": "Podtytuł dla strony 0 arkusza Jak działają budżety kategorii"},
   "howCategoryBudgetsSubtitle1": "Tworzenie budżetu",
   "@howCategoryBudgetsSubtitle1": {"description": "Podtytuł dla strony 1 arkusza Jak działają budżety kategorii"},
