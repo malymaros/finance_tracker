@@ -182,98 +182,115 @@ class _GuardScreenState extends State<GuardScreen> {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(12),
+      body: Column(
         children: [
-          // ── Notification time ──────────────────────────────────────────
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.notifications_outlined,
-                  color: AppColors.gold),
-              title: Text(context.l10n.guardDailyReminder),
-              subtitle: Text(context.l10n.guardChangeNotifTime),
-              trailing: Text(
-                timeLabel,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.gold,
+          // ── Notification time (fixed chrome) ──────────────────────────
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Card(
+              child: ListTile(
+                leading: const Icon(Icons.notifications_outlined,
+                    color: AppColors.gold),
+                title: Text(context.l10n.guardDailyReminder),
+                subtitle: Text(context.l10n.guardChangeNotifTime),
+                trailing: Text(
+                  timeLabel,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.gold,
+                  ),
                 ),
+                onTap: _pickNotifyTime,
               ),
-              onTap: _pickNotifyTime,
             ),
           ),
-          const SizedBox(height: 16),
-
+          const Divider(height: 1),
           // ── Guarded items ──────────────────────────────────────────────
-          if (guardedItems.isEmpty)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32),
-                child: Column(
-                  children: [
-                    const Icon(Icons.pets, size: 48, color: AppColors.border),
-                    const SizedBox(height: 12),
-                    Text(
-                      context.l10n.noGuardedItems,
-                      style: const TextStyle(
-                          fontSize: 16, color: AppColors.textMuted),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      context.l10n.guardNoGuardedItemsHint,
-                      style: const TextStyle(
-                          fontSize: 13, color: AppColors.textMuted),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 20),
-                    TextButton.icon(
-                      onPressed: () => HowGuardWorkSheet.show(context),
-                      icon: const Icon(Icons.pets, size: 16),
-                      label: Text(context.l10n.howGuardWorkQuestion),
-                      style: TextButton.styleFrom(
-                          foregroundColor: AppColors.gold),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else ...[
-            _buildSectionHeader(context, guardedItems.length),
-            const SizedBox(height: 6),
-            ...guardedItems.values.map((item) {
-              final period = _effectivePeriod(item, now);
-              final nextPeriod = widget.guardRepository
-                  .nextReminderPeriod(item, now, all);
-              final lastPeriod = widget.guardRepository
-                  .lastReminderPeriod(item, all);
-              return GuardItemStatusCard(
-                item: item,
-                period: period,
-                state: widget.guardRepository.itemStateForPeriod(item, period),
-                guardRepository: widget.guardRepository,
-                onChangeDueDay: () => _pickDueDay(item),
-                onDeleteGuard: () => widget.planRepository
-                    .disableGuardForSeries(item.seriesId),
-                showIfScheduled: true,
-                nextReminderLabel: nextPeriod != null
-                    ? _formatReminderPeriod(item, nextPeriod)
-                    : null,
-                lastReminderLabel: lastPeriod != null
-                    ? _formatReminderPeriod(item, lastPeriod)
-                    : null,
-              );
-            }),
-          ],
+          Expanded(
+            child: guardedItems.isEmpty
+                ? _buildEmptyState()
+                : _buildItemsList(guardedItems, now, all),
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.pets, size: 64, color: AppColors.border),
+            const SizedBox(height: 16),
+            Text(
+              context.l10n.noGuardedItems,
+              style: const TextStyle(fontSize: 16, color: AppColors.textMuted),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              context.l10n.guardNoGuardedItemsHint,
+              style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            TextButton.icon(
+              onPressed: () => HowGuardWorkSheet.show(context),
+              icon: const Icon(Icons.pets, size: 16),
+              label: Text(context.l10n.howGuardWorkQuestion),
+              style: TextButton.styleFrom(foregroundColor: AppColors.gold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildItemsList(
+    Map<String, PlanItem> guardedItems,
+    YearMonth now,
+    List<PlanItem> all,
+  ) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+      children: [
+        _buildSectionHeader(guardedItems.length),
+        const SizedBox(height: 6),
+        ...guardedItems.values.map((item) {
+          final period = _effectivePeriod(item, now);
+          final nextPeriod =
+              widget.guardRepository.nextReminderPeriod(item, now, all);
+          final lastPeriod =
+              widget.guardRepository.lastReminderPeriod(item, all);
+          return GuardItemStatusCard(
+            item: item,
+            period: period,
+            state: widget.guardRepository.itemStateForPeriod(item, period),
+            guardRepository: widget.guardRepository,
+            onChangeDueDay: () => _pickDueDay(item),
+            onDeleteGuard: () =>
+                widget.planRepository.disableGuardForSeries(item.seriesId),
+            showIfScheduled: true,
+            nextReminderLabel: nextPeriod != null
+                ? _formatReminderPeriod(item, nextPeriod)
+                : null,
+            lastReminderLabel: lastPeriod != null
+                ? _formatReminderPeriod(item, lastPeriod)
+                : null,
+          );
+        }),
+      ],
     );
   }
 
   String _formatReminderPeriod(PlanItem item, YearMonth period) =>
       GuardCalculator.formatReminderPeriod(item.guardDueDay, period, context.l10n);
 
-  Widget _buildSectionHeader(BuildContext context, int count) {
+  Widget _buildSectionHeader(int count) {
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 2),
       child: Text(
