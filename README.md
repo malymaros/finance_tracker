@@ -32,6 +32,11 @@ Built with AI-assisted development using Claude Code.
   updated in the background without user action
 - **Period navigation** — consistent month/year navigation across all tabs with
   shared bounds derived from plan data
+- **In-app help** — contextual "How it works?" sheets for all major features
+  (Expenses, Plan, Reports, Groups, GUARD, Category Budgets); paginated bottom
+  sheets with step indicators, examples, and illustrated mock UI
+- **Multi-language** — UI fully localised in 6 languages: English, Czech,
+  Slovak, Polish, German, Hungarian
 - **Welcome screen** — animated entry screen with coin toss interaction and
   haptic feedback
 
@@ -46,6 +51,7 @@ Built with AI-assisted development using Claude Code.
 | Import (xlsx/csv) | excel + file_picker |
 | Notifications | flutter_local_notifications |
 | Preferences | shared_preferences |
+| Localisation | flutter_localizations + intl |
 | AI tooling | Claude Code |
 
 ## Project Structure

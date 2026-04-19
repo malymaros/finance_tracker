@@ -213,6 +213,17 @@ KEY PATTERNS
 - Type-selector bottom sheet before forms: when a form requires a type decision
   (Income vs Fixed Cost), show AddPlanItemTypeSheet first so the choice is explicit
   and the form opens pre-configured — type cannot be changed mid-form
+- Empty state positioning: all empty states use Expanded → Center → Column(mainAxisSize.min)
+  so they are centred in the available body space below fixed chrome (navigator, toggles,
+  divider). Never place an empty state inside a ListView as a list child.
+- "How it works" sheets: HowGuardWorkSheet and HowCategoryBudgetsWorkSheet are paginated
+  DraggableScrollableSheet bottom sheets (3 pages each). Opened from AppBar help icon
+  and from the empty-state link on their respective screens. Use dedicated l10n title keys
+  (howGuardTitle / howCategoryBudgetsTitle) — do not borrow howGroupsWorkTitle.
+- Expense ordering in items view: sorted newest-date-first at render time in
+  ExpenseListScreen (b.date.compareTo(a.date)); repository stores in insertion order.
+  Time-of-day is only preserved if the user did not interact with the date picker (picker
+  resets to midnight); same-day ordering is therefore insertion order in the general case.
 
 --------------------------------------------------
 SCREENS
@@ -245,11 +256,15 @@ AddPlanItemScreen       Add/edit plan item; accepts initialType (pre-selects and
 PlanItemDetailScreen    Read-only plan item detail; opened by tapping item in plan list
 ManageBudgetsScreen     Category budget management; own ±2-year period navigator;
                         monthly: list of CategoryBudgetTile (sorted alpha, other last);
-                        FAB → AddCategoryBudgetScreen; accessed from PlanScreen overflow menu
+                        FAB → AddCategoryBudgetScreen; help icon (?) in AppBar →
+                        HowCategoryBudgetsWorkSheet; accessed from PlanScreen overflow menu
 AddCategoryBudgetScreen Add/edit category budget form; category locked when editing;
                         past-month inline warning; effective-from month picker
 GuardScreen             Lists guarded fixed-cost items with payment/silence status;
                         notification time config; mark-paid and silence actions;
+                        help icon (?) in AppBar → HowGuardWorkSheet;
+                        body: Column — fixed notification-time Card above Divider,
+                        Expanded below holds items ListView or empty state;
                         accessed from PlanScreen overflow menu
 ReportScreen            Monthly / yearly / overview modes; pie charts by category
                         (pie: <5% grouped into Other, list: all categories shown);
@@ -270,7 +285,7 @@ TESTING
 
 Place tests in test/ mirroring the lib/ structure.
 
-857 tests, all passing. flutter analyze: no issues.
+995 tests, all passing. flutter analyze: no issues.
 
 Models:   Expense, YearMonth, ExpenseCategory, FinancialType, ReportData,
           PlanItem (serialization, GUARD fields, copyWith sentinels, unknown enum fallback),
