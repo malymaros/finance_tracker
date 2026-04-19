@@ -111,7 +111,7 @@ class _HowGuardWorkSheetState extends State<HowGuardWorkSheet> {
       child: Row(
         children: [
           Text(
-            context.l10n.howGuardTitle,
+            context.l10n.howItWorksQuestion,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const Spacer(),

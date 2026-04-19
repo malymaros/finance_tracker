@@ -1158,9 +1158,6 @@ class AppLocalizationsPl extends AppLocalizations {
       'Plik jest uszkodzony i nie można go wczytać';
 
   @override
-  String get howGroupsWorkTitle => 'Jak to działa?';
-
-  @override
   String get howGroupsTitle => 'Grupy';
 
   @override
@@ -1848,9 +1845,6 @@ class AppLocalizationsPl extends AppLocalizations {
   String get allCategoriesTitle => 'Wszystkie kategorie';
 
   @override
-  String get howCategoryBudgetsTitle => 'Jak działają budżety kategorii';
-
-  @override
   String get howCategoryBudgetsSubtitle0 => 'Po co to jest';
 
   @override
@@ -1946,9 +1940,6 @@ class AppLocalizationsPl extends AppLocalizations {
   @override
   String get howCategoryBudgetsResetHint =>
       'Budżety resetują się co miesiąc — niewykorzystane kwoty nie przechodzą dalej.';
-
-  @override
-  String get howGuardTitle => 'Jak działa GUARD';
 
   @override
   String get howGuardSubtitle0 => 'Przypomnienie o płatności';

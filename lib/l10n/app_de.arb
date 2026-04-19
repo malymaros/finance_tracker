@@ -1013,8 +1013,6 @@
   "saveSlotDamagedSubtitle": "Datei ist beschädigt und kann nicht geladen werden",
   "@saveSlotDamagedSubtitle": { "description": "Untertitel auf einer beschädigten Speicherstand-Kachel" },
 
-  "howGroupsWorkTitle": "Wie funktioniert's?",
-  "@howGroupsWorkTitle": { "description": "Kopftitel des Gruppen-Erklärungssheets" },
   "howGroupsTitle": "Gruppen",
   "@howGroupsTitle": { "description": "Schrittüberschrift des Gruppen-Erklärungssheets" },
   "howGroupsSubtitle0": "Was eine Gruppe ist und wie sie funktioniert",
@@ -1666,8 +1664,6 @@
   "allCategoriesTitle": "Alle Kategorien",
   "@allCategoriesTitle": {"description": "Titel des Bildschirms mit allen verfügbaren Kategorien"},
 
-  "howCategoryBudgetsTitle": "Wie Kategoriebudgets funktionieren",
-  "@howCategoryBudgetsTitle": {"description": "Top header title of the How Category Budgets Work bottom sheet"},
   "howCategoryBudgetsSubtitle0": "Warum es das gibt",
   "@howCategoryBudgetsSubtitle0": {"description": "Subtitle for page 0 of the How Category Budgets Work sheet"},
   "howCategoryBudgetsSubtitle1": "Budget erstellen",
@@ -1721,8 +1717,6 @@
   "howCategoryBudgetsResetHint": "Budgets werden jeden Monat zurückgesetzt — nicht verbrauchte Beträge werden nicht übertragen.",
   "@howCategoryBudgetsResetHint": {"description": "Hint box text on page 2 of the How Category Budgets Work sheet"},
 
-  "howGuardTitle": "Wie GUARD funktioniert",
-  "@howGuardTitle": {"description": "Top header title of the How GUARD Works bottom sheet"},
   "howGuardSubtitle0": "Ihre Zahlungserinnerung",
   "@howGuardSubtitle0": {"description": "Subtitle for page 0 of the How GUARD Works sheet"},
   "howGuardSubtitle1": "Einrichtung",

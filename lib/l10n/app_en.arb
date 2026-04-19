@@ -1014,8 +1014,6 @@
   "saveSlotDamagedSubtitle": "File is damaged and cannot be loaded",
   "@saveSlotDamagedSubtitle": {"description": "Subtitle on a damaged save slot tile"},
 
-  "howGroupsWorkTitle": "How it works?",
-  "@howGroupsWorkTitle": {"description": "Top header title of the How Groups Work bottom sheet"},
   "howGroupsTitle": "Groups",
   "@howGroupsTitle": {"description": "Step header title of the How Groups Work bottom sheet"},
   "howGroupsSubtitle0": "What a group is and how it works",
@@ -1667,8 +1665,6 @@
   "allCategoriesTitle": "All Categories",
   "@allCategoriesTitle": {"description": "Title of the screen showing all available categories"},
 
-  "howCategoryBudgetsTitle": "How Category Budgets Work",
-  "@howCategoryBudgetsTitle": {"description": "Top header title of the How Category Budgets Work bottom sheet"},
   "howCategoryBudgetsSubtitle0": "Why it exists",
   "@howCategoryBudgetsSubtitle0": {"description": "Subtitle for page 0 of the How Category Budgets Work sheet"},
   "howCategoryBudgetsSubtitle1": "Creating a budget",
@@ -1722,8 +1718,6 @@
   "howCategoryBudgetsResetHint": "Budgets reset each month — unused amounts don't carry over.",
   "@howCategoryBudgetsResetHint": {"description": "Hint box text on page 2 of the How Category Budgets Work sheet"},
 
-  "howGuardTitle": "How GUARD Works",
-  "@howGuardTitle": {"description": "Top header title of the How GUARD Works bottom sheet"},
   "howGuardSubtitle0": "Your payment reminder",
   "@howGuardSubtitle0": {"description": "Subtitle for page 0 of the How GUARD Works sheet"},
   "howGuardSubtitle1": "Setting it up",

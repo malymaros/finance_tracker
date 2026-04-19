@@ -1013,8 +1013,6 @@
   "saveSlotDamagedSubtitle": "A fájl sérült és nem tölthető be",
   "@saveSlotDamagedSubtitle": {"description": "Felirat sérült mentési hely csempén"},
 
-  "howGroupsWorkTitle": "Hogyan működik?",
-  "@howGroupsWorkTitle": {"description": "A csoportok működését bemutató alsó lap felső fejlécének címe"},
   "howGroupsTitle": "Csoportok",
   "@howGroupsTitle": {"description": "A csoportok működését bemutató alsó lap lépésfejlécének címe"},
   "howGroupsSubtitle0": "Mi a csoport és hogyan működik",
@@ -1666,8 +1664,6 @@
   "allCategoriesTitle": "Összes kategória",
   "@allCategoriesTitle": {"description": "Az összes elérhető kategóriát megjelenítő képernyő címe"},
 
-  "howCategoryBudgetsTitle": "Hogyan működnek a kategória keretek",
-  "@howCategoryBudgetsTitle": {"description": "Top header title of the How Category Budgets Work bottom sheet"},
   "howCategoryBudgetsSubtitle0": "Miért létezik",
   "@howCategoryBudgetsSubtitle0": {"description": "Subtitle for page 0 of the How Category Budgets Work sheet"},
   "howCategoryBudgetsSubtitle1": "Keret létrehozása",
@@ -1721,8 +1717,6 @@
   "howCategoryBudgetsResetHint": "A keretek havonta visszaállnak — a fel nem használt összegek nem vihetők át.",
   "@howCategoryBudgetsResetHint": {"description": "Hint box text on page 2 of the How Category Budgets Work sheet"},
 
-  "howGuardTitle": "Hogyan működik a GUARD",
-  "@howGuardTitle": {"description": "Top header title of the How GUARD Works bottom sheet"},
   "howGuardSubtitle0": "Fizetési emlékeztető",
   "@howGuardSubtitle0": {"description": "Subtitle for page 0 of the How GUARD Works sheet"},
   "howGuardSubtitle1": "Beállítás",

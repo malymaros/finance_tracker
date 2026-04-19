@@ -2036,12 +2036,6 @@ abstract class AppLocalizations {
   /// **'File is damaged and cannot be loaded'**
   String get saveSlotDamagedSubtitle;
 
-  /// Top header title of the How Groups Work bottom sheet
-  ///
-  /// In en, this message translates to:
-  /// **'How it works?'**
-  String get howGroupsWorkTitle;
-
   /// Step header title of the How Groups Work bottom sheet
   ///
   /// In en, this message translates to:
@@ -3176,12 +3170,6 @@ abstract class AppLocalizations {
   /// **'All Categories'**
   String get allCategoriesTitle;
 
-  /// Top header title of the How Category Budgets Work bottom sheet
-  ///
-  /// In en, this message translates to:
-  /// **'How Category Budgets Work'**
-  String get howCategoryBudgetsTitle;
-
   /// Subtitle for page 0 of the How Category Budgets Work sheet
   ///
   /// In en, this message translates to:
@@ -3337,12 +3325,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Budgets reset each month — unused amounts don\'t carry over.'**
   String get howCategoryBudgetsResetHint;
-
-  /// Top header title of the How GUARD Works bottom sheet
-  ///
-  /// In en, this message translates to:
-  /// **'How GUARD Works'**
-  String get howGuardTitle;
 
   /// Subtitle for page 0 of the How GUARD Works sheet
   ///

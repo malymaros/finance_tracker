@@ -1146,9 +1146,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get saveSlotDamagedSubtitle => 'A fájl sérült és nem tölthető be';
 
   @override
-  String get howGroupsWorkTitle => 'Hogyan működik?';
-
-  @override
   String get howGroupsTitle => 'Csoportok';
 
   @override
@@ -1833,9 +1830,6 @@ class AppLocalizationsHu extends AppLocalizations {
   String get allCategoriesTitle => 'Összes kategória';
 
   @override
-  String get howCategoryBudgetsTitle => 'Hogyan működnek a kategória keretek';
-
-  @override
   String get howCategoryBudgetsSubtitle0 => 'Miért létezik';
 
   @override
@@ -1931,9 +1925,6 @@ class AppLocalizationsHu extends AppLocalizations {
   @override
   String get howCategoryBudgetsResetHint =>
       'A keretek havonta visszaállnak — a fel nem használt összegek nem vihetők át.';
-
-  @override
-  String get howGuardTitle => 'Hogyan működik a GUARD';
 
   @override
   String get howGuardSubtitle0 => 'Fizetési emlékeztető';

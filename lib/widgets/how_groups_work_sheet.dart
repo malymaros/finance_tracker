@@ -121,7 +121,7 @@ class _HowGroupsWorkSheetState extends State<HowGroupsWorkSheet> {
       child: Row(
         children: [
           Text(
-            context.l10n.howGroupsWorkTitle,
+            context.l10n.howItWorksQuestion,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const Spacer(),

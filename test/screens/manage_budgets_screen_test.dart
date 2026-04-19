@@ -66,7 +66,8 @@ void main() {
 
     testWidgets('shows tune icon in empty state', (tester) async {
       await tester.pumpWidget(_wrap(CategoryBudgetRepository(persist: false)));
-      expect(find.byIcon(Icons.tune_outlined), findsOneWidget);
+      // Hero icon (size 64) + TextButton icon (size 16) in the "How it works?" link — both tune_outlined
+      expect(find.byIcon(Icons.tune_outlined), findsNWidgets(2));
     });
 
     testWidgets('no CategoryBudgetTile when empty', (tester) async {

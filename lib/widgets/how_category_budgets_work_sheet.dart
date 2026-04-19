@@ -114,7 +114,7 @@ class _HowCategoryBudgetsWorkSheetState
       child: Row(
         children: [
           Text(
-            context.l10n.howCategoryBudgetsTitle,
+            context.l10n.howItWorksQuestion,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const Spacer(),

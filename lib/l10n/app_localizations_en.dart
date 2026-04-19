@@ -1141,9 +1141,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveSlotDamagedSubtitle => 'File is damaged and cannot be loaded';
 
   @override
-  String get howGroupsWorkTitle => 'How it works?';
-
-  @override
   String get howGroupsTitle => 'Groups';
 
   @override
@@ -1820,9 +1817,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get allCategoriesTitle => 'All Categories';
 
   @override
-  String get howCategoryBudgetsTitle => 'How Category Budgets Work';
-
-  @override
   String get howCategoryBudgetsSubtitle0 => 'Why it exists';
 
   @override
@@ -1918,9 +1912,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get howCategoryBudgetsResetHint =>
       'Budgets reset each month — unused amounts don\'t carry over.';
-
-  @override
-  String get howGuardTitle => 'How GUARD Works';
 
   @override
   String get howGuardSubtitle0 => 'Your payment reminder';

@@ -1013,8 +1013,6 @@
   "saveSlotDamagedSubtitle": "Plik jest uszkodzony i nie można go wczytać",
   "@saveSlotDamagedSubtitle": {"description": "Podtytuł na kafelku uszkodzonego slotu zapisu"},
 
-  "howGroupsWorkTitle": "Jak to działa?",
-  "@howGroupsWorkTitle": {"description": "Główny nagłówek dolnego panelu Jak działają grupy"},
   "howGroupsTitle": "Grupy",
   "@howGroupsTitle": {"description": "Nagłówek kroku w dolnym panelu Jak działają grupy"},
   "howGroupsSubtitle0": "Czym jest grupa i jak działa",
@@ -1666,8 +1664,6 @@
   "allCategoriesTitle": "Wszystkie kategorie",
   "@allCategoriesTitle": {"description": "Tytuł ekranu ze wszystkimi dostępnymi kategoriami"},
 
-  "howCategoryBudgetsTitle": "Jak działają budżety kategorii",
-  "@howCategoryBudgetsTitle": {"description": "Główny tytuł nagłówka dolnego panelu Jak działają budżety kategorii"},
   "howCategoryBudgetsSubtitle0": "Po co to jest",
   "@howCategoryBudgetsSubtitle0": {"description": "Podtytuł dla strony 0 arkusza Jak działają budżety kategorii"},
   "howCategoryBudgetsSubtitle1": "Tworzenie budżetu",
@@ -1721,8 +1717,6 @@
   "howCategoryBudgetsResetHint": "Budżety resetują się co miesiąc — niewykorzystane kwoty nie przechodzą dalej.",
   "@howCategoryBudgetsResetHint": {"description": "Tekst wskazówki na stronie 2 arkusza Jak działają budżety kategorii"},
 
-  "howGuardTitle": "Jak działa GUARD",
-  "@howGuardTitle": {"description": "Główny tytuł nagłówka dolnego panelu Jak działa GUARD"},
   "howGuardSubtitle0": "Przypomnienie o płatności",
   "@howGuardSubtitle0": {"description": "Podtytuł dla strony 0 arkusza Jak działa GUARD"},
   "howGuardSubtitle1": "Konfiguracja",

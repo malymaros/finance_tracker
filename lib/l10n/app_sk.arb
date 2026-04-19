@@ -1013,8 +1013,6 @@
   "saveSlotDamagedSubtitle": "Súbor je poškodený a nedá sa načítať",
   "@saveSlotDamagedSubtitle": {"description": "Podtitul na dlaždici poškodeného slotu uloženia"},
 
-  "howGroupsWorkTitle": "Ako to funguje?",
-  "@howGroupsWorkTitle": {"description": "Horný nadpis spodného panelu Ako fungujú skupiny"},
   "howGroupsTitle": "Skupiny",
   "@howGroupsTitle": {"description": "Nadpis kroku v spodnom paneli Ako fungujú skupiny"},
   "howGroupsSubtitle0": "Čo je skupina a ako funguje",
@@ -1666,8 +1664,6 @@
   "allCategoriesTitle": "Všetky kategórie",
   "@allCategoriesTitle": {"description": "Názov obrazovky so všetkými dostupnými kategóriami"},
 
-  "howCategoryBudgetsTitle": "Ako fungujú rozpočty kategórií",
-  "@howCategoryBudgetsTitle": {"description": "Top header title of the How Category Budgets Work bottom sheet"},
   "howCategoryBudgetsSubtitle0": "Prečo to existuje",
   "@howCategoryBudgetsSubtitle0": {"description": "Subtitle for page 0 of the How Category Budgets Work sheet"},
   "howCategoryBudgetsSubtitle1": "Vytvorenie rozpočtu",
@@ -1721,8 +1717,6 @@
   "howCategoryBudgetsResetHint": "Rozpočty sa každý mesiac resetujú — nevyužité sumy sa neprenášajú.",
   "@howCategoryBudgetsResetHint": {"description": "Hint box text on page 2 of the How Category Budgets Work sheet"},
 
-  "howGuardTitle": "Ako funguje GUARD",
-  "@howGuardTitle": {"description": "Top header title of the How GUARD Works bottom sheet"},
   "howGuardSubtitle0": "Pripomenutie platby",
   "@howGuardSubtitle0": {"description": "Subtitle for page 0 of the How GUARD Works sheet"},
   "howGuardSubtitle1": "Nastavenie",

@@ -1154,9 +1154,6 @@ class AppLocalizationsSk extends AppLocalizations {
   String get saveSlotDamagedSubtitle => 'Súbor je poškodený a nedá sa načítať';
 
   @override
-  String get howGroupsWorkTitle => 'Ako to funguje?';
-
-  @override
   String get howGroupsTitle => 'Skupiny';
 
   @override
@@ -1842,9 +1839,6 @@ class AppLocalizationsSk extends AppLocalizations {
   String get allCategoriesTitle => 'Všetky kategórie';
 
   @override
-  String get howCategoryBudgetsTitle => 'Ako fungujú rozpočty kategórií';
-
-  @override
   String get howCategoryBudgetsSubtitle0 => 'Prečo to existuje';
 
   @override
@@ -1940,9 +1934,6 @@ class AppLocalizationsSk extends AppLocalizations {
   @override
   String get howCategoryBudgetsResetHint =>
       'Rozpočty sa každý mesiac resetujú — nevyužité sumy sa neprenášajú.';
-
-  @override
-  String get howGuardTitle => 'Ako funguje GUARD';
 
   @override
   String get howGuardSubtitle0 => 'Pripomenutie platby';
