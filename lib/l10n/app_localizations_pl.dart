@@ -105,7 +105,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get menuHowItWorks => 'Jak to działa';
 
   @override
-  String get menuResetWithDummyData => 'Zresetuj z przykładowymi danymi';
+  String get menuResetWithDummyData => 'Zresetuj z danymi testowymi';
 
   @override
   String get menuManageBudgets => 'Zarządzaj budżetami';
@@ -145,18 +145,18 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String noExpensesInMonth(String monthName, int year) {
-    return 'Brak wydatków w $monthName $year.';
+    return 'W miesiącu $monthName $year nie ma żadnych wydatków.';
   }
 
   @override
-  String get tapPlusToAddOne => 'Dotknij +, aby dodać jeden.';
+  String get tapPlusToAddOne => 'Stuknij +, aby dodać wydatek.';
 
   @override
   String get fixedBillsHint =>
-      'Stałe rachunki, takie jak czynsz, należą do Planu.';
+      'Stałe płatności, takie jak czynsz, należą do Planu.';
 
   @override
-  String get noGroupsThisMonth => 'W tym miesiącu nie ma grup.';
+  String get noGroupsThisMonth => 'W tym miesiącu nie ma żadnych grup.';
 
   @override
   String get addGroupHint =>
@@ -166,12 +166,18 @@ class AppLocalizationsPl extends AppLocalizations {
   String get howGroupsWorkQuestion => 'Jak działają grupy?';
 
   @override
+  String get howGuardWorkQuestion => 'Jak działa GUARD?';
+
+  @override
+  String get howCategoryBudgetsWorkQuestion =>
+      'Jak działają budżety kategorii?';
+
+  @override
   String itemCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
       other: '$count pozycji',
-      many: '$count pozycji',
       few: '$count pozycje',
       one: '1 pozycja',
     );
@@ -188,14 +194,14 @@ class AppLocalizationsPl extends AppLocalizations {
   String get validationAmountEmpty => 'Wprowadź kwotę';
 
   @override
-  String get validationAmountInvalid => 'Wprowadź poprawną dodatnią liczbę';
+  String get validationAmountInvalid => 'Wprowadź prawidłową dodatnią liczbę';
 
   @override
   String get expenseDetailTitle => 'Wydatek';
 
   @override
   String noExpensesInNamedGroup(String name) {
-    return 'Brak wydatków w „$name”.';
+    return 'W grupie „$name” nie ma żadnych wydatków.';
   }
 
   @override
@@ -211,13 +217,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get sectionIncome => 'Dochód';
 
   @override
-  String get sectionFixedCosts => 'Stałe koszty';
+  String get sectionFixedCosts => 'Stałe wydatki';
 
   @override
   String get noIncomeItems => 'Brak pozycji dochodu.';
 
   @override
-  String get noFixedCostItems => 'Brak pozycji stałych kosztów.';
+  String get noFixedCostItems => 'Brak pozycji stałych wydatków.';
 
   @override
   String get spendableBudget => 'Budżet do wydania';
@@ -229,7 +235,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get deleteItemFromPeriod => 'Od tego okresu';
 
   @override
-  String get deleteItemWholeSeries => 'Cała seria';
+  String get deleteItemWholeSeries => 'Całą serię';
 
   @override
   String get planItemDeleted => 'Pozycja planu została usunięta.';
@@ -238,13 +244,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get addIncomeTitle => 'Dodaj dochód';
 
   @override
-  String get addFixedCostTitle => 'Dodaj stały koszt';
+  String get addFixedCostTitle => 'Dodaj stały wydatek';
 
   @override
   String get editIncomeTitle => 'Edytuj dochód';
 
   @override
-  String get editFixedCostTitle => 'Edytuj stały koszt';
+  String get editFixedCostTitle => 'Edytuj stały wydatek';
 
   @override
   String get frequencyOneTime => 'Jednorazowo';
@@ -277,16 +283,16 @@ class AppLocalizationsPl extends AppLocalizations {
   String get typeIncome => 'Dochód';
 
   @override
-  String get typeFixedCost => 'Stały koszt';
+  String get typeFixedCost => 'Stały wydatek';
 
   @override
-  String get ongoing => 'Bez końca';
+  String get ongoing => 'Bez zakończenia';
 
   @override
   String get manageBudgetsTitle => 'Zarządzaj budżetami';
 
   @override
-  String get noBudgetsSet => 'Brak ustawionych budżetów dla tego okresu.';
+  String get noBudgetsSet => 'Dla tego okresu nie ustawiono żadnych budżetów.';
 
   @override
   String get addFirstBudget => 'Dodaj swój pierwszy budżet.';
@@ -305,7 +311,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get pastMonthBudgetWarning =>
-      'Ustawienie budżetu w przeszłości nie wpłynie na wcześniejsze wydatki.';
+      'Ustawienie budżetu w przeszłości nie wpłynie na minione wydatki.';
 
   @override
   String get budgetSaved => 'Budżet został zapisany.';
@@ -317,10 +323,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get guardScreenTitle => 'GUARD';
 
   @override
-  String get guardDailyReminderTime => 'Czas codziennego przypomnienia';
+  String get guardDailyReminderTime => 'Godzina codziennego przypomnienia';
 
   @override
-  String get guardTimePicker => 'Czas codziennego przypomnienia GUARD';
+  String get guardTimePicker => 'Godzina codziennego przypomnienia GUARD';
 
   @override
   String get guardMarkPaid => 'Oznacz jako opłacone';
@@ -341,7 +347,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get guardStatusSilenced => 'Wyciszone';
 
   @override
-  String get noGuardedItems => 'Brak chronionych pozycji.';
+  String get noGuardedItems => 'Brak śledzonych pozycji.';
 
   @override
   String get reportsTitle => 'Raporty';
@@ -359,11 +365,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get exportPdf => 'Eksportuj PDF';
 
   @override
-  String get noExpensesForPeriod => 'Brak zapisanych wydatków dla tego okresu.';
+  String get noExpensesForPeriod =>
+      'Dla tego okresu nie zapisano żadnych wydatków.';
 
   @override
   String get noIncomeOrSpendingDataForYear =>
-      'Brak danych o dochodach lub wydatkach dla tego roku.';
+      'Dla tego roku nie ma danych o dochodach ani wydatkach.';
 
   @override
   String get pieChartOther => 'Inne';
@@ -375,17 +382,16 @@ class AppLocalizationsPl extends AppLocalizations {
   String get reportSectionExpenses => 'WYDATKI';
 
   @override
-  String get noneInPeriod => 'Brak w tym okresie.';
+  String get noneInPeriod => 'W tym okresie nic.';
 
   @override
   String fixedCostCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count stałych kosztów',
-      many: '$count stałych kosztów',
-      few: '$count stałe koszty',
-      one: '1 stały koszt',
+      other: '$count stałych wydatków',
+      few: '$count stałe wydatki',
+      one: '1 stały wydatek',
     );
     return '$_temp0';
   }
@@ -396,7 +402,6 @@ class AppLocalizationsPl extends AppLocalizations {
       count,
       locale: localeName,
       other: '$count wydatków',
-      many: '$count wydatków',
       few: '$count wydatki',
       one: '1 wydatek',
     );
@@ -404,7 +409,7 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get noItemsInPeriod => 'Brak pozycji w tym okresie';
+  String get noItemsInPeriod => 'W tym okresie nie ma żadnych pozycji';
 
   @override
   String get importTitle => 'Importuj wydatki';
@@ -414,24 +419,24 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get importStep1Description =>
-      'Pobierz oficjalny szablon Excel ze wszystkimi wymaganymi kolumnami oraz przewodnikiem po prawidłowych wartościach.';
+      'Pobierz oficjalny szablon Excel ze wszystkimi wymaganymi kolumnami i instrukcjami dotyczącymi prawidłowych wartości.';
 
   @override
   String get importStep1Button => 'Pobierz szablon';
 
   @override
-  String get importStep2Title => 'Wypełnij i importuj';
+  String get importStep2Title => 'Wypełnij i zaimportuj';
 
   @override
   String get importStep2Description =>
-      'Wypełnij szablon w Excelu lub Google Sheets, a następnie wybierz tutaj plik, aby zaimportować swoje wydatki.';
+      'Wypełnij szablon w Excelu lub Google Sheets, a następnie wybierz tutaj plik do importu wydatków.';
 
   @override
   String get importStep2Button => 'Wybierz plik (.xlsx lub .csv)';
 
   @override
   String get importInfoText =>
-      'Można importować tylko wydatki. Dochody i pozycje planu nie są obsługiwane.\n\nAkceptowane formaty: .xlsx (Excel) i .csv.\nPliki CSV muszą mieć taką samą kolejność kolumn jak szablon: Date, Amount, Category, Financial Type, Note, Group.\n\nPliki wyeksportowane z tej aplikacji również można importować bezpośrednio.';
+      'Importować można tylko wydatki. Dochody i pozycje planu nie są obsługiwane.\n\nObsługiwane formaty: .xlsx (Excel) i .csv.\nPliki CSV muszą mieć taką samą kolejność kolumn jak szablon: Data, Kwota, Kategoria, Typ finansowy, Notatka, Grupa.\n\nPliki wyeksportowane z tej aplikacji można importować bezpośrednio.';
 
   @override
   String importReadyCount(int count) {
@@ -439,7 +444,6 @@ class AppLocalizationsPl extends AppLocalizations {
       count,
       locale: localeName,
       other: '$count wydatków gotowych do importu',
-      many: '$count wydatków gotowych do importu',
       few: '$count wydatki gotowe do importu',
       one: '1 wydatek gotowy do importu',
     );
@@ -451,10 +455,9 @@ class AppLocalizationsPl extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count wierszy nie udało się odczytać',
-      many: '$count wierszy nie udało się odczytać',
-      few: '$count wierszy nie udało się odczytać',
-      one: '1 wiersza nie udało się odczytać',
+      other: '$count wierszy nie udało się wczytać',
+      few: '$count wierszy nie udało się wczytać',
+      one: '1 wiersza nie udało się wczytać',
     );
     return '$_temp0';
   }
@@ -464,20 +467,19 @@ class AppLocalizationsPl extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count wierszy nie udało się odczytać — zostaną pominięte',
-      many: '$count wierszy nie udało się odczytać — zostaną pominięte',
-      few: '$count wierszy nie udało się odczytać — zostaną pominięte',
-      one: '1 wiersza nie udało się odczytać — zostanie pominięty',
+      other: '$count wierszy nie udało się wczytać — zostaną pominięte',
+      few: '$count wiersze nie udało się wczytać — zostaną pominięte',
+      one: '1 wiersza nie udało się wczytać — zostanie pominięty',
     );
     return '$_temp0';
   }
 
   @override
-  String get importNoDataFound => 'Nie znaleziono danych w pliku.';
+  String get importNoDataFound => 'W pliku nie znaleziono żadnych danych.';
 
   @override
   String get importTapToEdit =>
-      'Dotknij dowolnego wiersza, aby go edytować lub usunąć przed importem.';
+      'Stuknij dowolny wiersz, aby go przed importem edytować lub usunąć.';
 
   @override
   String get importRowsWithErrors => 'Wiersze z błędami';
@@ -491,7 +493,6 @@ class AppLocalizationsPl extends AppLocalizations {
       count,
       locale: localeName,
       other: 'Importuj $count wydatków',
-      many: 'Importuj $count wydatków',
       few: 'Importuj $count wydatki',
       one: 'Importuj 1 wydatek',
     );
@@ -503,10 +504,9 @@ class AppLocalizationsPl extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count wydatków zaimportowano · $range',
-      many: '$count wydatków zaimportowano · $range',
-      few: '$count wydatki zaimportowano · $range',
-      one: '1 wydatek zaimportowano · $range',
+      other: '$count wydatków zaimportowanych · $range',
+      few: '$count wydatki zaimportowane · $range',
+      one: '1 wydatek zaimportowany · $range',
     );
     return '$_temp0';
   }
@@ -530,7 +530,7 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get tryAnotherFile => 'Spróbuj innego pliku';
+  String get tryAnotherFile => 'Spróbuj inny plik';
 
   @override
   String get savesTitle => 'Zapisy';
@@ -542,7 +542,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get sectionSaves => 'ZAPISY';
 
   @override
-  String get sectionDataTransfer => 'TRANSFER DANYCH';
+  String get sectionDataTransfer => 'PRZENOSZENIE DANYCH';
 
   @override
   String get sectionDataDeletion => 'USUWANIE DANYCH';
@@ -561,12 +561,12 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String savedConfirmation(String name) {
-    return '„$name” zapisano.';
+    return '„$name” zostało zapisane.';
   }
 
   @override
   String loadedConfirmation(String name) {
-    return '„$name” wczytano.';
+    return '„$name” zostało wczytane.';
   }
 
   @override
@@ -617,12 +617,12 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String overBudgetAmount(String amount) {
-    return '$amount ponad budżet';
+    return '$amount ponad limit';
   }
 
   @override
   String underBudgetAmount(String amount) {
-    return '$amount pozostało';
+    return 'Pozostało $amount';
   }
 
   @override
@@ -637,12 +637,12 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String progressBarLabel(String spent, String budget) {
-    return '$spent wydano  /  $budget budżet';
+    return '$spent wydane  /  $budget budżet';
   }
 
   @override
   String categoryBudgetOverBy(String category, String amount) {
-    return 'Budżet kategorii $category: przekroczony o $amount';
+    return 'Budżet $category: przekroczony o $amount';
   }
 
   @override
@@ -779,7 +779,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get categoryMedications => 'Leki';
 
   @override
-  String get categoryUtilities => 'Media';
+  String get categoryUtilities => 'Media i usługi';
 
   @override
   String get categoryHousehold => 'Artykuły gospodarstwa domowego';
@@ -791,13 +791,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get categorySavings => 'Oszczędności';
 
   @override
-  String get categoryDebt => 'Dług';
+  String get categoryDebt => 'Długi';
 
   @override
   String get categoryKids => 'Dzieci';
 
   @override
-  String get categoryPets => 'Zwierzęta';
+  String get categoryPets => 'Zwierzęta domowe';
 
   @override
   String get categoryFees => 'Opłaty';
@@ -836,10 +836,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get addOneTimeIncomeTitle => 'Dodaj jednorazowy dochód';
 
   @override
-  String get addMonthlyFixedCostTitle => 'Dodaj miesięczny stały koszt';
+  String get addMonthlyFixedCostTitle => 'Dodaj miesięczny stały wydatek';
 
   @override
-  String get addYearlyFixedCostTitle => 'Dodaj roczny stały koszt';
+  String get addYearlyFixedCostTitle => 'Dodaj roczny stały wydatek';
 
   @override
   String get editMonthlyIncomeTitle => 'Edytuj miesięczny dochód';
@@ -851,10 +851,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get editOneTimeIncomeTitle => 'Edytuj jednorazowy dochód';
 
   @override
-  String get editMonthlyFixedCostTitle => 'Edytuj miesięczny stały koszt';
+  String get editMonthlyFixedCostTitle => 'Edytuj miesięczny stały wydatek';
 
   @override
-  String get editYearlyFixedCostTitle => 'Edytuj roczny stały koszt';
+  String get editYearlyFixedCostTitle => 'Edytuj roczny stały wydatek';
 
   @override
   String get labelType => 'Typ';
@@ -882,7 +882,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String lastMonthRenewal(String monthName) {
-    return 'Ostatnie odnowienie w $monthName';
+    return 'Ostatnie odnowienie w miesiącu $monthName';
   }
 
   @override
@@ -900,7 +900,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String lastActiveMonthNote(String label) {
-    return '$label jest ostatnim aktywnym miesiącem.';
+    return '$label to ostatni aktywny miesiąc.';
   }
 
   @override
@@ -912,7 +912,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String renewedEachMonth(String monthName) {
-    return 'Odnawiane co $monthName. Daty są stałe.';
+    return 'Odnawia się co $monthName. Daty są stałe.';
   }
 
   @override
@@ -924,7 +924,7 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get openEnded => 'Bez końca';
+  String get openEnded => 'Bez zakończenia';
 
   @override
   String fromDateLabel(String validFromLabel) {
@@ -933,21 +933,21 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get samePeriodInPlace =>
-      'Ten sam miesiąc co oryginał — zostanie zaktualizowany w miejscu.';
+      'Ten sam miesiąc co oryginalny — aktualizacja w miejscu.';
 
   @override
   String get differentPeriodNewVersion =>
       'Inny miesiąc — zostanie utworzona nowa wersja.';
 
   @override
-  String get applyChangesToTitle => 'Zastosuj zmiany do...';
+  String get applyChangesToTitle => 'Zastosować zmiany do...';
 
   @override
-  String get applyToWholeSeries => 'Całej serii';
+  String get applyToWholeSeries => 'Całą serię';
 
   @override
   String applyToWholeSeriesSubtitle(String seriesStartLabel) {
-    return 'Wszystkie okresy od $seriesStartLabel dalej';
+    return 'Wszystkie okresy od $seriesStartLabel';
   }
 
   @override
@@ -969,43 +969,44 @@ class AppLocalizationsPl extends AppLocalizations {
       'Pozycje roczne można zmieniać tylko w miesiącu ich odnowienia.';
 
   @override
-  String get guardRemindMe => 'Przypomnij mi o potwierdzeniu tej płatności';
+  String get guardRemindMe => 'Przypomnij mi, abym potwierdził tę płatność';
 
   @override
   String get guardShorterMonths =>
       'Krótsze miesiące użyją swojego ostatniego dnia.';
 
   @override
-  String get dueDayMonthly => 'Dzień płatności (powtarza się co miesiąc)';
+  String get dueDayMonthly => 'Dzień płatności (powtarzaj co miesiąc)';
 
   @override
   String dueDayYearly(String monthName) {
-    return 'Dzień płatności (powtarza się każdego $monthName)';
+    return 'Dzień płatności (powtarzaj co $monthName)';
   }
 
   @override
   String dueDayMonthlyLabel(int day) {
-    return 'Dzień $day każdego miesiąca';
+    return '$day. dzień każdego miesiąca';
   }
 
   @override
   String dueDayYearlyLabel(int day, String monthName) {
-    return 'Dzień $day miesiąca $monthName każdego roku';
+    return '$day. dzień miesiąca $monthName każdego roku';
   }
 
   @override
   String get guardDailyReminder => 'Codzienne przypomnienie';
 
   @override
-  String get guardChangeNotifTime => 'Dotknij, aby zmienić czas powiadomienia';
+  String get guardChangeNotifTime =>
+      'Stuknij, aby zmienić godzinę powiadomienia';
 
   @override
   String get guardNoGuardedItemsHint =>
-      'Włącz GUARD przy stałym koszcie, aby śledzić płatności.';
+      'Włącz GUARD przy stałym wydatku, aby śledzić płatności.';
 
   @override
   String guardedItemsCount(int count) {
-    return 'Chronione pozycje · $count';
+    return 'Śledzone pozycje · $count';
   }
 
   @override
@@ -1027,19 +1028,19 @@ class AppLocalizationsPl extends AppLocalizations {
   String get oneTimeSuffix => '(jednorazowo)';
 
   @override
-  String get noEndDate => 'Brak daty końcowej';
+  String get noEndDate => 'Bez daty końcowej';
 
   @override
   String get guardNotEnabled => 'Nie włączono';
 
   @override
   String removeIncomeEntirely(String name) {
-    return '„$name” zostanie całkowicie usunięte.';
+    return '„$name” zostanie usunięte całkowicie.';
   }
 
   @override
   String removeIncomeFromOnwards(String name, String from, String prev) {
-    return '„$name” zostanie zatrzymane od $from dalej. $prev i wcześniejsze okresy pozostaną zaplanowane.';
+    return '„$name” zostanie zatrzymane od $from. $prev i wcześniejsze okresy pozostaną zaplanowane.';
   }
 
   @override
@@ -1060,7 +1061,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String removeHistoryKept(String prev) {
-    return 'Historia do $prev zostaje zachowana.';
+    return 'Historia do $prev zostanie zachowana.';
   }
 
   @override
@@ -1068,7 +1069,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String silenceReminderBody(String periodLabel) {
-    return 'Płatność za $periodLabel nadal będzie pokazywana jako niepotwierdzona. Możesz w każdej chwili oznaczyć ją jako opłaconą.';
+    return 'Płatność za okres $periodLabel nadal będzie wyświetlana jako niepotwierdzona. W każdej chwili możesz oznaczyć ją jako opłaconą.';
   }
 
   @override
@@ -1084,34 +1085,34 @@ class AppLocalizationsPl extends AppLocalizations {
   String get spendableThisYear => 'Do wydania w tym roku';
 
   @override
-  String get noPlanItemsYet => 'Brak jeszcze pozycji planu.';
+  String get noPlanItemsYet => 'Nie ma jeszcze żadnych pozycji planu.';
 
   @override
   String get tapPlusToAddPlanItems =>
-      'Dotknij +, aby dodać dochód lub stałe koszty.';
+      'Stuknij +, aby dodać dochód lub stałe koszty.';
 
   @override
-  String get removeWholeSeries => 'Cała seria';
+  String get removeWholeSeries => 'Całą serię';
 
   @override
   String removeWholeSeriesSubtitle(String seriesStartLabel) {
-    return 'Wszystkie okresy od $seriesStartLabel są usuwane.';
+    return 'Wszystkie okresy od $seriesStartLabel zostaną usunięte.';
   }
 
   @override
-  String get clearAllDataAction => 'USUŃ';
+  String get clearAllDataAction => 'WYCZYŚĆ';
 
   @override
   String get clearAllDataDescription =>
-      'Wydatki, pozycje planu, budżety i płatności guard zostaną trwale usunięte. Tej operacji nie można cofnąć.';
+      'Wydatki, pozycje planu, budżety i płatności GUARD zostaną trwale usunięte. Tej operacji nie można cofnąć.';
 
   @override
   String get clearAllDataPreservedNote =>
-      'Zapisane snapshoty i automatyczne kopie zapasowe pozostają bez zmian.';
+      'Zapisane snapshoty i automatyczne kopie zapasowe nie zostaną naruszone.';
 
   @override
   String get allCategoriesBudgeted =>
-      'Wszystkie kategorie mają już budżet na ten miesiąc. Wybierz inny miesiąc, aby dodać kolejny.';
+      'Wszystkie kategorie mają już ustawiony budżet na ten miesiąc. Wybierz inny miesiąc, jeśli chcesz dodać kolejny.';
 
   @override
   String get selectCategoryHint => 'Wybierz kategorię';
@@ -1129,7 +1130,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String pastMonthBudgetCreateWarning(String fromLabel) {
-    return 'Tworzysz budżet dla wcześniejszego miesiąca. Będzie obowiązywał wstecz od $fromLabel.';
+    return 'Tworzysz budżet dla poprzedniego miesiąca. Będzie obowiązywał wstecz od $fromLabel.';
   }
 
   @override
@@ -1142,10 +1143,10 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get noFixedCostsPlanned => 'Brak zaplanowanych stałych kosztów';
+  String get noFixedCostsPlanned => 'Nie zaplanowano stałych kosztów';
 
   @override
-  String get noIncomePlanned => 'Brak zaplanowanego dochodu';
+  String get noIncomePlanned => 'Nie zaplanowano dochodu';
 
   @override
   String saveSlotSubtitle(String date, int expenseCount, int planItemCount) {
@@ -1166,47 +1167,47 @@ class AppLocalizationsPl extends AppLocalizations {
   String get howGroupsSubtitle0 => 'Czym jest grupa i jak działa';
 
   @override
-  String get howGroupsSubtitle1 => 'Jak najlepiej to wykorzystać';
+  String get howGroupsSubtitle1 => 'Jak wyciągnąć z niej jak najwięcej';
 
   @override
   String get howGroupsSubtitle2 => 'Gdzie grupy pojawiają się w aplikacji';
 
   @override
-  String get howGroupsLabel0 => 'Tag';
+  String get howGroupsLabel0 => 'Etykieta';
 
   @override
   String get howGroupsLabel1 => 'Bądź kreatywny';
 
   @override
-  String get howGroupsLabel2 => 'Rejestr';
+  String get howGroupsLabel2 => 'Przegląd';
 
   @override
   String get howGroupsRule1 =>
-      'Grupa to opcjonalna etykieta dowolnego tekstu, którą przypisujesz do dowolnego wydatku.';
+      'Grupa to opcjonalna etykieta tekstowa, którą możesz przypisać do każdego wydatku.';
 
   @override
   String get howGroupsRule2 =>
-      'Możesz wpisać dowolny ciąg znaków — nie ma stałej listy ani walidacji.';
+      'Możesz wpisać dowolny tekst — nie istnieje stała lista ani walidacja.';
 
   @override
   String get howGroupsRule3 =>
-      'Dwa wydatki należą do tej samej grupy tylko wtedy, gdy ich etykiety są dokładnie takie same, znak po znaku.';
+      'Dwa wydatki należą do tej samej grupy tylko wtedy, gdy ich nazwy są identyczne, znak po znaku.';
 
   @override
   String get howGroupsRule4 =>
-      'Wielkość liter jest zachowana — „Trip” i „trip” są traktowane jako dwie różne grupy.';
+      'Rozróżniana jest wielkość liter — „Trip” i „trip” to dwie różne grupy.';
 
   @override
   String get howGroupsRule5 =>
-      'To pole jest opcjonalne. Zostaw je puste, a wydatek po prostu nie będzie miał grupy.';
+      'Pole jest opcjonalne. Jeśli pozostawisz je puste, wydatek po prostu nie będzie miał grupy.';
 
   @override
   String get howGroupsHint =>
-      'Ustaw grupę podczas tworzenia lub edycji dowolnego wydatku.';
+      'Grupę ustawiasz podczas tworzenia lub edycji dowolnego wydatku.';
 
   @override
   String get howGroupsUseIntro =>
-      'Używaj tego zawsze, gdy chcesz śledzić fragment wydatków przecinający się z wieloma kategoriami.';
+      'Użyj jej zawsze, gdy chcesz śledzić wycinek wydatków obejmujący różne kategorie.';
 
   @override
   String howGroupsExample1Label(int year) {
@@ -1215,7 +1216,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get howGroupsExample1Desc =>
-      'Przypisz ją do każdego wydatku podczas podróży — lotów, hoteli, posiłków, biletów. Zobacz całkowity koszt całej podróży jednym dotknięciem.';
+      'Przypisz ją do wszystkich wydatków z wyjazdu — lotów, hoteli, jedzenia, wejściówek. Całkowity koszt całej podróży zobaczysz po jednym stuknięciu.';
 
   @override
   String howGroupsExample2Label(int year) {
@@ -1224,36 +1225,36 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get howGroupsExample2Desc =>
-      'Używaj spójnej nazwy przez cały rok. Pod koniec roku będziesz dokładnie wiedzieć, ile wydałeś w tym jednym miejscu.';
+      'Używaj tej samej nazwy przez cały rok. Na koniec roku dokładnie zobaczysz, ile wydałeś w tym jednym miejscu.';
 
   @override
   String get howGroupsExample3Label => 'Remont domu Q1';
 
   @override
   String get howGroupsExample3Desc =>
-      'Rozciągnij ten sam tag na wiele miesięcy. Karta Grupy zbierze wszystko pod tą nazwą.';
+      'Używaj tej samej nazwy przez kilka miesięcy. Karta Grupy zbierze wszystko pod tą nazwą.';
 
   @override
   String get howGroupsPrecision =>
-      'Im bardziej precyzyjny jest twój tag, tym bardziej użyteczne będzie podsumowanie.';
+      'Im dokładniejszą nazwę wpiszesz, tym bardziej przydatne będzie końcowe podsumowanie.';
 
   @override
   String get howGroupsRecord0Title => 'Karta Grupy w Wydatkach';
 
   @override
   String get howGroupsRecord0Body =>
-      'Każda grupa, która ma co najmniej jeden wydatek w bieżącym miesiącu, pojawia się tutaj jako jeden wiersz pokazujący liczbę pozycji i sumę. Dotknij grupy, aby wejść głębiej i zobaczyć każdy pojedynczy wydatek, który za nią stoi.';
+      'Każda grupa, która ma w bieżącym miesiącu przynajmniej jeden wydatek, pojawi się tutaj jako jeden wiersz z liczbą pozycji i łączną kwotą. Stuknij grupę, aby zobaczyć pojedyncze wydatki, które się na nią składają.';
 
   @override
-  String get howGroupsRecord1Title => 'Raport miesięczny w Raportach';
+  String get howGroupsRecord1Title => 'Miesięczny raport w Raportach';
 
   @override
   String get howGroupsRecord1Body =>
-      'Gdy eksportujesz miesięczny PDF z ekranu Raporty, grupy z wydatkami w tym miesiącu otrzymują osobną stronę „Grupy wydatków” — każda grupa jest wymieniona wraz ze swoimi wydatkami, kwotami i sumą grupy.';
+      'Gdy na ekranie Raporty eksportujesz miesięczny PDF, grupy z wydatkami w danym miesiącu otrzymają własną stronę „Grupy wydatków” — każda grupa będzie wymieniona wraz ze swoimi wydatkami, kwotami i łączną sumą grupy.';
 
   @override
   String get howGroupsMonthlyNote =>
-      'Grupy nie są uwzględniane w raporcie rocznym — to miesięczna perspektywa.';
+      'Grupy nie są częścią rocznego raportu — to widok miesięczny.';
 
   @override
   String get howGroupsExampleGroupName => 'Moja grupa';
@@ -1263,16 +1264,16 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String noCategoryExpenses(String category, String period) {
-    return 'Brak wydatków kategorii $category\nw $period.';
+    return 'Brak wydatków kategorii $category\nw okresie $period.';
   }
 
   @override
   String guardDueDate(String monthName, int day, int year) {
-    return 'Termin $monthName $day, $year';
+    return 'Płatne $day $monthName $year';
   }
 
   @override
-  String get guardNotYetDue => 'Jeszcze nie jest wymagalne';
+  String get guardNotYetDue => 'Jeszcze nie jest płatne';
 
   @override
   String guardNextReminder(String label) {
@@ -1295,7 +1296,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String guardMarkUnpaidBody(String monthName, int year) {
-    return 'To usunie potwierdzenie płatności dla $monthName $year.';
+    return 'To usunie potwierdzenie płatności za $monthName $year.';
   }
 
   @override
@@ -1309,14 +1310,14 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String guardRemoveBody(String name) {
-    return 'GUARD zostanie wyłączony dla „$name”. Istniejące rekordy płatności zostaną zachowane, ale nowe przypomnienia nie będą już uruchamiane.';
+    return 'GUARD zostanie wyłączony dla „$name”. Istniejące wpisy płatności zostaną zachowane, ale nowe przypomnienia nie będą już uruchamiane.';
   }
 
   @override
   String get guardRemoveConfirm => 'Usuń';
 
   @override
-  String get guardSelectPaidDate => 'Wybierz datę opłacenia';
+  String get guardSelectPaidDate => 'Wybierz datę zapłaty';
 
   @override
   String guardPaidOn(String date) {
@@ -1329,58 +1330,59 @@ class AppLocalizationsPl extends AppLocalizations {
   }
 
   @override
-  String get planSubtitle0 => 'Twoje wynagrodzenie i stałe miesięczne rachunki';
+  String get planSubtitle0 =>
+      'Twoje wynagrodzenie i regularne miesięczne zobowiązania';
 
   @override
   String get planSubtitle1 => 'Jak klasyfikowane są twoje stałe koszty';
 
   @override
-  String get planSubtitle2 => 'Jaką część twojego dochodu pochłania każdy typ';
+  String get planSubtitle2 => 'Ile z twojego dochodu pochłania każdy typ';
 
   @override
-  String get planSubStep0 => 'Przepływ gotówki';
+  String get planSubStep0 => 'Cashflow';
 
   @override
   String get planSubStep1 => 'Klasyfikacja';
 
   @override
-  String get planSubStep2 => 'Alokacja';
+  String get planSubStep2 => 'Podział';
 
   @override
   String get howItWorksPlanIncomeBody =>
-      'Wprowadź swoje wynagrodzenie i stałe miesięczne rachunki — czynsz, ubezpieczenie, subskrypcje. To są prawdziwe, znane liczby, a nie szacunki ani cele.';
+      'Wprowadź swoje wynagrodzenie i regularne miesięczne zobowiązania — czynsz, ubezpieczenie, subskrypcje. To są realne, znane kwoty, a nie szacunki ani cele.';
 
   @override
   String get howItWorksTypeConsumptionDesc =>
-      'Codzienne wydatki — zakupy spożywcze, czynsz, jedzenie na mieście, transport';
+      'Codzienne wydatki — zakupy spożywcze, czynsz, jedzenie, transport';
 
   @override
   String get howItWorksTypeAssetDesc =>
-      'Inwestycje i oszczędności, które z czasem powiększają twój majątek';
+      'Inwestycje i oszczędności, które z czasem zwiększają twój majątek';
 
   @override
   String get howItWorksTypeInsuranceDesc =>
-      'Koszty ochrony — ubezpieczenie samochodu, zdrowia i życia';
+      'Koszty ochrony — samochód, zdrowie i ubezpieczenie na życie';
 
   @override
   String get howItWorksFinancialTypesBody =>
-      'Każdy stały koszt jest oznaczony typem finansowym. Dzięki temu aplikacja może pokazać, jak twój dochód jest rozłożony między wydatki, oszczędności i ochronę.';
+      'Każdy stały wydatek jest oznaczony typem finansowym. Dzięki temu aplikacja pokaże, jak twój dochód rozkłada się między konsumpcję, oszczędności i ochronę.';
 
   @override
-  String get howItWorksSpendingVsIncomeTitle => 'Wydatki vs Dochód';
+  String get howItWorksSpendingVsIncomeTitle => 'Wydatki vs dochód';
 
   @override
   String get howItWorksSpendingVsIncomeBody =>
-      'Karta Plan pokazuje, ile twojego dochodu trafia do każdego typu finansowego — dzięki czemu na pierwszy rzut oka widzisz, czy wydajesz, oszczędzasz lub chronisz właściwą część tego, co zarabiasz.';
+      'Karta Plan pokazuje, ile z twojego dochodu trafia do każdego typu finansowego — dzięki temu od razu widzisz, czy wydajesz, oszczędzasz czy chronisz się we właściwej proporcji.';
 
   @override
-  String get expSubtitle0 => 'Twój dostępny budżet, obliczony z Planu';
+  String get expSubtitle0 => 'Twój dostępny budżet obliczony z Planu';
 
   @override
   String get expSubtitle1 => 'Codzienne wydatki, które zapisujesz';
 
   @override
-  String get expSubtitle2 => 'Czy zmieściłeś się w budżecie?';
+  String get expSubtitle2 => 'Zmieszczono się w budżecie?';
 
   @override
   String get subStepBudget => 'Budżet';
@@ -1393,24 +1395,24 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get howItWorksBudgetBody =>
-      'Aplikacja odejmuje twoje stałe koszty od twojego dochodu i pokazuje wynik tutaj. Nie ustawiasz tej liczby — pochodzi z twojego Planu.';
+      'Aplikacja odejmuje stałe koszty od twojego dochodu i pokazuje wynik tutaj. Nie ustawiasz tej liczby ręcznie — wynika z twojego Planu.';
 
   @override
   String get howItWorksSpendingBody =>
-      'Zapisuj zakupy spożywcze, posiłki, zakupy i inne zmienne wydatki. Stałe miesięczne rachunki, takie jak czynsz, należą do Planu, nie tutaj.';
+      'Zapisuj zakupy spożywcze, posiłki, zakupy i inne zmienne wydatki. Stałe miesięczne płatności, takie jak czynsz, należą do Planu, nie tutaj.';
 
   @override
   String get howItWorksResultBody =>
       'Na koniec miesiąca karta Wydatki pokaże, jaki wynik osiągnąłeś.';
 
   @override
-  String get repSubtitle0 => 'Gdzie poszły twoje pieniądze?';
+  String get repSubtitle0 => 'Gdzie trafiły twoje pieniądze?';
 
   @override
   String get repSubtitle1 => 'Twoje finanse na papierze';
 
   @override
-  String get repSubtitle2 => 'Pełny obraz, miesiąc po miesiącu';
+  String get repSubtitle2 => 'Duży obraz, miesiąc po miesiącu';
 
   @override
   String get repSubStep0 => 'Podział';
@@ -1423,7 +1425,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get howItWorksBreakdownBody =>
-      'Podział pokazuje twoje wydatki według kategorii dla dowolnego miesiąca lub roku. Dotknij wycinka lub wiersza kategorii, aby przejść do pojedynczych wydatków i stałych kosztów, które za nimi stoją.';
+      'Podział pokazuje twoje wydatki według kategorii dla dowolnego miesiąca lub roku. Stuknij segment wykresu lub wiersz kategorii, aby zobaczyć pojedyncze wydatki i stałe koszty, które się za nimi kryją.';
 
   @override
   String get pdfFeatureCategoryTotals => 'Sumy kategorii';
@@ -1432,10 +1434,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get pdfFeatureBudgetVsActual => 'Budżet vs rzeczywistość';
 
   @override
-  String get pdfFeatureTypeSplit => 'Podział typu finansowego';
+  String get pdfFeatureTypeSplit => 'Podział według typów finansowych';
 
   @override
-  String get pdfFeatureAllExpenses => 'Wszystkie wydatki wymienione';
+  String get pdfFeatureAllExpenses => 'Wszystkie wydatki na liście';
 
   @override
   String get pdfFeatureCategoryBudgets => 'Budżety kategorii';
@@ -1447,30 +1449,30 @@ class AppLocalizationsPl extends AppLocalizations {
   String get pdfFeature12MonthOverview => 'Przegląd 12 miesięcy';
 
   @override
-  String get pdfFeatureAnnualTotals => 'Roczne sumy';
+  String get pdfFeatureAnnualTotals => 'Sumy roczne';
 
   @override
-  String get pdfFeatureMonthlyBreakdown => 'Podział miesięczny';
+  String get pdfFeatureMonthlyBreakdown => 'Miesięczny podział';
 
   @override
   String get pdfFeaturePlanVsActual => 'Plan vs rzeczywistość';
 
   @override
-  String get pdfFeatureTypeRatios => 'Wskaźniki typów';
+  String get pdfFeatureTypeRatios => 'Proporcje typów finansowych';
 
   @override
   String get pdfFeatureActivePlanItems => 'Aktywne pozycje planu';
 
   @override
   String get howItWorksExportBody =>
-      'Użyj przycisku PDF w Podziale, aby eksportować. Raporty można udostępniać przez dowolną aplikację na twoim urządzeniu.';
+      'Użyj przycisku PDF w Podziale, aby wyeksportować raport. Raportami możesz dzielić się przez dowolną aplikację na swoim urządzeniu.';
 
   @override
-  String get howItWorksMoreMonths => '· · · jeszcze 9 miesięcy';
+  String get howItWorksMoreMonths => '· · · 9 kolejnych miesięcy';
 
   @override
   String get howItWorksOverviewBody =>
-      'Przegląd pokazuje wszystkie 12 miesięcy obok siebie — ile zarobiłeś, ile trafiło do aktywów i ile zostało skonsumowane. Dotknij dowolnego miesiąca, aby przejść do tego okresu w Planie.';
+      'Przegląd pokazuje wszystkie 12 miesięcy obok siebie — ile zarobiłeś, ile trafiło do aktywów i ile zostało skonsumowane. Stuknij dowolny miesiąc, aby przejść do tego okresu w Planie.';
 
   @override
   String overBudgetBy(String amount) {
@@ -1493,11 +1495,11 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get autoBackupSubtitleExpand =>
-      'Aktualizowane codziennie · dotknij, aby rozwinąć';
+      'Aktualizowane codziennie · stuknij, aby rozwinąć';
 
   @override
   String get autoBackupSubtitleCollapse =>
-      'Aktualizowane codziennie · dotknij, aby zwinąć';
+      'Aktualizowane codziennie · stuknij, aby zwinąć';
 
   @override
   String get actionRestoreAllCaps => 'PRZYWRÓĆ';
@@ -1507,36 +1509,36 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get autoBackupRestoreDescription =>
-      'Przywrócenie zastąpi wszystkie bieżące dane kopią zapasową.';
+      'Przywrócenie zastąpi wszystkie bieżące dane zawartością kopii zapasowej.';
 
   @override
   String autoBackupRestored(String date) {
-    return 'Przywrócono kopię zapasową z $date.';
+    return 'Kopia zapasowa z $date została przywrócona.';
   }
 
   @override
   String get autoBackupRestoreFailed =>
-      'Nie udało się przywrócić kopii zapasowej.';
+      'Przywracanie kopii zapasowej nie powiodło się.';
 
   @override
   String get autoBackupPrimary => 'Główna kopia zapasowa';
 
   @override
-  String get autoBackupSecondary => 'Pomocnicza kopia zapasowa';
+  String get autoBackupSecondary => 'Zapasowa kopia zapasowa';
 
   @override
-  String get frequencyPickerFixed => 'Jak często to się powtarza?';
+  String get frequencyPickerFixed => 'Jak często się powtarza?';
 
   @override
   String get frequencyMonthlyFixedSubtitle =>
-      'Czynsz, subskrypcje, powtarzające się rachunki';
+      'Czynsz, subskrypcje, regularne rachunki';
 
   @override
   String get frequencyYearlyFixedSubtitle =>
       'Roczne subskrypcje, ubezpieczenia, członkostwa';
 
   @override
-  String get frequencyPickerIncome => 'Jak często to otrzymujesz?';
+  String get frequencyPickerIncome => 'Jak często go otrzymujesz?';
 
   @override
   String get frequencyMonthlyIncomeSubtitle =>
@@ -1548,7 +1550,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get frequencyOneTimeIncomeSubtitle =>
-      'Prezent, niespodziewany dochód, jednorazowa płatność';
+      'Prezent, nieoczekiwany dochód, jednorazowa płatność';
 
   @override
   String get typePickerTitle => 'Co dodajesz?';
@@ -1566,13 +1568,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get currencyPickerTitle => 'Waluta';
 
   @override
-  String get currencyCustom => 'Niestandardowa';
+  String get currencyCustom => 'Własna';
 
   @override
   String get currencyCustomSubtitle => 'Zdefiniuj własny kod i symbol';
 
   @override
-  String get currencyCustomTitle => 'Waluta niestandardowa';
+  String get currencyCustomTitle => 'Własna waluta';
 
   @override
   String get currencyCodeLabel => 'Kod';
@@ -1596,17 +1598,17 @@ class AppLocalizationsPl extends AppLocalizations {
   String get selectDateRangeHint => 'Wybierz zakres dat do eksportu:';
 
   @override
-  String get startDateLabel => 'Data początkowa';
+  String get startDateLabel => 'Data od';
 
   @override
-  String get endDateLabel => 'Data końcowa';
+  String get endDateLabel => 'Data do';
 
   @override
-  String get tapToSelectDate => 'Dotknij, aby wybrać';
+  String get tapToSelectDate => 'Stuknij, aby wybrać';
 
   @override
   String get endDateAfterStart =>
-      'Data końcowa musi przypadać w dniu rozpoczęcia lub po nim.';
+      'Data końcowa musi być taka sama lub późniejsza niż data początkowa.';
 
   @override
   String get actionExport => 'Eksportuj';
@@ -1627,10 +1629,9 @@ class AppLocalizationsPl extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'GUARD — $count płatności nie zostało potwierdzonych',
-      many: 'GUARD — $count płatności nie zostało potwierdzonych',
-      few: 'GUARD — $count płatności nie zostały potwierdzone',
-      one: 'GUARD — 1 płatność nie została potwierdzona',
+      other: 'GUARD — $count niepotwierdzonych płatności',
+      few: 'GUARD — $count niepotwierdzone płatności',
+      one: 'GUARD — 1 niepotwierdzona płatność',
     );
     return '$_temp0';
   }
@@ -1643,10 +1644,9 @@ class AppLocalizationsPl extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count chronionych płatności oczekuje',
-      many: '$count chronionych płatności oczekuje',
-      few: '$count chronione płatności oczekują',
-      one: '1 chroniona płatność oczekuje',
+      other: '$count śledzonych płatności czeka',
+      few: '$count śledzone płatności czekają',
+      one: '1 śledzona płatność czeka',
     );
     return '$_temp0';
   }
@@ -1688,11 +1688,12 @@ class AppLocalizationsPl extends AppLocalizations {
   String get categoryBudgetsTitle => 'Budżety kategorii';
 
   @override
-  String get noCategoryBudgetsSet => 'Brak ustawionych budżetów kategorii.';
+  String get noCategoryBudgetsSet =>
+      'Nie ustawiono żadnych budżetów kategorii.';
 
   @override
   String removeBudgetDialogTitle(String category) {
-    return 'Usuń budżet kategorii $category';
+    return 'Usunąć budżet kategorii $category';
   }
 
   @override
@@ -1702,7 +1703,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String endBudgetFromDescription(String from) {
-    return 'Zatrzymuje budżet od $from dalej. Wcześniejsze miesiące zachowają swój historyczny budżet.';
+    return 'Zakończy budżet od $from dalej. Poprzednie miesiące zachowają historyczny budżet.';
   }
 
   @override
@@ -1713,7 +1714,7 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String deleteBudgetSeriesDescription(String range) {
-    return 'Trwale usuwa wszystkie rekordy ($range). Budżet nie pojawi się w żadnym miesiącu tej serii. Tej operacji nie można cofnąć.';
+    return 'Trwale usunie wszystkie wpisy ($range). Budżet tej serii nie będzie już wyświetlany w żadnym miesiącu. Tej operacji nie można cofnąć.';
   }
 
   @override
@@ -1747,7 +1748,7 @@ class AppLocalizationsPl extends AppLocalizations {
   String get pdfSectionCategorySummary => 'PODSUMOWANIE KATEGORII';
 
   @override
-  String get pdfSectionCashFlowSummary => 'PODSUMOWANIE PRZEPŁYWU GOTÓWKI';
+  String get pdfSectionCashFlowSummary => 'PODSUMOWANIE CASH FLOW';
 
   @override
   String get pdfSectionExpenseGroups => 'GRUPY WYDATKÓW';
@@ -1781,10 +1782,10 @@ class AppLocalizationsPl extends AppLocalizations {
   String get pdfEarnedThisYear => 'Zarobiono w tym roku';
 
   @override
-  String get pdfGroupTotal => 'Suma grupy (w tym miesiącu)';
+  String get pdfGroupTotal => 'Suma grupy (ten miesiąc)';
 
   @override
-  String get pdfAllPeriodsTotal => 'Suma wszystkich okresów';
+  String get pdfAllPeriodsTotal => 'Suma za wszystkie okresy';
 
   @override
   String pdfItemsThisMonth(int count) {
@@ -1792,7 +1793,6 @@ class AppLocalizationsPl extends AppLocalizations {
       count,
       locale: localeName,
       other: '$count pozycji w tym miesiącu',
-      many: '$count pozycji w tym miesiącu',
       few: '$count pozycje w tym miesiącu',
       one: '1 pozycja w tym miesiącu',
     );
@@ -1803,11 +1803,11 @@ class AppLocalizationsPl extends AppLocalizations {
   String get pdfNormalized => ' (znormalizowane)';
 
   @override
-  String get pdfAnnualized => ' (w ujęciu rocznym)';
+  String get pdfAnnualized => ' (przeliczone na rok)';
 
   @override
   String get pdfPartialYearNote =>
-      'Niepełny rok - miesiące bez danych pokazują zera. Tylko sumy od początku roku do dziś.';
+      'Niepełny rok - miesiące bez danych pokazują zera. Podane są tylko sumy narastające od początku roku.';
 
   @override
   String pdfPage(int page, int total) {
@@ -1846,4 +1846,195 @@ class AppLocalizationsPl extends AppLocalizations {
 
   @override
   String get allCategoriesTitle => 'Wszystkie kategorie';
+
+  @override
+  String get howCategoryBudgetsTitle => 'Jak działają budżety kategorii';
+
+  @override
+  String get howCategoryBudgetsSubtitle0 => 'Po co to jest';
+
+  @override
+  String get howCategoryBudgetsSubtitle1 => 'Tworzenie budżetu';
+
+  @override
+  String get howCategoryBudgetsSubtitle2 => 'Odczyt paska';
+
+  @override
+  String get howCategoryBudgetsLabel0 => 'Limit';
+
+  @override
+  String get howCategoryBudgetsLabel1 => 'Ustawić';
+
+  @override
+  String get howCategoryBudgetsLabel2 => 'Postęp';
+
+  @override
+  String get howCategoryBudgetsWhatIntro =>
+      'Ustaw miesięczny limit dla dowolnej kategorii — restauracje, zakupy spożywcze, rozrywka. Wydaj tyle, ile zaplanowałeś, nic więcej.';
+
+  @override
+  String get howCategoryBudgetsRule1 =>
+      'Wybierz kategorie, w których masz tendencję do przepłacania. Ustaw limit tylko tam.';
+
+  @override
+  String get howCategoryBudgetsRule2 =>
+      'Każdy budżet to prosty miesięczny limit — na przykład: Restauracje → 100 € miesięcznie.';
+
+  @override
+  String get howCategoryBudgetsRule3 =>
+      'Budżety są opcjonalne. Ustaw tyle, ile chcesz.';
+
+  @override
+  String get howCategoryBudgetsRule4 =>
+      'Możesz mieć jeden budżet na kategorię, dla tylu kategorii, ile potrzebujesz.';
+
+  @override
+  String get howCategoryBudgetsSetupIntro =>
+      'Stuknij + na ekranie Zarządzaj budżetami. Wybierz kategorię, wpisz kwotę, wybierz datę początkową. Gotowe.';
+
+  @override
+  String get howCategoryBudgetsSetupRule1 =>
+      'Wybierz kategorię — na przykład Restauracje.';
+
+  @override
+  String get howCategoryBudgetsSetupRule2 =>
+      'Wpisz miesięczny limit — na przykład 100 €.';
+
+  @override
+  String get howCategoryBudgetsSetupRule3 =>
+      'Wybierz miesiąc, od którego obowiązuje. Stosuje się od tego momentu.';
+
+  @override
+  String get howCategoryBudgetsSetupRule4 =>
+      'Po zapisaniu kategoria jest zablokowana — aby ją zmienić, utwórz nowy budżet.';
+
+  @override
+  String get howCategoryBudgetsPastMonthHint =>
+      'Wybranie poprzedniego miesiąca zastosuje budżet wstecznie. Przed zapisaniem pojawi się potwierdzenie.';
+
+  @override
+  String get howCategoryBudgetsProgressIntro =>
+      'Pasek postępu pokazuje dokładnie, jak stoisz — jednym spojrzeniem, za każdym razem gdy otwierasz Wydatki.';
+
+  @override
+  String get howCategoryBudgetsProgressRule1 =>
+      'Zielony — poniżej 80%: jesteś na właściwej drodze. Tak trzymaj.';
+
+  @override
+  String get howCategoryBudgetsProgressRule2 =>
+      'Bursztynowy — 80–100%: zbliżasz się. Czas zwolnić.';
+
+  @override
+  String get howCategoryBudgetsProgressRule3 =>
+      'Czerwony — powyżej 100%: limit przekroczony. Na górze Wydatków pojawi się karta ostrzeżenia.';
+
+  @override
+  String get howCategoryBudgetsWhereTitle => 'Gdzie się pojawia';
+
+  @override
+  String get howCategoryBudgetsWhere1 =>
+      'Wydatki — gdy budżet jest aktywny, pod każdą kategorią pojawia się pasek postępu.';
+
+  @override
+  String get howCategoryBudgetsWhere2 =>
+      'Widok kategorii — każda kategoria z budżetem pokazuje swój stopień wypełnienia inline.';
+
+  @override
+  String get howCategoryBudgetsWhere3 =>
+      'Miesięczny raport PDF — budżety są uwzględnione w podsumowaniu wydatków.';
+
+  @override
+  String get howCategoryBudgetsResetHint =>
+      'Budżety resetują się co miesiąc — niewykorzystane kwoty nie przechodzą dalej.';
+
+  @override
+  String get howGuardTitle => 'Jak działa GUARD';
+
+  @override
+  String get howGuardSubtitle0 => 'Przypomnienie o płatności';
+
+  @override
+  String get howGuardSubtitle1 => 'Konfiguracja';
+
+  @override
+  String get howGuardSubtitle2 => 'Jak się powtarza';
+
+  @override
+  String get howGuardLabel0 => 'Przypomnienie';
+
+  @override
+  String get howGuardLabel1 => 'Ustawienia';
+
+  @override
+  String get howGuardLabel2 => 'Cykliczne';
+
+  @override
+  String get howGuardWhatIntro =>
+      'GUARD przypomina, gdy zbliża się termin płatności regularnego rachunku — czynsz, Netflix, ubezpieczenie. Nic nie umknie.';
+
+  @override
+  String get howGuardRule1 =>
+      'W dniu płatności na telefonie pojawi się powiadomienie. Żadne wcześniejsze działanie nie jest potrzebne.';
+
+  @override
+  String get howGuardRule2 =>
+      'Stuknij \"Opłacone\", aby potwierdzić. Lub wycisz, jeśli chcesz pominąć tym razem.';
+
+  @override
+  String get howGuardRule3 =>
+      'Każdy strzeżony rachunek pokazuje swój aktualny stan.';
+
+  @override
+  String get howGuardStateUnpaid =>
+      'Wymagalne — oczekuje na Twoje potwierdzenie';
+
+  @override
+  String get howGuardStatePaid => 'Opłacone — potwierdzone w tym okresie';
+
+  @override
+  String get howGuardStateSilenced => 'Wyciszone — przypomnienie odrzucone';
+
+  @override
+  String get howGuardActivateIntro =>
+      'Otwórz dowolny stały wydatek, stuknij Edytuj i włącz GUARD. Ustaw, kiedy rachunek jest wymagalny — to wszystko.';
+
+  @override
+  String get howGuardActivateRule1 =>
+      'Ustaw dzień płatności — dzień miesiąca, w którym spodziewasz się płacić. Na przykład: czynsz 1., Netflix 15.';
+
+  @override
+  String get howGuardActivateRule2 =>
+      'Od tego dnia codzienne przypomnienie powtarza się, dopóki nie oznaczysz płatności lub nie wyciszysz.';
+
+  @override
+  String get howGuardActivateRule3 =>
+      'W przypadku rachunków rocznych — jak ubezpieczenie — wybierz też miesiąc płatności.';
+
+  @override
+  String get howGuardActivateRule4 =>
+      'Godzinę codziennego przypomnienia możesz zmienić w ustawieniach GUARD.';
+
+  @override
+  String get howGuardFixedCostOnlyHint =>
+      'GUARD można włączyć tylko dla pozycji stałych wydatków.';
+
+  @override
+  String get howGuardActIntro =>
+      'GUARD resetuje się samoczynnie na początku każdego nowego okresu. Nie musisz niczego resetować ręcznie.';
+
+  @override
+  String get howGuardActRule1 =>
+      'Miesięczne rachunki — jak czynsz lub subskrypcje — otrzymują nowe przypomnienie co miesiąc.';
+
+  @override
+  String get howGuardActRule2 =>
+      'Roczne rachunki — jak ubezpieczenie lub opłaty roczne — resetują się raz w roku.';
+
+  @override
+  String get howGuardActRule3 =>
+      'Po oznaczeniu rachunku jako opłaconego pozostaje potwierdzony do początku następnego okresu.';
+
+  @override
+  String get howGuardPerPeriodHint =>
+      'Opłacone lub wyciszone — dotyczy tylko bieżącego okresu. Następny zawsze zaczyna się od nowa.';
 }

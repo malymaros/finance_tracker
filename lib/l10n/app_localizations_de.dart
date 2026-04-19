@@ -165,6 +165,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get howGroupsWorkQuestion => 'Wie funktionieren Gruppen?';
 
   @override
+  String get howGuardWorkQuestion => 'Wie funktioniert GUARD?';
+
+  @override
+  String get howCategoryBudgetsWorkQuestion =>
+      'Wie funktionieren Kategoriebudgets?';
+
+  @override
   String itemCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1826,4 +1833,194 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get allCategoriesTitle => 'Alle Kategorien';
+
+  @override
+  String get howCategoryBudgetsTitle => 'Wie Kategoriebudgets funktionieren';
+
+  @override
+  String get howCategoryBudgetsSubtitle0 => 'Warum es das gibt';
+
+  @override
+  String get howCategoryBudgetsSubtitle1 => 'Budget erstellen';
+
+  @override
+  String get howCategoryBudgetsSubtitle2 => 'Balken lesen';
+
+  @override
+  String get howCategoryBudgetsLabel0 => 'Limit';
+
+  @override
+  String get howCategoryBudgetsLabel1 => 'Einrichten';
+
+  @override
+  String get howCategoryBudgetsLabel2 => 'Fortschritt';
+
+  @override
+  String get howCategoryBudgetsWhatIntro =>
+      'Legen Sie ein monatliches Limit für jede Kategorie fest — Restaurants, Lebensmittel, Unterhaltung. Geben Sie nur das aus, was Sie geplant haben.';
+
+  @override
+  String get howCategoryBudgetsRule1 =>
+      'Wählen Sie die Kategorien, in denen Sie zum Überschreiten neigen. Setzen Sie das Limit nur dort.';
+
+  @override
+  String get howCategoryBudgetsRule2 =>
+      'Jedes Budget ist ein einfaches Monatslimit — zum Beispiel: Restaurants → 100 € pro Monat.';
+
+  @override
+  String get howCategoryBudgetsRule3 =>
+      'Budgets sind optional. Setzen Sie so viele oder so wenige wie Sie möchten.';
+
+  @override
+  String get howCategoryBudgetsRule4 =>
+      'Pro Kategorie kann ein Budget aktiv sein — für beliebig viele Kategorien.';
+
+  @override
+  String get howCategoryBudgetsSetupIntro =>
+      'Tippen Sie auf + im Budgets verwalten-Bildschirm. Kategorie wählen, Betrag eingeben, Startmonat festlegen. Fertig.';
+
+  @override
+  String get howCategoryBudgetsSetupRule1 =>
+      'Wählen Sie eine Kategorie — zum Beispiel Restaurants.';
+
+  @override
+  String get howCategoryBudgetsSetupRule2 =>
+      'Geben Sie Ihr Monatslimit ein — zum Beispiel 100 €.';
+
+  @override
+  String get howCategoryBudgetsSetupRule3 =>
+      'Wählen Sie den Startmonat. Das Budget gilt ab diesem Zeitpunkt.';
+
+  @override
+  String get howCategoryBudgetsSetupRule4 =>
+      'Nach dem Speichern ist die Kategorie gesperrt — erstellen Sie ein neues Budget, um es später zu ändern.';
+
+  @override
+  String get howCategoryBudgetsPastMonthHint =>
+      'Die Wahl eines vergangenen Monats wendet das Budget rückwirkend an. Eine Bestätigung erscheint vor dem Speichern.';
+
+  @override
+  String get howCategoryBudgetsProgressIntro =>
+      'Der Fortschrittsbalken zeigt genau, wo Sie stehen — auf einen Blick, jedes Mal wenn Sie Ausgaben öffnen.';
+
+  @override
+  String get howCategoryBudgetsProgressRule1 =>
+      'Grün — unter 80 %: Ausgaben im Rahmen. Weiter so.';
+
+  @override
+  String get howCategoryBudgetsProgressRule2 =>
+      'Orange — 80–100 %: fast am Limit. Zeit, langsamer zu werden.';
+
+  @override
+  String get howCategoryBudgetsProgressRule3 =>
+      'Rot — über 100 %: Limit überschritten. Eine Warnkarte erscheint oben in Ihren Ausgaben.';
+
+  @override
+  String get howCategoryBudgetsWhereTitle => 'Wo es erscheint';
+
+  @override
+  String get howCategoryBudgetsWhere1 =>
+      'Ausgaben — unter jeder Kategoriezeile erscheint ein Fortschrittsbalken, wenn ein Budget aktiv ist.';
+
+  @override
+  String get howCategoryBudgetsWhere2 =>
+      'Kategorienansicht — jede Kategorie mit Budget zeigt ihren Füllstand.';
+
+  @override
+  String get howCategoryBudgetsWhere3 =>
+      'Monatlicher PDF-Bericht — Budgets sind in der Ausgabenzusammenfassung enthalten.';
+
+  @override
+  String get howCategoryBudgetsResetHint =>
+      'Budgets werden jeden Monat zurückgesetzt — nicht verbrauchte Beträge werden nicht übertragen.';
+
+  @override
+  String get howGuardTitle => 'Wie GUARD funktioniert';
+
+  @override
+  String get howGuardSubtitle0 => 'Ihre Zahlungserinnerung';
+
+  @override
+  String get howGuardSubtitle1 => 'Einrichtung';
+
+  @override
+  String get howGuardSubtitle2 => 'Wie es sich wiederholt';
+
+  @override
+  String get howGuardLabel0 => 'Erinnerung';
+
+  @override
+  String get howGuardLabel1 => 'Einstellungen';
+
+  @override
+  String get howGuardLabel2 => 'Wiederkehrend';
+
+  @override
+  String get howGuardWhatIntro =>
+      'GUARD erinnert Sie, wenn eine regelmäßige Rechnung fällig wird — Miete, Netflix, Versicherung. Nichts geht durch.';
+
+  @override
+  String get howGuardRule1 =>
+      'Am Fälligkeitstag erscheint eine Benachrichtigung auf Ihrem Telefon. Keine Vorbereitung im Voraus nötig.';
+
+  @override
+  String get howGuardRule2 =>
+      'Tippen Sie auf \"Bezahlt\" zur Bestätigung. Oder stummschalten, wenn Sie diesmal überspringen möchten.';
+
+  @override
+  String get howGuardRule3 =>
+      'Jede überwachte Rechnung zeigt ihren aktuellen Status auf einen Blick.';
+
+  @override
+  String get howGuardStateUnpaid => 'Fällig — wartet auf Ihre Bestätigung';
+
+  @override
+  String get howGuardStatePaid => 'Bezahlt — für diesen Zeitraum bestätigt';
+
+  @override
+  String get howGuardStateSilenced => 'Stummgeschaltet — Erinnerung abgewiesen';
+
+  @override
+  String get howGuardActivateIntro =>
+      'Öffnen Sie eine beliebige Fixkostenposition, tippen Sie auf Bearbeiten und schalten Sie GUARD ein. Legen Sie fest, wann die Rechnung fällig ist — das war\'s.';
+
+  @override
+  String get howGuardActivateRule1 =>
+      'Legen Sie den Fälligkeitstag fest — den Tag im Monat, an dem Sie zahlen möchten. Zum Beispiel: Miete am 1., Netflix am 15.';
+
+  @override
+  String get howGuardActivateRule2 =>
+      'Ab diesem Tag wiederholt sich die tägliche Erinnerung, bis Sie sie als bezahlt markieren oder stummschalten.';
+
+  @override
+  String get howGuardActivateRule3 =>
+      'Bei jährlichen Rechnungen — wie Versicherungen — wählen Sie auch den Fälligkeitsmonat.';
+
+  @override
+  String get howGuardActivateRule4 =>
+      'Die tägliche Erinnerungszeit können Sie in den GUARD-Einstellungen ändern.';
+
+  @override
+  String get howGuardFixedCostOnlyHint =>
+      'GUARD kann nur für Fixkosten-Positionen aktiviert werden.';
+
+  @override
+  String get howGuardActIntro =>
+      'GUARD setzt sich zu Beginn jedes neuen Zeitraums automatisch zurück. Sie müssen nichts manuell zurücksetzen.';
+
+  @override
+  String get howGuardActRule1 =>
+      'Monatliche Rechnungen — wie Miete oder Abonnements — erhalten jeden Monat eine neue Erinnerung.';
+
+  @override
+  String get howGuardActRule2 =>
+      'Jährliche Rechnungen — wie Versicherungen oder Jahresgebühren — setzen sich einmal pro Jahr zurück.';
+
+  @override
+  String get howGuardActRule3 =>
+      'Sobald Sie eine Rechnung als bezahlt markieren, bleibt sie bis zum Beginn des nächsten Zeitraums bestätigt.';
+
+  @override
+  String get howGuardPerPeriodHint =>
+      'Bezahlt oder stummgeschaltet — gilt nur für den aktuellen Zeitraum. Der nächste beginnt immer neu.';
 }

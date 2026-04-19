@@ -11,6 +11,7 @@ import '../../services/guard_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/guard_item_status_card.dart';
+import '../../widgets/how_guard_work_sheet.dart';
 
 class GuardScreen extends StatefulWidget {
   final PlanRepository planRepository;
@@ -174,6 +175,12 @@ class _GuardScreenState extends State<GuardScreen> {
           ],
         ),
         scrolledUnderElevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () => HowGuardWorkSheet.show(context),
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(12),
@@ -218,6 +225,14 @@ class _GuardScreenState extends State<GuardScreen> {
                       style: const TextStyle(
                           fontSize: 13, color: AppColors.textMuted),
                       textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 20),
+                    TextButton.icon(
+                      onPressed: () => HowGuardWorkSheet.show(context),
+                      icon: const Icon(Icons.pets, size: 16),
+                      label: Text(context.l10n.howGuardWorkQuestion),
+                      style: TextButton.styleFrom(
+                          foregroundColor: AppColors.gold),
                     ),
                   ],
                 ),
@@ -273,5 +288,3 @@ class _GuardScreenState extends State<GuardScreen> {
     );
   }
 }
-
-

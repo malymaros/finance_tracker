@@ -165,6 +165,13 @@ class AppLocalizationsCs extends AppLocalizations {
   String get howGroupsWorkQuestion => 'Jak skupiny fungují?';
 
   @override
+  String get howGuardWorkQuestion => 'Jak funguje GUARD?';
+
+  @override
+  String get howCategoryBudgetsWorkQuestion =>
+      'Jak fungují rozpočty kategorií?';
+
+  @override
   String itemCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1831,4 +1838,194 @@ class AppLocalizationsCs extends AppLocalizations {
 
   @override
   String get allCategoriesTitle => 'Všechny kategorie';
+
+  @override
+  String get howCategoryBudgetsTitle => 'Jak fungují rozpočty kategorií';
+
+  @override
+  String get howCategoryBudgetsSubtitle0 => 'Proč to existuje';
+
+  @override
+  String get howCategoryBudgetsSubtitle1 => 'Vytvoření rozpočtu';
+
+  @override
+  String get howCategoryBudgetsSubtitle2 => 'Čtení ukazatele';
+
+  @override
+  String get howCategoryBudgetsLabel0 => 'Limit';
+
+  @override
+  String get howCategoryBudgetsLabel1 => 'Nastavit';
+
+  @override
+  String get howCategoryBudgetsLabel2 => 'Průběh';
+
+  @override
+  String get howCategoryBudgetsWhatIntro =>
+      'Nastavte měsíční limit pro libovolnou kategorii — restaurace, potraviny, zábava. Utratte jen to, co jste plánovali.';
+
+  @override
+  String get howCategoryBudgetsRule1 =>
+      'Vyberte kategorie, ve kterých máte tendenci utrácet více. Limit nastavte jen tam.';
+
+  @override
+  String get howCategoryBudgetsRule2 =>
+      'Každý rozpočet je jednoduchý měsíční limit — například: Restaurace → 100 € za měsíc.';
+
+  @override
+  String get howCategoryBudgetsRule3 =>
+      'Rozpočty jsou volitelné. Nastavte jich tolik nebo tak málo, jak chcete.';
+
+  @override
+  String get howCategoryBudgetsRule4 =>
+      'Na každou kategorii může být jeden rozpočet — pro libovolný počet kategorií.';
+
+  @override
+  String get howCategoryBudgetsSetupIntro =>
+      'Klepněte na + na obrazovce Správa rozpočtů. Vyberte kategorii, zadejte částku, zvolte datum zahájení. Hotovo.';
+
+  @override
+  String get howCategoryBudgetsSetupRule1 =>
+      'Vyberte kategorii — například Restaurace.';
+
+  @override
+  String get howCategoryBudgetsSetupRule2 =>
+      'Zadejte měsíční limit — například 100 €.';
+
+  @override
+  String get howCategoryBudgetsSetupRule3 =>
+      'Zvolte měsíc, od kterého platí. Vztahuje se na vše od tohoto bodu.';
+
+  @override
+  String get howCategoryBudgetsSetupRule4 =>
+      'Po uložení je kategorie uzamčena — pro pozdější změnu vytvořte nový rozpočet.';
+
+  @override
+  String get howCategoryBudgetsPastMonthHint =>
+      'Výběr minulého měsíce použije rozpočet zpětně. Před uložením se zobrazí potvrzení.';
+
+  @override
+  String get howCategoryBudgetsProgressIntro =>
+      'Ukazatel průběhu přesně ukazuje, kde se nacházíte — na jeden pohled, pokaždé když otevřete Výdaje.';
+
+  @override
+  String get howCategoryBudgetsProgressRule1 =>
+      'Zelená — pod 80 %: výdaje jsou v pořádku. Pokračujte.';
+
+  @override
+  String get howCategoryBudgetsProgressRule2 =>
+      'Oranžová — 80–100 %: blíží se limit. Čas zpomalit.';
+
+  @override
+  String get howCategoryBudgetsProgressRule3 =>
+      'Červená — přes 100 %: limit překročen. V horní části Výdajů se zobrazí varovná karta.';
+
+  @override
+  String get howCategoryBudgetsWhereTitle => 'Kde se zobrazuje';
+
+  @override
+  String get howCategoryBudgetsWhere1 =>
+      'Výdaje — pod každým řádkem kategorie se zobrazí ukazatel průběhu, je-li aktivní rozpočet.';
+
+  @override
+  String get howCategoryBudgetsWhere2 =>
+      'Zobrazení kategorií — každá kategorie s rozpočtem zobrazuje svůj stav naplnění.';
+
+  @override
+  String get howCategoryBudgetsWhere3 =>
+      'Měsíční PDF výkaz — rozpočty jsou součástí přehledu výdajů.';
+
+  @override
+  String get howCategoryBudgetsResetHint =>
+      'Rozpočty se každý měsíc resetují — nevyužité částky se nepřenášejí.';
+
+  @override
+  String get howGuardTitle => 'Jak funguje GUARD';
+
+  @override
+  String get howGuardSubtitle0 => 'Připomenutí plateb';
+
+  @override
+  String get howGuardSubtitle1 => 'Nastavení';
+
+  @override
+  String get howGuardSubtitle2 => 'Jak se opakuje';
+
+  @override
+  String get howGuardLabel0 => 'Připomenutí';
+
+  @override
+  String get howGuardLabel1 => 'Nastavení';
+
+  @override
+  String get howGuardLabel2 => 'Opakování';
+
+  @override
+  String get howGuardWhatIntro =>
+      'GUARD vás upozorní, když se blíží splatnost pravidelného výdaje — nájem, Netflix, pojištění. Nic vám neunikne.';
+
+  @override
+  String get howGuardRule1 =>
+      'V den splatnosti se na vašem telefonu zobrazí upozornění. Žádná příprava předem není potřeba.';
+
+  @override
+  String get howGuardRule2 =>
+      'Klepněte na \"Zaplaceno\" pro potvrzení. Nebo upozornění ztište, pokud chcete tentokrát přeskočit.';
+
+  @override
+  String get howGuardRule3 =>
+      'Každý hlídaný výdaj zobrazuje svůj aktuální stav.';
+
+  @override
+  String get howGuardStateUnpaid => 'Splatné — čeká na vaše potvrzení';
+
+  @override
+  String get howGuardStatePaid => 'Zaplaceno — potvrzeno pro toto období';
+
+  @override
+  String get howGuardStateSilenced => 'Ztišeno — připomenutí zamítnuto';
+
+  @override
+  String get howGuardActivateIntro =>
+      'Otevřete libovolný fixní výdaj, klepněte na Upravit a zapněte GUARD. Nastavte, kdy je výdaj splatný — to je vše.';
+
+  @override
+  String get howGuardActivateRule1 =>
+      'Nastavte den splatnosti — den v měsíci, kdy očekáváte platbu. Například: nájem 1., Netflix 15.';
+
+  @override
+  String get howGuardActivateRule2 =>
+      'Od toho dne se denní připomenutí opakuje, dokud ho neoznačíte jako zaplacené nebo neztišíte.';
+
+  @override
+  String get howGuardActivateRule3 =>
+      'U ročních výdajů — jako je pojištění — vyberte také měsíc splatnosti.';
+
+  @override
+  String get howGuardActivateRule4 =>
+      'Čas denního připomenutí lze změnit v nastavení GUARD.';
+
+  @override
+  String get howGuardFixedCostOnlyHint =>
+      'GUARD lze zapnout pouze pro položky fixních výdajů.';
+
+  @override
+  String get howGuardActIntro =>
+      'GUARD se automaticky resetuje na začátku každého nového období. Nemusíte nic resetovat ručně.';
+
+  @override
+  String get howGuardActRule1 =>
+      'Měsíční výdaje — jako nájem nebo předplatné — dostávají nové připomenutí každý měsíc.';
+
+  @override
+  String get howGuardActRule2 =>
+      'Roční výdaje — jako pojištění nebo roční poplatky — se resetují jednou ročně.';
+
+  @override
+  String get howGuardActRule3 =>
+      'Jakmile označíte výdaj jako zaplacený, zůstane potvrzený až do začátku dalšího období.';
+
+  @override
+  String get howGuardPerPeriodHint =>
+      'Zaplaceno nebo ztišeno — platí pouze pro aktuální období. Příští období vždy začíná znovu.';
 }

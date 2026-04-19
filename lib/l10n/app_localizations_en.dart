@@ -165,6 +165,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get howGroupsWorkQuestion => 'How groups work?';
 
   @override
+  String get howGuardWorkQuestion => 'How GUARD works?';
+
+  @override
+  String get howCategoryBudgetsWorkQuestion => 'How category budgets work?';
+
+  @override
   String itemCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1812,4 +1818,194 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allCategoriesTitle => 'All Categories';
+
+  @override
+  String get howCategoryBudgetsTitle => 'How Category Budgets Work';
+
+  @override
+  String get howCategoryBudgetsSubtitle0 => 'Why it exists';
+
+  @override
+  String get howCategoryBudgetsSubtitle1 => 'Creating a budget';
+
+  @override
+  String get howCategoryBudgetsSubtitle2 => 'Reading the bar';
+
+  @override
+  String get howCategoryBudgetsLabel0 => 'Limit';
+
+  @override
+  String get howCategoryBudgetsLabel1 => 'Set up';
+
+  @override
+  String get howCategoryBudgetsLabel2 => 'Progress';
+
+  @override
+  String get howCategoryBudgetsWhatIntro =>
+      'Set a monthly cap for any category — restaurants, groceries, entertainment. Spend what you planned, nothing more.';
+
+  @override
+  String get howCategoryBudgetsRule1 =>
+      'Pick the categories where you tend to overspend. Set a limit only there.';
+
+  @override
+  String get howCategoryBudgetsRule2 =>
+      'Each budget is a simple monthly cap — for example: Restaurants → 100 € per month.';
+
+  @override
+  String get howCategoryBudgetsRule3 =>
+      'Budgets are optional. Set as many or as few as you like.';
+
+  @override
+  String get howCategoryBudgetsRule4 =>
+      'You can have one budget per category, across as many categories as you need.';
+
+  @override
+  String get howCategoryBudgetsSetupIntro =>
+      'Tap + on the Manage Budgets screen. Pick a category, enter an amount, choose when it starts. Done.';
+
+  @override
+  String get howCategoryBudgetsSetupRule1 =>
+      'Pick a category — for example, Restaurants.';
+
+  @override
+  String get howCategoryBudgetsSetupRule2 =>
+      'Enter your monthly limit — for example, 100 €.';
+
+  @override
+  String get howCategoryBudgetsSetupRule3 =>
+      'Choose the month it starts from. It applies going forward from that point.';
+
+  @override
+  String get howCategoryBudgetsSetupRule4 =>
+      'Once saved, the category is locked — create a new budget to change it later.';
+
+  @override
+  String get howCategoryBudgetsPastMonthHint =>
+      'Choosing a past month will apply the budget retroactively. A confirmation appears before you save.';
+
+  @override
+  String get howCategoryBudgetsProgressIntro =>
+      'The progress bar shows exactly where you stand — at a glance, every time you open Expenses.';
+
+  @override
+  String get howCategoryBudgetsProgressRule1 =>
+      'Green — below 80%: you\'re on track. Keep going.';
+
+  @override
+  String get howCategoryBudgetsProgressRule2 =>
+      'Amber — 80–100%: getting close. Time to slow down.';
+
+  @override
+  String get howCategoryBudgetsProgressRule3 =>
+      'Red — over 100%: limit exceeded. A warning card appears at the top of your Expenses.';
+
+  @override
+  String get howCategoryBudgetsWhereTitle => 'Where it appears';
+
+  @override
+  String get howCategoryBudgetsWhere1 =>
+      'Expenses — a progress bar appears below each category row when a budget is active.';
+
+  @override
+  String get howCategoryBudgetsWhere2 =>
+      'Category view — each budgeted category shows its fill status inline.';
+
+  @override
+  String get howCategoryBudgetsWhere3 =>
+      'Monthly PDF report — budgets are included in your spending summary.';
+
+  @override
+  String get howCategoryBudgetsResetHint =>
+      'Budgets reset each month — unused amounts don\'t carry over.';
+
+  @override
+  String get howGuardTitle => 'How GUARD Works';
+
+  @override
+  String get howGuardSubtitle0 => 'Your payment reminder';
+
+  @override
+  String get howGuardSubtitle1 => 'Setting it up';
+
+  @override
+  String get howGuardSubtitle2 => 'How it repeats';
+
+  @override
+  String get howGuardLabel0 => 'Reminder';
+
+  @override
+  String get howGuardLabel1 => 'Settings';
+
+  @override
+  String get howGuardLabel2 => 'Recurring';
+
+  @override
+  String get howGuardWhatIntro =>
+      'GUARD reminds you when a regular bill is coming due — rent, Netflix, insurance. Nothing slips through.';
+
+  @override
+  String get howGuardRule1 =>
+      'On the due date, a notification appears on your phone. No action needed in advance.';
+
+  @override
+  String get howGuardRule2 =>
+      'Tap \"Paid\" to confirm. Or silence it if you want to skip this time.';
+
+  @override
+  String get howGuardRule3 =>
+      'Every guarded bill shows its current state at a glance.';
+
+  @override
+  String get howGuardStateUnpaid => 'Due — waiting for your confirmation';
+
+  @override
+  String get howGuardStatePaid => 'Paid — confirmed for this period';
+
+  @override
+  String get howGuardStateSilenced => 'Silenced — reminder dismissed';
+
+  @override
+  String get howGuardActivateIntro =>
+      'Open any Fixed Cost, tap Edit, and switch GUARD on. Set when the bill is due — that\'s all.';
+
+  @override
+  String get howGuardActivateRule1 =>
+      'Set the due day — the day of the month you expect to pay. For example: rent on the 1st, Netflix on the 15th.';
+
+  @override
+  String get howGuardActivateRule2 =>
+      'From that day, a daily reminder repeats until you mark it paid or silence it.';
+
+  @override
+  String get howGuardActivateRule3 =>
+      'For yearly bills — like insurance — also pick the due month.';
+
+  @override
+  String get howGuardActivateRule4 =>
+      'You can change the daily reminder time in GUARD settings.';
+
+  @override
+  String get howGuardFixedCostOnlyHint =>
+      'Only Fixed Cost items can have GUARD enabled.';
+
+  @override
+  String get howGuardActIntro =>
+      'GUARD resets on its own at the start of each new period. You never need to reset anything manually.';
+
+  @override
+  String get howGuardActRule1 =>
+      'Monthly bills — like rent or subscriptions — get a fresh reminder every month.';
+
+  @override
+  String get howGuardActRule2 =>
+      'Yearly bills — like insurance or annual fees — reset once a year.';
+
+  @override
+  String get howGuardActRule3 =>
+      'Once you mark a bill as paid, it stays confirmed until the next period begins.';
+
+  @override
+  String get howGuardPerPeriodHint =>
+      'Paid or silenced — it only applies to the current period. The next one always starts fresh.';
 }

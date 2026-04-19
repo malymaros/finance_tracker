@@ -166,6 +166,13 @@ class AppLocalizationsHu extends AppLocalizations {
   String get howGroupsWorkQuestion => 'Hogyan működnek a csoportok?';
 
   @override
+  String get howGuardWorkQuestion => 'Hogyan működik a GUARD?';
+
+  @override
+  String get howCategoryBudgetsWorkQuestion =>
+      'Hogyan működnek a kategória keretek?';
+
+  @override
   String itemCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -1824,4 +1831,194 @@ class AppLocalizationsHu extends AppLocalizations {
 
   @override
   String get allCategoriesTitle => 'Összes kategória';
+
+  @override
+  String get howCategoryBudgetsTitle => 'Hogyan működnek a kategória keretek';
+
+  @override
+  String get howCategoryBudgetsSubtitle0 => 'Miért létezik';
+
+  @override
+  String get howCategoryBudgetsSubtitle1 => 'Keret létrehozása';
+
+  @override
+  String get howCategoryBudgetsSubtitle2 => 'A sáv értelmezése';
+
+  @override
+  String get howCategoryBudgetsLabel0 => 'Limit';
+
+  @override
+  String get howCategoryBudgetsLabel1 => 'Beállítás';
+
+  @override
+  String get howCategoryBudgetsLabel2 => 'Haladás';
+
+  @override
+  String get howCategoryBudgetsWhatIntro =>
+      'Állíts be havi limitet bármelyik kategóriára — éttermek, bevásárlás, szórakozás. Csak annyit költs, amennyit terveztél.';
+
+  @override
+  String get howCategoryBudgetsRule1 =>
+      'Válaszd ki azokat a kategóriákat, ahol hajlamos vagy túlkölteni. Csak ott állíts be limitet.';
+
+  @override
+  String get howCategoryBudgetsRule2 =>
+      'Minden keret egy egyszerű havi cap — például: Éttermek → 100 € havonta.';
+
+  @override
+  String get howCategoryBudgetsRule3 =>
+      'A keretek opcionálisak. Annyit állíts be, amennyit szeretnél.';
+
+  @override
+  String get howCategoryBudgetsRule4 =>
+      'Kategóriánként egy kereted lehet, annyi kategóriában, amennyire szükséged van.';
+
+  @override
+  String get howCategoryBudgetsSetupIntro =>
+      'Koppints a + gombra a Keretek kezelése képernyőn. Válassz kategóriát, adj meg összeget, válaszd meg a kezdeti dátumot. Kész.';
+
+  @override
+  String get howCategoryBudgetsSetupRule1 =>
+      'Válassz kategóriát — például Éttermek.';
+
+  @override
+  String get howCategoryBudgetsSetupRule2 =>
+      'Add meg a havi limitedet — például 100 €.';
+
+  @override
+  String get howCategoryBudgetsSetupRule3 =>
+      'Válaszd meg azt a hónapot, amelytől érvényes. Attól a ponttól él.';
+
+  @override
+  String get howCategoryBudgetsSetupRule4 =>
+      'Mentés után a kategória zárolva van — új keretet hozz létre, ha módosítani szeretnéd.';
+
+  @override
+  String get howCategoryBudgetsPastMonthHint =>
+      'Ha múlt hónapot választasz, a keret visszamenőleg érvényes lesz. Mentés előtt megerősítés jelenik meg.';
+
+  @override
+  String get howCategoryBudgetsProgressIntro =>
+      'A folyamatjelző sáv pontosan megmutatja, hol állsz — egy pillantásra, minden alkalommal, amikor megnyitod a Kiadásokat.';
+
+  @override
+  String get howCategoryBudgetsProgressRule1 =>
+      'Zöld — 80% alatt: jó úton jársz. Csak így tovább.';
+
+  @override
+  String get howCategoryBudgetsProgressRule2 =>
+      'Borostyán — 80–100%: közeledik. Ideje lassítani.';
+
+  @override
+  String get howCategoryBudgetsProgressRule3 =>
+      'Piros — 100% felett: limit túllépve. Figyelmeztetés jelenik meg a Kiadások tetején.';
+
+  @override
+  String get howCategoryBudgetsWhereTitle => 'Hol jelenik meg';
+
+  @override
+  String get howCategoryBudgetsWhere1 =>
+      'Kiadások — aktív keret esetén minden kategóriasor alatt megjelenik a folyamatjelző sáv.';
+
+  @override
+  String get howCategoryBudgetsWhere2 =>
+      'Kategória nézet — minden korlátozott kategória inline mutatja a telítettségét.';
+
+  @override
+  String get howCategoryBudgetsWhere3 =>
+      'Havi PDF-jelentés — a keretek szerepelnek a kiadási összesítőben.';
+
+  @override
+  String get howCategoryBudgetsResetHint =>
+      'A keretek havonta visszaállnak — a fel nem használt összegek nem vihetők át.';
+
+  @override
+  String get howGuardTitle => 'Hogyan működik a GUARD';
+
+  @override
+  String get howGuardSubtitle0 => 'Fizetési emlékeztető';
+
+  @override
+  String get howGuardSubtitle1 => 'Beállítás';
+
+  @override
+  String get howGuardSubtitle2 => 'Hogyan ismétlődik';
+
+  @override
+  String get howGuardLabel0 => 'Emlékeztető';
+
+  @override
+  String get howGuardLabel1 => 'Beállítások';
+
+  @override
+  String get howGuardLabel2 => 'Ismétlődő';
+
+  @override
+  String get howGuardWhatIntro =>
+      'A GUARD emlékezteti, amikor egy rendszeres számla esedékes — bérleti díj, Netflix, biztosítás. Semmi sem csúszik át.';
+
+  @override
+  String get howGuardRule1 =>
+      'Az esedékesség napján értesítés jelenik meg a telefonján. Előzetes teendő nincs.';
+
+  @override
+  String get howGuardRule2 =>
+      'Koppintson a \"Fizetve\" gombra a megerősítéshez. Vagy némítsa el, ha ezúttal ki szeretné hagyni.';
+
+  @override
+  String get howGuardRule3 =>
+      'Minden őrzött számla megmutatja aktuális állapotát.';
+
+  @override
+  String get howGuardStateUnpaid => 'Esedékes — vár a megerősítésére';
+
+  @override
+  String get howGuardStatePaid => 'Fizetve — megerősítve erre az időszakra';
+
+  @override
+  String get howGuardStateSilenced => 'Elnémítva — emlékeztető elutasítva';
+
+  @override
+  String get howGuardActivateIntro =>
+      'Nyisson meg bármely fix kiadást, koppintson a Szerkesztés gombra, és kapcsolja be a GUARD-ot. Állítsa be, mikor esedékes a számla — ennyi az egész.';
+
+  @override
+  String get howGuardActivateRule1 =>
+      'Állítsa be a fizetési napot — a hónap azon napját, amelyen fizetni szokott. Például: bérleti díj 1-jén, Netflix 15-én.';
+
+  @override
+  String get howGuardActivateRule2 =>
+      'Attól a naptól kezdve a napi emlékeztető addig ismétlődik, amíg meg nem jelöli fizetettként vagy el nem némítja.';
+
+  @override
+  String get howGuardActivateRule3 =>
+      'Éves számlák esetén — mint a biztosítás — válassza ki az esedékességi hónapot is.';
+
+  @override
+  String get howGuardActivateRule4 =>
+      'A napi emlékeztető időpontját a GUARD beállításaiban módosíthatja.';
+
+  @override
+  String get howGuardFixedCostOnlyHint =>
+      'A GUARD csak fix kiadás tételeknél engedélyezhető.';
+
+  @override
+  String get howGuardActIntro =>
+      'A GUARD minden új időszak elején automatikusan visszaáll. Semmit sem kell manuálisan visszaállítani.';
+
+  @override
+  String get howGuardActRule1 =>
+      'A havi számlák — mint a bérleti díj vagy az előfizetések — minden hónapban új emlékeztetőt kapnak.';
+
+  @override
+  String get howGuardActRule2 =>
+      'Az éves számlák — mint a biztosítás vagy éves díjak — évente egyszer állnak vissza.';
+
+  @override
+  String get howGuardActRule3 =>
+      'Amint megjelöl egy számlát fizetettként, megerősítve marad a következő időszak kezdetéig.';
+
+  @override
+  String get howGuardPerPeriodHint =>
+      'Fizetve vagy elnémítva — csak az aktuális időszakra vonatkozik. A következő mindig frissen kezdődik.';
 }

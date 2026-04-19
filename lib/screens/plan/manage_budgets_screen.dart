@@ -9,6 +9,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/category_budget_tile.dart';
 import '../../widgets/delete_option_card.dart';
 import '../../widgets/period_navigator.dart';
+import '../../widgets/how_category_budgets_work_sheet.dart';
 import 'add_category_budget_screen.dart';
 
 enum _DeleteChoice { cancel, endFromNow, deleteAll }
@@ -120,6 +121,12 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
       appBar: AppBar(
         title: Text(context.l10n.categoryBudgetsTitle),
         scrolledUnderElevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () => HowCategoryBudgetsWorkSheet.show(context),
+          ),
+        ],
       ),
       body: ListenableBuilder(
         listenable: widget.budgetRepository,
@@ -202,6 +209,13 @@ class _ManageBudgetsScreenState extends State<ManageBudgetsScreen> {
             context.l10n.tapPlusToAddOne,
             style: const TextStyle(color: AppColors.textMuted),
             textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          TextButton.icon(
+            onPressed: () => HowCategoryBudgetsWorkSheet.show(context),
+            icon: const Icon(Icons.tune_outlined, size: 16),
+            label: Text(context.l10n.howCategoryBudgetsWorkQuestion),
+            style: TextButton.styleFrom(foregroundColor: AppColors.gold),
           ),
         ],
       ),

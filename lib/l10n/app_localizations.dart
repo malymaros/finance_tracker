@@ -412,6 +412,18 @@ abstract class AppLocalizations {
   /// **'How groups work?'**
   String get howGroupsWorkQuestion;
 
+  /// Link text to open the how-guard-works sheet from the GUARD empty state
+  ///
+  /// In en, this message translates to:
+  /// **'How GUARD works?'**
+  String get howGuardWorkQuestion;
+
+  /// Link text to open the how-category-budgets-work sheet from the empty state
+  ///
+  /// In en, this message translates to:
+  /// **'How category budgets work?'**
+  String get howCategoryBudgetsWorkQuestion;
+
   /// Number of items in a category or group header
   ///
   /// In en, this message translates to:
@@ -3163,6 +3175,318 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All Categories'**
   String get allCategoriesTitle;
+
+  /// Top header title of the How Category Budgets Work bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'How Category Budgets Work'**
+  String get howCategoryBudgetsTitle;
+
+  /// Subtitle for page 0 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Why it exists'**
+  String get howCategoryBudgetsSubtitle0;
+
+  /// Subtitle for page 1 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Creating a budget'**
+  String get howCategoryBudgetsSubtitle1;
+
+  /// Subtitle for page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Reading the bar'**
+  String get howCategoryBudgetsSubtitle2;
+
+  /// Step indicator label for page 0 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Limit'**
+  String get howCategoryBudgetsLabel0;
+
+  /// Step indicator label for page 1 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Set up'**
+  String get howCategoryBudgetsLabel1;
+
+  /// Step indicator label for page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get howCategoryBudgetsLabel2;
+
+  /// Intro text on page 0 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Set a monthly cap for any category — restaurants, groceries, entertainment. Spend what you planned, nothing more.'**
+  String get howCategoryBudgetsWhatIntro;
+
+  /// Bullet rule 1 on page 0 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the categories where you tend to overspend. Set a limit only there.'**
+  String get howCategoryBudgetsRule1;
+
+  /// Bullet rule 2 on page 0 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Each budget is a simple monthly cap — for example: Restaurants → 100 € per month.'**
+  String get howCategoryBudgetsRule2;
+
+  /// Bullet rule 3 on page 0 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets are optional. Set as many or as few as you like.'**
+  String get howCategoryBudgetsRule3;
+
+  /// Bullet rule 4 on page 0 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'You can have one budget per category, across as many categories as you need.'**
+  String get howCategoryBudgetsRule4;
+
+  /// Intro text on page 1 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + on the Manage Budgets screen. Pick a category, enter an amount, choose when it starts. Done.'**
+  String get howCategoryBudgetsSetupIntro;
+
+  /// Bullet rule 1 on page 1 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a category — for example, Restaurants.'**
+  String get howCategoryBudgetsSetupRule1;
+
+  /// Bullet rule 2 on page 1 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your monthly limit — for example, 100 €.'**
+  String get howCategoryBudgetsSetupRule2;
+
+  /// Bullet rule 3 on page 1 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the month it starts from. It applies going forward from that point.'**
+  String get howCategoryBudgetsSetupRule3;
+
+  /// Bullet rule 4 on page 1 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Once saved, the category is locked — create a new budget to change it later.'**
+  String get howCategoryBudgetsSetupRule4;
+
+  /// Hint box text on page 1 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Choosing a past month will apply the budget retroactively. A confirmation appears before you save.'**
+  String get howCategoryBudgetsPastMonthHint;
+
+  /// Intro text on page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'The progress bar shows exactly where you stand — at a glance, every time you open Expenses.'**
+  String get howCategoryBudgetsProgressIntro;
+
+  /// Bullet rule 1 on page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Green — below 80%: you\'re on track. Keep going.'**
+  String get howCategoryBudgetsProgressRule1;
+
+  /// Bullet rule 2 on page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Amber — 80–100%: getting close. Time to slow down.'**
+  String get howCategoryBudgetsProgressRule2;
+
+  /// Bullet rule 3 on page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Red — over 100%: limit exceeded. A warning card appears at the top of your Expenses.'**
+  String get howCategoryBudgetsProgressRule3;
+
+  /// Section header for the 'where it appears' subsection on page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Where it appears'**
+  String get howCategoryBudgetsWhereTitle;
+
+  /// Where it appears bullet 1 on page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses — a progress bar appears below each category row when a budget is active.'**
+  String get howCategoryBudgetsWhere1;
+
+  /// Where it appears bullet 2 on page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Category view — each budgeted category shows its fill status inline.'**
+  String get howCategoryBudgetsWhere2;
+
+  /// Where it appears bullet 3 on page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly PDF report — budgets are included in your spending summary.'**
+  String get howCategoryBudgetsWhere3;
+
+  /// Hint box text on page 2 of the How Category Budgets Work sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Budgets reset each month — unused amounts don\'t carry over.'**
+  String get howCategoryBudgetsResetHint;
+
+  /// Top header title of the How GUARD Works bottom sheet
+  ///
+  /// In en, this message translates to:
+  /// **'How GUARD Works'**
+  String get howGuardTitle;
+
+  /// Subtitle for page 0 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Your payment reminder'**
+  String get howGuardSubtitle0;
+
+  /// Subtitle for page 1 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Setting it up'**
+  String get howGuardSubtitle1;
+
+  /// Subtitle for page 2 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'How it repeats'**
+  String get howGuardSubtitle2;
+
+  /// Step indicator label for page 0 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get howGuardLabel0;
+
+  /// Step indicator label for page 1 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get howGuardLabel1;
+
+  /// Step indicator label for page 2 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get howGuardLabel2;
+
+  /// Intro text on page 0 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'GUARD reminds you when a regular bill is coming due — rent, Netflix, insurance. Nothing slips through.'**
+  String get howGuardWhatIntro;
+
+  /// Bullet rule 1 on page 0 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'On the due date, a notification appears on your phone. No action needed in advance.'**
+  String get howGuardRule1;
+
+  /// Bullet rule 2 on page 0 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Paid\" to confirm. Or silence it if you want to skip this time.'**
+  String get howGuardRule2;
+
+  /// Bullet rule 3 on page 0 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Every guarded bill shows its current state at a glance.'**
+  String get howGuardRule3;
+
+  /// Status label for the unpaid state in the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Due — waiting for your confirmation'**
+  String get howGuardStateUnpaid;
+
+  /// Status label for the paid state in the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Paid — confirmed for this period'**
+  String get howGuardStatePaid;
+
+  /// Status label for the silenced state in the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Silenced — reminder dismissed'**
+  String get howGuardStateSilenced;
+
+  /// Intro text on page 1 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Open any Fixed Cost, tap Edit, and switch GUARD on. Set when the bill is due — that\'s all.'**
+  String get howGuardActivateIntro;
+
+  /// Bullet rule 1 on page 1 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Set the due day — the day of the month you expect to pay. For example: rent on the 1st, Netflix on the 15th.'**
+  String get howGuardActivateRule1;
+
+  /// Bullet rule 2 on page 1 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'From that day, a daily reminder repeats until you mark it paid or silence it.'**
+  String get howGuardActivateRule2;
+
+  /// Bullet rule 3 on page 1 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'For yearly bills — like insurance — also pick the due month.'**
+  String get howGuardActivateRule3;
+
+  /// Bullet rule 4 on page 1 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'You can change the daily reminder time in GUARD settings.'**
+  String get howGuardActivateRule4;
+
+  /// Hint box text on page 1 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Only Fixed Cost items can have GUARD enabled.'**
+  String get howGuardFixedCostOnlyHint;
+
+  /// Intro text on page 2 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'GUARD resets on its own at the start of each new period. You never need to reset anything manually.'**
+  String get howGuardActIntro;
+
+  /// Bullet rule 1 on page 2 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly bills — like rent or subscriptions — get a fresh reminder every month.'**
+  String get howGuardActRule1;
+
+  /// Bullet rule 2 on page 2 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly bills — like insurance or annual fees — reset once a year.'**
+  String get howGuardActRule2;
+
+  /// Bullet rule 3 on page 2 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Once you mark a bill as paid, it stays confirmed until the next period begins.'**
+  String get howGuardActRule3;
+
+  /// Hint box text on page 2 of the How GUARD Works sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Paid or silenced — it only applies to the current period. The next one always starts fresh.'**
+  String get howGuardPerPeriodHint;
 }
 
 class _AppLocalizationsDelegate
