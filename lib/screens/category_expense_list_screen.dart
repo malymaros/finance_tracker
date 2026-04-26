@@ -40,12 +40,19 @@ class _CategoryExpenseListScreenState
   String get _periodLabel =>
       '${context.l10n.monthName(widget.period.month)} ${widget.period.year}';
 
-  List<Expense> _expensesForPeriod() =>
-      widget.repository
-          .expensesForMonth(widget.period.year, widget.period.month)
-          .where((e) => e.category == widget.category)
-          .toList()
-        ..sort((a, b) => b.date.compareTo(a.date));
+  List<Expense> _expensesForPeriod() {
+    final raw = widget.repository
+        .expensesForMonth(widget.period.year, widget.period.month)
+        .where((e) => e.category == widget.category)
+        .toList();
+    return (raw.asMap().entries.toList()
+          ..sort((a, b) {
+            final d = b.value.date.compareTo(a.value.date);
+            return d != 0 ? d : b.key.compareTo(a.key);
+          }))
+        .map((e) => e.value)
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {

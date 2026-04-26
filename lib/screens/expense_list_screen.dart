@@ -160,8 +160,17 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         widget.repositories.guard,
       ]),
       builder: (context, _) {
-        final monthExpenses = widget.repositories.finance.expensesForMonth(_year, _month)
-          ..sort((a, b) => b.date.compareTo(a.date));
+        final monthExpenses = (widget.repositories.finance
+                .expensesForMonth(_year, _month)
+                .asMap()
+                .entries
+                .toList()
+              ..sort((a, b) {
+                final d = b.value.date.compareTo(a.value.date);
+                return d != 0 ? d : b.key.compareTo(a.key);
+              }))
+            .map((e) => e.value)
+            .toList();
 
         final budgetStatus = _computeBudgetStatus(monthExpenses);
 

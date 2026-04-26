@@ -31,11 +31,18 @@ class GroupExpenseListScreen extends StatefulWidget {
 }
 
 class _GroupExpenseListScreenState extends State<GroupExpenseListScreen> {
-  List<Expense> _allGroupExpenses() =>
-      widget.repository.expenses
-          .where((e) => e.group == widget.groupName)
-          .toList()
-        ..sort((a, b) => b.date.compareTo(a.date));
+  List<Expense> _allGroupExpenses() {
+    final raw = widget.repository.expenses
+        .where((e) => e.group == widget.groupName)
+        .toList();
+    return (raw.asMap().entries.toList()
+          ..sort((a, b) {
+            final d = b.value.date.compareTo(a.value.date);
+            return d != 0 ? d : b.key.compareTo(a.key);
+          }))
+        .map((e) => e.value)
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {

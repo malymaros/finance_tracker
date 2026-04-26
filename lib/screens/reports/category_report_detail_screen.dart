@@ -82,13 +82,18 @@ class _CategoryReportDetailScreenState
   }
 
   List<Expense> _expenses() {
-    final raw = _isYearly
-        ? widget.repository.expensesForYear(widget.year)
-        : widget.repository.expensesForMonth(widget.year, widget.month!);
-    return raw
+    final raw = (_isYearly
+            ? widget.repository.expensesForYear(widget.year)
+            : widget.repository.expensesForMonth(widget.year, widget.month!))
         .where((e) => e.category == widget.category)
-        .toList()
-      ..sort((a, b) => b.date.compareTo(a.date));
+        .toList();
+    return (raw.asMap().entries.toList()
+          ..sort((a, b) {
+            final d = b.value.date.compareTo(a.value.date);
+            return d != 0 ? d : b.key.compareTo(a.key);
+          }))
+        .map((e) => e.value)
+        .toList();
   }
 
   // ── Build ─────────────────────────────────────────────────────────────────

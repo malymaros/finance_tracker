@@ -97,13 +97,19 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final normalizedDate = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
+
     final expense = Expense(
       id: widget.existing?.id ??
           IdGenerator.generate(),
       amount: double.parse(_amountController.text.trim()),
       category: _selectedCategory,
       financialType: _selectedFinancialType,
-      date: _selectedDate,
+      date: normalizedDate,
       note: _noteController.text.trim().isEmpty
           ? null
           : _noteController.text.trim(),
