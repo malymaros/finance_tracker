@@ -1048,7 +1048,7 @@
   },
   "howGroupsExample1Desc": "Przypisz ją do wszystkich wydatków z wyjazdu — lotów, hoteli, jedzenia, wejściówek. Całkowity koszt całej podróży zobaczysz po jednym stuknięciu.",
   "@howGroupsExample1Desc": {"description": "Opis 1. przykładu na stronie Bądź kreatywny"},
-  "howGroupsExample2Label": "McDonald''s {year}",
+  "howGroupsExample2Label": "McDonald's {year}",
   "@howGroupsExample2Label": {
     "description": "Przykład nazwy grupy na stronie Bądź kreatywny (przykład restauracji)",
     "placeholders": {"year": {"type": "int"}}

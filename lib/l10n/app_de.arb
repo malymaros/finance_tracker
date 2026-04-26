@@ -1048,7 +1048,7 @@
   },
   "howGroupsExample1Desc": "Füge es jeder Ausgabe auf einer Reise hinzu – Flüge, Hotels, Mahlzeiten, Tickets. Sieh die Gesamtkosten der gesamten Reise auf einen Blick.",
   "@howGroupsExample1Desc": { "description": "Beschreibung für Beispiel 1 auf der Kreativ-werden-Seite" },
-  "howGroupsExample2Label": "McDonald''s {year}",
+  "howGroupsExample2Label": "McDonald's {year}",
   "@howGroupsExample2Label": {
     "description": "Beispiel-Gruppen-Label auf der Kreativ-werden-Seite",
     "placeholders": { "year": { "type": "int" } }

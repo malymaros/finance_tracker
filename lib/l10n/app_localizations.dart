@@ -2135,7 +2135,7 @@ abstract class AppLocalizations {
   /// Example group label on the Be Creative page (restaurant example)
   ///
   /// In en, this message translates to:
-  /// **'McDonald\'\'s {year}'**
+  /// **'McDonald\'s {year}'**
   String howGroupsExample2Label(int year);
 
   /// Description for example 2 on the Be Creative page

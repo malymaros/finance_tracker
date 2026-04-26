@@ -1213,7 +1213,7 @@ class AppLocalizationsSk extends AppLocalizations {
 
   @override
   String howGroupsExample2Label(int year) {
-    return 'McDonald\'\'s $year';
+    return 'McDonald\'s $year';
   }
 
   @override

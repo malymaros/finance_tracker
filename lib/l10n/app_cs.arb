@@ -1048,7 +1048,7 @@
   },
   "howGroupsExample1Desc": "Připojte ho ke každému výdaji na cestě — lety, hotely, jídla, vstupenky. Celkovou cenu celé cesty uvidíte jedním klepnutím.",
   "@howGroupsExample1Desc": {"description": "Popis příkladu 1 na stránce Buďte kreativní"},
-  "howGroupsExample2Label": "McDonald''s {year}",
+  "howGroupsExample2Label": "McDonald's {year}",
   "@howGroupsExample2Label": {
     "description": "Příklad názvu skupiny na stránce Buďte kreativní (příklad restaurace)",
     "placeholders": {"year": {"type": "int"}}

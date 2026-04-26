@@ -1049,7 +1049,7 @@
   },
   "howGroupsExample1Desc": "Attach to every expense on a trip — flights, hotels, meals, tickets. See the total cost of the whole trip in one tap.",
   "@howGroupsExample1Desc": {"description": "Description for example 1 on the Be Creative page"},
-  "howGroupsExample2Label": "McDonald''s {year}",
+  "howGroupsExample2Label": "McDonald's {year}",
   "@howGroupsExample2Label": {
     "description": "Example group label on the Be Creative page (restaurant example)",
     "placeholders": {"year": {"type": "int"}}

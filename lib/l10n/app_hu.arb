@@ -1048,7 +1048,7 @@
   },
   "howGroupsExample1Desc": "Rendeld hozzá az utazás minden kiadásához — repülőjegyekhez, szállodákhoz, étkezésekhez, belépőkhöz. Egy koppintással lásd az egész út teljes költségét.",
   "@howGroupsExample1Desc": {"description": "Az 1. példa leírása a Légy kreatív oldalon"},
-  "howGroupsExample2Label": "McDonald''s {year}",
+  "howGroupsExample2Label": "McDonald's {year}",
   "@howGroupsExample2Label": {
     "description": "Példa csoportcímke a Légy kreatív oldalon (étterem példa)",
     "placeholders": {"year": {"type": "int"}}
