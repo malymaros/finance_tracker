@@ -18,6 +18,7 @@ PlanItem _monthlyGuarded({
   int fromYear = 2024,
   int fromMonth = 1,
   int? dueDay,
+  YearMonth? validTo,
 }) =>
     PlanItem(
       id: id,
@@ -27,6 +28,7 @@ PlanItem _monthlyGuarded({
       type: PlanItemType.fixedCost,
       frequency: PlanFrequency.monthly,
       validFrom: YearMonth(fromYear, fromMonth),
+      validTo: validTo,
       category: ExpenseCategory.housing,
       financialType: FinancialType.consumption,
       isGuarded: true,
@@ -820,6 +822,228 @@ void main() {
         repo.itemStateForPeriod(item, YearMonth(2099, 12)),
         GuardState.scheduled,
       );
+    });
+  });
+
+  // ── nextReminderPeriod ────────────────────────────────────────────────────
+
+  group('nextReminderPeriod', () {
+    // ── guards ───────────────────────────────────────────────────────────────
+
+    group('guards — always null', () {
+      test('non-guarded item', () {
+        final repo = _repo();
+        final now = YearMonth.now();
+        final item = PlanItem(
+          id: 'i1',
+          seriesId: 's1',
+          name: 'Rent',
+          amount: 500,
+          type: PlanItemType.fixedCost,
+          frequency: PlanFrequency.monthly,
+          validFrom: YearMonth(now.year - 1, 1),
+          isGuarded: false,
+          guardDueDay: 1,
+        );
+        expect(repo.nextReminderPeriod(item, now, [item]), isNull);
+      });
+
+      test('income item', () {
+        final repo = _repo();
+        final now = YearMonth.now();
+        final item = PlanItem(
+          id: 'i1',
+          seriesId: 's1',
+          name: 'Salary',
+          amount: 3000,
+          type: PlanItemType.income,
+          frequency: PlanFrequency.monthly,
+          validFrom: YearMonth(now.year - 1, 1),
+          isGuarded: true,
+          guardDueDay: 1,
+        );
+        expect(repo.nextReminderPeriod(item, now, [item]), isNull);
+      });
+
+      test('oneTime frequency', () {
+        final repo = _repo();
+        final now = YearMonth.now();
+        final item = PlanItem(
+          id: 'i1',
+          seriesId: 's1',
+          name: 'Fee',
+          amount: 100,
+          type: PlanItemType.fixedCost,
+          frequency: PlanFrequency.oneTime,
+          validFrom: YearMonth(now.year - 1, 1),
+          isGuarded: true,
+          guardDueDay: 1,
+        );
+        expect(repo.nextReminderPeriod(item, now, [item]), isNull);
+      });
+    });
+
+    // ── monthly ──────────────────────────────────────────────────────────────
+
+    group('monthly', () {
+      test('before due day — returns current period', () {
+        final today = DateTime.now().day;
+        // Can't place a reliable future due day on days 28-31 across all months.
+        if (today >= 28) return;
+        final repo = _repo();
+        final now = YearMonth.now();
+        final item = _monthlyGuarded(
+          fromYear: now.year - 1,
+          fromMonth: 1,
+          dueDay: today + 1,
+        );
+        expect(repo.nextReminderPeriod(item, now, [item]), now);
+      });
+
+      test('on or after due day — returns next month', () {
+        final repo = _repo();
+        final now = YearMonth.now();
+        // dueDay 1: today.day >= 1 always, so the due day is always reached.
+        final item = _monthlyGuarded(
+          fromYear: now.year - 1,
+          fromMonth: 1,
+          dueDay: 1,
+        );
+        expect(repo.nextReminderPeriod(item, now, [item]), now.addMonths(1));
+      });
+
+      test('series ends at current month — returns null', () {
+        final repo = _repo();
+        final now = YearMonth.now();
+        final item = _monthlyGuarded(
+          fromYear: now.year - 1,
+          fromMonth: 1,
+          dueDay: 1,
+          validTo: now,
+        );
+        expect(repo.nextReminderPeriod(item, now, [item]), isNull);
+      });
+
+      test('series ends next month — returns next month', () {
+        final repo = _repo();
+        final now = YearMonth.now();
+        final nextMonth = now.addMonths(1);
+        final item = _monthlyGuarded(
+          fromYear: now.year - 1,
+          fromMonth: 1,
+          dueDay: 1,
+          validTo: nextMonth,
+        );
+        expect(repo.nextReminderPeriod(item, now, [item]), nextMonth);
+      });
+    });
+
+    // ── yearly ───────────────────────────────────────────────────────────────
+    //
+    // Use a fixed past `now` (2020-05) for the first three cases so the
+    // period comparisons are deterministic regardless of wall-clock date.
+
+    group('yearly', () {
+      test('anchor month is a future month this year — returns this year anchor',
+          () {
+        final repo = _repo();
+        final now = YearMonth(2020, 5);
+        // Anchor = July; YearMonth(2020, 7) is after May 2020.
+        final item = _yearlyGuarded(fromYear: 2018, fromMonth: 7, dueDay: 1);
+        expect(repo.nextReminderPeriod(item, now, [item]), YearMonth(2020, 7));
+      });
+
+      test('anchor month already passed this year — returns next year anchor',
+          () {
+        final repo = _repo();
+        final now = YearMonth(2020, 5);
+        // Anchor = March; YearMonth(2020, 3) is before May 2020.
+        final item = _yearlyGuarded(fromYear: 2018, fromMonth: 3, dueDay: 1);
+        expect(repo.nextReminderPeriod(item, now, [item]), YearMonth(2021, 3));
+      });
+
+      test('on or after due day in anchor month — returns next year anchor', () {
+        final repo = _repo();
+        final now = YearMonth(2020, 5);
+        // Anchor = May = now; dueDay 1 means today.day >= 1 always.
+        final item = _yearlyGuarded(fromYear: 2018, fromMonth: 5, dueDay: 1);
+        expect(repo.nextReminderPeriod(item, now, [item]), YearMonth(2021, 5));
+      });
+
+      test('before due day in anchor month — returns current year anchor', () {
+        final today = DateTime.now().day;
+        if (today >= 28) return;
+        final repo = _repo();
+        final now = YearMonth.now();
+        // Anchor = current month; dueDay is tomorrow so reminder hasn't fired.
+        final item = _yearlyGuarded(
+          fromYear: now.year - 2,
+          fromMonth: now.month,
+          dueDay: today + 1,
+        );
+        expect(repo.nextReminderPeriod(item, now, [item]), now);
+      });
+
+      test('series ends at upcoming anchor — returns that anchor', () {
+        final repo = _repo();
+        final now = YearMonth(2020, 5);
+        // Anchor = July; validTo = July 2020 — the series ends exactly at
+        // its next firing. July 2020 is still upcoming (after May 2020) so
+        // the method must return it, not skip it.
+        final item = _yearlyGuarded(
+          fromYear: 2018,
+          fromMonth: 7,
+          dueDay: 1,
+          validTo: YearMonth(2020, 7),
+        );
+        expect(repo.nextReminderPeriod(item, now, [item]), YearMonth(2020, 7));
+      });
+
+      test('series ended before now — returns null', () {
+        final repo = _repo();
+        final now = YearMonth(2022, 5);
+        // Anchor = July; validTo = July 2021 — series has already expired.
+        final item = _yearlyGuarded(
+          fromYear: 2018,
+          fromMonth: 7,
+          dueDay: 1,
+          validTo: YearMonth(2021, 7),
+        );
+        expect(repo.nextReminderPeriod(item, now, [item]), isNull);
+      });
+    });
+
+    // ── regression ───────────────────────────────────────────────────────────
+
+    group('regression — unpaid item does not report same period as next', () {
+      test('monthly: on due day, next reminder is the following month not now',
+          () {
+        final repo = _repo();
+        final now = YearMonth.now();
+        // dueDay 1: today >= 1, so the reminder has fired this month.
+        // Before the fix (<=), nextReminderPeriod returned `now` here.
+        final item = _monthlyGuarded(
+          fromYear: now.year - 1,
+          fromMonth: 1,
+          dueDay: 1,
+        );
+        final next = repo.nextReminderPeriod(item, now, [item]);
+        expect(next, isNotNull);
+        expect(next, isNot(now));
+        expect(next, now.addMonths(1));
+      });
+
+      test('yearly: on due day in anchor month, next reminder is next year', () {
+        final repo = _repo();
+        final now = YearMonth(2020, 5);
+        // Anchor = May = now, dueDay 1: always on/after due.
+        // Before the fix (<=), nextReminderPeriod returned `now` here.
+        final item = _yearlyGuarded(fromYear: 2018, fromMonth: 5, dueDay: 1);
+        final next = repo.nextReminderPeriod(item, now, [item]);
+        expect(next, isNotNull);
+        expect(next, isNot(now));
+        expect(next, YearMonth(2021, 5));
+      });
     });
   });
 

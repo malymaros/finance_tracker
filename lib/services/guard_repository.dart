@@ -101,7 +101,7 @@ class GuardRepository extends ChangeNotifier {
         final active = _activeGuardedVersionForPeriod(allItems, item.seriesId, period);
         if (active == null) continue;
         final dueDay = GuardCalculator.clampDueDay(active.guardDueDay, period);
-        if (period != now || today.day <= dueDay) return period;
+        if (period != now || today.day < dueDay) return period;
       }
     } else if (item.frequency == PlanFrequency.yearly) {
       // Walk forward year by year; anchor month is validFrom.month of the
@@ -115,7 +115,7 @@ class GuardRepository extends ChangeNotifier {
         final period = YearMonth(year, anchorMonth);
         final dueDay = GuardCalculator.clampDueDay(active.guardDueDay, period);
         final notYetPast = period.isAfter(now) ||
-            (period == now && today.day <= dueDay);
+            (period == now && today.day < dueDay);
         if (notYetPast) return period;
       }
     }
