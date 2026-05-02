@@ -535,7 +535,7 @@ class _ReportScreenState extends State<ReportScreen> {
                         ? const BorderSide(color: Colors.black, width: 2)
                         : BorderSide.none,
                     title: '${ct.percentage.toStringAsFixed(0)}%',
-                    radius: isSelected ? 98.0 : 90.0,
+                    radius: isSelected ? 86.0 : 78.0,
                     titleStyle: TextStyle(
                       color: isAggOther ? Colors.black87 : Colors.white,
                       fontWeight: FontWeight.bold,
