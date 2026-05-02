@@ -9,6 +9,7 @@ import '../services/currency_formatter.dart';
 import '../services/category_preferences_repository.dart';
 import '../services/finance_repository.dart';
 import '../theme/app_theme.dart';
+import '../widgets/expense_delete_confirm.dart';
 import '../widgets/expense_list_tile.dart';
 import '../widgets/swipeable_tile.dart';
 import 'add_expense_screen.dart';
@@ -138,7 +139,11 @@ class _CategoryExpenseListScreenState
         final expense = expenses[i];
         return SwipeableTile(
           itemId: expense.id,
-          onDelete: () => widget.repository.removeExpense(expense.id),
+          onDelete: () async {
+            if (await confirmDeleteExpense(context, expense)) {
+              widget.repository.removeExpense(expense.id);
+            }
+          },
           onEdit: () => _navigateToEdit(context, expense),
           child: ExpenseListTile(
             expense: expense,
@@ -178,9 +183,13 @@ class _CategoryExpenseListScreenState
           Navigator.of(routeContext).pop();
           _navigateToEdit(context, expense);
         },
-        onDelete: () {
-          Navigator.of(routeContext).pop();
-          widget.repository.removeExpense(expense.id);
+        onDelete: () async {
+          final confirmed = await confirmDeleteExpense(context, expense);
+          if (!routeContext.mounted) return;
+          if (confirmed) {
+            Navigator.of(routeContext).pop();
+            widget.repository.removeExpense(expense.id);
+          }
         },
       ),
     ));

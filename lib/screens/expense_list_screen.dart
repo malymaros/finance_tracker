@@ -23,6 +23,7 @@ import '../widgets/how_it_works_sheet.dart';
 import '../widgets/month_budget_summary.dart';
 import '../widgets/period_navigator.dart';
 import '../widgets/export_date_range_dialog.dart';
+import '../widgets/expense_delete_confirm.dart';
 import '../widgets/swipeable_tile.dart';
 import 'add_expense_screen.dart';
 import 'import_screen.dart';
@@ -414,7 +415,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
         final expense = expenses[i];
         return SwipeableTile(
           itemId: expense.id,
-          onDelete: () => widget.repositories.finance.removeExpense(expense.id),
+          onDelete: () async {
+            if (await confirmDeleteExpense(context, expense)) {
+              widget.repositories.finance.removeExpense(expense.id);
+            }
+          },
           onEdit: () => _navigateToEdit(context, expense),
           child: ExpenseListTile(
             expense: expense,
@@ -433,9 +438,13 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
           Navigator.of(routeContext).pop();
           _navigateToEdit(context, expense);
         },
-        onDelete: () {
-          Navigator.of(routeContext).pop();
-          widget.repositories.finance.removeExpense(expense.id);
+        onDelete: () async {
+          final confirmed = await confirmDeleteExpense(context, expense);
+          if (!routeContext.mounted) return;
+          if (confirmed) {
+            Navigator.of(routeContext).pop();
+            widget.repositories.finance.removeExpense(expense.id);
+          }
         },
       ),
     ));

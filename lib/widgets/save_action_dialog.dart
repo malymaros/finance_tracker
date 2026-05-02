@@ -111,8 +111,6 @@ class SaveActionDialog extends StatelessWidget {
                 targetName!,
                 style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
                 textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
             const SizedBox(height: 20),
