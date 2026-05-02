@@ -9,8 +9,8 @@ import 'swipeable_tile.dart';
 
 /// A list tile representing a single category budget in [ManageBudgetsScreen].
 ///
-/// Long-press reveals an action sheet with Edit and Delete options via
-/// [SwipeableTile]. Tapping the tile directly calls [onEdit].
+/// Tapping or long-pressing the tile reveals an action sheet with Edit and
+/// Delete options via [SwipeableTile.showActionSheet].
 class CategoryBudgetTile extends StatelessWidget {
   final CategoryBudget budget;
   final VoidCallback onEdit;
@@ -32,7 +32,11 @@ class CategoryBudgetTile extends StatelessWidget {
       onEdit: onEdit,
       onDelete: onDelete,
       child: ListTile(
-        onTap: onEdit,
+        onTap: () => SwipeableTile.showActionSheet(
+          context,
+          onEdit: onEdit,
+          onDelete: onDelete,
+        ),
         leading: CircleAvatar(
           backgroundColor: cat.color.withAlpha(30),
           child: Icon(cat.icon, size: 20, color: cat.color),

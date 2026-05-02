@@ -32,12 +32,22 @@ class SwipeableTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onLongPress: () => _showActionSheet(context),
+      onLongPress: () => showActionSheet(
+        context,
+        onEdit: onEdit,
+        onDelete: onDelete,
+        onGuard: onGuard,
+      ),
       child: child,
     );
   }
 
-  void _showActionSheet(BuildContext context) {
+  static void showActionSheet(
+    BuildContext context, {
+    VoidCallback? onEdit,
+    required VoidCallback onDelete,
+    VoidCallback? onGuard,
+  }) {
     showModalBottomSheet<void>(
       context: context,
       builder: (sheetContext) => SafeArea(
@@ -62,7 +72,7 @@ class SwipeableTile extends StatelessWidget {
                 ),
                 onTap: () {
                   Navigator.pop(sheetContext);
-                  onGuard!();
+                  onGuard();
                 },
               ),
             if (onEdit != null)
@@ -71,7 +81,7 @@ class SwipeableTile extends StatelessWidget {
                 title: Text(sheetContext.l10n.actionEdit),
                 onTap: () {
                   Navigator.pop(sheetContext);
-                  onEdit!();
+                  onEdit();
                 },
               ),
             ListTile(
