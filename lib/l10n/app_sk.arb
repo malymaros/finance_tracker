@@ -25,6 +25,12 @@
   "actionDelete": "Odstrániť",
   "@actionDelete": {"description": "Všeobecný popisok akcie odstránenia"},
 
+  "deleteExpenseAllCaps": "DELETE",
+  "@deleteExpenseAllCaps": {"description": "All-caps action label in the expense delete confirmation dialog"},
+
+  "deleteExpenseDescription": "Tento výdavok bude trvalo odstránený.",
+  "@deleteExpenseDescription": {"description": "Body text in the expense delete confirmation dialog"},
+
   "actionSave": "Uložiť",
   "@actionSave": {"description": "Všeobecný popisok tlačidla uloženia / potvrdenia"},
 

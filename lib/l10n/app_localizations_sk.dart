@@ -33,6 +33,13 @@ class AppLocalizationsSk extends AppLocalizations {
   String get actionDelete => 'Odstrániť';
 
   @override
+  String get deleteExpenseAllCaps => 'DELETE';
+
+  @override
+  String get deleteExpenseDescription =>
+      'Tento výdavok bude trvalo odstránený.';
+
+  @override
   String get actionSave => 'Uložiť';
 
   @override

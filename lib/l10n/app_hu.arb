@@ -25,6 +25,12 @@
   "actionDelete": "Törlés",
   "@actionDelete": {"description": "Általános törlési művelet címkéje"},
 
+  "deleteExpenseAllCaps": "DELETE",
+  "@deleteExpenseAllCaps": {"description": "All-caps action label in the expense delete confirmation dialog"},
+
+  "deleteExpenseDescription": "Ez a kiadás véglegesen törlésre kerül.",
+  "@deleteExpenseDescription": {"description": "Body text in the expense delete confirmation dialog"},
+
   "actionSave": "Mentés",
   "@actionSave": {"description": "Általános mentés / elküldés gomb címkéje"},
 

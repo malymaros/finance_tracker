@@ -33,6 +33,13 @@ class AppLocalizationsHu extends AppLocalizations {
   String get actionDelete => 'Törlés';
 
   @override
+  String get deleteExpenseAllCaps => 'DELETE';
+
+  @override
+  String get deleteExpenseDescription =>
+      'Ez a kiadás véglegesen törlésre kerül.';
+
+  @override
   String get actionSave => 'Mentés';
 
   @override

@@ -25,6 +25,12 @@
   "actionDelete": "Usuń",
   "@actionDelete": {"description": "Ogólna etykieta akcji usuwania"},
 
+  "deleteExpenseAllCaps": "DELETE",
+  "@deleteExpenseAllCaps": {"description": "All-caps action label in the expense delete confirmation dialog"},
+
+  "deleteExpenseDescription": "Ten wydatek zostanie trwale usunięty.",
+  "@deleteExpenseDescription": {"description": "Body text in the expense delete confirmation dialog"},
+
   "actionSave": "Zapisz",
   "@actionSave": {"description": "Ogólna etykieta przycisku zapisu / potwierdzenia"},
 

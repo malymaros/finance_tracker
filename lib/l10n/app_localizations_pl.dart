@@ -33,6 +33,13 @@ class AppLocalizationsPl extends AppLocalizations {
   String get actionDelete => 'Usuń';
 
   @override
+  String get deleteExpenseAllCaps => 'DELETE';
+
+  @override
+  String get deleteExpenseDescription =>
+      'Ten wydatek zostanie trwale usunięty.';
+
+  @override
   String get actionSave => 'Zapisz';
 
   @override

@@ -154,6 +154,18 @@ abstract class AppLocalizations {
   /// **'Delete'**
   String get actionDelete;
 
+  /// All-caps action label in the expense delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'DELETE'**
+  String get deleteExpenseAllCaps;
+
+  /// Body text in the expense delete confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'This expense will be permanently removed.'**
+  String get deleteExpenseDescription;
+
   /// Generic save / submit button label
   ///
   /// In en, this message translates to:

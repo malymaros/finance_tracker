@@ -33,6 +33,12 @@ class AppLocalizationsCs extends AppLocalizations {
   String get actionDelete => 'Smazat';
 
   @override
+  String get deleteExpenseAllCaps => 'DELETE';
+
+  @override
+  String get deleteExpenseDescription => 'Tento výdaj bude trvale odstraněn.';
+
+  @override
   String get actionSave => 'Uložit';
 
   @override

@@ -25,6 +25,12 @@
   "actionDelete": "Löschen",
   "@actionDelete": { "description": "Allgemeine Beschriftung für die Löschen-Aktion" },
 
+  "deleteExpenseAllCaps": "DELETE",
+  "@deleteExpenseAllCaps": { "description": "All-caps action label in the expense delete confirmation dialog" },
+
+  "deleteExpenseDescription": "Diese Ausgabe wird dauerhaft entfernt.",
+  "@deleteExpenseDescription": { "description": "Body text in the expense delete confirmation dialog" },
+
   "actionSave": "Speichern",
   "@actionSave": { "description": "Allgemeine Beschriftung für die Speichern-/Bestätigen-Schaltfläche" },
 

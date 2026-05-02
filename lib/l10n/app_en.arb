@@ -25,6 +25,12 @@
   "actionDelete": "Delete",
   "@actionDelete": {"description": "Generic delete action label"},
 
+  "deleteExpenseAllCaps": "DELETE",
+  "@deleteExpenseAllCaps": {"description": "All-caps action label in the expense delete confirmation dialog"},
+
+  "deleteExpenseDescription": "This expense will be permanently removed.",
+  "@deleteExpenseDescription": {"description": "Body text in the expense delete confirmation dialog"},
+
   "actionSave": "Save",
   "@actionSave": {"description": "Generic save / submit button label"},
 
