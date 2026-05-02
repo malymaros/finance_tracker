@@ -3173,7 +3173,7 @@ abstract class AppLocalizations {
   /// Subtitle for page 0 of the How Category Budgets Work sheet
   ///
   /// In en, this message translates to:
-  /// **'Why it exists'**
+  /// **'Limit your spending by category!'**
   String get howCategoryBudgetsSubtitle0;
 
   /// Subtitle for page 1 of the How Category Budgets Work sheet
