@@ -44,6 +44,8 @@ void main() async {
     prefs: prefsRepository,
   );
   await SaveLoadService.checkAndRotate(repositories);
+  await guardRepository.backfillPastPeriods(
+      planRepository.items, YearMonth.now());
 
   CurrencyService.instance = CurrencyService();
   await CurrencyService.instance.load();
