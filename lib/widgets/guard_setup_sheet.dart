@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../l10n/l10n.dart';
 import '../l10n/l10n_extensions.dart';
 import '../models/plan_item.dart';
+import '../models/year_month.dart';
+import '../services/guard_repository.dart';
 import '../services/plan_repository.dart';
 import '../theme/app_theme.dart';
 
@@ -18,11 +20,13 @@ import '../theme/app_theme.dart';
 class GuardSetupSheet extends StatefulWidget {
   final PlanItem item;
   final PlanRepository planRepository;
+  final GuardRepository? guardRepository;
 
   const GuardSetupSheet({
     super.key,
     required this.item,
     required this.planRepository,
+    this.guardRepository,
   });
 
   /// Shows this sheet as a modal bottom sheet.
@@ -30,6 +34,7 @@ class GuardSetupSheet extends StatefulWidget {
     BuildContext context, {
     required PlanItem item,
     required PlanRepository planRepository,
+    GuardRepository? guardRepository,
   }) {
     return showModalBottomSheet<void>(
       context: context,
@@ -37,6 +42,7 @@ class GuardSetupSheet extends StatefulWidget {
       builder: (_) => GuardSetupSheet(
         item: item,
         planRepository: planRepository,
+        guardRepository: guardRepository,
       ),
     );
   }
@@ -147,6 +153,17 @@ class _GuardSetupSheetState extends State<GuardSetupSheet> {
     } else if (_enabled) {
       await widget.planRepository
           .enableGuardForItem(widget.item.id, dueDay: _dueDay);
+      if (!widget.item.isGuarded && widget.guardRepository != null) {
+        final now = YearMonth.now();
+        if (widget.item.validFrom.isBefore(now)) {
+          await widget.guardRepository!.autoConfirmPastPeriods(
+            seriesId: widget.item.seriesId,
+            validFrom: widget.item.validFrom,
+            before: now,
+            frequency: widget.item.frequency,
+          );
+        }
+      }
     }
     if (mounted) navigator.pop();
   }

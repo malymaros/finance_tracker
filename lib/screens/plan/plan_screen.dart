@@ -639,6 +639,7 @@ class _PlanScreenState extends State<PlanScreen> {
               context,
               item: item,
               planRepository: widget.repositories.plan,
+              guardRepository: widget.repositories.guard,
             ),
           ),
         FinancialTypeDistributionCard(

@@ -138,6 +138,7 @@ class PlanItemDetailScreen extends StatelessWidget {
               context,
               item: current,
               planRepository: planRepository!,
+              guardRepository: guardRepository,
             ),
           ),
         );
