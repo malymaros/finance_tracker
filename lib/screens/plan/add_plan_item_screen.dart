@@ -590,7 +590,7 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       }
 
       autoConfirmSeriesId = e.seriesId;
-      autoConfirmValidFrom = _validFrom;
+      autoConfirmValidFrom = e.validFrom;
     }
 
     // When GUARD is newly enabled and the item has past months, auto-confirm
