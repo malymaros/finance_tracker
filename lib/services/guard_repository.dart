@@ -262,41 +262,6 @@ class GuardRepository extends ChangeNotifier {
     await _save();
   }
 
-  /// Backfills auto-confirmed payments for every guarded series that has
-  /// outstanding past periods with no record. Called once on cold launch to
-  /// repair data created before auto-confirm was introduced.
-  ///
-  /// Safe to call on every launch — [autoConfirmPastPeriods] skips periods
-  /// that already have a record, so this is fully idempotent.
-  Future<void> backfillPastPeriods(
-      List<PlanItem> allItems, YearMonth now) async {
-    final processedSeries = <String>{};
-    for (final item in allItems) {
-      if (!item.isGuarded ||
-          item.type != PlanItemType.fixedCost ||
-          item.frequency == PlanFrequency.oneTime) {
-        continue;
-      }
-      if (!processedSeries.add(item.seriesId)) { continue; }
-
-      YearMonth earliest = item.validFrom;
-      for (final other in allItems) {
-        if (other.seriesId == item.seriesId &&
-            other.validFrom.isBefore(earliest)) {
-          earliest = other.validFrom;
-        }
-      }
-      if (!earliest.isBefore(now)) continue;
-
-      await autoConfirmPastPeriods(
-        seriesId: item.seriesId,
-        validFrom: earliest,
-        before: now,
-        frequency: item.frequency,
-      );
-    }
-  }
-
   Future<void> clearAll() async {
     _payments.clear();
     _guardedPeriodsCache.clear();
