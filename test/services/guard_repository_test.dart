@@ -1047,6 +1047,172 @@ void main() {
     });
   });
 
+  // ── autoConfirmPastPeriods ────────────────────────────────────────────────
+
+  group('autoConfirmPastPeriods', () {
+    test('monthly: marks all months from validFrom up to (not including) before', () async {
+      final repo = _repo();
+      await repo.autoConfirmPastPeriods(
+        seriesId: 's1',
+        validFrom: YearMonth(2024, 1),
+        before: YearMonth(2024, 4),
+        frequency: PlanFrequency.monthly,
+      );
+      expect(repo.payments.length, 3); // Jan, Feb, Mar
+      final periods = repo.payments.map((p) => p.period).toList();
+      expect(periods, contains(YearMonth(2024, 1)));
+      expect(periods, contains(YearMonth(2024, 2)));
+      expect(periods, contains(YearMonth(2024, 3)));
+      expect(periods, isNot(contains(YearMonth(2024, 4)))); // before is exclusive
+    });
+
+    test('monthly: does not overwrite existing records', () async {
+      final repo = _repo(seed: [
+        GuardPayment(
+          id: 'g1',
+          planItemSeriesId: 's1',
+          period: YearMonth(2024, 2),
+          silencedAt: DateTime(2024, 2, 5),
+        ),
+      ]);
+      await repo.autoConfirmPastPeriods(
+        seriesId: 's1',
+        validFrom: YearMonth(2024, 1),
+        before: YearMonth(2024, 4),
+        frequency: PlanFrequency.monthly,
+      );
+      // Feb record should still be silenced (not replaced with paid).
+      final feb = repo.payments.firstWhere((p) => p.period == YearMonth(2024, 2));
+      expect(feb.silencedAt, isNotNull);
+      expect(feb.paidAt, isNull);
+      // Jan and Mar get new paid records.
+      expect(repo.payments.length, 3);
+    });
+
+    test('yearly: only marks anchor months, not every month', () async {
+      final repo = _repo();
+      // anchor = March (validFrom.month = 3)
+      await repo.autoConfirmPastPeriods(
+        seriesId: 'sy1',
+        validFrom: YearMonth(2023, 3),
+        before: YearMonth(2025, 6),
+        frequency: PlanFrequency.yearly,
+      );
+      final periods = repo.payments.map((p) => p.period).toList();
+      // Only March 2023 and March 2024 (March 2025 is before June 2025 but IS the anchor).
+      expect(periods, contains(YearMonth(2023, 3)));
+      expect(periods, contains(YearMonth(2024, 3)));
+      expect(periods, contains(YearMonth(2025, 3)));
+      // Non-anchor months must not appear.
+      expect(periods, isNot(contains(YearMonth(2023, 6))));
+      expect(periods, isNot(contains(YearMonth(2024, 1))));
+      // before is exclusive: June 2025 must not appear.
+      expect(periods, isNot(contains(YearMonth(2025, 6))));
+    });
+
+    test('no-op when validFrom is not before before', () async {
+      final repo = _repo();
+      await repo.autoConfirmPastPeriods(
+        seriesId: 's1',
+        validFrom: YearMonth(2024, 5),
+        before: YearMonth(2024, 5),
+        frequency: PlanFrequency.monthly,
+      );
+      expect(repo.payments, isEmpty);
+    });
+
+    test('all added records are in paid state', () async {
+      final repo = _repo();
+      await repo.autoConfirmPastPeriods(
+        seriesId: 's1',
+        validFrom: YearMonth(2024, 1),
+        before: YearMonth(2024, 3),
+        frequency: PlanFrequency.monthly,
+      );
+      for (final p in repo.payments) {
+        expect(p.paidAt, isNotNull);
+        expect(p.silencedAt, isNull);
+      }
+    });
+
+    test('unpaidActiveItems returns empty after auto-confirm covers all past months', () async {
+      final repo = _repo();
+      final item = _monthlyGuarded(fromYear: 2024, fromMonth: 1, dueDay: 1);
+      final now = YearMonth(2024, 4);
+      await repo.autoConfirmPastPeriods(
+        seriesId: 's1',
+        validFrom: YearMonth(2024, 1),
+        before: now,
+        frequency: PlanFrequency.monthly,
+      );
+      final unpaid = repo.unpaidActiveItems([item], now);
+      // Only the current month (April) remains — Jan, Feb, Mar are paid.
+      expect(unpaid.length, 1);
+      expect(unpaid.first.$2, now);
+    });
+
+    test('notifies listeners when records are added', () async {
+      final repo = _repo();
+      var notified = false;
+      repo.addListener(() => notified = true);
+      await repo.autoConfirmPastPeriods(
+        seriesId: 's1',
+        validFrom: YearMonth(2024, 1),
+        before: YearMonth(2024, 3),
+        frequency: PlanFrequency.monthly,
+      );
+      expect(notified, isTrue);
+    });
+
+    test('does not notify listeners when no new records were added', () async {
+      final repo = _repo(seed: [
+        GuardPayment(
+          id: 'g1',
+          planItemSeriesId: 's1',
+          period: YearMonth(2024, 1),
+          paidAt: DateTime(2024, 1, 5),
+        ),
+        GuardPayment(
+          id: 'g2',
+          planItemSeriesId: 's1',
+          period: YearMonth(2024, 2),
+          paidAt: DateTime(2024, 2, 5),
+        ),
+      ]);
+      var notified = false;
+      repo.addListener(() => notified = true);
+      await repo.autoConfirmPastPeriods(
+        seriesId: 's1',
+        validFrom: YearMonth(2024, 1),
+        before: YearMonth(2024, 3),
+        frequency: PlanFrequency.monthly,
+      );
+      expect(notified, isFalse);
+    });
+
+    test('cache is invalidated after records are added', () async {
+      final repo = _repo();
+      final item = _monthlyGuarded(fromYear: 2024, fromMonth: 1, dueDay: 1);
+      final now = YearMonth(2024, 3);
+
+      // Populate cache.
+      final before = repo.unpaidActiveItems([item], now);
+      expect(before.length, 3); // Jan, Feb, Mar
+
+      await repo.autoConfirmPastPeriods(
+        seriesId: 's1',
+        validFrom: YearMonth(2024, 1),
+        before: now,
+        frequency: PlanFrequency.monthly,
+      );
+
+      // Cache must be busted — Jan and Feb are now paid.
+      final after = repo.unpaidActiveItems([item], now);
+      expect(after.length, 1); // Only Mar
+      expect(after.first.$2, now);
+    });
+  });
+
   // ── lifecycle — yearly item ───────────────────────────────────────────────
 
   group('lifecycle — yearly item', () {

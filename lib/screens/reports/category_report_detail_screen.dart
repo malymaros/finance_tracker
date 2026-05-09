@@ -10,6 +10,7 @@ import '../../services/budget_calculator.dart';
 import '../../services/category_preferences_repository.dart';
 import '../../services/currency_formatter.dart';
 import '../../services/finance_repository.dart';
+import '../../services/guard_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/expense_delete_confirm.dart';
@@ -36,6 +37,7 @@ class CategoryReportDetailScreen extends StatefulWidget {
   final FinanceRepository repository;
   final PlanRepository planRepository;
   final CategoryPreferencesRepository prefsRepository;
+  final GuardRepository? guardRepository;
 
   const CategoryReportDetailScreen({
     super.key,
@@ -45,6 +47,7 @@ class CategoryReportDetailScreen extends StatefulWidget {
     required this.repository,
     required this.planRepository,
     required this.prefsRepository,
+    this.guardRepository,
   });
 
   @override
@@ -302,6 +305,7 @@ class _CategoryReportDetailScreenState
       builder: (_) => AddPlanItemScreen(
         planRepository: widget.planRepository,
         prefsRepository: widget.prefsRepository,
+        guardRepository: widget.guardRepository,
         existing: item,
         initialValidFrom: validFrom,
       ),

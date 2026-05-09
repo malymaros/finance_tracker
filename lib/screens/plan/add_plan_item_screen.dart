@@ -9,6 +9,7 @@ import '../../models/plan_item.dart';
 import '../../models/year_month.dart';
 import '../../services/category_preferences_repository.dart';
 import '../../services/currency_formatter.dart';
+import '../../services/guard_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../widgets/category_picker_sheet.dart';
 import '../../theme/app_theme.dart';
@@ -34,6 +35,10 @@ class AddPlanItemScreen extends StatefulWidget {
   /// recurring item. Defaults to [YearMonth.now] when null.
   final YearMonth? initialValidFrom;
 
+  /// When provided, auto-confirms all past months as paid when GUARD is newly
+  /// enabled on save. Optional so screens without guard access are unaffected.
+  final GuardRepository? guardRepository;
+
   const AddPlanItemScreen({
     super.key,
     required this.planRepository,
@@ -42,6 +47,7 @@ class AddPlanItemScreen extends StatefulWidget {
     this.initialType,
     this.initialFrequency,
     this.initialValidFrom,
+    this.guardRepository,
   });
 
   @override
@@ -113,6 +119,29 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       _type == PlanItemType.fixedCost &&
       _frequency == PlanFrequency.yearly;
 
+  /// True when [existing] is the latest version in its series (or when adding
+  /// a new item). False means a newer version already exists.
+  bool get _isLatestVersion {
+    final e = widget.existing;
+    if (e == null) return true;
+    return !widget.planRepository.items
+        .any((i) => i.seriesId == e.seriesId && i.validFrom.isAfter(e.validFrom));
+  }
+
+  /// The [validFrom] of the next version in the series, or null if [existing]
+  /// is the latest (or there is no existing item). Only meaningful when
+  /// [_isLatestVersion] is false.
+  YearMonth? get _nextVersionStart {
+    final e = widget.existing;
+    if (e == null) return null;
+    final later = widget.planRepository.items.where(
+        (i) => i.seriesId == e.seriesId && i.validFrom.isAfter(e.validFrom));
+    if (later.isEmpty) return null;
+    return later
+        .map((i) => i.validFrom)
+        .reduce((a, b) => a.isBefore(b) ? a : b);
+  }
+
   // ── Yearly helpers ─────────────────────────────────────────────────────────
 
   /// The next occurrence of the anchor month (validFrom.month) that is
@@ -138,10 +167,12 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
       // Income edits and one-time items: always start from the item's own
       // validFrom — income is always updated in place, no new version.
       // Yearly fixed cost edits: From is locked, always show e.validFrom.
-      // Monthly fixed cost edits: use the selected period as the new version start.
+      // Non-latest monthly fixed cost: always edit in-place (From locked).
+      // Latest monthly fixed cost: use the selected period as new version start.
       _validFrom = (e.type == PlanItemType.income ||
               e.frequency == PlanFrequency.oneTime ||
-              e.frequency == PlanFrequency.yearly)
+              e.frequency == PlanFrequency.yearly ||
+              !_isLatestVersion)
           ? e.validFrom
           : (widget.initialValidFrom ?? YearMonth.now());
       _validTo = e.validTo;
@@ -470,8 +501,15 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
     final guardEnabled = _canShowGuard && _isGuarded;
     final guardDueDay = guardEnabled ? _guardDueDay : null;
 
+    // Track which seriesId and validFrom were used so we can auto-confirm past
+    // months after saving (only when GUARD is newly enabled).
+    String? autoConfirmSeriesId;
+    YearMonth? autoConfirmValidFrom;
+
     if (e == null) {
       final newId = IdGenerator.generate();
+      autoConfirmSeriesId = newId;
+      autoConfirmValidFrom = _validFrom;
       await widget.planRepository.addPlanItem(PlanItem(
         id: newId,
         seriesId: newId,
@@ -494,6 +532,8 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
 
       if (wholeSeries) {
         // Apply to whole (currently active) series version in place.
+        autoConfirmSeriesId = e.seriesId;
+        autoConfirmValidFrom = e.validFrom;
         await widget.planRepository.applyPlanItemEdit(
           e,
           name: name,
@@ -508,7 +548,8 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
           guardDueDay: guardDueDay,
         );
       } else {
-        // Split: cap old series, create new independent series.
+        // Split: cap old series, create new independent series with a future
+        // start — no past months to auto-confirm.
         await widget.planRepository.splitYearlySeries(
           e,
           newSeriesStart: _nextUpcomingPeriod(),
@@ -546,6 +587,27 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
           );
         }
         return;
+      }
+
+      autoConfirmSeriesId = e.seriesId;
+      autoConfirmValidFrom = _validFrom;
+    }
+
+    // When GUARD is newly enabled and the item has past months, auto-confirm
+    // all of them so the user is not flooded with historical unpaid reminders.
+    final guardNewlyEnabled = guardEnabled && (e == null || !e.isGuarded);
+    if (guardNewlyEnabled &&
+        autoConfirmSeriesId != null &&
+        autoConfirmValidFrom != null &&
+        widget.guardRepository != null) {
+      final now = YearMonth.now();
+      if (autoConfirmValidFrom.isBefore(now)) {
+        await widget.guardRepository!.autoConfirmPastPeriods(
+          seriesId: autoConfirmSeriesId,
+          validFrom: autoConfirmValidFrom,
+          before: now,
+          frequency: _frequency,
+        );
       }
     }
 
@@ -970,6 +1032,32 @@ class _AddPlanItemScreenState extends State<AddPlanItemScreen> {
                     : l10n.openEnded,
               ),
               const SizedBox(height: 16),
+            ] else if (!_isLatestVersion &&
+                _type == PlanItemType.fixedCost &&
+                _frequency == PlanFrequency.monthly &&
+                _nextVersionStart != null) ...[
+              // Non-latest version: both From and Until are locked to preserve
+              // the series invariant. The service enforces the cap on save too.
+              Builder(builder: (context) {
+                final nextStart = _nextVersionStart!; // non-null: checked above
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLockedDateRow(
+                      label: l10n.fromFieldLabel,
+                      value: validFromLabel,
+                    ),
+                    const SizedBox(height: 12),
+                    _buildLockedDateRow(
+                      label: l10n.untilFieldLabel,
+                      value: l10n.yearMonthLabel(nextStart.addMonths(-1)),
+                      hint: l10n.versionBoundaryHint(
+                          l10n.yearMonthLabel(nextStart)),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                );
+              }),
             ] else ...[
               OutlinedButton.icon(
                 onPressed: _pickValidFrom,

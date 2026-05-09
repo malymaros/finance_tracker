@@ -944,6 +944,11 @@ class AppLocalizationsCs extends AppLocalizations {
   String get differentPeriodNewVersion => 'Jiný měsíc — vytvoří se nová verze.';
 
   @override
+  String versionBoundaryHint(String period) {
+    return 'Datum ukončení nastaveno aktualizací z $period';
+  }
+
+  @override
   String get applyChangesToTitle => 'Použít změny na...';
 
   @override

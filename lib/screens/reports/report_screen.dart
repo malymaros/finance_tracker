@@ -18,6 +18,7 @@ import '../../services/currency_formatter.dart';
 import '../../services/finance_repository.dart';
 import '../../services/pdf_report_service.dart';
 import '../../services/pdf_strings.dart';
+import '../../services/guard_repository.dart';
 import '../../services/plan_repository.dart';
 import '../../services/report_aggregator.dart';
 import '../../services/share_service.dart';
@@ -52,6 +53,7 @@ class ReportScreen extends StatefulWidget {
   final PlanRepository planRepository;
   final CategoryBudgetRepository budgetRepository;
   final CategoryPreferencesRepository prefsRepository;
+  final GuardRepository? guardRepository;
   final ValueNotifier<YearMonth> selectedPeriod;
   final ValueNotifier<PeriodBounds> periodBounds;
 
@@ -66,6 +68,7 @@ class ReportScreen extends StatefulWidget {
     required this.planRepository,
     required this.budgetRepository,
     required this.prefsRepository,
+    this.guardRepository,
     required this.selectedPeriod,
     required this.periodBounds,
     required this.onNavigateToPlan,
@@ -616,6 +619,7 @@ class _ReportScreenState extends State<ReportScreen> {
         repository: widget.repository,
         planRepository: widget.planRepository,
         prefsRepository: widget.prefsRepository,
+        guardRepository: widget.guardRepository,
       ),
     ));
   }

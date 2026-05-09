@@ -224,6 +224,44 @@ class GuardRepository extends ChangeNotifier {
     await _save();
   }
 
+  /// Marks all unrecorded periods before [before] as paid in a single batch write.
+  ///
+  /// For monthly frequency: marks every month from [validFrom] (inclusive)
+  /// to [before] (exclusive).
+  /// For yearly frequency: marks only the anchor month ([validFrom.month]) each year.
+  /// Existing records (paid or silenced) are left untouched.
+  Future<void> autoConfirmPastPeriods({
+    required String seriesId,
+    required YearMonth validFrom,
+    required YearMonth before,
+    required PlanFrequency frequency,
+  }) async {
+    assert(frequency != PlanFrequency.oneTime,
+        'autoConfirmPastPeriods must not be called for one-time items');
+    if (!validFrom.isBefore(before)) return;
+    final paidAt = DateTime.now();
+    var period = validFrom;
+    var changed = false;
+    while (period.isBefore(before)) {
+      final shouldMark = frequency != PlanFrequency.yearly ||
+          period.month == validFrom.month;
+      if (shouldMark && _findRecord(seriesId, period) == null) {
+        _payments.add(GuardPayment(
+          id: IdGenerator.generate(),
+          planItemSeriesId: seriesId,
+          period: period,
+          paidAt: paidAt,
+        ));
+        changed = true;
+      }
+      period = period.addMonths(1);
+    }
+    if (!changed) return;
+    _guardedPeriodsCache.clear();
+    notifyListeners();
+    await _save();
+  }
+
   Future<void> clearAll() async {
     _payments.clear();
     _guardedPeriodsCache.clear();

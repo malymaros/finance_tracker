@@ -821,6 +821,13 @@
   "@samePeriodInPlace": {"description": "Súgó, ha az új kezdőhónap megegyezik a meglévő tétel kezdőhónapjával"},
   "differentPeriodNewVersion": "Másik hónap — új verzió jön létre.",
   "@differentPeriodNewVersion": {"description": "Súgó, ha az új kezdőhónap eltér a meglévő tétel kezdőhónapjától"},
+  "versionBoundaryHint": "A befejező dátumot a(z) {period} frissítés határozza meg",
+  "@versionBoundaryHint": {
+    "description": "Súgó a zárolt Érvényesség vége mező alatt, ha nem a legújabb havi fix költség verziót szerkeszti",
+    "placeholders": {
+      "period": {"type": "String"}
+    }
+  },
 
   "applyChangesToTitle": "Mire alkalmazod a módosításokat...",
   "@applyChangesToTitle": {"description": "Párbeszédablak címe az éves fix költség mentési választásához"},

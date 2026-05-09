@@ -1708,6 +1708,12 @@ abstract class AppLocalizations {
   /// **'Different month — will create a new version.'**
   String get differentPeriodNewVersion;
 
+  /// Hint shown below the locked Until field when editing a non-latest version of a monthly fixed cost series
+  ///
+  /// In en, this message translates to:
+  /// **'End date set by the {period} update'**
+  String versionBoundaryHint(String period);
+
   /// Dialog title for the yearly fixed cost save-choice dialog
   ///
   /// In en, this message translates to:

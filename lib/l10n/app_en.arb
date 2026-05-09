@@ -821,6 +821,13 @@
   "@samePeriodInPlace": {"description": "Hint shown when the new start month matches the existing item's start month"},
   "differentPeriodNewVersion": "Different month — will create a new version.",
   "@differentPeriodNewVersion": {"description": "Hint shown when the new start month differs from the existing item's start month"},
+  "versionBoundaryHint": "End date set by the {period} update",
+  "@versionBoundaryHint": {
+    "description": "Hint shown below the locked Until field when editing a non-latest version of a monthly fixed cost series",
+    "placeholders": {
+      "period": {"type": "String"}
+    }
+  },
 
   "applyChangesToTitle": "Apply changes to...",
   "@applyChangesToTitle": {"description": "Dialog title for the yearly fixed cost save-choice dialog"},

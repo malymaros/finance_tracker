@@ -939,6 +939,11 @@ class AppLocalizationsDe extends AppLocalizations {
       'Anderer Monat – erstellt eine neue Version.';
 
   @override
+  String versionBoundaryHint(String period) {
+    return 'Enddatum durch die Aktualisierung vom $period festgelegt';
+  }
+
+  @override
   String get applyChangesToTitle => 'Änderungen anwenden auf...';
 
   @override

@@ -821,6 +821,13 @@
   "@samePeriodInPlace": { "description": "Hinweis, wenn der neue Startmonat mit dem Original übereinstimmt" },
   "differentPeriodNewVersion": "Anderer Monat – erstellt eine neue Version.",
   "@differentPeriodNewVersion": { "description": "Hinweis, wenn der neue Startmonat vom Original abweicht" },
+  "versionBoundaryHint": "Enddatum durch die Aktualisierung vom {period} festgelegt",
+  "@versionBoundaryHint": {
+    "description": "Hinweis unter dem gesperrten Bis-Feld beim Bearbeiten einer älteren Version eines monatlichen Fixkostens",
+    "placeholders": {
+      "period": {"type": "String"}
+    }
+  },
 
   "applyChangesToTitle": "Änderungen anwenden auf...",
   "@applyChangesToTitle": { "description": "Dialogtitel für den Speicherauswahl-Dialog bei jährlichen Fixkosten" },

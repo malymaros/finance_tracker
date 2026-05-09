@@ -157,6 +157,17 @@ class PlanRepository extends ChangeNotifier {
     await _save();
   }
 
+  /// Returns the earliest [validFrom] in [seriesId] that is strictly after
+  /// [after], or null if [existing] is already the latest version.
+  YearMonth? _nextVersionStart(String seriesId, YearMonth after) {
+    final later = _items.where(
+        (i) => i.seriesId == seriesId && i.validFrom.isAfter(after));
+    if (later.isEmpty) return null;
+    return later
+        .map((i) => i.validFrom)
+        .reduce((a, b) => a.isBefore(b) ? a : b);
+  }
+
   /// Applies an edit to [existing] using the given form values.
   ///
   /// Returns [PlanItemEditResult.success] on success, or a specific error
@@ -198,6 +209,12 @@ class PlanRepository extends ChangeNotifier {
         startFrom == existing.validFrom;
 
     if (inPlace) {
+      // Enforce version boundary: cap validTo if a later version exists and the
+      // supplied validTo would overlap it (or is null = open-ended).
+      final boundary = _nextVersionStart(existing.seriesId, existing.validFrom);
+      final cap = boundary?.addMonths(-1);
+      final effectiveValidTo =
+          cap != null && (validTo == null || validTo.isAfter(cap)) ? cap : validTo;
       await updatePlanItem(PlanItem(
         id: existing.id,
         seriesId: existing.seriesId,
@@ -206,7 +223,7 @@ class PlanRepository extends ChangeNotifier {
         type: existing.type,
         frequency: frequency,
         validFrom: existing.validFrom,
-        validTo: validTo,
+        validTo: effectiveValidTo,
         note: note,
         category: category,
         financialType: financialType,

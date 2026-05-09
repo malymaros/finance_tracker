@@ -177,6 +177,7 @@ class _PlanScreenState extends State<PlanScreen> {
       builder: (_) => AddPlanItemScreen(
         planRepository: widget.repositories.plan,
         prefsRepository: widget.repositories.prefs,
+        guardRepository: widget.repositories.guard,
         initialType: type,
         initialFrequency: frequency,
         initialValidFrom: widget.selectedPeriod.value,
@@ -189,6 +190,7 @@ class _PlanScreenState extends State<PlanScreen> {
       builder: (_) => AddPlanItemScreen(
         planRepository: widget.repositories.plan,
         prefsRepository: widget.repositories.prefs,
+        guardRepository: widget.repositories.guard,
         existing: item,
         initialValidFrom: widget.selectedPeriod.value,
       ),

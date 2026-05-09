@@ -946,6 +946,11 @@ class AppLocalizationsSk extends AppLocalizations {
       'Iný mesiac — vytvorí sa nová verzia.';
 
   @override
+  String versionBoundaryHint(String period) {
+    return 'Dátum ukončenia nastavený aktualizáciou z $period';
+  }
+
+  @override
   String get applyChangesToTitle => 'Použiť zmeny na...';
 
   @override

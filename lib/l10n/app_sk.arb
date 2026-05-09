@@ -821,6 +821,13 @@
   "@samePeriodInPlace": {"description": "Nápoveda zobrazená, keď nový začiatočný mesiac zodpovedá existujúcemu začiatočnému mesiacu položky"},
   "differentPeriodNewVersion": "Iný mesiac — vytvorí sa nová verzia.",
   "@differentPeriodNewVersion": {"description": "Nápoveda zobrazená, keď sa nový začiatočný mesiac líši od existujúceho"},
+  "versionBoundaryHint": "Dátum ukončenia nastavený aktualizáciou z {period}",
+  "@versionBoundaryHint": {
+    "description": "Nápoveda pod uzamknutým poľom Platnosť do pri úprave staršej verzie mesačného fixného nákladu",
+    "placeholders": {
+      "period": {"type": "String"}
+    }
+  },
 
   "applyChangesToTitle": "Použiť zmeny na...",
   "@applyChangesToTitle": {"description": "Názov dialógu pre voľbu uloženia pri ročnom fixnom náklade"},

@@ -64,6 +64,7 @@ class _MainScreenState extends State<MainScreen> {
             planRepository: widget.repositories.plan,
             budgetRepository: widget.repositories.budget,
             prefsRepository: widget.repositories.prefs,
+            guardRepository: widget.repositories.guard,
             selectedPeriod: _selectedPeriod,
             periodBounds: _periodBounds,
             onNavigateToPlan: () => _navigateToTab(0),

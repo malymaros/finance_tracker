@@ -821,6 +821,13 @@
   "@samePeriodInPlace": {"description": "Wskazówka wyświetlana, gdy nowy miesiąc początkowy odpowiada istniejącemu miesiącowi początkowemu pozycji"},
   "differentPeriodNewVersion": "Inny miesiąc — zostanie utworzona nowa wersja.",
   "@differentPeriodNewVersion": {"description": "Wskazówka wyświetlana, gdy nowy miesiąc początkowy różni się od istniejącego"},
+  "versionBoundaryHint": "Data zakończenia ustawiona przez aktualizację z {period}",
+  "@versionBoundaryHint": {
+    "description": "Wskazówka pod zablokowanym polem Data zakończenia przy edycji starszej wersji miesięcznego stałego kosztu",
+    "placeholders": {
+      "period": {"type": "String"}
+    }
+  },
 
   "applyChangesToTitle": "Zastosować zmiany do...",
   "@applyChangesToTitle": {"description": "Tytuł okna dialogowego wyboru zapisu dla rocznego stałego kosztu"},

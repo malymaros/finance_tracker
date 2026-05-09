@@ -821,6 +821,13 @@
   "@samePeriodInPlace": {"description": "Nápověda zobrazená, když se nový počáteční měsíc shoduje s počátečním měsícem existující položky"},
   "differentPeriodNewVersion": "Jiný měsíc — vytvoří se nová verze.",
   "@differentPeriodNewVersion": {"description": "Nápověda zobrazená, když se nový počáteční měsíc liší od počátečního měsíce existující položky"},
+  "versionBoundaryHint": "Datum ukončení nastaveno aktualizací z {period}",
+  "@versionBoundaryHint": {
+    "description": "Nápověda pod uzamčeným polem Datum ukončení při úpravě starší verze měsíčního fixního nákladu",
+    "placeholders": {
+      "period": {"type": "String"}
+    }
+  },
 
   "applyChangesToTitle": "Použít změny na...",
   "@applyChangesToTitle": {"description": "Název dialogu pro výběr způsobu uložení ročního pevného nákladu"},

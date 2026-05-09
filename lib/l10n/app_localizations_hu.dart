@@ -936,6 +936,11 @@ class AppLocalizationsHu extends AppLocalizations {
   String get differentPeriodNewVersion => 'Másik hónap — új verzió jön létre.';
 
   @override
+  String versionBoundaryHint(String period) {
+    return 'A befejező dátumot a(z) $period frissítés határozza meg';
+  }
+
+  @override
   String get applyChangesToTitle => 'Mire alkalmazod a módosításokat...';
 
   @override

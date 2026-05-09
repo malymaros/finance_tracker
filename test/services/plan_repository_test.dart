@@ -1141,6 +1141,179 @@ void main() {
     });
   });
 
+  // ── applyPlanItemEdit — version boundary guard ────────────────────────────
+
+  group('applyPlanItemEdit — version boundary guard', () {
+    PlanItem fixedItem({
+      required String id,
+      required String seriesId,
+      required int fromYear,
+      required int fromMonth,
+      int? toYear,
+      int? toMonth,
+    }) =>
+        PlanItem(
+          id: id,
+          seriesId: seriesId,
+          name: 'Rent',
+          amount: 800,
+          type: PlanItemType.fixedCost,
+          frequency: PlanFrequency.monthly,
+          validFrom: YearMonth(fromYear, fromMonth),
+          validTo: toYear != null && toMonth != null
+              ? YearMonth(toYear, toMonth)
+              : null,
+          category: ExpenseCategory.housing,
+          financialType: FinancialType.consumption,
+        );
+
+    test('in-place edit on non-latest version clamps validTo to boundary', () async {
+      final repo = PlanRepository(persist: false);
+      final v1 = fixedItem(id: 'v1', seriesId: 's', fromYear: 2026, fromMonth: 1);
+      final v2 = fixedItem(id: 'v2', seriesId: 's', fromYear: 2026, fromMonth: 3);
+      await repo.addPlanItem(v1);
+      await repo.addPlanItem(v2);
+
+      await repo.applyPlanItemEdit(
+        v1,
+        name: 'Rent',
+        amount: 800,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2026, 1), // same as v1.validFrom → in-place
+        validTo: null, // user tried to remove the cap
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      final saved = repo.items.firstWhere((i) => i.id == 'v1');
+      expect(saved.validTo, YearMonth(2026, 2)); // clamped to March - 1
+    });
+
+    test('in-place edit on latest version preserves validTo: null', () async {
+      final repo = PlanRepository(persist: false);
+      final v1 = fixedItem(
+        id: 'v1',
+        seriesId: 's',
+        fromYear: 2026,
+        fromMonth: 1,
+        toYear: 2026,
+        toMonth: 2,
+      );
+      final v2 = fixedItem(id: 'v2', seriesId: 's', fromYear: 2026, fromMonth: 3);
+      await repo.addPlanItem(v1);
+      await repo.addPlanItem(v2);
+
+      await repo.applyPlanItemEdit(
+        v2,
+        name: 'Rent',
+        amount: 800,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2026, 3), // same as v2.validFrom → in-place
+        validTo: null, // latest version — open-ended is valid
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      final saved = repo.items.firstWhere((i) => i.id == 'v2');
+      expect(saved.validTo, isNull); // not clamped
+    });
+
+    test('three-version series: middle version clamps to immediate next, not the last', () async {
+      final repo = PlanRepository(persist: false);
+      final v1 = fixedItem(id: 'v1', seriesId: 's', fromYear: 2026, fromMonth: 1);
+      final v2 = fixedItem(id: 'v2', seriesId: 's', fromYear: 2026, fromMonth: 3);
+      final v3 = fixedItem(id: 'v3', seriesId: 's', fromYear: 2026, fromMonth: 5);
+      await repo.addPlanItem(v1);
+      await repo.addPlanItem(v2);
+      await repo.addPlanItem(v3);
+
+      await repo.applyPlanItemEdit(
+        v1,
+        name: 'Rent',
+        amount: 800,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2026, 1), // in-place
+        validTo: null,
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      final saved = repo.items.firstWhere((i) => i.id == 'v1');
+      expect(saved.validTo, YearMonth(2026, 2)); // Mar - 1, not May - 1
+    });
+
+    test('non-latest in-place edit preserves an already-correct validTo', () async {
+      final repo = PlanRepository(persist: false);
+      final v1 = fixedItem(
+        id: 'v1',
+        seriesId: 's',
+        fromYear: 2026,
+        fromMonth: 1,
+        toYear: 2026,
+        toMonth: 2, // already the correct cap
+      );
+      final v2 = fixedItem(id: 'v2', seriesId: 's', fromYear: 2026, fromMonth: 3);
+      await repo.addPlanItem(v1);
+      await repo.addPlanItem(v2);
+
+      await repo.applyPlanItemEdit(
+        v1,
+        name: 'Rent',
+        amount: 800,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2026, 1),
+        validTo: YearMonth(2026, 2), // within bounds — must not be changed
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      final saved = repo.items.firstWhere((i) => i.id == 'v1');
+      expect(saved.validTo, YearMonth(2026, 2)); // unchanged
+    });
+
+    test('non-latest in-place edit clamps a validTo that exceeds the boundary', () async {
+      final repo = PlanRepository(persist: false);
+      final v1 = fixedItem(id: 'v1', seriesId: 's', fromYear: 2026, fromMonth: 1);
+      final v2 = fixedItem(id: 'v2', seriesId: 's', fromYear: 2026, fromMonth: 3);
+      await repo.addPlanItem(v1);
+      await repo.addPlanItem(v2);
+
+      await repo.applyPlanItemEdit(
+        v1,
+        name: 'Rent',
+        amount: 800,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2026, 1),
+        validTo: YearMonth(2026, 6), // beyond boundary — must be clamped
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      final saved = repo.items.firstWhere((i) => i.id == 'v1');
+      expect(saved.validTo, YearMonth(2026, 2)); // clamped to Mar - 1
+    });
+
+    test('in-place edit on single-version series preserves validTo: null', () async {
+      final repo = PlanRepository(persist: false);
+      final v1 = fixedItem(id: 'v1', seriesId: 's', fromYear: 2026, fromMonth: 1);
+      await repo.addPlanItem(v1);
+
+      await repo.applyPlanItemEdit(
+        v1,
+        name: 'Rent',
+        amount: 800,
+        frequency: PlanFrequency.monthly,
+        startFrom: YearMonth(2026, 1), // in-place
+        validTo: null,
+        category: ExpenseCategory.housing,
+        financialType: FinancialType.consumption,
+      );
+
+      final saved = repo.items.firstWhere((i) => i.id == 'v1');
+      expect(saved.validTo, isNull); // single version, no clamping
+    });
+  });
+
   // ── yearly validTo formula ────────────────────────────────────────────────
 
   group('yearly validTo — last active month is anchorMonth - 1 of next year', () {
