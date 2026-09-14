@@ -1,3 +1,4 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:finance_tracker/l10n/app_localizations.dart';
@@ -135,6 +136,36 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.textContaining('150'), findsWidgets);
+    });
+
+    testWidgets(
+        'real Other above threshold + small categories renders both rows '
+        'without a duplicate GlobalKey crash', (tester) async {
+      // Regression: a large real "Other" expense (above the 5% pie threshold)
+      // plus several below-threshold categories used to produce two rows both
+      // keyed by ExpenseCategory.other → duplicate GlobalKey → chart failed to
+      // render. Grand total 1000: other 90%, groceries 4%, transport 3%,
+      // health 3% (all three collapse into the aggregate bucket).
+      final repo = FinanceRepository(persist: false, seed: [
+        _expense(id: 'e1', amount: 900, category: ExpenseCategory.other),
+        _expense(id: 'e2', amount: 40, category: ExpenseCategory.groceries),
+        _expense(id: 'e3', amount: 30, category: ExpenseCategory.transport),
+        _expense(id: 'e4', amount: 30, category: ExpenseCategory.health),
+      ]);
+      await tester.pumpWidget(_wrap(financeRepo: repo));
+      await tester.pumpAndSettle();
+
+      // No exception thrown during build (would be the GlobalKey conflict).
+      expect(tester.takeException(), isNull);
+
+      // Chart is present, empty state is not.
+      expect(find.text('No expenses recorded for this period.'), findsNothing);
+      expect(find.byType(PieChart), findsOneWidget);
+
+      // The real "Other" category row and the aggregate "Other categories"
+      // bucket row are distinct and both present.
+      expect(find.text('Other'), findsOneWidget);
+      expect(find.text('Other categories'), findsOneWidget);
     });
   });
 

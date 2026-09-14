@@ -65,6 +65,7 @@ class ReportAggregator {
         category: ExpenseCategory.other,
         amount: smallAmount,
         percentage: smallPct,
+        isAggregate: true,
       ),
     ];
   }

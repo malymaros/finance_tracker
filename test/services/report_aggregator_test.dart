@@ -129,6 +129,50 @@ void main() {
       expect(otherRow.percentage, 10);
     });
 
+    test(
+        'real Other above threshold + small categories → two distinct Other rows '
+        '(regression: duplicate GlobalKey crash)', () {
+      // Regression for the report chart crash: a real ExpenseCategory.other
+      // expense above the threshold must stay as its own row, while the
+      // below-threshold categories collapse into a SEPARATE aggregate bucket.
+      // Both use ExpenseCategory.other, so they are only distinguishable via
+      // isAggregate — the flag ReportScreen uses to avoid keying two rows with
+      // the same GlobalKey.
+      final totals = [
+        makeTotal(ExpenseCategory.other, 90, 90), // real "other", above 5%
+        makeTotal(ExpenseCategory.groceries, 4, 4), // below 5%
+        makeTotal(ExpenseCategory.transport, 3, 3), // below 5%
+        makeTotal(ExpenseCategory.health, 3, 3), // below 5%
+      ];
+      final result = ReportAggregator.applyThreshold(totals, 5.0);
+
+      final otherRows =
+          result.where((ct) => ct.category == ExpenseCategory.other).toList();
+      expect(otherRows.length, 2, reason: 'real other + aggregate bucket');
+
+      final aggregates = result.where((ct) => ct.isAggregate).toList();
+      expect(aggregates.length, 1, reason: 'exactly one aggregate bucket');
+      expect(aggregates.single.amount, closeTo(10, 0.001));
+
+      final realOther = otherRows.firstWhere((ct) => !ct.isAggregate);
+      expect(realOther.amount, 90);
+      expect(realOther.isAggregate, isFalse);
+
+      // The aggregate bucket is always last.
+      expect(result.last.isAggregate, isTrue);
+    });
+
+    test('collapsed bucket is flagged isAggregate; real rows are not', () {
+      final totals = [
+        makeTotal(ExpenseCategory.groceries, 950, 95),
+        makeTotal(ExpenseCategory.transport, 30, 3), // below 5%
+        makeTotal(ExpenseCategory.clothing, 20, 2), // below 5%
+      ];
+      final result = ReportAggregator.applyThreshold(totals, 5.0);
+      expect(result[0].isAggregate, isFalse);
+      expect(result[1].isAggregate, isTrue);
+    });
+
     test('Other bucket is always the last element', () {
       final totals = [
         makeTotal(ExpenseCategory.groceries, 700, 70),

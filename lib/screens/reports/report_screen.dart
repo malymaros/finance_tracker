@@ -97,6 +97,12 @@ class _ReportScreenState extends State<ReportScreen> {
     for (final cat in ExpenseCategory.values) cat: GlobalKey(),
   };
 
+  // Dedicated key for the synthetic "Other categories" aggregation bucket.
+  // It shares [ExpenseCategory.other] with a possible real above-threshold
+  // "Other" row, so it must NOT reuse _categoryRowKeys[other] — doing so would
+  // put two widgets under the same GlobalKey and crash the chart.
+  final _otherBucketKey = GlobalKey();
+
   int get _year => widget.selectedPeriod.value.year;
   int get _month => widget.selectedPeriod.value.month;
 
@@ -500,9 +506,6 @@ class _ReportScreenState extends State<ReportScreen> {
     final otherSubcategories = reportData.otherSubcategories;
     final grandTotal = reportData.grandTotal;
 
-    // "Other categories" bucket is present when sub-categories were collapsed.
-    final hasOtherGroup = otherSubcategories.isNotEmpty;
-
     return SingleChildScrollView(
       controller: _scrollController,
       child: Column(
@@ -529,8 +532,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 ),
                 sections: chartTotals.map((ct) {
                   final isSelected = ct.category == _selectedCategory;
-                  final isAggOther =
-                      ct.category == ExpenseCategory.other && hasOtherGroup;
+                  final isAggOther = ct.isAggregate;
                   return PieChartSectionData(
                     value: ct.amount,
                     color: isAggOther ? Colors.white : ct.category.color,
@@ -552,7 +554,7 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          ..._buildCategoryRows(chartTotals, otherSubcategories, hasOtherGroup),
+          ..._buildCategoryRows(chartTotals, otherSubcategories),
           const Divider(height: 1),
           _buildTotalRow(grandTotal),
           const SizedBox(height: 16),
@@ -566,14 +568,12 @@ class _ReportScreenState extends State<ReportScreen> {
   List<Widget> _buildCategoryRows(
     List<CategoryTotal> chartTotals,
     List<CategoryTotal> otherSubcategories,
-    bool hasOtherGroup,
   ) {
     final rows = <Widget>[];
     for (final ct in chartTotals) {
-      final isOtherRow =
-          ct.category == ExpenseCategory.other && hasOtherGroup;
+      final isOtherRow = ct.isAggregate;
       rows.add(ReportCategoryRow(
-        key: _categoryRowKeys[ct.category],
+        key: isOtherRow ? _otherBucketKey : _categoryRowKeys[ct.category],
         ct: ct,
         isSelected: _selectedCategory == ct.category,
         isInteractive: true,
